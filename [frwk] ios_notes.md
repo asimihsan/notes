@@ -1,11 +1,11 @@
 ## Online tutorials
 
-- o Your First iPhone Application (Apple) (http://goo.gl/mkYmJ)
-- o Cocoa Fundamentals Guide (Apple) (http://goo.gl/wp7gl)
-- o View Controller Programming Guide (Apple) (http://goo.gl/EFfd7)
-- o Table View Programming Guide (Apple) (http://goo.gl/J4SkT)
+- o Your First iPhone Application (Apple)
+- o Cocoa Fundamentals Guide (Apple)
+- o View Controller Programming Guide (Apple)
+- o Table View Programming Guide (Apple)
 - o iOS App Programming Guide
-- o Design then Code (two tutorials on iOS apps) (http://goo.gl/5rok6)
+- o Design then Code (two tutorials on iOS apps)
 
 ## Apple samples
 
