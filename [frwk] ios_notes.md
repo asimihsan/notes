@@ -1,11 +1,32 @@
 ## Online tutorials
 
-- o Your First iPhone Application (Apple)
-- o Cocoa Fundamentals Guide (Apple)
-- o View Controller Programming Guide (Apple)
-- o Table View Programming Guide (Apple)
-- o iOS App Programming Guide
-- o Design then Code (two tutorials on iOS apps)
+- x 01: Your First iPhone Application (Apple)
+- x 02: Your Second iOS App: Storyboards (Apple)
+- o 03: Your Third iOS App: iCloud
+- o 04: iOS App Programming Guide (Apple)
+- x 05: Cocoa Fundamentals Guide (Apple)
+- o 06: View Controller Programming Guide (Apple)
+- o 07: Event Handling Guide for iOS (Apple)
+- o 08: View Programming Guide for iOS (Apple)
+- o 09: View Controller Catalog for iOS (Apple)
+- o 10: Table View Programming Guide (Apple)
+- o 11: Design then Code (two tutorials on iOS apps)
+
+- o 12: Networking Overview (Apple)
+- o 13: Networking Programming Topics (Apple)
+- o 19: CFNetwork Programming Guide, sockets (Apple)
+- o 14: Networking Concepts (Apple)
+- o 17: Concurrency Programming Guide (Apple)
+- o 20: Cryptographic Services Guide (Apple)
+- o 18: Keychain Services Programming Guide (Apple)
+
+- o 15: Key-Value Coding Programming Guide (Apple)
+- o 16: Key-Value Observing Programming Guide (Apple)
+
+- o 22: Core Data Tutorial for iOS (Apple)
+- o 23: iOS Human Interface Guidelines (Apple)
+- o 24: iOS Technology Overview (Apple)
+- o 25: Core Data Programming Guide (Apple)
 
 ## Apple samples
 
@@ -38,7 +59,13 @@
 
 ## Notes
 
-### Your First iPhone Application (Apple)
+### General
+
+- Good project defaults:
+	- Project options -> Build Settings -> All, Buld Options -> Run Static Analyzer = Yes.
+	- Menu bar Product -> Edit Scheme -> Run on left menu -> Diagnostics tab -> Enable Zombie Objects
+
+### 01: Your First iPhone Application
 
 - Automatic Reference Counting (ARC) is provided by `@autoreleasepool` around `UIApplicationMain` call in `main`. It's compile-time memory management, not garbage collection.
 - App delegates provide the window.
@@ -73,7 +100,67 @@
 -	A delegate protocol specifies all messages an objects might send to its delegte.
 -	Recall that in this example the view controller is the delegate for the text field.
 
-### Cocoa Fundamentals Guide
+### 02: Your Second iOS App: Storyboards
+
+-	Model layer.
+-	Master and detail scenes (i.e. view controllers).
+-	Navigation controller is also a _container view controller_ because, in addition to its views, it also manages a set of other view controllers. In default app is manages navigation bar, back button, master and detail view controllers.
+-	A _segue_ is a transition from one scene (the _source_) to the next (the _destination_).
+-	A _push_ segue slides destination over source right-to-left.
+-	A _relationship_ is a connection between scenes. Navigation controller has relationship with master scene.
+-	p21: `@property` in .h, `@synthesize` underscore-suffixed version in .m.
+-	Can directly reference `_var` in `init`, `dealloc`, and getter/setter properties, else reference property `self.var`.
+-	Want a pure data model class and a data controller class; consumers go through data controller.
+-	Don't `import` class in data controller .h when a forward declaration will do, `@class Name`. `import` in .m.
+-	_Class extensions_. Private methods go in `@interface Class ()` section before `@implementation` in .h.
+-	_Cell_: a table row.
+-	Storyboards have two ways to design cells:
+	1. _Dynamic prototypes_: design one cell, use it as a template.
+	2. _Static cells_: design overall layout of table.
+-	p31: how to set up table cells.
+-	Connect the master view controller to the data controller with a forward declaration in .h and a data controller property `(strong, nonatomic)` and `import` in .h.
+-	p37: `cellForRowAtIndexPath`.
+-	p37: minimize what app delegate does, put as much logic in view controllers as possible.
+-	`self.window.rootViewController` = `UINavigationController`.
+-	p46: In `viewDidUnload` release any strong references by setting to nil.
+-	p47: to create segue:
+	-	CTRL-drag table cell from master scene to detail scene, select Push.
+	-	select segue, go to attributes inspector, enter a custom ID into the identifier field to differeniate between segues for `prepareForSegue`.
+-	p50: making static table cells for a detail view. Connect UILabel views to detail view controller properties
+	-	CTRL-right click,
+	-	CTRL-drag new referencing outlet circle to yellow sphere, i.e. view controller.
+-	p53: pass data between scenes in `prepareForSegue`; when _source_ scene is aboue to transition to _destination_ scene.
+
+-	p58: Adding a scene to a navigation hierarchy is good pracice. Select view controller, Editor -> Embed in -> Navigation controller
+	-	Easiest way to add a navigation bar on top, but not necessary if you're not navigating onwards.
+	-	Ensure the nav bar is always on top.
+	-	Easy to extend to add further scenes.
+-	p63: you can (must) add your own buttons to a navigation bar.
+-	p69: again, view controller becomes text field delegate (i.e. follows `UITextFieldDelegate` protocol) to handle `textFieldShouldReturn` and revoke text field's first responder status and dismiss keyboard.
+-	p70: create delegate protocol to pass data from destination to source after segue.
+-	p73: modal segue, slide up/down. CTRL-drag navbar button to the navigation controller of the branch.
+-	p75: tricky, how to find actual desintation view controller in `prepareForSegue` given `UINavigationController` parent.
+-	p77: troubleshooting
+-	p79: next steps, come back (or not) after reading more guides
+
+### 03: Your Third iOS App: iCloud
+
+### 04: iOS App Programming Guide
+
+-	Translating design into action
+	-	Choose a data model (how, data controllers, structured or not)
+	-	Decide whether you need to support documents (`UIDocument`, Core Data, iCloud).
+	-	UI approach
+		-	Building blocks, existing components
+		-	OpenGL ES-based.
+-	Starting the app creation process
+	-	Basic interface-style?
+	-	Universal app or specifically iPad/iPhone.
+	-	Storyboards? iOS 5 and later only.
+	-	Core Data? Better for structured data.
+-	p20: key objects in an iOS app.
+
+### 05: Cocoa Fundamentals Guide
 
 -	Xcode performance tools
 	-	Instruments, performance over time.
@@ -131,5 +218,20 @@
 	-	p185: Receptionist pattern via key-value observing.
 	-	p210: Outlets.
 	
-### View controller guide
+### 06: View Controller Programming Guide
 
+-	A view controller manages a set of views.
+-	You manage your content by creating subclasses of `UIViewController` or `UITableViewController`.
+-	Container view controllers manage other view controllers.
+- Can temporarily _present_ another view controller; this brings its view on screen and when its dismissed it tells the calling view controller the result. (Reminiscent of Android ActivityWithResult).
+- Storyboards link user interface elements into an app interface. Storyboards hold preconfigured instances of view controllers and their associated objects.
+
+### 07: Event Handling Guide for iOS 
+
+### 08: View Programming Guide for iOS 
+
+### 09: View Controller Catalog for iOS 
+
+### 10: Table View Programming Guide
+
+### 11: Design then Code (two tutorials on iOS apps)
