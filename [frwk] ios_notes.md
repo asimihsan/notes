@@ -2,18 +2,22 @@
 
 - x 01: Your First iPhone Application (Apple)
 - x 02: Your Second iOS App: Storyboards (Apple)
+- x 04: iOS App Programming Guide (Apple)
 - o 03: Your Third iOS App: iCloud
-- o 04: iOS App Programming Guide (Apple)
+- o 22: Core Data Tutorial for iOS (Apple)
+- o 27: Core Data Utility Tutorial (Apple)
+
 - x 05: Cocoa Fundamentals Guide (Apple)
 - o 06: View Controller Programming Guide (Apple)
+- o 10: Table View Programming Guide (Apple)
 - o 07: Event Handling Guide for iOS (Apple)
 - o 08: View Programming Guide for iOS (Apple)
 - o 09: View Controller Catalog for iOS (Apple)
-- o 10: Table View Programming Guide (Apple)
 - o 11: Design then Code (two tutorials on iOS apps)
 
-- o 12: Networking Overview (Apple)
-- o 13: Networking Programming Topics (Apple)
+- x 12: Networking Overview (Apple)
+- x 13: Networking Programming Topics (Apple)
+- x 29: Streams Programming Guide
 - o 19: CFNetwork Programming Guide, sockets (Apple)
 - o 14: Networking Concepts (Apple)
 - o 17: Concurrency Programming Guide (Apple)
@@ -23,10 +27,12 @@
 - o 15: Key-Value Coding Programming Guide (Apple)
 - o 16: Key-Value Observing Programming Guide (Apple)
 
-- o 22: Core Data Tutorial for iOS (Apple)
 - o 23: iOS Human Interface Guidelines (Apple)
 - o 24: iOS Technology Overview (Apple)
 - o 25: Core Data Programming Guide (Apple)
+- o 26: Location Awareness Programming Guide (Apple).
+- o 28: Threading Programming Guide
+
 
 ## Apple samples
 
@@ -159,6 +165,63 @@
 	-	Storyboards? iOS 5 and later only.
 	-	Core Data? Better for structured data.
 -	p20: key objects in an iOS app.
+-	p21: in iOS 5 and later app delegate is dispatched events if `UIApplication` doesn't handle it. Reference: _`UIResponder` Class Reference_.
+- p31: what is in an app bundle.
+	-	p34: how to access bundle. References: _Resource Programming Guide_, _Bundle Programming Guide_.
+-	p37, fig 3-1: state changes in iOS app.
+-	p39: fig 3-2: launching an app into the foreground.
+-	p40, fig 3-3: launching an app into the background. no UI, just handles events. can tell on `applicationState` property of shared `UIApplication` object (p41).
+-	p42: what to do in app delegate's `application:didFinishLuanchingWithOptions:`.
+	-	check launch options dictionary, why was app launched.
+	-	initialize critical data structures.
+	-	prepare window and views.
+	-	use saved preferences and state to restore.
+-	p44, fig 3-4: handling alert-based interruptions.
+-	p45: what to do when an interruption occurs, i.e. app delegate's `applicationWillResignActive`:
+	-	stop timers and periodic tasks
+	-	stop any running metadata queries (iCloud)
+	-	do not initiate new tasks
+	-	pay movie / audio playback
+	-	suspend any dispatch queues or operation queues executing non-criticial code.
+	-	close references to files protected by `NSFileProtectionComplete`.
+	-	you can continue processing network requests and other time-sensitive tasks.
+-	reverse the above in `applicationDidBecomeActive`
+-	p47, fig 3-5: moving from foreground to background.
+-	p48, what to do when moving to background, i.e. `applicationDidEnterBackground`, you have 5 seconds
+	-	when `applicationDidEnterBackground` returns the system take a screenshot. Hide sensitive information before this returns.
+	-	save user data and state to disk with a background thread.
+	-	free up as much memory as possible.
+	-	can call `beingBackgroundTaskWithExpirationHandler:` method for long-running tasks.
+-	can use default notification cener to register for `UIApplicationDidEnterBackgroundNotification`
+-	p50, fig 3-6: transitioning from the background to the foreground, also via `UIApplicationWillEnterForegroundNotification`.
+-	p51, table 3-2: notifications delieverd to waking apps.
+-	be sure to respond to changes in app's settings when coming back to foreground (p53).
+-	p54, fig 3-7: processing events in the main run loop.
+-	p56: multitasking support in `UIDevice.ultitaskingSupported`.
+-	p57: call `beginBackgroundTaskWithExpirationHandler` before any criticl task you want to protect from immediate termination on backgrounding. Need to `endBackgroundTask` eventually, or killed anyway.
+-	p60: declare what long-running background task resources you need in `Info.plist`, e.g. `location`.
+-	p61: tracking user location in background. significant-change (recommended), foreground-only, and background.
+-	p65: being a responsible background app:
+	-	always cancel listening sockets in backgrounding; you can't listen anyway.
+	-	prepare to handle socket failure.
+	-	always save state on suspension.
+	-	release unneeded memory.
+	-	stop using shared system resources, e.g. address book.
+	-	avoid updating windows and views.
+	-	remove sensitive info from screen.
+	-	do minimal work.
+-	p67: can explicitly opt out of backgrounding, just dies on suspension.
+-	p81: using SQLite on iCloud only supported if you use Core Data.
+-	p88: declaring `UIRequiredDeviceCapabilities` in `Info.plist`, e.g. `gps` and `location-services`.
+-	p98: settings bundle for app settings. use for unfrequently-changed settings, else put directly in app.
+-	p105: preserving the state of your app's user interface. walk your view controller hierarchy.
+-	p107: protecting data using on-disk encryption.
+-	p112: configuring reachability interfaces using `SCNetworkReachabilityRef`. Reference: _System Configuration Framework Reference_.
+-	p120: Critical app data in `<Application_Home>/Documents`.
+-	p121: Non-critical for iOS 5.1+ in `<Application_Home>/Library/Application Support`, else `<Application_Home>/Library/Caches`
+-	p123: can do _Simulate Memory Warning_ in iOS Simulator.
+-	p123: `-mthumb` to reduce code size by 35%, but not if you use floating point arithmetic.
+-	p128: level-wise, `NSStream` on top then `CFNetwork` then BSD sockets.
 
 ### 05: Cocoa Fundamentals Guide
 
@@ -235,3 +298,50 @@
 ### 10: Table View Programming Guide
 
 ### 11: Design then Code (two tutorials on iOS apps)
+
+### 12: Networking Overview
+
+-	p15: design for variable network availability.
+	-	for requests made at user's behest:
+		-	always attempt to make connection. don't guess if it'll work or not.
+		-	if the connection fails, use `SCNetworkReachability` API to diagnose failure. then.
+			-	If transient error, try again.
+			-	If host unreachable, wait for `SCNetworkReachability` API to call your registered callback. When host reachable, then retry.
+		-	try to display connection status in non-modal way, don't block user.
+	-	for requests made in background:
+		-	attempt to make connection. Use `SCNetworkReachability` to avoid making connection at inconvenient times, e.g. avoid 3G.
+		-	if conenction fails use `SCNetworkReachability` API to wait for host to become reachale.
+		-	do not display any dialogs.
+		-	don't retry too quickly, use exponential backoff up to e.g. 15 minutes.
+-	`SCNetwokReachability` is not intended as preflight check of connectivity. It is intended as post-failure diagnostics.
+-	Xcode has tool called _Network Link Conditioner_ that simulates network conditions.
+
+### 13: Networking Programming Topics
+
+- For TCP, basically says to refer to _Stream Programming Guide_, provides short summary on p9.
+
+
+### 26: Location Awareness Programming Guide
+
+- p11: call `CLLocationManager::locationServicesEnabled:` to see if location services available.
+- p11: can set up `desiredAccuracy` and `distanceFilter`.
+- p12: starting the significant-change location service, calls a delegate on event.
+	- Significant power savings.
+	- Service automatically wakes up application when new location data arrives, but not much time to process data and still in background.
+-	p13, listing 1-3, processing an incoming location event. Check timestamp of datum.
+-	p14: check reported accuracy of location events and discard less-accurate data and wait for more-accurate data to come. Check that accuracy is actually improving over time and, if it doesn't, abandon effort (p18).
+-	p23: can use geocoder objects to convert GPS coordinates to place name. in iOS 5 can do place name to GPS coordinates.   
+
+### 29: Streams Programming Guide
+
+- p8: generally how to use streams. p22 has how to start socket streams.
+- p9 => open stream on secondary thread and schedule the stream on the thread's run loop.
+- p10: how to handle bytes-available event on NSStream, i.e. receiving from stream.
+- p14: how to handle space-available event on NSStream, i.e. sending to stream.
+- p16: how to close stream.
+- p20: handling stream errors.
+- p22: setting up socket streams.
+	-	create and initialize `NSInputStream`.
+	-	schedule the stream object on a run loop, open the stream. (but could use polling).
+	-	handle events that the stream object reports to its delegate.
+	-	when there's no more data dispose of the stream object.
