@@ -4,11 +4,11 @@
 - x 02: Your Second iOS App: Storyboards (Apple)
 - x 04: iOS App Programming Guide (Apple)
 - o 03: Your Third iOS App: iCloud
-- o 22: Core Data Tutorial for iOS (Apple)
+- x 22: Core Data Tutorial for iOS (Apple)
 - o 27: Core Data Utility Tutorial (Apple)
 
 - x 05: Cocoa Fundamentals Guide (Apple)
-- o 06: View Controller Programming Guide (Apple)
+- x 06: View Controller Programming Guide (Apple)
 - o 10: Table View Programming Guide (Apple)
 - o 07: Event Handling Guide for iOS (Apple)
 - o 08: View Programming Guide for iOS (Apple)
@@ -43,6 +43,10 @@
 - o iPhoneUnitTests / UnitTests
 - o Regions (for changing level of monitoring depending on foreground/background)
 - o SimpleDrillDown
+- o TableViewSuite
+- o TheElements
+- o PhotoLocations
+- o CoreDataBooks
 
 - CoreTextPageViewer
 - DrillDownSave
@@ -58,7 +62,6 @@
 - StreetScroller (infinite horizontal scrolling)
 - SysSound (system sound notifications, vibration)
 - TableMultiSelect
-- TableViewSuite
 - TableViewUpdates
 - UICatalog
 - URLCache
@@ -288,6 +291,83 @@
 -	Container view controllers manage other view controllers.
 - Can temporarily _present_ another view controller; this brings its view on screen and when its dismissed it tells the calling view controller the result. (Reminiscent of Android ActivityWithResult).
 - Storyboards link user interface elements into an app interface. Storyboards hold preconfigured instances of view controllers and their associated objects.
+- p17, fig 1-5: view controller classes in UIKit, look for subclasses of `UIViewController`.
+
+- _Content View Controllers_ display content.
+	-	1:1 between views and parent view controllers.
+	-	Content view controller only shows one screen.
+	- _Table View Controllers_, i.e. `UITableViewController`. Tabular. You can subclass.
+	
+- _Container View Controllers_ can combine together, hierarchies of view controllers.
+	- _Navigation Controller_: `UINavigationController`, stack-based navigation with nav bar.
+	- _Tab Bar Controller_: `UITabBarController`. 2+ modes of operation.
+	- _Split View Controller_: `UISplitViewController`. Master-detail. iPad only.
+	- _Page View Controller_: page layout, discrete pages like a book. Lazy loading.
+
+-	p25: to display a view controller must be associated with window, by:
+	-	making it the window's root view controller.
+	-	child of a container view controller.
+	-	show it in a popover controller.
+	-	present it from another view controller (segue). When presenting can determine how much screen is used, called _presentation context_, default the whole window. Transient.
+
+- p28: combination of views and view controllers establishes _responder chain_ for events.
+- p28: navigation controller children are siblings arranged in stack tab view controller children have no relationship.
+- p30: source view controller provide properties to destination view controllers. destination view controllers call delegates that implement the delegate's protocol to communicate back with source.
+
+- p37: when are view controllers instantiated by iOS:
+	-	if relationship is segue, destination view controller is intantiated when segue is triggered.
+	-	if relationship is container, child view controller instantiated when parent is instantiated.
+	-	if not destination or child never instantiated automatically, you must do so programmatically.
+- p37: label all segues with identifiers.
+- p37: can use multiple storyboards.
+- p38: programmatically trigger segues using source view controller's `performSegueWithIdentifier:sender:`.
+- p39: instantiating a storyboard's view controller programmatically.
+	-	obtain storyboard object, `UIStoryBoard`.
+	-	call storyboard object's `instantiateViewControllerWithIdentifier:` or `instantiateInitialViewController`.
+	-	configure new view controller by setting properties.
+	-	display new view controller.
+- p41: transitioning to a new storyboard requires a programmatic approach.
+- p42: how to display view conroller contents programmatically.
+- p47: designing your content view controller:
+	-	are you using a storyboard to implement it?
+	-	when is it instantiated?
+	-	what data does it show?
+	-	what tasks does it perform?
+	-	how is its view displayed onscreen?
+	-	how does it collaborate with other view controllers? contained? segues to/from?
+- p50: examples of common view controller designs.
+- p55: as you define your view controller you'll probably end up adding:
+	-	_declared properties_ pointing to the objects containing the data to be displayed in child views.
+	-	_public methods and properties_ to expose view controller's custom behavior to other view controllers.
+	-	_outlets_ pointing to views in hierarchy with which the view controller must interact.
+	-	_action methods_ that perform tasks associated with buttons and other child views.
+- important: define outlets and actions in nameless category, so that other view controllers don't depend on them, i.e.
+
+		@interface MyViewController ()
+		// outlets and actions here
+		@end
+		
+		@implementation MyViewController
+		// implementation of privately declared category here.
+		@end
+
+- p56: when view controller loaded form storyboard it opens an archive.
+- p58, fig 4-1: loading a view into memory.
+- p60, fig 4-2: unloading a view from memory.
+- p62: creating a view programmatically. p63 => don't call `super` in `loadView:`.
+- p64, table 4-1: places to allocate and deallocate memory.
+- p66: gotchas for scrolling a view.
+- p68: how views get sized by view controller, reference _View Programming Guide for iOS_
+	-	view controller's view if resized.
+	-	view controller calls `viewWillLayoutSubviews`
+	-	view controller's view calls its `layoutSubviews` method.
+	-	view controller calls `viewDidLayoutSubviews`.
+- p70, fig 6-1: responder chain for view controllers. Reference: _Event Handling Guide for iOS_.
+- p78, fig 8-1: responding to the appearance of a view.
+- p79, fig 8-2: responding to the disappearance of a view.
+- p87: presenting a view controller programmatically.
+- p100: enabling edit mode in a view controller.
+- 
 
 ### 07: Event Handling Guide for iOS 
 
@@ -296,6 +376,15 @@
 ### 09: View Controller Catalog for iOS 
 
 ### 10: Table View Programming Guide
+
+-	p21: table view is itself instance of `UITableView`, inherits from `UIScrollView`.
+-	p21: `UITableView` object must have a delegate and a data source. Often delegate and data source the same object, and often this object is a subclass of `UITableViewController`. (surely could be property too?)
+	-	data source mediates between app's data model (model objects) and table view.
+	-	data source adopts `UITableViewDataSource` protocol. Two methods: `tableView:numberOfRowsInSection:` and `tableView:cellForRowAtIndexPath:`.
+	-	delegate adopts `UITableViewDelegate`, no required methods.
+-	p22: can also use convenience class `UILocalizedIndexedCollation` for indexed lists (the A-Z on right side).
+-	Many methods return values representing index paths. Use `NSIndexPath`.
+
 
 ### 11: Design then Code (two tutorials on iOS apps)
 
@@ -320,6 +409,33 @@
 
 - For TCP, basically says to refer to _Stream Programming Guide_, provides short summary on p9.
 
+### 22: Core Data Tutorial for iOS
+
+- Reference: _Core Data Programming Guide_
+- _Stack_: collection of Core Data framework objects that work together to get modelled objects to and from _persistent store_, the file where data is stored. Can be SQLite if you want.
+-	_Managed object_ is instance or subclass of `NSManagedObject`, object representation of record in database. Always associated with mananged object context.
+-	_Managed object context_ instance of `NSManagedObjectContext`. Manages objects, does life-cycle management, validation, relationship maintenance, undo/redo.
+-	_Managed object model_ is instance of `NSManagedObjectModel`, object that represents schema. Collection of `NSEntityDescription` objects. Entity descripiton describes entity in terms of name, class, properties.
+-	_Persistent store coordinator_: instance of `NSPersistentStoreCoordinator`. Manages collection of _persistent object stores_. Persistent object store represents external store file.
+-	Entity is Event, attributes are creation date, lattitude, and location.
+-	Many ways to edit the model, reference: _Xcode Tools for Core Data_.
+-	Select `Locations.xcdatamodel`, Editor -> Add Entity. Then Add Attributes to the Entity. Rename, define type.
+-	p25: common to have custom managed object class
+	-	select the entity, select new file, do Core Data -> NSManagedObject subclass.
+-	Notice all properties are `@dynamic` in .m. Core Data generates accessor methods at runtime
+- Notice that raw types are wrapped as e.g. `NSNumber`.
+-	Notice there is no `dealloc`. Core data handles life-cycle of all modelled properties of a managed object. If you add instance variables you're responsible for them.
+-	p27: adding events.
+-	p28: typically create managed object using `insertNewObjectForEntityForName:inManagedObjectContext:` of `NSEntityDescription`.
+-	You accessor methods to set attributes. Nothing saved implicitly. Need to explicitly save with `managedObjectContext save`.
+-	p30: displaying data in table. lots of faff but eventually we just read off of the local `self.eventsArray`.
+-	p33: how to fetch managed objects. _fetch request_, instance of `NSFetchRequest`, like SQL `SELECT`. Predicates specified using `NSPredicate`, sort order by array of `NSSortOrdering` objects. reference: _Predicate Programming Guide_.
+-	p34: Core Data gets related objects for you, like Django.
+-	p34: key code for preparing fetch for core data entity.
+-	p37: deleting managed objects. `deleteObject:` method of `NSManagedObjectContext` then `save:`.
+-	p40: next steps, might be fun.
+	-	really want to use `NSFetchedResultsController` to efficiently get many objects.
+	-	_faulting_: don't have the complete the object graph. that means if you have .e.g photograph don't fetch all photos. See _PhotoLocations_ example.
 
 ### 26: Location Awareness Programming Guide
 
