@@ -33,6 +33,9 @@
 - o 26: Location Awareness Programming Guide (Apple).
 - o 28: Threading Programming Guide
 
+- o 30: Notification Programming Topics
+
+
 
 ## Apple samples
 
@@ -83,7 +86,7 @@
 - Initial view controller is the first view controller that gets loaded.
 - View is an object that draws content and handles user events.
 - View hierarchies.
-- Canvas is the grid backgrond in storyboard.
+- Canvas is the grid background in storyboard.
 - Storyboard scene is a view controller.
 - Storyboard segue is a transition between two scenes.
 - Initial scene indicator is arrow on left of storyboard.
@@ -148,7 +151,7 @@
 -	p69: again, view controller becomes text field delegate (i.e. follows `UITextFieldDelegate` protocol) to handle `textFieldShouldReturn` and revoke text field's first responder status and dismiss keyboard.
 -	p70: create delegate protocol to pass data from destination to source after segue.
 -	p73: modal segue, slide up/down. CTRL-drag navbar button to the navigation controller of the branch.
--	p75: tricky, how to find actual desintation view controller in `prepareForSegue` given `UINavigationController` parent.
+-	p75: tricky, how to find actual destination view controller in `prepareForSegue` given `UINavigationController` parent.
 -	p77: troubleshooting
 -	p79: next steps, come back (or not) after reading more guides
 
@@ -194,14 +197,14 @@
 	-	when `applicationDidEnterBackground` returns the system take a screenshot. Hide sensitive information before this returns.
 	-	save user data and state to disk with a background thread.
 	-	free up as much memory as possible.
-	-	can call `beingBackgroundTaskWithExpirationHandler:` method for long-running tasks.
+	-	can call `beginBackgroundTaskWithExpirationHandler:` method for long-running tasks.
 -	can use default notification cener to register for `UIApplicationDidEnterBackgroundNotification`
 -	p50, fig 3-6: transitioning from the background to the foreground, also via `UIApplicationWillEnterForegroundNotification`.
--	p51, table 3-2: notifications delieverd to waking apps.
+-	p51, table 3-2: notifications delievered to waking apps.
 -	be sure to respond to changes in app's settings when coming back to foreground (p53).
 -	p54, fig 3-7: processing events in the main run loop.
--	p56: multitasking support in `UIDevice.ultitaskingSupported`.
--	p57: call `beginBackgroundTaskWithExpirationHandler` before any criticl task you want to protect from immediate termination on backgrounding. Need to `endBackgroundTask` eventually, or killed anyway.
+-	p56: multitasking support in `UIDevice.multitaskingSupported`.
+-	p57: call `beginBackgroundTaskWithExpirationHandler` before any critical task you want to protect from immediate termination on backgrounding. Need to `endBackgroundTask` eventually, or killed anyway.
 -	p60: declare what long-running background task resources you need in `Info.plist`, e.g. `location`.
 -	p61: tracking user location in background. significant-change (recommended), foreground-only, and background.
 -	p65: being a responsible background app:
@@ -409,6 +412,81 @@
 
 - For TCP, basically says to refer to _Stream Programming Guide_, provides short summary on p9.
 
+### 17: Concurrency Programming Guide
+
+- _Grand Central Dispatch (GCD)_: define tasks and add them to appropriate dispatch queue.
+- _Operation queues_: Objective-C object that act like dispatch queues. Much more startup efficiency than threads.
+	- `NSOperationQueue`.
+	- Not first-in first-out.
+	- Can have task dependencies.
+	- Tasks are subclass instances of `NSOperation`, _operation objects_. Use KVO.
+	-  p13 => initially assume no task is too small.
+- _Dispatch queue_: C-based mechanism for first-in first-out serial or concurrent executing of tasks.
+- _Block object_: C-based, similar to function pointers, can be copied onto heap with their own scope.
+- _Dispatch source_: C-based, monitor system events asynchronously. Part of GCD. 
+- Process
+	-	Define your application's expected behaviour.
+		-	Enumerate the tasks your application performs and the objects or data structures associated with each task.
+		-	Break each task down furhter into a set of steps.
+	-	Identify places where code may benefit from concurrency. Maybe change order. No task is too small.
+	-	Identify the queues you need.
+- p17: `NSInvocationOperation`: as-is object to execute object:selector:. Subclass of `NSOperation`.
+- p17: `NSBlockOperation`: as-is object to execute blocks concurrently.
+- p19: only need to implement _concurrent operation_ if you need to execute asynchronously without adding to operation queue.
+- p19, listing 2-1: creating an `NSInvocationOperation`.
+- p20, listing 202: creating an `NSBlockOperation` object.
+- p27: `NSOperation` is KVO compliant for all these keys.
+- p29: `addDependency:` to `NSOperation`.
+- p29: `setQueuePriority:` for `NSOperation`.
+- p33: executing operations, adding operations to an operation queue.
+- p34: `setMaxConcurrentOperationCount:` sets concurrency for operation queue object.
+- p35: cancelling. `cancel` on `NSOperation` or `cancelAllOperations`on `NSOperationQueue`.
+- p37: `setSuspended:` to suspend/resume queue.
+- p39: _private dispatch queue_: serial queue for GCD. Can create as many as you want.
+- p39: _global dispatch queue_: concurrent queue for GCD. There are three of these per application.
+- p39: _main dispatch queue_: globally available serial queue that runs on app's main thread.
+- p41: _dispatch group_: monitor a set of block objects for completion.
+- p41: _dispatch semaphore_: efficient semaphore
+- p41: _dispatch source_: generate notifications.
+- p43: use context pointer of dispatch queue to share data.
+- p43: if blocks have more than a few Objective-C objects enclose parts of the block in an `@autorelease`.
+- p43: getting global dispatch queue:
+
+		dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+		
+- p44: create/use serial dispatch queues to protect a resource (i.e. not use locks) or synchronize some key behaviour.
+
+		dispatch_queue_t queue;
+		queue = dispatch_queue_create("com.example.MyQueue", NULL);
+
+- p45: `dispatch_get_current_queue` to test identity of current queue from block.
+- p45: `dispatch_get_main_queue` to get serial dispatch queue associated with app's main thread.
+- p46: `dispatch_set_context` and `dispatch_get_context` to associated shared data with queue or block.
+- p48: `dispatch_async` and `dispatch_async_f` to asynchronously add task to queue. Example here.
+- p49: completion blocks, executed after task complete. Example in listing 3-4.
+- p51: `dispatch_apply` or `dispatch_apply_f` to parallelzie loops. Consider using stridling to batch loops (p78).
+- p52: suspending and resuming queues.
+- p53: example of using dispatch semaphore to limit maximum number of files open.
+- p53: waiting on groups of queued tasks.
+- p54: don't call `dispatch_sync` from a task on the same queue. If you need to then use `dispatch_async`.
+- p56: dispatch sources:
+	-	_timer dispatch sources_: periodic notifications.
+	-	_signal dispatch sources_: UNIX signals
+	-	_descriptor sources_: file/socket data available for read/write, file data and metadata changes.
+	-	_process dispatch sources_: process exit/fork.
+	-	_custom dispatch sources_: make yourself.
+	- replace asynchronous callback functions.
+-	dispatch sources submits event handler whenenver corresponding event occurs.
+- p57: creating dispatch sources:
+	-	`dispatch_source_create`
+	-	configure; assign event handler (`dispatch_source_set_event_handler` or `dispatch_source_set_event_handler_f`), or for timers use `dispatch_source_set_timer`.
+	-	optional cancelling handler.
+	-	call `dispatch_resume` to start processing.
+- p59, table 4-1: getting data from a dispatch source.
+- p63, listing 4-1: creating a timer dispatch source.
+- p65, listing 4-2: reading data from a file.
+- p67, listing 4-3: writing data to a file.
+
 ### 22: Core Data Tutorial for iOS
 
 - Reference: _Core Data Programming Guide_
@@ -417,7 +495,7 @@
 -	_Managed object context_ instance of `NSManagedObjectContext`. Manages objects, does life-cycle management, validation, relationship maintenance, undo/redo.
 -	_Managed object model_ is instance of `NSManagedObjectModel`, object that represents schema. Collection of `NSEntityDescription` objects. Entity descripiton describes entity in terms of name, class, properties.
 -	_Persistent store coordinator_: instance of `NSPersistentStoreCoordinator`. Manages collection of _persistent object stores_. Persistent object store represents external store file.
--	Entity is Event, attributes are creation date, lattitude, and location.
+-	Entity is Event, attributes are creation date, lattitude, and longitude.
 -	Many ways to edit the model, reference: _Xcode Tools for Core Data_.
 -	Select `Locations.xcdatamodel`, Editor -> Add Entity. Then Add Attributes to the Entity. Rename, define type.
 -	p25: common to have custom managed object class
@@ -447,6 +525,15 @@
 -	p13, listing 1-3, processing an incoming location event. Check timestamp of datum.
 -	p14: check reported accuracy of location events and discard less-accurate data and wait for more-accurate data to come. Check that accuracy is actually improving over time and, if it doesn't, abandon effort (p18).
 -	p23: can use geocoder objects to convert GPS coordinates to place name. in iOS 5 can do place name to GPS coordinates.   
+
+### 28: Threading Programming Guide
+
+- p38: performing selectors on other threads.
+- p42: using run loop objects.
+- p44: better to use input sources than to use a periodic timer to poll a run loop to keep secondary thread running.
+- p45: skeleton for running a run loop
+- p45: better to explicitly tell a run loop to stop than removing all its input sources. Latter only implicitly stops it and might be unable to remove input source.
+- p48: custom input source.
 
 ### 29: Streams Programming Guide
 
