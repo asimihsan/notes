@@ -348,7 +348,7 @@
 -	RabbitMQ tutorial (part 3)
 	-	Exchange types: `direct`, `topic`, `headers`, `fanout`.
 	-	`fanout` is PUB/SUB. Broadcast all received messages to all queues it knows.
-	-	Producer emits logs, consumer get theme if they've bound a queue to the exchange.
+	-	Producer emits logs, consumer get them if they've bound a queue to the exchange.
 	
 			channel.exchange_declare(exchange='logs',
 									 type='fanout')
@@ -440,7 +440,7 @@
 			class FetchUserInfoTask(Task):
 				def run(self, screen_name, **kwargs):
 					logger = self.get_logger(**kwargs)
-					logger.info("Starting request %s at %s" % (keargs.get('task_id', ''), datetime.datetime.utcnow()))
+					logger.info("Starting request %s at %s" % (kwargs.get('task_id', ''), datetime.datetime.utcnow()))
 					try:
 						user = twitter.users.show(id=screen_name)
 					except TwitterError:

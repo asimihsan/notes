@@ -1,0 +1,123 @@
+TravelBot
+
+Slovenia
+Spain
+Germany
+France
+Italy
+
+-------------------------------------------------------------------------------
+    Location-specific research.
+-------------------------------------------------------------------------------
+
+========================
+    Slovenia
+========================
+
+Bus:
+    -   http://www.ap-ljubljana.si/eng/
+    -   Prefix search, so Geonames locations will work.
+    -   Geonamas has Pirano, bus has Piran.
+
+Train:
+    -   http://www.slo-zeleznice.si/en/passengers/slovenia
+    -   Geonames should work.
+
+Largest cities:
+    -   Ljubljana
+    -    
+
+========================
+    Spain
+========================
+
+Bus:
+    -  Movelia - https://www.movelia.es
+        -   A bus meta search engine. Might be best option.
+    -  Estacion autobuses Madrid - http://www.estacionautobusesmadrid.com/
+        -   No arrival times! So can't determine journey length.
+        -   Need to click through to the actual bus provider in order to get details.
+        -   But then why not just use the bus providers? Ah, too many of them. 
+        -   Click on "Enlaces de Interes" on the left for a list of providers. A lot!
+    -   Eurolines - http://www.eurolines.es/en/
+        -   Indexed from Estacion autobuses Madrid.
+        -   International only.
+    -   AISA - http://www.aisa-grupo.com/
+        -   No web interface, PDF schedule
+    -   ALSA - http://www.alsa.es/
+    -   Avanza Bus - http://www.avanzabus.com/web/default.aspx
+
+Train:
+    -   RENFE
+        -   http://www.renfe.com/EN/viajeros/horarios.html
+        -   Mobile site: http://renfe.mobi, click on Timetable
+    -   FEVE
+        -   http://www.feve.es/es/
+
+References:
+    -   Bus travel in Spain: http://gospain.about.com/od/bustravelinspain/Bus_Travel_in_Spain.htm
+
+-------------------------------------------------------------------------------
+
+http://www.101holidays.co.uk/top-10-holiday-destinations/
+
+Spain
+France
+Great Britain
+Greece
+Italy
+Turkey
+Croatia
+
+http://www.europeanconsumerschoice.org/travel/european-best-destination-2012/
+
+Portugal (Porto, Lisbon)
+Austria (Vienna)
+Croatia (Dubrovnik)
+Czech Republich (Prague)
+Belgium (Brussels)
+Germany (Berlin)
+Hungary (Budapest)
+Italy (Florence)
+Scotland (Edinburgh)
+
+http://www.tripadvisor.com/TravelersChoice-Destinations-cTop-g4
+
+UK (London, Edinburgh)
+Italy (Rome, Florence, Venice, Sorrento, Taormina, Positano, Palermo)
+France (Paris)
+Turkey (Istanbul)
+Spain (Barcelona, Madrid)
+Germany (Berlin, Munich)
+Czech Republic (Prague)
+Ireland (Dublin)
+Netherlands (Amsterdam)
+Portugal (Lisbon)
+Russia (St. Petersburg)
+Hungary (Budapest)
+Austria (Vienna)
+Greece (Santorini)
+Poland (Krakow)
+Switzerland (Zermatt)
+
+http://travel.usnews.com/Rankings/Best_Europe_Vacations/
+
+Spain (Barcelona, Madrid)
+France (Paris, Cannes)
+Germany (Berlin)
+Hungary (Budapest)
+Portugal (Lisbon)
+UK (London, Edinburgh)
+Czech Republic (Prague)
+Netherlands (Amsterdam)
+Italy (Rome, Florence)
+Turkey (Istanbul)
+Greece (Crete)
+Denmark (Copenhagen)
+Russia (St. Petersburg)
+Switzerland (Zurich)
+Iceland (Reykjavik)
+Croatia (Central Dalmatia)
+Austria (Vienna)
+
+

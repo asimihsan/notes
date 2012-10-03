@@ -9,7 +9,7 @@
 
 - x 05: Cocoa Fundamentals Guide (Apple)
 - x 06: View Controller Programming Guide (Apple)
-- o 10: Table View Programming Guide (Apple)
+- x 10: Table View Programming Guide (Apple)
 - o 07: Event Handling Guide for iOS (Apple)
 - o 08: View Programming Guide for iOS (Apple)
 - o 09: View Controller Catalog for iOS (Apple)
@@ -137,13 +137,13 @@
 -	p46: In `viewDidUnload` release any strong references by setting to nil.
 -	p47: to create segue:
 	-	CTRL-drag table cell from master scene to detail scene, select Push.
-	-	select segue, go to attributes inspector, enter a custom ID into the identifier field to differeniate between segues for `prepareForSegue`.
+	-	select segue, go to attributes inspector, enter a custom ID into the identifier field to differentiate between segues for `prepareForSegue`.
 -	p50: making static table cells for a detail view. Connect UILabel views to detail view controller properties
 	-	CTRL-right click,
 	-	CTRL-drag new referencing outlet circle to yellow sphere, i.e. view controller.
 -	p53: pass data between scenes in `prepareForSegue`; when _source_ scene is aboue to transition to _destination_ scene.
 
--	p58: Adding a scene to a navigation hierarchy is good pracice. Select view controller, Editor -> Embed in -> Navigation controller
+-	p58: Adding a scene to a navigation hierarchy is good practice. Select view controller, Editor -> Embed in -> Navigation controller
 	-	Easiest way to add a navigation bar on top, but not necessary if you're not navigating onwards.
 	-	Ensure the nav bar is always on top.
 	-	Easy to extend to add further scenes.
@@ -387,6 +387,27 @@
 	-	delegate adopts `UITableViewDelegate`, no required methods.
 -	p22: can also use convenience class `UILocalizedIndexedCollation` for indexed lists (the A-Z on right side).
 -	Many methods return values representing index paths. Use `NSIndexPath`.
+-	p24: typically hierarchy of arrays leading up to a final view of detail. Hierarchy of table views embedded in a `UINavigationController`.
+-	p29: on overriding `loadView:`, `viewWillAppear:`, etc., call super then do the rest.
+-	p30: if you have a table view as part of multiple views in a screen subclass `UIViewController` rather than `UITableController`, because the latter fills the view with the table. Then implement methods as needed to e.g. clear selections.
+-	p33: how to handle table cell clicks. This is handled by Storyboard.
+-	p35: only need to implement `numberOfSectionsInTableView:` if you have more than one section.
+-	p36: figure 4-1 shows required `UITableViewDataSource` protocol flow.
+-	p37: recommendations for creating and configuring table views:
+	-	use `UITableViewController` instances for each layer of the hierarchy, either programmatically or NIB/Storyboard.
+-	p42: creating a table view programmatically.
+-	p72: if you make a custom `UITableViewCell` and a property changes such that you want its display to update you must call `setNeedsDisplay`. Good place to call is in a non-synthesized setter method associated with property.
+-	p77: cell and table view performance:
+	-	reuse cells.
+	-	avoid relayout of content.
+	-	use opaque subviews, not transparent.
+-	p82: programmatically selecting and scrolling.
+	-	`selectRowAtIndexPath`, `scrollToNearestSelectedRowAtScrollPosition`, `scrollToRowAtIndexPath`.
+-	p84: inserting and deleting rows and sections.
+-	p86: figure 7-1: calling sequence for inserting or deleting rows in a table view.
+-	p91: batch insertion, deletion, and reloading of rows and sections.
+-	p92: `reloadSections` and `reloadRowsAtIndexPaths` allow `reloadData` to be focused on a subset of rows.
+-	p96: figure 8-2: calling sequence for reordering a row in a table view.
 
 
 ### 11: Design then Code (two tutorials on iOS apps)
@@ -464,7 +485,7 @@
 - p46: `dispatch_set_context` and `dispatch_get_context` to associated shared data with queue or block.
 - p48: `dispatch_async` and `dispatch_async_f` to asynchronously add task to queue. Example here.
 - p49: completion blocks, executed after task complete. Example in listing 3-4.
-- p51: `dispatch_apply` or `dispatch_apply_f` to parallelzie loops. Consider using stridling to batch loops (p78).
+- p51: `dispatch_apply` or `dispatch_apply_f` to parallelize loops. Consider using stridling to batch loops (p78).
 - p52: suspending and resuming queues.
 - p53: example of using dispatch semaphore to limit maximum number of files open.
 - p53: waiting on groups of queued tasks.
