@@ -92,6 +92,37 @@
 	-	Not only visual but will put new columns in Data Laboratory.
 -	(right) Statistics -> Network Overview -> Connected Components -> Run. Then should be able to Partition -> Edges -> refresh, choose strongly connected ID.
 
+### 2A Introduction to random graph models
+
+-	simple representation to test and predict properties.
+-	a strawman: how is the real world different, what insights are there?
+-	Erdos and Renyi, random network model.
+-	Assumptions:
+	-	Nodes connect at random.
+	-	Undirected.
+-	Two parameters:
+	-	N: number of nodes.
+	-	p: probability that any two nodes share an edge, OR
+	-	M: total number of edges.
+-	(N, p) model is binomial (review this). p = node, (1 - p) = no node.
+-	Average degree = (N - 1) * p.
+	-	Each node has (N - 1) tries to get an edge. 
+-	Binomial cofficient
+	-	N choose k. = n! / (k!) * (n - k)!
+-	B(7;4;p) = 7_C_4 * p^4 * (1-p)^3.
+-	In general average degree is the mean, expected(x) = sum(x) * p(x).
+-	Variance in degree = (n-1)*p*(1-p)
+-	In general variance = E[(X-u)^2] = sum(X-u)^2 * p(x).
+-	Binomial approximations:
+	-	Small p => Poisson. p_k = z^k * e^(-z) / k!
+	-	Large n => Normal.
+-	Insights:
+	-	No hubs, no nodes with very high degrees.
+
+### 2B: Random graphs and alternative models
+
+-	
+
 #### Readings:
 
 -	Week 1
