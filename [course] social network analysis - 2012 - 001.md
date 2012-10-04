@@ -95,7 +95,18 @@
 #### Readings:
 
 -	Week 1
-	
+	-	Network Science - Chapter 1
+		-	Networks have predictive power.
+		-	Networks are remarkably stable.
+		-	The choice of network we focus on makes a huge difference.
+		-	Cascading faliures - where nodes depend on each other. Network structure critical.
+		-	Behind each complex system is an intricate network.
+		-	There are fundamental principles and reproducible mechanisms behind all networks.
+		-	Interdisciplinary.
+		-	Empirical, data driven.
+		-	Quantitative and mathematical nature. Physics, engineering, statistics, etc.
+		-	Computational nature. Big databases, algorithms, data mining.
+		
 
 
 
