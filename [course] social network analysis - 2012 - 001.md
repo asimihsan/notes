@@ -111,7 +111,7 @@
 	-	N choose k. = n! / (k!) * (n - k)!
 -	B(7;4;p) = 7_C_4 * p^4 * (1-p)^3.
 -	In general average degree is the mean, expected(x) = sum(x) * p(x).
--	Variance in degree = (n-1)*p*(1-p)
+-	Variance in degree = (n-1) * p * (1-p)
 -	In general variance = E[(X-u)^2] = sum(X-u)^2 * p(x).
 -	Binomial approximations:
 	-	Small p => Poisson. p_k = z^k * e^(-z) / k!
@@ -121,7 +121,83 @@
 
 ### 2B: Random graphs and alternative models
 
--	
+-	For a growing random graph there's a marked increase in the giant component size when average degree = 1.
+	-	NetLogo -> Sample Models -> Network -> Giant Component.
+	-	Imagine network of friends. If average degree = 1 there's a chain of a friend to a friend to a …, hence giant component.
+-	Lattice percolation.
+	-	2D grid, each point has a probability p of being occupied.
+	-	How far can infinite liquid starting at origin travel?
+	-	Critical point at p = 0.5 - 0.55
+-	In general: at what average degree (i.e. density) to giant components appear?
+-	In random graphs degree distribution has an exponential distribution.
+-	In random graphs size of giant components ~ N, whereas size of other components ~ log(n).
+	-	Given two very large components any additional random edges are very likely to join them, hence intuitively only one giant component likely.
+-	Given Erdos-Renyi graph with nodes N, average degree z, => average shortest path ~= log(N) / log(z).
+	-	Very hard to derive.
+	-	Intuitively N^l = z^l. i.e. the number of friends distance l away from you is z^l.
+-	Closed triad: A -> B -> C -> A.
+-	**Introduction model**
+	-	Like ER except only (1 - p_intro) chance of random edge. Else we ask an adjacent node for one of their edges (friend of a friend).
+	-	Relative to ER the **introduction model** has:
+		-	more closed triads (friends introduce you to friends)
+		-	longer average shortest path (instead of randomly connecting to distant nodes edges kept more local).
+		-	more uneven degree distribution (people with more connections get more edges, increasing returns)
+		-	smaller giant component at low p.
+-	**Static geographical model**
+	-	Randomly place nodes on a 2D grid. Each node tries to connect to M neighbours.
+	-	Relative to ER:
+		-	narrower degree distribution (each node is aiming for the same number of neighbours).
+		-	longer average shortest path (geographically localised)
+		-	smaller giant component (less chance of random connections)
+-	**Random encounter model**
+	-	Nodes at random on 2D grid. Then each node moves randomly until it encounters a node, and then makes an edge.
+	-	Relative to ER:
+		-	longer average shortest path.
+		-	smaller giant component.
+		-	more closed triads.
+-	**Growth model**
+	-	Nodes added over time.
+	-	Compared to ER:
+		-	More nodes with degree 1, as there are more younger nodes.
+		-	No more closed triads, because of yound nodes.
+		-	Smaller giant component.
+		
+### 2C: Models of network growth
+
+-	In real networks degree distribution is highly skewed.
+	-	Question/answer forums, sexual contact.
+-	The Poisson distribution of Erdos-Renyi has very fey high degree nodes.
+-	The Power Law of real networks have log(n) high degree nodes.
+	- p(k) (probability of degree k) = C * k ^ (-alpha).
+	- C is constant such that probabilities of all k sum to 1.
+	- i.e. log(p(k)) = c - alpha * log(k).
+	- alpha > 3 => no longer heavy tailed distribution.
+-	Preferential attachment / cumulative advantage is increasing returns, those with many edges get more edges.
+-	Power law model networks **grow over time**, nodes make m edges per tick. (first ingredient)
+	-	If at time t there are t nodes, k_i is degree of node i born at time i, then dk_i(t) / dt = m / t.
+	-	k_i(t) = m * (log(t) + c)
+	-	At t = i, k_i(t) = m, => m = m * (log(i) + c), => c = 1 - log(i)
+	-	=> **k_i(t) = m * (1 + log(t/i))**
+	
+	-	If tau(100) is time when node of degree 100 is born, fraction of nodes that have degree <= 100 is (t - tau) / t, or 1 - tau/t.
+	-	log(t/tau) = k/m - 1
+	-	t/tau = e^(k/m - 1)
+	-	tau/t = e^(-(k/m - 1)))
+	-	P(k < k') = 1 - e^(-(k/m - 1))
+-	Power law model networks show **preferential attachment** (second ingredient).
+	-	Price [65] model for citations.
+		-	Papers start with m citations.
+		-	Probability of citing a paper with degree k proportional to k + 1.
+		-	Power law, alpha = 2 + 1/m.
+-	Barbasi-Albert model
+	-	New nodes form m attachments. Form to nodes in proportion to vertex degree / sum of all degrees of all vertices.
+	-	dk_i(t) / dt = m * (k_i/2tm) = k_i/2t, and k_i(i) = m.
+	-	k_i(t) = m * (t/i) ^ (1/2)
+	-	p(k) = 2m^2 / k^3
+	-	Distribution is scale free (i.e. power law) with alpha = 3.
+	-	Graph is connected.
+	-	Older are richer.
+
 
 #### Readings:
 
@@ -138,8 +214,9 @@
 		-	Quantitative and mathematical nature. Physics, engineering, statistics, etc.
 		-	Computational nature. Big databases, algorithms, data mining.
 		
-
-
+-	Week 2
+	-	Giant component (Wikipedia)
+		-	For n nodes, p = 1 / n, size of giant component is likely to be proportional to n^(2/3).
 
 ## Assignment notes
 
