@@ -67,9 +67,222 @@
 -	Doug Engelbart invented the mouse.
 -	Alan Kay, at Xerox PARC, prototyped the Dynabook, created the WIMP Windows-Icon-Mouse-Pointer (WIMP) GUI.
 
+### 2.1: Participant Observation
+
+-	"You can observe a lot just by watching".
+-	Tacit knowledge: deep hanging out.
+-	Five questions:
+	-	What do people do now?
+	-	What values and goals do people have?
+	-	How are these activities embedded in larger ecology?
+		-	e.g. buses. What leads people to need buses?
+		-	Broaden your scope.
+	-	Similarities and differences across people.
+	-	…and other types of context, like time of day.
+-	Apprentice yourself.
+	-	Set up partnership with observee.
+	-	Be taught the process.
+	-	Observer practices.
+	-	Validate your observations; ask observee what they mean.
+-	Pay attention to all artifacts. 
+	-	**Look for workarounds and hacks.**
+	-	**Errors are a goldmine**.
+-	**Difference between what people say and what people do.**
+
+### 2.2: Interviewing
+
+-	Choosing participants.
+	-	May be current users, or also non-users but potential future users.
+	-	Use incentives and motivation; in SF $50-100, or gift certificate.
+	-	Approximate if necessary; better than nothing.
+-	Malcolm Gladwell
+	-	Everything is interesting. Be curious.
+	-	Don't start at the top or bottom. Start at the middle. Talk to the people who actually do the work.
+	-	People at the top have power to lose, not as interested in sharing knowledge.
+-	Bad questions.
+	-	No: "Is the daily update an important feature to you?"
+	-	Don't lead people. Use data to back up open ended questions.
+	-	Yes: "Judging by logs I see that you don't use the daily update feature? Tell me more. Why is that?"
+	-	No: "What would you like in a tool?".
+	-	Users don't know about design, can't help you like this.
+	-	Other types of question to avoid:
+		-	Likes and wants in hypothetical scenarios.
+		-	How often they do things.
+		-	How much they like things on an absolute scale.
+		-	Avoid binary questions.
+-	Good questions
+	-	Open ended, especially at beginning.
+	-	(A little bit of) silence is golden. Let them answer.
+
+### 2.3: Additional needfinding strategies
+
+-	Longitudinal or sporadic behavior?
+	-	**Diary studies.**
+		-	Give them a diary, complete at a specified time or interval.
+		-	Structured task.
+		-	Written, camera, voice; but tailor to context.
+		-	Scales better than direct observation.
+		-	Entries must be as frictionless as possible. Better results.
+		-	May require practice, training, reminding.
+-	**Experience Sampling, aka pager studies**
+	-	Phone beeps, then you fill in a form.
+	-	Psychometric.
+-	**Lead users**
+	-	Individually create solutions to their problems.
+	-	Designers collaborate to bring their solutions to market.
+	-	Before early adopters.
+	-	Don't work well if the improvement is process or knowledge based; difficult to diffuse / market.
+-	**Extreme users.**
+	-	Everyone gets email. But some people get a lot.
+	-	Sometimes some useful ideas, but they're not representitive users.
+-	Keeping users in mind.
+	-	Don't forget users!
+	-	**Personas**.
+		-	A model of a person, an example.
+		-	Demographics, motivation, beliefs, intentions, behaviour, and goals.
+		-	Draw a picture or have a photo of persona.
+		-	Name, occupation, background, social situation, hopes, dreams, and goals. A story!
+		-	You can build empathy. Empathy leads to insights.
+		-	Keep design consistent over time.
+-	Ultimately, it's about design. This will help you find one, but not strict.
+
+### 3.1: Paper Prototypes and Mockups
+
+-	Over course of project fidelity increases.
+	-	Storyboard, lowest.
+	-	Paper prototypes, low.
+	-	Digital mockups, low.
+	-	Onwards.
+-	**Don't focus on user interface before focusing on the task at hand**.
+-	**Storyboarding isn't about pretty pictures, it's about communicating ideas**.
+-	Star people
+	-	Circle, then body like a star. Very crude. Then add sight lines, boards.
+-	First objective: **illustrate a goal**.
+-	Last objective: **people accomplishing goals**.
+-	Storyboards should convey:
+	-	**Settings**.
+		-	People, environment, tasks.
+	-	**Sequence**
+		-	Steps.
+		-	What leads someone to use the app, impetus?
+		-	What task is being illustrated?
+	-	**Satisfaction**
+		-	What motivates people to use system?
+		-	What does it enable people to accomplish?
+		-	What need does the system fill?
+-	Benefits of storyboarding
+	-	**Holistic**. Emphasize how interfaces accomplish tasks without commiting to particular interfaces.
+	-	Gets all the stakeholders on the same page with respect to the goal.
+-	Time limits help, e.g. 10 minutes per panel.
+-	Then, **paper prototyping**.
+-	Paper prototyping tips and tricks
+	-	Get a physical box and put all materials in one place! easy to lose or damage it.
+	-	Work quickly, reuse by e.g. photocopying.
+	-	If something is difficult to simulate allow users to ask verbal questions.
+	-	Mix and match hardware and software. Print out a photo of the hardware then put software elements in it.
+-	**Test multiple paper prototypes simultaneously**.
+-	Get users or other stakeholders to help design.
+-	Form and feedback co-evolve. Fidelity increases, feedback detail increases.
+-	Further reading:
+	-	Bill Buxton, Sketching User Experiences.
+	-	Bill Moggridge, designing Interactions.
+	-	Carolyn Snyder, Paper Prototyping.
+	-	Michael Schrage, Serious Play
+	-	Houde and Hill, What do Prototypes Prototype?
+	-	Todd Zaki Warfel, Prototyping
+
+### 3.2: Faking it - Wizard-of-Oz Prototyping
+
+-	Simulate machine behaviour with human operators.
+-	Make an interactive application without much code.
+-	Get feedback from users.
+	-	Hi fidelity => users think it's real, more reluctant to be critical.
+	-	Low fidelity => more license to suggest changes.
+-	Steps:
+	1.	Map out scenarios and application flow.
+		-	What happens in response to user behavour?
+	2.	Put together interface skeletons.
+	3.	Develop "hooks" for wizard input.
+	4.	Where and how the wizard will provide input.
+		-	Remember you'll eventually replace with software.
+	5.	Rehearse wizard role with a colleague.
+-	Running wizard-powered prototypes:
+	-	Practice with a friend first.
+	-	Once comfortable recruit "users": train stations, cafes, etc.
+	-	Two roles: facilitator and wizard.
+		-	Facilitator: provides tasks and takes notes.
+		-	Wizard: operator interface (more authenticate if hidden or remote).
+	-	User feedback could be:
+		-	Think aloud.
+		-	Retrospective (if thinking aloud is distracting).
+		-	Heuristic evaluation
+		-	Debrief and reward users.
+-	Advantages:
+	-	Faster, cheaper, quicker iterations.
+	-	Creating multiple variations easy.
+	-	More "real" than paper prototypes.
+	-	Identifies bugs and problems with current design.
+	-	User-centric.
+	-	Can evision very difficult ideas now.
+	-	Designers learn too.
+-	Disadvantages:
+	-	May be too optimistic about technology, e.g. perfect speech recognition.
+	-	Technology may never be possible.
+	-	Some features or limitations are too difficult to wizard.
+-	Further reading:
+	-	http://speckyboy.com/2012/06/24/10-effective-video-examples-of-paper-prototyping
+	-	www.elsevierdirect.com/companion.jsp?ISBN=9780123740373
+	-	Stephen Dow
+	
+### 3.3: Faking It - Video Prototyping
+
+-	Benefits:
+	1.	Cheap and fast.
+	2.	Great communication tools.
+		-	Shows context, self-explanatory.
+	3.	Development spec.
+	4.	Ties interface designs to tasks.
+		-	Check completeness of interface.
+		-	Check nothing extra there.
+-	Any fidelity, but usually low.
+	-	Often coupled with paper prototypes.
+-	Content
+	-	Like storyboard, the whole task, including motivation (impetus) and success (narrative).
+	-	Draw on tasks you've observed.
+	-	Illustrate important tasks, MVP.
+-	Steps:
+	1.	Start with outline, or your storyboards.
+	2.	Camera, people, realistic location.
+	3.	Focus on message rather than production value.
+-	Considerations:
+	-	Audio or silent? Audio can be finicky, can use cue cards instead.
+	-	Interface can be paper, mock-ups, code, or invisible (just showing task)
+	-	Can show both success and failure.
+	-	Edit as little as possible, editing sucks.
+-	Furher reading:
+	-	Wendy MacKay.
+
+### 3.4: Creating and comparing alternatives
+
+-	Duncker: **functional fixation**
+	-	Once objects are biased to a particular purpose it's difficult to see them otherwise.
+-	**Prototype in parallel**, not in serial.
+	-	More diverse output, simulated annealing escapes local maxima.
+	-	Better rated output.
+-	Separating ego from artifact.
+	-	If you have different ideas, it's easier to see that judgements are based on your artifacts.
+-	Parallel encourages comparison, and comparison aids learning.
+-	**Create and share multiple designs**.
+	-	Feel better in team environments.
+	-	Alternatives provides a vocabulary for teams to discuss the space of possible solutions.
+
+
 #### Readings:
 
--	Week 1
+-	3.1, prototyping
+
+
+
 	
 
 ## Assignment notes
