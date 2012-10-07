@@ -138,9 +138,68 @@ EC, lexical analysis and finite automata
 -	**Microsyntax**: lexical structure of language.
 	-	e.g. English groups alphabetic letters. Spaces terminate words.
 	-	After English word identified use dictionary lookup to see if valid.
-	
-$$ x \forall \mathbb{Z} $$
-		
+-	Typical programming language has **keywords**, reserved for particular syntactic purpose and cannot be used as an identifier.
+-	Compiler writer starts with microsyntax specification, encodes into notation used by scanner generator.
+
+Recognizing words
+
+-	FSM states are circle, above arrow are letters that cause transition.
+	-	Double-circle is recognized word.
+	-	Else, move to an error state.	
+-	**Finite automaton (FA)**: a formalism for recognizers that has:
+	-	a *finite* set of states (S) and an error state s_e.
+	-	an alphabet (big sigma), usually union of edge labels in transition diagram.
+	-	a transition function $$\delta(s, c)$$ -> next state, s is state and c is character.
+	-	a start state (s_0), and
+	-	one or more accepting states (S_A), the double circles in a transition diagram.
+-	Recognizer takes one transition per input character, run time is O(n), n is length of input string.
+-	**Lexeme**: actual text for a word recognized by an FA. An actual instance of a syntactic category.
+	-	113 is a specific unsigned integer; latter is lexeme.
+-	Infinite sets, like set of integers, require cyclic transition diagrams.
+
+Regular expressions
+
+-	Set of words accepted by FA (F) forms a language L(F).
+-	For any FA we can also describe L(F) using a **regular expression** (RE).
+-	Zero or more instances is * operator, or *Kleene closure*.
+-	RE is made up of three basic operations:
+	-	*Alternation* (R | S).
+	-	*Concatenation* (xy)
+	-	*Closure* ($$R^*$$).
+		-	*Finite closure* ($$R^i$$). One to i instances of R.
+		-	*Postiive closure* ($$R^+$$). One or more instances of R. 
+	- $$\epsilon$$ is empty string and is itself an RE.
+-	**Complement operator**: notation ^c specific set $$(\Sigma - c)$$. High precedence than *, |, or $$^+$$.
+-	**Escape sequence**: two or more characters that a scanner translates into another character, e.g. \n.
+-	**Regular languages**: Any language that can be specified by an RE.
+-	Programming languages vs. natural languages.
+	-	In natural languages words require understanding of context to derive meaning.
+	-	In programming languages words are almost always specified lexically.
+-	REs are closed under concatenation, union, closure, and complement. e.g. RE_1 | RE_2 => RE.
+-	**Complete FA**: an FA that explicitly includes all error transitions.
+-	**e-transition**: A transition on the empty string $$\epsilon$$, that does not advance the input.
+	-	Combine FAs.
+-	**Nondeterministic FA**: An FA that allows transitions on the empty string, $$\epsilon$$, and states that have multiple transitions on the same character.
+	-	Depends on future characters.
+-	**Deterministic FA**: A DFA is an FA where the transition function $$\delta(s, a)$$ is single-values. DFAs do not allow $$\epsilon$$-transitions.
+-	**Configuration of an NFA**: the set of concurrently active states of an NFA.
+	-	On multi-values transition function NFA clones itself once per possibility.
+	-	Always finite, but could be exponential.
+-	To simulate an NFA, we need a DFA with a state for each configuration of the NFA.
+-	**Powerset of N**: the set of all subsets of N, denotes $$2^N$$.
+
+
+-	p46, figure 2.4: trivial NFAs for REs.
+-	**Thompson's construction**: REs -> NFA.
+	-	Use trivial NFAs in order consistent with precedence of operators.
+-	**Subset construction**: NFA to DFA.
+-	**Valid configuration**: configuration of an NFA that can be reached by some input string.
+-	Subset construction example, p50-51.
+-	(not in class) **Hopcroft's algorithm**: DFA to minimal DFA.
+
+Table-driven scanners
+
+
 	
 - - - 
 
