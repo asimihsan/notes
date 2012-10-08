@@ -203,7 +203,7 @@ z# Social Network Analysis - 2012 - 001
 -	www.moviegalaxies.com
 -	Indegree/outdegree, discussed before.
 -	Trade in petroleum, source: NBER / UN Trade Doha
--	Ask yourself what your network represents and what it's scope is.
+-	Ask yourself what your network represents and what its scope is.
 -	Common tactic - size node by in-degree, colour node by out-degree or ratio of in/out degree.
 -	**Normalization**
 	-	Divide degree by maximum possible degree, $$N-1$$.
@@ -242,6 +242,51 @@ $$ C_c(i) = [\sum{j=1}^{N} d(i,j)]^(-1) $$
 $$ C'_C(i) = \frac{C_C(i)}{(N-1)} $$
 
 -	Sometimes the graph isn't fully connected, so some distances are infinite. Instead can invert each distance and then sum those.
+
+### 3B: Eigenvector and directed networks
+
+-	**Eigenvector centrality**: you are as central as your neighbours, recursively.
+	-	Solving for eigenvector of adjacency matrix with eigvenvalue = 1.
+-	**Bonacich eigenvector centrality**
+	-	Tunable via beta.
+	
+$$ c_i(\Beta) = \sum{j} (\alpha + \Beta c_j)A_(ji) $$
+
+$$ c(\Beta) = \alpha(I - \Beta A)^-1 \times A \times 1 $$
+
+-	Meaning:
+	-	alpha: normalization constant.
+	-	beta: how importatnt the centrality of your neighbours is.
+	-	A: adjacency matrix (can be weighted)
+	-	I: identity matrix
+	-	1: matrix of all ones.
+
+-	Beta:
+	-	0 yields simple degree centrality.
+	-	Small beta => high attenuation. Only your immediate friends matter.
+	-	High beta => low atteuation. Global network structure matters.
+	-	Negative => node is more central when connected to less central nodes.
+	
+-	**Betweenness centrality in directed networks**
+	-	Watch out which paths you're actually on.
+	-	Normalization denominator changes, loses factor of 2:
+	
+$$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
+
+-	**Directed closeness centrality**
+	-	In-closeness (prestige in citation networks)
+	-	Out-closeness.
+	-	Only consider nodes you can reach.
+	
+-	**Eigenvector centrality in directed networks**
+	-	**PageRank.**
+	-	Recursive, directed. Difficult to artificially inflate it because it's recursive.
+-	**Random walk** is like the eigenvector centrality measure.
+	-	Just walk randomly, measure time you spend at each node.
+	-	More time => more important.
+	-	But could get trapped in circles!
+	-	PageRank allows random teleportation to work around cycles.
+	-	As you increase random teleportation probability PageRank score distribution flattens. Not walking, just jumping around.
 
 #### Readings:
 
