@@ -132,6 +132,60 @@ Complex!
 
 -	LA always requires lookahead, but we want to minimize and bound it.
 
+## 03-03: Regular langauges
+
+-	**Lexical structure** = set of token classes.
+-	What set of strings in a token class?
+	-	Use regular languages.
+	-	Usually use regular expressions.
+-	**Regular expressions**
+	-	"c" = {"c"}. One string is a one string language.
+	-	$$\epsilon$$ = {""}. Empty string. Not an empty set.
+	-	Union. $$A + B = {a | a \in A} U {b | b \in B}$$.
+		-	Is commutative.
+	-	Concatenation (cross product). $$AB = {ab | a \in A ^ b \in B}$$.
+	-	Iteration, Kleen closure. $$A^* = \bigcup_{i \geq 0} A^i$$. A^i = A … A (i times), A^0 = epsilon.
+	
+-	**Regular expressions over Sigma** are the smallest set of expressions.
+	-	R = epsilon | 'c' (each c in alphabet ($$\Sigma$$)) | R + R | RR | R*.
+	-	This is a **grammar**.
+-	Examples of RLs.
+
+---
+
+$\Sigma = {0, 1}$
+
+$1^* = \bigcup_{i\geq0}1^i = \epsilon + 1 + 11 + …$
+
+---
+
+$(1 + 0)1 = \{ab | a \in 1 + 0 \wedge b \in 1\}$
+$= \{11, 01\}$
+
+---
+
+$0^* + 1^* = \{0^i | i \geq 0\} U \{1^i | i \geq 0\}$ 
+
+---
+
+$(0+1)^* = \bigcup_{i \geq 0}(0 + 1)^i$
+$= "", 0+1, (0+1)(0+1), …, (0+1), … i times, …(0 + 1)$
+
+all strings of 0's and 1's. In fact this is the alphabet, so all the strings of the alphabet as many times as you like.
+
+$=\Sigma^*$.
+
+---
+
+-	RLs are not equations. They express languages, i.e sets of strings.
+	-	Hence:
+	
+(0+1)* . 1 . (0+1)* = (0+1)* . (10+11+1) . (0+1)*
+
+-	LHS => make sure there is a 1 in the middle, preceded or followed by any any combination of alphabet.
+-	RHS guarantees the same!
+
+
 ## Readings notes
 
 -	CPTT: Compilers: Principles, Techniques, and Tools
