@@ -1,4 +1,4 @@
-# Social Network Analysis - 2012 - 001
+z# Social Network Analysis - 2012 - 001
 
 (via Coursera)
 
@@ -198,6 +198,50 @@
 	-	Graph is connected.
 	-	Older are richer.
 
+### 3A: Centrality
+
+-	www.moviegalaxies.com
+-	Indegree/outdegree, discussed before.
+-	Trade in petroleum, source: NBER / UN Trade Doha
+-	Ask yourself what your network represents and what it's scope is.
+-	Common tactic - size node by in-degree, colour node by out-degree or ratio of in/out degree.
+-	**Normalization**
+	-	Divide degree by maximum possible degree, $$N-1$$.
+-	**Skew in distribution of degree centrality**
+	-	Could just do stdev of degree.
+	-	Freeman's general formula.
+		-	Sum over all nodes of difference between maximum centrality and this node's centrality, divided by number of pairs [(N-1)(N-2)].
+
+		sum[i = 1 to g](C_D(n*) - C_D(i)) / [(N-1)(N-2)]
+
+-	**Brokerage**: how nodes lie between other nodes.
+	-	Having to go through other key nodes to each everyone.
+	-	How many pairs of nodes do you have to go through to reach one another in a minimum number of hops?
+-	Degree centralization doesn't capture brokerage.
+-	**Constraint**: how dependent on other nodes are you to communicate.
+	-	In a brokerage position you experience low constraint.
+-	**Betweenness** definition:
+
+$$ C_B(i) = /sum{j<k} \frac{g_jk(i)}{g_jk} $$
+
+-	$$g_jk$$ is number of shortest paths node $$i$$ is on between $$j$$ and $$k$$.
+-	**Normalized betweenness**:
+
+$$ C_B(i) = \frac{C_B(i)}{[(n-1)(n-2)/2]} $$
+
+-	Denominator is number of pairs of nodes excluding the node itself.
+-	Size nodes by degree, colour by betweenness.
+	-	Notice low degree nodes with high betweenness, bridge networks.
+-	What if it's not important to have many direct edges, but just to be "not too far"?
+-	**Closenesss**: length of average shortest path between a node and all other nodes in the graph.
+
+$$ C_c(i) = [\sum{j=1}^{N} d(i,j)]^(-1) $$
+
+-	**Normalized closeness centrality**
+
+$$ C'_C(i) = \frac{C_C(i)}{(N-1)} $$
+
+-	Sometimes the graph isn't fully connected, so some distances are infinite. Instead can invert each distance and then sum those.
 
 #### Readings:
 
