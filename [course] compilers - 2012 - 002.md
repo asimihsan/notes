@@ -119,6 +119,18 @@ Converting string to integer from stdin:
 
 Complex!
 
+## 03-01: Lexical Analysis
+
+-	Divide strings into tokens.
+	-	In English e.g. noun, verb
+	-	In programming language e.g. identifier, keywords, integer, whitespace.
+-	**Lexical analysis** classify substrings according to their role. Communicate tokens to the parser.
+	-	Output of LA (a token) is <Class, String>.
+-	Some strings are the only ones in their own class, e.g. '(', ')', ';'.
+
+## 03-02: Lexical Analysis Examples
+
+-	LA always requires lookahead, but we want to minimize and bound it.
 
 ## Readings notes
 
