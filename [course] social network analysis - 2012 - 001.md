@@ -224,7 +224,8 @@ z# Social Network Analysis - 2012 - 001
 
 $$ C_B(i) = /sum{j<k} \frac{g_jk(i)}{g_jk} $$
 
--	$$g_jk$$ is number of shortest paths node $$i$$ is on between $$j$$ and $$k$$.
+-	$$g_jk(i)$$ is number of shortest paths node $$i$$ is on between $$j$$ and $$k$$.
+-	$$g_jk$$ is the total number of shortest paths between $$j$$ and $$k$$.
 -	**Normalized betweenness**:
 
 $$ C_B(i) = \frac{C_B(i)}{[(n-1)(n-2)/2]} $$
@@ -249,14 +250,14 @@ $$ C'_C(i) = \frac{C_C(i)}{(N-1)} $$
 	-	Solving for eigenvector of adjacency matrix with eigvenvalue = 1.
 -	**Bonacich eigenvector centrality**
 	-	Tunable via beta.
-	
+
 $$ c_i(\Beta) = \sum{j} (\alpha + \Beta c_j)A_(ji) $$
 
 $$ c(\Beta) = \alpha(I - \Beta A)^-1 \times A \times 1 $$
 
 -	Meaning:
 	-	alpha: normalization constant.
-	-	beta: how importatnt the centrality of your neighbours is.
+	-	beta: how important the centrality of your neighbours is.
 	-	A: adjacency matrix (can be weighted)
 	-	I: identity matrix
 	-	1: matrix of all ones.
@@ -287,6 +288,42 @@ $$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
 	-	But could get trapped in circles!
 	-	PageRank allows random teleportation to work around cycles.
 	-	As you increase random teleportation probability PageRank score distribution flattens. Not walking, just jumping around.
+
+### 3C: Centrality applications (optional)
+
+-	**Hospital patient transfers**, simulation.
+	-	Patients transfer, take diseases.
+	-	Hospitals could collaborate to find hubs of key disease transfer points.
+	-	Want to allocate money to hospitals to fight disease, but who to give money to?
+	-	Strategies, and how they affect probability of getting infected:
+		-	Random, no effective.
+		-	Degree (some hospitals have more transfers than others), geometric mean (sqrt(indegree + outdegree)), a bit effective.
+		-	Betweenness, even more effective.
+		-	Greedy (simulation based), most effective.
+		-	Eigenvector (as effective as greedy).
+-	**Identifying expertise** in an expertise network
+	-	Response time gap between the questions you ask and when they're answered.
+	-	Directed edges.
+		-	A -> thread => A asked the question.
+		-	Thread -> B and C => B and C answered.
+		-	Could weigh edges by:
+			-	number of threads.
+			-	shared credit (all responders get equal weight)
+			-	backflow (questions that are answered get a backward edge).
+	-	**Bow tie model** of web and forums
+		-	Core: strongly connected component, everyone asks and answers.
+		-	In: mostly askers
+		-	Out: mostly helpers.
+		-	Forums are skewed; indegree is much higher, small core. Not a community as such.
+		-	Question: what is the indegree/outdegree of the largest connected component?
+	-	Is centrality, using various measures, a good measure of expertise?
+		-	Compared with human evaluation: yes.
+	-	Very interesting is that recursive PageRank wasn't the best!
+		-	To investigate, simulated two models:
+			-	'Best' preferred. Experts answer questions that are high enough quality to be worth answering.
+			-	'Just better' preferred: people answer questions just a bit more challenging than their expertise level.
+			-	Centrality measure perform differently depending on model.
+
 
 #### Readings:
 

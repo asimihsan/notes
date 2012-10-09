@@ -185,6 +185,34 @@ $=\Sigma^*$.
 -	LHS => make sure there is a 1 in the middle, preceded or followed by any any combination of alphabet.
 -	RHS guarantees the same!
 
+## 03-04: Formal languages
+
+-	Regular expressions are an example of a formal language.
+-	FL has an alphabet $\Sigma$, a set of characters. A **language** over $\Sigma$ is a set of strings of characters drawn from$$\Sigma$.
+-	e.g. alphabet = ASCII characters, language = C programs.
+-	*Meaning function L* maps syntax to semantics.
+	-	$L(e) = M$. e is language, e.g. RE.  M is set of strings.
+	-	L maps from expressions (e.g. epsilon) to sets (e.g. {""}).
+	-	L: Exp -> Sets Strings
+	-	Recursive. L(A + B) = L(A) U L(B), etc.
+-	Why use a meaning function?
+	-	Clearly delineate syntax from semantics.
+	-	Allows us to consider that notation is a separate issue.
+		-	Consider arabic numbers vs. roman numerals.
+			-	Meaning is same, but arithmetic in roman numerals is painful.
+	-	Expression -> meaning is not 1:1.
+		-	Syntax -> semantics is many:1.
+		-	Never 1:many! Means ambigious output.
+		-	Consider below, all are the same:
+
+$0^*$
+
+$0 + 0^*$
+
+$\epsilon + 00^*$
+
+$\epsilon + 0 + 0^*$
+
 
 ## Readings notes
 
