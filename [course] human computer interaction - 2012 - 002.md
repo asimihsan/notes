@@ -279,8 +279,36 @@
 
 #### Readings:
 
--	3.1, prototyping
+-	3.1 and assignment 2, Prototyping
 
+-	10 Heuristics for User Interface Design
+	1.	**Visibility of system status**.
+		-	Users informed of what is going in.
+		-	Appropriate and prompt.
+	2.	**Match between system and real world**.
+		-	Speak user's language.
+		-	Follow real-world conventions.
+		-	Natural and logical.
+	3.	**User control and freedom**.
+		-	Mistakes happen, need undo and redo.
+	4.	**Consistency and standards**.
+		-	Follow conventions.
+	5.	**Error prevention**.
+		-	Eliminate error-prone conditions or check for them.
+		-	Confirmation of action commits.
+	6.	**Recognition rather than recall**.
+		-	Instructions and options should be visible and easily retrievable.
+	7.	**Flexibility and efficiency of use**.
+		-	Experts need accelerators, novices can ignore them.
+		-	Allow users to tailor frequent actions.
+	8.	**Aesthetic and minimalist design**.
+		-	Remove irrelevant or rarely needed information.
+	9.	**Help users recognize, diagnose, and recover from errors**.
+		-	Plain language.
+		-	Explain problem and suggest solution.
+	10.	**Help and documentation**.
+		-	Better that system is usable without docs.
+		-	But docs should exist, easy to search, focused on user's task, concrete.
 
 
 	
