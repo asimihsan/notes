@@ -344,6 +344,56 @@ $$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
 	-	Giant component (Wikipedia)
 		-	For n nodes, p = 1 / n, size of giant component is likely to be proportional to n^(2/3).
 
+-	Week 3
+	-	**The Social Organization of Conspiracy - Illegal Networks in the Heavy Electrical Equipment Industry (Baker / Faulkner)**
+		-	Price fixing.
+		-	Conclusion: maximise concealment rather than efficiency.
+		-	In switchgear "phase of the moon" price scheduling, i.e. decentralized. Product standardized, flow of orders predictable, easy to synchronize price fixing. Not true of more complex products like turbines.
+		-	In transformers also decentralized price fixing.
+		-	In turbines very lumpy market, low volume, non-standardized. High information processing requirements for conspirators.
+		-	Industrial organization economics examines effects of market system imperfections on behaviour of producers, and how producers satisfy society's economic needs.
+			-	Collusion likely in certain industry structures; few sellers, high seller concentration, homogenous products.
+			-	Number of two-way flows is N(N-1)/2, so fewer sellers => easier to coordinate.
+			-	Treat the internals of the conspiracy as a black box.
+		-	Organizational crime examines individuals as agents, representing their organization and themselves.
+			-	Makes many simplifications about conspirator social organization, almost a black box as well.
+		-	Expect *sparse, decentralized networks* if secrecy is only factor. But also need to communicate efficiently.
+		-	Small group research applies here: more routine tasks are more efficiently performed in centralized structures, more complex tasks in decentralized structures.
+		-	Organizational theorists have similar conclusions - more information-processing requires more decentralization.
+		-	Concealment vs. coordination.
+		-	Centrality: more central => can get better illegal deals for your company, but also mean more personal culpability.
+		-	Executives can delegate so can afford to be less central, hence predict less likely to get fined or prosectured.
+		-	Degree => legal culpability, where betweenness and closensess amounts to hearsay.
+		-	Undirected graph of Senate testimony where witnesses mention someone else. Also measure organizational rank.
+		-	Freeman's three point centrality measures used. Also could have used Bonacich's measures of sociometric status (Bonacich 1972) and influence (Bonacich 1987), Coleman's measure of power (Coleman 1973), Burt's measure of prestige (1980).
+		-	Also Stephenson and Zelen (1989)'s measure of point centrality where shortest paths are deliberately avoided.
+		-	Graph density => observed number of edges as percentage of maximum possible.
+		-	p849, figure 2: decentralized and centralized networks.
+		-	Graph centralization => ratio of centrality of most central point to maxmium possible centrality.
+		-	Results.
+		-	Turbines (recall, most information processing) had highest density and most centralization, contradicting small group and organizational theory.
+		-	Network decentralization did not protect against successful prosection; in turbine network less likely to be found guilty.
+		-	Top executives in decentralized conspiracies able to shield themselves from prosection, but when found guilty had larger fines.
+		-	Top executives in centralized conspiracies could not shield themselves, but when found guilty had smaller fines.
+		-	Middle managers more vulnerable than junior managers.
+		-	Degree centrality increases vulnerability. Not betweenness or closeness. However, degree does not affect penalities.
+		-	In centralized networks, e.g. turbines, small connected core and large periphery. Core dominated by top executives, who need to be hands on. Hence lower conviction rate but more top executives found guilty.
+	-	**Network Structure and Information Advantage (Aral / Alstyne)**
+		-	How and why social structure affects economic outcomes.
+		-	Burt (1992) shows that structurally diverse networks (low in cohesion and structural equivalence) are more successful in e.g. wages, promotion, job placement, creativity (Burt 2004a). Other studies show similar. More novel information.
+			-	See p11 figure 1 for diagram of cohesion and structural equivalence.
+			-	p12 => sructural equivalence of two actors is Euclidean distance of their contact vectors.
+		-	Conclusion: total amount and diversity of novel information increases at decreasing rate with network size and network diversity.
+		-	Weak ties to other parts of network important source of inormation (Granovetter 1973: 1371). Get redudant information from well connected local network (Burt 1992).
+		-	Burt (2004b): "creativity is an import-export game, not a creation game".
+		-	Do diverse networks actually provide access to more novel information? No.
+			-	Less diverse, stronger connected links have less novel information but higher bandwidth, so maybe more information.
+			-	Nodes aware of more redundant information in local network so they adjust their transmission to avoid redundancy.
+		-	Even with new information does productivity necessarily rise? No.
+		-	p19, vector space model of communication content. Emails categorized into set of topic vectors, individuals' email's diversity is variance of topic vectors.
+		-	Results.
+		-	Total and diversity of novel information increasing with node's network size and network diversity, but marginal increase decreses with network size.
+
 ## Assignment notes
 
 ## General notes
