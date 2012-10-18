@@ -276,6 +276,77 @@
 	-	Feel better in team environments.
 	-	Alternatives provides a vocabulary for teams to discuss the space of possible solutions.
 
+### 4.1: Heuristic Evaluation, why and how.
+
+-	Empirical: assess with users.
+-	Formal: models and formulas => measured.
+-	Automated: software measures.
+-	Critique: Expertise and heuristic feedback.
+	-	When to get critique?
+	-	**Before user testing**. Allows user testing to focus on big issues.
+	-	**Before redesigning**. What to keep, what to throw away.
+	-	**Problems known, but need evidence**. You get complaints, need to articulate.
+	-	**Before release**: Smooth out rough edges.
+-	**Begin with clear goal**.
+-	**Heuristic Evaluation**.
+	-	Jakob Nielsen, ten heuristics.
+	-	3-5 independent evaluators, on working UI or sketches.
+	-	Universal principles.
+	-	Process.
+		-	Give them some tasks. Execute each task several times, stepping through the design.
+		-	Constantly refer to Nielsen's heuristics and category-specific heuristics.
+		-	Use violations to redesign and fix.
+-	Why multiple evaluators?
+	-	Some evaluators find more problems than others.
+	-	No evaluator finds all problems.
+	-	But: decreasing returns, cost of evaluation.
+-	Heuristics vs. user testing.
+	-	HE is faster.
+	-	HE results are pre-interpreted.
+	-	UT is more accurate (by definition).
+	-	HE can save participants for further testing.
+-	Heuristic evaluation phases
+	-	**Pre-evaluation training**. Domain knowledge, information on scenarios.
+	-	**Evaluation**. Independent, then aggregate. Use **severity ratings**.
+	-	**Debriefing**. Review with design team.
+	-	At least two passes for each evalutor. One to get the flow, second for focus.
+	-	Produce list of specific problems from a list.
+		-	Issue, severity rating, heuristics violated, description.
+-	Severity rating
+	-	Frequency, impact, persistence.
+	-	Allocate resources to problems.
+
+### 4.2: Design Heuristics (part 1 of 2)
+
+-	**Show system status**.
+	-	wrt. response time.
+		-	> 1s => spinner.
+		-	>> 1s => fractional progress indication.
+	-	wrt space, e.g. disk space.
+	-	wrt change, e.g. unsaved changes.
+	-	wrt action, e.g. traffic lights.
+		-	Traffic lights are redundant; red and on top, green and on bottom. Colour blindness.
+	-	wrt next steps. What happened, and what will happen next?
+	-	wrt completion. e.g. dialog saying done! 
+-	**Familiar metaphors and language**
+	-	Identify terms and language familiar to users.
+	-	Familiar categories.
+	-	For esoteric errors explain what actions are available and their consequences.
+-	**User control and freedom**
+	-	Undo/redo.
+	-	Not forcing people down certain paths. Freedom to explore.
+	-	Preview paths; it helps them explore. e.g. flight ticket search with calendar of cheapest prices on days.
+	-	But context-dependent. e.g. a wizard is easier if very contrained, but bad for experts.
+-	**Consistency and standards**
+	-	Placement of controls.
+	-	Consistent names. User-centric consistency.
+	-	Clear choices. Use actions and verbs, not Yes and No.
+-	**Error prevention**
+	-	Prevent data loss. Warn.
+	-	Prevent clutter. Too much means can't see options.
+	-	Prevent confusing flow and use safe defaults.
+	-	Prevent bad input.
+	-	Prevent unnecessary constaints. e.g. free-text shouldn't be constained by category. Offer the option but don't contrain.
 
 #### Readings:
 
