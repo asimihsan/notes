@@ -251,9 +251,9 @@ $$ C'_C(i) = \frac{C_C(i)}{(N-1)} $$
 -	**Bonacich eigenvector centrality**
 	-	Tunable via beta.
 
-$$ c_i(\Beta) = \sum{j} (\alpha + \Beta c_j)A_(ji) $$
+``c_i(\Beta) = \sum{j} (\alpha + \Beta c_j)A_(ji)``
 
-$$ c(\Beta) = \alpha(I - \Beta A)^-1 \times A \times 1 $$
+``c(\Beta) = \alpha(I - \Beta A)^-1 \times A \times 1``
 
 -	Meaning:
 	-	alpha: normalization constant.
@@ -323,6 +323,44 @@ $$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
 			-	'Best' preferred. Experts answer questions that are high enough quality to be worth answering.
 			-	'Just better' preferred: people answer questions just a bit more challenging than their expertise level.
 			-	Centrality measure perform differently depending on model.
+
+### 4A - Why detect communities?
+
+-	Sometimes communities bridge different organisation units.
+-	Strong communities => there are brokers, which are bottle-necks in information flow. Key influencers.
+-	Communities can maintain divergent opinions; influenced by neighbours, less by other communities.
+	-	Unlike Erdos-Renyi random graphs.
+-	Community finding in scientific papers, how areas influence one another.
+
+### 4B - Heuristics for finding communities
+
+-	What makes a community?
+	-	Mutuality of ties?
+	-	Frequency of ties among members?
+	-	Closeness of reachability of subgroup members?
+	-	Relative frequency of ties within subgroup?
+-	**Affiliation networks , i.e. bipartite graphs**.
+	-	e.g. two types of nodes: people, and events they attended.
+	-	People who attended the same event are connected.
+	-	**Multi-modal network**.
+-	**Clique**: fully connected subgraph.
+	-	Every member connected to every other member.
+	-	Cliques may overlap.
+-	Communities are cliquish.
+-	Meaningfulness of cliques.
+	-	Not robust; just one missing link disqualifies it.
+	-	Not interesting; no core, no centrality.
+	-	Overlaps are more interesting than just existence.
+-	**k-cores**: similar idea, but just need to know k other nodes, not fully connected.
+	-	But even this is too stringent.
+-	**n-cliques**: maximal distance between any two nodes in subgroup is n.
+	-	Reachability. 
+	-	**Diameter**: longest path between any two nodes.
+	-	Diameter may be greater than n, so paths go through nodes not in subgroup.
+-	**n-club**: maximal subgraph of diameter 2.
+-	**p-cliques**: cluster has vertices with at least proportion p of neighbours in cluster.
+-	Cohesion in directed and weighted networks
+	-	Could only keep edges above a threshold weight
 
 
 #### Readings:
