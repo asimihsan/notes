@@ -213,6 +213,31 @@ $\epsilon + 00^*$
 
 $\epsilon + 0 + 0^*$
 
+## 03-05: Lexical Specifications
+
+-	Conditional
+	-	'i' . 'f' = "if"
+	-	"if" + "then" + "else"
+-	Integer, nonempty.
+	-	digit = "0" + … + "9"
+	-	digit+ = digit digit^*
+-	Identifier
+	-	letter = [a-zA-Z]
+	-	letter (letter + digit)*
+-	Whitespace
+	-	' ' + '\n' + '\t'
+-	Email address
+	-	Username, domains.
+	-	letter+ '@' letter+ '.' letter+
+	-	(surely not valid?)
+-	Optional => (RE)?, is + epsilon.
+
+
+
+## 03-06: DeduceIt Demo
+
+-	Conclusion, rule, justification.
+
 
 ## Readings notes
 
