@@ -362,6 +362,47 @@ $$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
 -	Cohesion in directed and weighted networks
 	-	Could only keep edges above a threshold weight
 
+### 4C - Community Finding
+
+-	**Hierarchical clustering**
+	-	Calculate some notion of distance between all pairs of nodes (e.g. number of shared neighbours, weight).
+	-	Add edges between pairs one by one in order of decreasing weight.
+	-	Can choose when to stop. Early => fine structure, late => coarse structure.
+-	Pajek has efficient and successful implementation, not in Gephi, igraph, networkx.
+-	Pajek can random permute rows of adjacency matrix such that same graph but clear clusters appear.
+-	**Dendrogram**: view of hierarchical clustering.
+-	**Betweenness clustering** (Girvan and Newman)
+	-	Compute betweenesss of all edges.
+	-	while (betweenness of any edges> threshold)
+		-	Remove edge with highest betweeneness
+		-	Recalculate betweenness.
+	-	Very inefficient; all pairs shortest path is O(N^3), need to do it up to N times but intuitive.
+	-	Does not scale > 100 nodes.
+-	How do you know when to stop for hierarchical and betweenness clustering?
+	-	**Modularity**, maximize it.
+	-	How many more edges in community than would be expected randomly?
+	
+Q = 1/2m * sum(all pairs)[A_vw - k_v * k_w / 2m] * delta(c_v, c_w)
+
+i.e.
+
+sum over all pairs of difference between adjacency matrix and probability of an edge between two vertices proportional to their degrees.
+
+delta is 1 if in same community, using any metric you want, 0 if not.
+
+-	Modularity used to find community structure in graphs with > 400,000 nodes and > 2 million edges
+
+-	Very large, dense graphs like Orkut and Flickr difficult to partition. Communities no larger than 100 nodes because traditional algorithms do not allow overlap.
+	-	*Statistical Properties of Community Structure in Large Social and Information Networks* (Leskovec et. al 2008)
+	
+-	Key is to *allow overlap*, nodes belong to more than one community.
+	-	*Uncovering the overlapping community structure of complex networks in nature and society* (Palla et. al 2005).
+	-	http://cfinder.org.
+	-	Finding cliques by removing a given node then adding someone nearby?
+	-	"Natural" community boundaries.
+
+-	Ingredient networks - what goes with what?
+
 
 #### Readings:
 
@@ -431,6 +472,14 @@ $$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
 		-	p19, vector space model of communication content. Emails categorized into set of topic vectors, individuals' email's diversity is variance of topic vectors.
 		-	Results.
 		-	Total and diversity of novel information increasing with node's network size and network diversity, but marginal increase decreses with network size.
+		
+		
+**Week 4**
+
+-	Modularity and community structure in networks
+
+-	Uncovering the overlapping community structure of complex networks in nature and society
+
 
 ## Assignment notes
 
