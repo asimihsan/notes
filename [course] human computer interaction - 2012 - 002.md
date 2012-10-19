@@ -348,6 +348,91 @@
 	-	Prevent bad input.
 	-	Prevent unnecessary constaints. e.g. free-text shouldn't be constained by category. Offer the option but don't contrain.
 
+### 4.3: Design Heuristics (part 2 of 2)
+
+-	**Recognition over recall**
+	-	Avoid codes.  Else you'll see post-it notes for people trying to help remember them.
+	-	Lead with resonable defaults to avoid awkward intermediary steps.
+	-	Previews allow recognition and more efficient.
+-	**Flexibility and efficiency**
+	-	Shortcuts for experts.
+	-	Use defaults but also simultaneously show options for flexibility. e.g. popular cities in a combo box, text field for other.
+	-	Ambient information using icons / sparklines in a dashboard.
+	-	Proactivity. Offer options based on behaviour rather than waiting for user.
+		-	Task relevant, don't interrupt flow.
+	-	Recommendations.
+		-	Keep it relevant.
+	-	Don't go overboard, options have a cost.
+-	**Aethetics and minimalist design**
+	-	Above the fold.  Push common and mainline information up.
+	-	Signal to noise.
+		-	Judicious use of colour.
+		-	Keep chrome down.
+		-	Collapse login and register page into one page.
+	-	Avoid redundancy.
+	-	Avoid unused features.
+-	**Recognize, Diagnose, and Recover from Errors**
+	-	Make problem clear. Where is the error?
+	-	Provide a solution.
+	-	Show a path forward.
+	-	Propose an alternative. If nothing is found or hit an error, suggest alternatives. "Smart rexlaxation".
+-	**Help**
+	-	Examples.
+	-	Explain choices using examples, e.g. content of a prospective newsletter.
+	-	Explain the options of escaping an error.
+	-	Help show the steps. If a sequence of steps required give clues about where to find them.
+	-	Help point things out. Highlight elements of UI.
+	-	Provide more information.
+	-	Be honest and clear, e.g. human-friendly EULAs.
+	-	Humour, let users have fun.
+
+### 5.1: Direct manipulation
+
+-	How to improve a measuring cup?
+	-	Even after user survey of people not complaining about how long it takes to make a measurement, participant observation => inefficient to make readings.
+	-	Be able to make measurements just be looking straight down.
+-	Simply asking people what they want will miss important opportunities.
+-	Go out into the field, especially with prototypes.
+-	**The Gulf of Execution**
+	-	How does the user know what to do? ("Do?")
+-	**The Gulf of Evaluation**
+	-	How does the user know what happened? ("Now?")
+-	Six questions.
+	-	Determine the function of the device?
+	-	Tell what actions are possible?
+	-	Determine mapping from intention to physical movement?
+	-	Perform the action?
+	-	Tell what state the system is in? Desired state?
+	-	Determine mapping from system state to interpretation.
+-	To reduce gulfs.
+	-	**Visibility** (affordances, signifiers)
+	-	**Feedback**
+	-	**Consistency** (standards)
+	-	**Non-destructive operations** (undo)
+	-	**Discoverability** (systematic exploration possible)
+	-	**Reliability** (consistent behaviour, it works).
+-	Command line vs. GUI
+	-	GUI offers continuous feedback.
+	-	GUI options are all visisible. Discoverable.
+-	GUI offers **direct manipulation**
+	-	**Immediate feedback on actions**
+	-	**Continuous representations of objects**
+	-	Leverage metaphor.
+-	But when is the command line better?
+	-	**Successful indirection**.
+	-	Express and combine abstract actions.
+-	Don Norman, The Design of Everyday Things
+
+### 5.2: Mental Models
+
+-	What makes an interface learnable?
+-	What leads to errors?
+-	Goal: **design beacons the right model**.
+	-	User's model develops through interaction with system.
+	-	Designer's expect user's model to match designer's...but often no!
+
+TOWATCH
+
 #### Readings:
 
 -	3.1 and assignment 2, Prototyping
