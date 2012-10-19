@@ -430,8 +430,92 @@
 -	Goal: **design beacons the right model**.
 	-	User's model develops through interaction with system.
 	-	Designer's expect user's model to match designer's...but often no!
+	-	Mismatched models lead to slow performance, errors, frustration.
+-	**Mental models <= experience, metaphor, analogical reasoning.**
+	-	"A text processor is like a typewriter". Encourages users to transer skills and beliefs over.
+	-	User models incomplete, vary over time, superstitious.
+-	**Slip**: right model, accidentally do wrong thing.
+	-	Prevent/fix via ergonomics, visual design.
+-	**Mistake**: do what you want to do but wrong model.
+	-	Prevent/fix via feedback, improve user's perception of affordances (visibility).
+-	Butterfly ballot in 2000 example of mistake.
+-	**Consistency and re-use reduce mistakes.**
+-	**Leverage real-world metaphors**.
+	-	Direct manipulation provides this.
+-	New technology necessarily different from what users used to; minimize the gap.
+-	To learn more:
+	-	JM Carroll, HR Olson, *Mental models in human-computer interaction: Research issues*, 1987
+	-	Don Norman, *Design of Everyday Things*
+	-	James Reason, *Human Error*.
+	
+### 5.3 Representation Matters
 
-TOWATCH
+-	The Oranges Puzzle, The Bagels Puzzle
+	-	Like Towers of Hanoi, but food.
+-	Bagels => **representation of problem enforces constraints**, easier to handle, less stress for working memory.
+-	The Number Game.
+	-	Two players, take numbers [1, 9] without replacement, first to sum to 15 wins.
+	-	Just in your head is difficult!
+	-	With cards a bit easier.
+-	Tic Tac Toe and Number Game isomorphs!
+	-	Magic square, sums to 15.
+-	"Solving a problem simply means representing it so as to make the solution transparent". - Herbert Simon.
+-	**Working memory**.
+	-	Recall heuristic recognition not recall.
+	-	**Embed constraints in user interface**.
+-	e.g. Getting Things Done
+	-	One rule is when you realise you need to do something write it down. Relieves pressure on working memory.
+-	**Naturalness Principle**: properties of representation match properties of the thing being represented.
+-	**World in miniature**. Fit into small diagram to illustrate summary and context of errors.
+
+### 5.4: Distributing Cognition (part 1 of 2)
+
+-	Think more fluidly by **distributing cognition** into artifacts of the world.
+	-	Encourage experimentation. (Tertris)
+	-	Scaffold learning, reduce errors through redundancy. (Montessouri blocks)
+	-	Show only differences that matter. (London Underground)
+	-	Convert slow calculation into fast perception. (Map colouring)
+	-	Chunking. (Chess and gestures)
+	-	Efficiency. (diagrams, GUI)
+	-	Collaboration. (cockpits)
+-	**Cheap experimentation**
+	-	e.g. Tetris. Experts more likely to move pieces around in attempt to determine fit. Offload cognition onto the interface.
+-	**Scaffold learning**
+	-	Redundantly represent abstract concepts. Reduce errors.
+-	A good representation:
+	-	**shows all relevant information, and nothing else.**
+	-	enable comparison, exploration, problem solving.
+	-	e.g. London Underground map.
+		-	**focus plus context representation**		-	Where detail matters, e.g. centre, higher fidelity.
+		-	where detail doesn't matter, e.g. suburbs, less fidelity.
+		-	make some tasks easier (get from A to B), necessarily makes others more difficult (measure distance).
+-	**Nearly all representational design is about fitness to task.**	
+-	Weather Underground.
+	-	Better if temperature scannable; colour or scale nodes.
+-	Edward Tufte, height above sea level map.
+	-	Hue not comparable (ROY G BIV), more qualitative.
+	-	**Colour as a meaningful representional cue**.
+	-	Earth tones above sea level, blue tones below sea level.
+	-	Luminance is comparable.
+-	**Chunking**.
+	-	Also expertise to build if interface is chunkable, fits in memory.
+	
+### 5.5: Distributing Cognition (part 2 of 2)
+
+-	**Informational Equivalnce != Computational Equivalence**
+	-	Same content, but different representation, => different efficiency.
+	-	e.g. diagrams of geometrical proofs.
+-	GUI vs. command line.
+	-	Many tasks can become perception tasks requiring little inference.
+-	Cockpit instruments have bugs, little physical markers.
+	-	Allows pilots in cockpit to offload task of coordinating memory about key measurements.
+-	Examples.
+-	Form validation, do it in real time and show constraints and errors and actions.
+-	Dialog boxes should be action oriented and guide users to likely next step. Provide them with necessary information.
+-	Further reading:
+	-	Don Norman, Things that Make Us Smart
+	-	Ed Hutchings, Cognition in the Wild
+	-	Herbert Simon, Sciences of the Artificial
 
 #### Readings:
 
