@@ -232,12 +232,151 @@ $\epsilon + 0 + 0^*$
 	-	(surely not valid?)
 -	Optional => (RE)?, is + epsilon.
 
-
-
 ## 03-06: DeduceIt Demo
 
 -	Conclusion, rule, justification.
 
+## 04-01: Lexical Specification
+
+-	Summary of RE notation
+	-	*At least one*: A^+ = A . A*
+	-	*Union*: A | B = A + B
+	-	*Option*: A? = A + \epsilon
+	-	*Range*: 'a' + 'b' + … = 'z' = [a-z]
+	-	*Excluded range*: Complement of [a-z] = [^a-z]
+	
+-	Hypothetical specification for a predicate.
+	-	s in set L( R ).
+	- 	i.e. string s in language( R ). Latter is set of strings.
+	-	Not enough! We need to *partition* input into words.
+	
+1.	First, write regexp for lexemes or each token class.
+	-	Integer = digit+
+	-	Whitespace - ' ' + '\n' + '\t'
+	-	etc.
+2.	Construct R, matching all lexemes for all tokens
+	-	R = Integer + Whitespace + …
+	-	R = R_1 + R_2 + …
+3.	For every prefix in input check if it is in L( R ).
+4.	If it is then we know the prefix is one of the constituent regexps, i.e. token classes.
+5.	Remove that prefix and continue checking.
+
+-	**Maximal munch**. Longest prefix match.
+-	What if more than one token matches? e.g. an Identifier called if.
+
+$x_1 … x_i \in L( R ), R = R_1 + … + r_N$
+
+$x_1, …, x_i \in L(R_j)$
+
+$x_1, …, x_i \in L(R_k)$
+
+e.g.
+
+$'if' \in L(Keywords)$ and $L(Identifiers)$
+
+-    **Priority ordering**. Choose the one listed first. Keywords before Identifiers.
+-    What is no rule matches?
+
+$x_1, …, x_i \notin L( R )$
+
+-    **Error token class**. regexp for all strings not in the lexical specification. Put it last.
+
+## 04-02: Finite Automata
+
+-    Implementation of regular expressions.
+-    FA consists of:
+    -    Input alphabat $\Sigma$.
+    -    A finite set of states $S$.
+    -    A start state $n$.
+    -    A set of accepting states $F \subseteq S$.
+    -    A set of transitions $state \overrightarrow{input} state$.
+-    Transition (read)
+    -    $s_1 \overrightarrow{a} s_2$.
+-    If end of input and in accepting state then accept.
+-    Terminates in any state other than accepting state, reject.
+-    Gets stuck, no transition, reject.
+-    **Configuration of FA**: state it is in and input it is processing (input pointer). 
+-    **Language of a FA**: set of accepted strings.
+-   $\epsilon$-move. Transition without consuming input (without moving input pointer).
+-   **Deterministic Finite Automata** (DFA)
+    -    One transition per input per state.
+    -    No $\epsilon$-moves.
+-    **Non-deterministic Finite Automata** (NFA)
+    -    Multiplate transitions for one input in given state.
+    -    Can have $\epsilon$-moves.
+    -    As we can transform multiple states into epsilon moves it's epsilon moves that tell us if an FA is NFA or not.
+-    A DFA takes only one path through state graph, NFA can choose.
+-    An NFA accepts if some choices lead to accepting state.
+-    **Configuration of a NFA**: the set of states it could be in and the input it's processing.
+-    NFAs and DFAs recognise same set of languages, regular languages.
+-    DFAs faster (no choices)
+-    NFAs are generally smaller.
+
+## 04-03: Regular Expressions into NFAs
+
+-    Lexical specification -> Regular expressions.
+-    Regular expressions -> NFA.
+-    NFA -> DFA.
+-    DFA -> Table-driven implementation of DFA.
+-    For epsilon or input A, simple.
+    -    s_1: start state.
+    -    input: epsilon or a, goes to s_2, accepting state.
+-    *Concatenation*, AB.
+    -    Final state of A has an epsilon transition to start state of B.
+-    *Union*, A + B
+    -    Make a new start state with two epsilon transitions. One to A, one to B.
+    -    Make a new accepting state with two epsilon transitions, from accepting states of A and B.
+-    *Kleene closure*, A*
+    -    Complex.
+    -    New start state. Epsilon edge to A.
+    -    Epsilon edges from accept of A to start and new accept state.
+    -    Epsilon edge from new start state to new accept state.
+    
+## 04-04: NFA to DFA
+
+-    **epsilon-closure of a state**: set of states that can be reached on *recursive* epsilon transitions and the state itself.
+    -    Keep following epsilons.
+-    NFA may have many states at any time.
+-    How many different states?
+    -    N states in total.
+    -    |S| <= N.
+    -    $2^N - 1$ non-empty subsets of N states.
+    -    **Finite state of possible configurations**. So in principle DFA can simulate NFA.
+-    NFA characterisation:
+
+states: $S$.
+start state: $s \in S$.
+final states: $F \subseteq S$.
+$a(X) = {y | x \in X ^ x \overrightarrow{a} y}$
+
+(i.e. for a set of states X and input a what are all states that can be reached).
+
+$\epsilon$-clos
+
+-    DFA characterisation:
+
+states: subsets of S (except empty set)
+start state: epsilon-clos of start state of NFA.
+final states: ${X | X \cap F \neq 0}$. (can be more than one).
+
+transition from X to Y given a if:
+
+$Y = \epsilon-clos(a(X))$
+
+- So for given input you can reach the epsilon closure of the ending state.
+
+- !!AI Pretty tricky! Do on paper, watch end of lecture for example.
+
+## 04-05: Implementing Finite Automata
+
+-    DFA. **Table of input vs. state**. Value is the next state.
+    -    Downside is that many duplicate rows.
+-    Instead **one-dimensional column, pointer** to possible moves as a row. Can share moves amongst states.
+    -    Could be 2^N - 1 states in DFA for an NFA with N states.
+    -    But pointer dereferencing takes time.
+-    Or could implement **NFA in table**.
+    -    States are rows, columns are alphabet (e.g. 0, 1, and epsilon).
+    -    But values are sets of states, i.e. the configuration is multiple states. Much slower.
 
 ## Readings notes
 
@@ -330,9 +469,19 @@ CPTT, lexical analysis and finite automata
 	
 -	Week 3 (Parsing)
 	-	CPTT section 4.1-4.6, 4.8.1, 4.8.2
-	-	EC sections 4.1-4.4
-	-	EC
+	-	EC sections 3.1-3.4
 	-	CPTT
+	
+- - -
+
+EC
+
+-    **Parsing**: given a stream s of words and a grammar G, find a derivation in G that produces s.
+
+- - - 
+
+
+	
 -	Week 4 (Semantic Analysis and Types)
 	-	CPTT section 5.1-5.3, 6.3, 6.5
 	-	EC sctions 4.1-4.4
