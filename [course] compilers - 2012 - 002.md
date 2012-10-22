@@ -474,12 +474,37 @@ CPTT, lexical analysis and finite automata
 	
 - - -
 
-EC
+EC 3.1-3.4
 
 -    **Parsing**: given a stream s of words and a grammar G, find a derivation in G that produces s.
+-	**Context-free grammar**: for a language L its CFG defines the set of strings of symbols that are valid sentences in L.
+-	**Sentence**: a string of symbols that can be derived from the rules of a grammar.
+-	**Language defined by G**: the set of sentences that can be derived from G.
+-	**Production**: a rule in a CFG.
+-	**Nonterminal symbol**: a syntactic variable used in a grammar's productions.
+-	**Terminal symbol**: a word that can occur in a sentence.
+-	**Word**: a lexeme and its syntactic class. Words are repesented in a grammar by their syntactic category.
+-	**Start symbol or goal symbol**: a nonterminal symbol that represents the set of all sentences in L(G).
+-	**Derivation**: sequence of rewriting steps that begins with the grammer's start symbol and ends with a sentence in the language.
+-	**Sequential form**: a string of symbols that occurs as one step in a valid derivation.
+-	**Parse tree or syntax tree**: a graph that represents a derivation.
+-	p89 is good diagram of derivation and corresponding parse tree.
+-	**Rightmost derivation**: a derivation that rewrites, at each step, the rightmost nonterminal.
+-	**Leftmost derivation**: a derivation that rewrites, at each step, the leftmost nonterminal.
+-	Despite using rightmost or leftmost derivation the corresponding parse trees are identical.
+-	**Ambiguity**: a grammar G is ambiguous if some sentence in L(G) has more than one rightmost (or leftmost) derivation.
+	-	p91, if-then-else ambiguity example.
+-	p93, figre 3.1: classis expression grammar for operator precedence, and p94 has an excample derivation and corresponding parse tree.
+-	Classes of CFGs and their parsers.
+	-	Arbitary CFGs take O(n^3) to parse, usually not used.
+	-	LR(1) are a large subset of unambigous CFGs. Parsed buttom-up, linear left-to-right, looking ahead at most one symbol. Favourite.
+	-	LL(1) are a subset of LR(1). Parsed top-down, linear left-to-right, looking ahead at most one symbol.
+	-	Regular grammars (RGs) are CFGs that generate regular languages. Subset of LL(1). Equivalent to regexp's.
+-	Why is top-down parsing efficient? A large subset of context-free grammers can be parsed without backtracking.
+
+TOREAD from p97
 
 - - - 
-
 
 	
 -	Week 4 (Semantic Analysis and Types)
