@@ -25,7 +25,7 @@
 	-	Compilers do limited **semantic analysis**, too hard otherwise.
 		-	Variable bindings wrt scope.
 		-	Type mismatching.
--	Then editing, i.e. **optimization**. Retrict usage of some resource(s).
+-	Then editing, i.e. **optimization**. Restrict usage of some resource(s).
 	-	Run faster.
 	-	Use less memory.
 	-	Power.
@@ -377,6 +377,10 @@ $Y = \epsilon-clos(a(X))$
 -    Or could implement **NFA in table**.
     -    States are rows, columns are alphabet (e.g. 0, 1, and epsilon).
     -    But values are sets of states, i.e. the configuration is multiple states. Much slower.
+
+## 05-01: Introduction to parsing
+
+
 
 ## Readings notes
 
