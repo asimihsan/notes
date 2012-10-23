@@ -380,7 +380,58 @@ $Y = \epsilon-clos(a(X))$
 
 ## 05-01: Introduction to parsing
 
+-	Regular languages are weakest formal language.
+-	Consider the language of all balanced parentheses:
 
+$\{(^i )^i | i \geq 0\}$
+
+-	Applies also to nested if/then.
+-	Regular expressions cannot handle all balanced parentheses or nested if/then.
+-	Regular languages can only count "mod k", where k is finite number of states. Not arbitrary.
+-	Lexer: string of characters -> string of tokens
+-	Parser: string of tokens -> parse tree.
+	-	Parse tree may be implicit.
+
+## 05-02: Context-Free Grammars
+
+-	We need:
+	-	Language for *describing valid strings of tokens*.
+	-	Method for *distinguishing valid from invalid* strings of tokens.
+-	CFGs are natural notation for describing recursive structures.
+-	A CFG consists of:
+	-	A set of terminals, T
+	-	A set of non-terminals, N
+	-	A start symbol, S ($S \in N$).
+	-	A set of productions, where production is $X \to Y_1 ... Y_N, X \in N, Y_i \in N \bigcup T \bigcup \epsilon$.
+
+e.g. two productions
+
+$S \to (S)$
+$S \to \epsilon$
+
+This implies:
+
+$N = \{S\}$
+$T = \{(, )\}$
+
+-	Productions can be read as rules.
+	-	Begin with a string with only the start symbol S.
+	-	Replace any non-terminal X by the right-hand side of some production $X \to Y_1 ... Y_n$.
+	-	Repeat until no non-terminals left.
+	-	*One step of a context-free derivation*
+
+One step of a context-free derivation reads as:
+
+$X_1 ... X_i X X_{i+1} ... X_N \to X_1 ... X_i Y_1 ... Y_k X_{i+1} ... X_N$
+
+$S \to \alpha_0 \overrightarrow{*} \alpha_n$ (in 0 or more steps, where alpha is some string).
+
+-	Language L(G) of a context-free grammar G:
+
+$\{a_1 ... a_b | \forall_i a_i \in T\} ^ S \overrightarrow{*} a_1 ... a_n\}$
+
+-	i.e. set of all strings that I can drive just from the start symbol.
+-	Terminal symbols do not have rules for replacing them, permanent. e.g. tokens in language.
 
 ## Readings notes
 
