@@ -404,6 +404,22 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 -	Ingredient networks - what goes with what?
 
 
+### 5A - Small world experiments
+
+-	Small world phenomenon: Stanley Milgran's experiment.
+	-	"Six degrees of separation".
+	-	Send a message to someone far from you by sending to "closest".
+-	In random graphs with noone sharing any neighbours you'd expect massive numbers of neighbours-of-neighbours etc.
+	-	So if friendship networks are random six degrees of separation not surprising.
+	-	But what if network is very cliquish? Worst case, what if all neighbours-of-neighbours were your neighbours?
+	-	In this case impossible to reach rest of network.
+-	Is 6 an accurate number?
+	-	**Attrition**. As path gets longer smaller probability of successfully passing on message. Bias to shorter paths.
+		-	Research indicates attrition rate is constant over position in path. See "An Experimental Study of Search in Global Social Networks", Dodds et al.
+	-	**Navigation and accuracy**. Do people find shortest paths? Of course not.
+		-	See "Killworth, McCarty, Bernard, & House", 2005. Less than optimal choice for next hop is made 0.5 of the time.
+
+
 #### Readings:
 
 -	Week 1
