@@ -433,6 +433,65 @@ $\{a_1 ... a_b | \forall_i a_i \in T\} ^ S \overrightarrow{*} a_1 ... a_n\}$
 -	i.e. set of all strings that I can drive just from the start symbol.
 -	Terminal symbols do not have rules for replacing them, permanent. e.g. tokens in language.
 
+## 05-03: Derivations
+
+-	**Derivation**: a sequence of productions.
+-	Can draw a derivation as a tree. Add the result as children.
+	-	Obviously root is start symbol, interior nodes are non-terminals, leaves are terminals.
+	-	In-order traversal of the leaves is the original input.
+-	**Left-most derivation**: at each step replace left-most non-terminal.
+-	**Right-most derivation**: at each step replace right-most non-terminal.
+-	Left-most and right-most derivation have the same parse tree.
+-	Many kinds of derivations.
+-	We don't just care if string s in L(G). We need a parse tree for s!
+
+## 05-04: Ambiguity
+
+-	**Ambiguous grammar**: grammar has more than one parse tree for some string.
+	-	Equivalently, more than one left-most or right-most derivation for some string.
+-	Dealing with ambiguity.
+	-	Most direct is to re-write grammar.
+
+E -> E' + E | E'
+E' -> id * E' | id | (E) * E' | (E)
+
+	-	Notice that E controls plus, E' controls multiplication.
+	-	Notice higher precedence towards bottom of parse tree.
+	-	E is a Kleene closure over plus, zero or more. Final E becomes E'.
+	-	E' is a Kleene closure over multiplication, zero or more. Final E' becomes id.
+	-	Notice we use (E), not (E'). We can put pluses in brackets.
+
+-	How to match if/then/else
+
+``
+E -> MIF
+   | UIF // matched if or unmatched if
+MIF -> if E then MIF else MIF
+	 | OTHER
+UIF -> if E then E
+	 | if E then MIF else UIF
+``
+
+-	Instead of rewriting grammer, tools can use precedence and associativity to do it for you.
+	-	bison does this, e.g.
+
+E -> E + E | int
+
+becomes
+
+%left +
+E -> E + E | int
+
+and
+
+E -> E + E | E * E | int
+
+becomes:
+
+%left +
+%left *
+E -> E + E | E * E | int
+
 ## Readings notes
 
 -	CPTT: Compilers: Principles, Techniques, and Tools

@@ -419,6 +419,50 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 	-	**Navigation and accuracy**. Do people find shortest paths? Of course not.
 		-	See "Killworth, McCarty, Bernard, & House", 2005. Less than optimal choice for next hop is made 0.5 of the time.
 
+### 5B - Clustering and motifs
+
+-	Local phenomenon.
+-	**Transitivity**
+	-	If A -> B and B -> C, what is probability that A -> C?
+-	**Triadic closure** - A, B, and C connected.
+-	**Global clustering coefficient**: to what extent is clustering present?
+	-	C = 3 x number of triangles in graph / number of connected triples of vertices.
+-	**Local clustering coefficient**
+	-	C_i = number of connections between i's neighbours / maximum possible connections.
+	-	n_i = number of neighbours of i.
+	-	C_i directed = number of directed connections / n_i * (n_i - 1)
+	-	C_i undirected = number of undirected connections / 0.5 * n_i * (n_i - 1)
+	-	C = 1/n * sum(C_i) over all i.
+-	**Embeddedness**: number of common neighbours that two endpoints have.
+	-	E = nodes that are neighbours of both A and B / nodes that are neighbours of at least one of A or B.
+	-	Implies shared context, e.g. high school class, but not necessarily closeness, i.e. actually friends.
+-	Snowball sampling (souce: Information and Social Capital, Alstyne).
+	-	Ask to name 1st and 2nd best friends, more clustered (i.e. embedded).
+	-	Ask to name 7th and 8th best friend, less clustered and hence longest possible path is larger so easier to reach more people.
+	-	Hence being more embedded can limit your ability to project information and intercept varied information.
+-	Onnella et al., 2007. (10:12)
+	-	Characterizing the large-scale structure and the tie strengths of the mobile call graph.
+		-	Tie strength is how frequently two people communicate.
+	-	Log distribution of degree (skewed, very few with high degree).
+	-	Log distribution of link weight (skewed, very few with high weight).
+	-	Embeddedness of the tie (?)
+	-	Edge neighbourhood overlap (embeddedness) as a function of tie strength.
+		-	Positive linear. => more embedded means greater tie strength.
+	-	Intermediate tie strength neighbours are whom you spread most novel information with, not weak or strong.
+-	Can do better if you look at directionality in local structure.
+	-	**Motif**: particular directed configuration of a closed triad and closed four-node subgraphs.
+	-	**Feed forward loop**: X -> Y, Y -> Z, X -> Z.
+		-	Filters out noise.
+	-	Compare number of instances of motifs to "equivalent" random graph.
+		-	Generate a random graph where the degree distribution matches the actual graph.
+		-	Then calculate Z-score (x - mean_x / stdev_x). Z > 0 => more often than random, Z < 0 => less often than random.
+	-	Software: use FANMOD or igraph.
+-	Onnella found that there are superfamilies of networks. (16:47)
+	-	**Motif profiles**: characterise using graphs by Z-scores for 3-node motifs.
+	-	e.g. graphs of different languages have similar distribution of Z-scores of motifs. (e.g. to->be->or->not->to->be).
+	-	Web and social graphs have similar distributions. Suggests similar mechanisms.
+-	**Forbidden triad**: A -> B, B -> C, but not A -> C.
+-	Can use motif profiles to compare models to actual networks.
 
 #### Readings:
 
