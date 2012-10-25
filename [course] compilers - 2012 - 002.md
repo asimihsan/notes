@@ -492,6 +492,53 @@ becomes:
 %left *
 E -> E + E | E * E | int
 
+## 06-01: Error handling
+
+-	Error types:
+	-	*Lexical*, e.g. a $ b.  Detected by lexer.
+	-	*Syntax*, e.g. a *% b. (Lexically correct). Detected by parser
+	-	*Semantic*, e.g. int x; y = x(3). (Syntax correct). Detected by type checker.
+	-	*Correctness*. Detected by user.
+-	**Panic mode**
+	-	Simplest, most popular.
+	-	On error discard tokens until one with a clear role is found. Then continue.
+	-	**Synchronizing tokens**: statement or expression terminations.
+	-	e.g.: (1 + + 2) + 3
+	-	On second plus discard input until it finds the next integer, then continue.
+	-	In bison use a terminal "error" to descibe how much input to skip.
+
+E -> int | E + E | (E) | error int | ( error )
+
+-	**Error productions**
+	-	Specify known common mistakes in the grammar.
+	-	e.g. You write 5x instead of 5 * x
+	-	Add production E -> ... | E E
+	-	Disadvantage
+		-	Complicates the grammar.
+
+-	**Error correction** (not common any more)
+	-	Find a correct "nearby" program.
+	-	Try token insertions and deletions. Minimize edit distance.
+	-	Exhaustive search.
+	-	Disadvantages:
+		-	Hard.
+		-	Slows down parsing.
+		-	Nearby doesn't necessarily imply "intended".
+	-	e.g. PL/C. Always parses to running program.
+	-	But this was developed in the 70's
+		-	Slow recompilation cycle, even one day.
+		-	Want to find as many errors in one cycle as possible.
+
+## 06-02: Abstract Syntax Trees
+
+-	Review:
+	-	Parser traces derivation of a sequence of tokens.
+	-	But later parts of compiler needs structural representation.
+	-	**Abstract syntax trees** (AST). Like a parse tree but ignores some details.
+-	e.g.: E -> int | ( E ) | E + E
+	-	5 + (2 + 3).
+	-	Parse tree has too much informaion: parentheses, single-successor nodes.
+
 ## Readings notes
 
 -	CPTT: Compilers: Principles, Techniques, and Tools

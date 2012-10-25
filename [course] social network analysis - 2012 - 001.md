@@ -373,7 +373,7 @@ $$ C'_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} $$
 -	**Dendrogram**: view of hierarchical clustering.
 -	**Betweenness clustering** (Girvan and Newman)
 	-	Compute betweenesss of all edges.
-	-	while (betweenness of any edges> threshold)
+	-	while (betweenness of any edges > threshold)
 		-	Remove edge with highest betweeneness
 		-	Recalculate betweenness.
 	-	Very inefficient; all pairs shortest path is O(N^3), need to do it up to N times but intuitive.
@@ -463,6 +463,52 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 	-	Web and social graphs have similar distributions. Suggests similar mechanisms.
 -	**Forbidden triad**: A -> B, B -> C, but not A -> C.
 -	Can use motif profiles to compare models to actual networks.
+
+### 5C - Small world models
+
+-	Small world phenomenon
+	-	*High clustering*: C_network >> C_{random_graph}
+	-	*Low average shortest path*: l_network ~= ln(N)
+	-	ER graphs also have similar low average shortest path.
+	-	Many closed triads.
+-	Watts/Strogatz model reconciles these two observations.
+	-	Generating small world graphs.
+	-	Take a ring of nodes, connect each node to its two physical neighbours on either side (four edges).
+	-	Either:
+		-	Randomly reposition edges, or
+		-	Add fraction p of new edges, leaving the old ones.
+	-	Disallow self-edges and multiple edges.
+	-	At p ~= 0.01 high clustering and low average shortest path.
+	-	At p > 0.1 clustering coefficient collapses, as expected; become ER network.
+	-	Probability that a connected triple stays connected is (1 - p)^3.
+	-	Hence clustering coefficient = C(p) = C(p=0) * (1-p)^3
+	-	What is missing?
+		-	Too many long range links.
+		-	No hierarchical structure and groups.
+		-	No hubs.
+-	Kleinberg's geographical small world model.
+	-	Nodes on 2-D lattice. Each node as local lattice edges (north, south, east, west)
+	-	Additional links with p(link between u and v) = (distance(u, b)) ^ (-r).
+	-	r is constant that determines navigability.
+	-	Greedy search (i.e. choosing node that is closest to target) reveals pattern similar to Milgram's experiement: many large hops initially, small hops towards the end.
+	-	r = 0 => randomly distributed, ASP ~= ln(n), so no very small local ties.
+	-	r > 2, p ~ 1 / d^4. search time ~= N^{(r-2)/(r-1)}. No large ties.
+	-	r = 2 is about right. p = ~ 1/d^2. (probabilty of forming tie is inverse squared). Greedy search works.
+-	15:08: group affiliations.
+	-	Bipartite networks. Individuals share contexts, imply edges between individuals as a unipartite network.
+-	Kleinburg's hierarchical network models (Small-world phenomena and the dyanmics of information):
+	-	h_ij = height of least common ancestor
+	-	p_ij = b^{-alpha * h_ij}
+	-	b is branching factor of the hierarchy.
+	-	alpha is measured from network.
+-	Kleinburg's group structure models (same paper):
+	-	f(q) ~ q^(-alpha).p
+-	Watts, Dodds, Newman (2001), Identity and Search in Social Networks
+	-	Individual belong to hierarchically nested groups.
+-	Columbia experiment
+	-	Successful chains disproportionately use professional ties.
+	-	Successful chains disproportionatly avoided hubs and family/friends.
+	-	Strategy: Geography first then work when close to target.
 
 #### Readings:
 
