@@ -510,6 +510,22 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 	-	Successful chains disproportionatly avoided hubs and family/friends.
 	-	Strategy: Geography first then work when close to target.
 
+### 5D - Origins of small worlds
+
+-	Generating small-world networks.
+-	Assign properties to nodes (spatial location, group membership)
+-	Add or rewire links according to some rule
+	-	Simulated annealing, optimize for property.
+	-	Add links iwth probability, e.g. preferential attachment
+	-	Simulate nodes as agents making decisions.
+-	What to optimize for?
+	-	E = lambda * L - (1 - lambda) * W // energy, want to minimize
+	-	L = average shortest path.
+	-	W = cartesian distance between two nodes.
+	-	Want small number of hops and short distances.
+-	Source: Small worlds: How and Why, Mathias et. al.
+-	Idea is that can generate small world networks based on different constaints (navigation, group affiliation).
+
 #### Readings:
 
 -	Week 1

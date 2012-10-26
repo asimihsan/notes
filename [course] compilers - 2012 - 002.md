@@ -539,6 +539,124 @@ E -> int | E + E | (E) | error int | ( error )
 	-	5 + (2 + 3).
 	-	Parse tree has too much informaion: parentheses, single-successor nodes.
 
+## 06-03: Recursive Descent Parsing
+
+-	Top-down, left to right.
+-	Terminals seen in order of appearance in token stream.
+-	Try production rules in order, e.g.
+
+E -> T | T + E
+T -> int | int * T | ( E )
+
+( 5 )
+
+-	For start symbol E we try T then T + E. On failure may have to do back-tracking.
+-	Notice while generating that when we generate non-terminal don't know if we're on the right track.
+-	Once you generate a terminal you can check the input at the input pointer to see if it's right. If not, try another production.
+-	Don't be too smart. Recursive descent parser tries all productions in order, so you should too.
+
+## 06-04: Recursive Descent Algorithm
+
+-	Let *TOKEN* be type of a TOKEN, i.e. INT, OPEN, CLOSE, PLUS, or TIMES.
+-	Let global *next* be pointer to next input token.
+-	Define boolean fuctions.
+	-	`bool term(TOKEN tok) { return *next++ == tok; }`
+		-	Is the token currently pointed to? Also increment next.
+	-	`bool S_n() { ... }`
+		-	nth production of S. Does particular production match input?
+	-	`bool S() { ... }`
+		-	Try all productions of S. Do any of all productions match input?
+-	For production E -> T
+	-	`bool E_1() { return T(); }`
+-	For production E -> T + E
+	-	`bool E_2() { return T() && term(PLUS) && E(); }`
+	-	Notice short-circuited AND.
+	-	Notice each bool function increments input pointer.
+	-	Notice it's called E_2, second production of E.
+-	For all productions of E with backtracking
+
+```
+bool E() {
+	TOKEN *save = next;
+	return (next = save, E_1())
+		|| (next = save, E_2());
+}
+```
+-	Notice short-circuited OR. If first condition true don't evaluate second.
+-	Notice we restore next after failing an OR condition.
+-	Notice on failing all productions of E we don't restore anything, because we're passing the error back up to a higher production.
+
+-	Functions for non-terminal T
+	-	T -> int
+		-	`bool T_1() { return term(INT); }`
+	-	T -> int * T
+		-	`bool T_2() { return term(INT) && term(TIMES) && T(); }`
+	-	T -> ( E )
+		-	`bool T_3() { return term(OPEN) && E() && term(CLOSE); }`
+
+```
+bool T() {
+	TOKEN *save = next;
+	return (next = save, T_1())
+		|| (next = save, T_2())
+		|| (next = save, T_3());
+}
+```
+
+-	To start parser.
+	-	Initialize next to first token
+	-	Invoke start symbol, E().
+
+## 06-04-1: Recursive Descent Limitations
+
+-	From before try to parse int * int.
+-	We parse as E -> E_1 -> T -> int, but input not exhausted, so reject input string.
+-	What happened?! String is definitely in language of grammar.
+-	Problem: there is no backtracking once we have found a matching production; ideally we'd try all productions, and then maximal munch.
+-	If a production for non-terminal X succeeds cannot backtrack to try a different production for X.
+-	General recursive-descent algorithms do however support such "full" backtracking.
+-	Presented RA algorithm is not general but easy to implement by hand.
+-	Sufficient for grammars where for any non-terminal at most one production can succeed.
+
+## 06-05: Left Recursion
+
+-	Consider S -> S a.
+
+``
+bool S_1() { return S() && term(a); }
+bool S() { return S_1(); }
+``
+
+-	S() goes into an infinite loop.
+-	**Left-recursive grammar**: has some non-terminal S such that S ->+ S alpha for some alpha.
+	-	One or more productions that refer to same non-terminal.
+	-	There is always a non-terminal in the derivation, can't finish.
+-	Recursive descent does not work with left-recursive grammars.
+-	Consider: `S -> S alpha | beta`
+	-	S generates all strings starting with one beta followed by any number of alphas.
+	-	But it does so right to left.
+-	Can rewrite using right-recursion:
+
+S -> beta S'
+S' -> alpha S' | epsilon
+
+e.g.
+
+S -> B S' -> B A S' -> B A A S' -> ... -> B A ... A S' -> B A ... A
+
+-	So in general take one left-recursive production S and rewrite into right-recursive productions S and S'.
+-	But above is not the most general form of left-recursion, e.g.
+
+S -> A alpha | beta
+A -> S beta
+
+-	Above is also left-recursive.
+-	!!AI don't get it, can't do the quiz question. Look at EC later.
+-	Summary of recursive descent (general form not presented here)
+	-	simple and general parsing strategy.
+	-	left-recursion must first be eliminated, but can be automatically eliminated.
+	-	Used in gcc.
+
 ## Readings notes
 
 -	CPTT: Compilers: Principles, Techniques, and Tools
