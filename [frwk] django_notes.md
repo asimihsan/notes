@@ -63,6 +63,60 @@
 -	Always return `HttpResponseRedirect` after successful POST to prevent double submits if user hits back.
 -	Use generic views to avoid boilerplate for "get from DB -> render -> return" pattern. (ListView, DetailView)
 
+## Heroku notes
+
+-    Setting up on Heroku: https://devcenter.heroku.com/articles/django
+
+        heroku create
+        git push heroku master
+        heroku ps:scale web=1
+        
+        # check status
+        heroku ps
+        
+        # open browser
+        heroku open
+        
+        # check logs
+        heroku logs
+        
+        # restart
+        heroku ps:restart web
+        
+        # run one-offs, even interactive
+        heroku run python manage.py syncdb
+        heroku run python manager.py shell
+        
+-    Should use gunicorn
+    -    `pip install gunicorn`
+    -    Add 'gunicorn' to `INSTALLED_APPS`
+    -    Create a Profile with:
+    
+            web: gunicorn canihazmusic.wsgi -b 0.0.0.0:$PORT
+            
+    -    To run locally:
+    
+            foreman start
+            
+    -    To deploy, commit and push `Procfile`, `requirements.txt`, `settings.py`, then:
+        
+            git push heroku master
+
+-    Can set up celery background workers as well.
+-    If you want static files to work (you do):
+
+        PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+        
+        # this is the output dir where statics are collected
+        STATIC_ROOT = os.path.join(PROJECT_DIR, "staticfiles") 
+        
+        # this is the input
+        STATICFILES_DIRS = (os.path.join(PROJECT_DIR, "static"), )
+
+        # how to collect, heroku does this for you
+        ./manage.py collectstatic
+
+
 ## Using Django
 
 ### Models and databases
