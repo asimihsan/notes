@@ -455,11 +455,11 @@ $\{a_1 ... a_b | \forall_i a_i \in T\} ^ S \overrightarrow{*} a_1 ... a_n\}$
 E -> E' + E | E'
 E' -> id * E' | id | (E) * E' | (E)
 
-	-	Notice that E controls plus, E' controls multiplication.
-	-	Notice higher precedence towards bottom of parse tree.
-	-	E is a Kleene closure over plus, zero or more. Final E becomes E'.
-	-	E' is a Kleene closure over multiplication, zero or more. Final E' becomes id.
-	-	Notice we use (E), not (E'). We can put pluses in brackets.
+-	Notice that E controls plus, E' controls multiplication.
+-	Notice higher precedence towards bottom of parse tree.
+-	E is a Kleene closure over plus, zero or more. Final E becomes E'.
+-	E' is a Kleene closure over multiplication, zero or more. Final E' becomes id.
+-	Notice we use (E), not (E'). We can put pluses in brackets.
 
 -	How to match if/then/else
 
@@ -652,6 +652,8 @@ A -> S beta
 
 -	Above is also left-recursive.
 -	!!AI don't get it, can't do the quiz question. Look at EC later.
+    -    EC p100 is pretty good.
+    -    Quiz includes question about eliminating indirect left-recursion, so midterm will have it too.
 -	Summary of recursive descent (general form not presented here)
 	-	simple and general parsing strategy.
 	-	left-recursion must first be eliminated, but can be automatically eliminated.

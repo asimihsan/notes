@@ -403,7 +403,6 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 
 -	Ingredient networks - what goes with what?
 
-
 ### 5A - Small world experiments
 
 -	Small world phenomenon: Stanley Milgran's experiment.
@@ -601,6 +600,11 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 -	Modularity and community structure in networks
 
 -	Uncovering the overlapping community structure of complex networks in nature and society
+
+**Week 5**
+
+-    The Small-World Phenomenon (Ch 20 of Networks, Crowds, and Markets)
+    -    
 
 
 ## Assignment notes
