@@ -814,6 +814,12 @@ TOREAD from p97
 
 			-	The first is a regular grammar; just pairs of open parens.
 			-	The second is not a regular grammar; we're matching open parens with closing ones, hence we need to "count" how many open parens we have in order to close them.
-		-	When looking for left-recursive grammars make sure the left-most token in some chain is a non-terminal, not a terminal, for production (even the ORs).
+	-	When looking for left-recursive grammars make sure the left-most token in some chain is a non-terminal, not a terminal, for production (even the ORs).
+    -    For a CFG to encode operator precedence we need:
+        -    Addition associates to the left.
+        -    Multiplication binds more tightly than addition.
+    -    Context-free => grammar requires no memory. Same as regular language?
+    -    A NFA can determine parity, i.e. even or odd number of something, it can't count.
+	
 
 ## General notes
