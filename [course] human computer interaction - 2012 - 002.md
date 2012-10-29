@@ -352,7 +352,7 @@
 
 -	**Recognition over recall**
 	-	Avoid codes.  Else you'll see post-it notes for people trying to help remember them.
-	-	Lead with resonable defaults to avoid awkward intermediary steps.
+	-	Lead with reasonable defaults to avoid awkward intermediary steps.
 	-	Previews allow recognition and more efficient.
 -	**Flexibility and efficiency**
 	-	Shortcuts for experts.
@@ -471,7 +471,7 @@
 ### 5.4: Distributing Cognition (part 1 of 2)
 
 -	Think more fluidly by **distributing cognition** into artifacts of the world.
-	-	Encourage experimentation. (Tertris)
+	-	Encourage experimentation. (Tetris)
 	-	Scaffold learning, reduce errors through redundancy. (Montessouri blocks)
 	-	Show only differences that matter. (London Underground)
 	-	Convert slow calculation into fast perception. (Map colouring)
@@ -502,7 +502,7 @@
 	
 ### 5.5: Distributing Cognition (part 2 of 2)
 
--	**Informational Equivalnce != Computational Equivalence**
+-	**Informational Equivalence != Computational Equivalence**
 	-	Same content, but different representation, => different efficiency.
 	-	e.g. diagrams of geometrical proofs.
 -	GUI vs. command line.
