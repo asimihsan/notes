@@ -802,4 +802,16 @@ TOREAD from p97
 
 ## Assignment notes
 
+-	Quiz 2
+	-	Question 3
+		-	When does a grammar not produce a regular language?
+			-	Look for any notion of counting, which a NFA cannot do as it only has a finite number of states. Compare these two grammars:
+
+					A -> (A( | epsilon
+					A -> (A) | epsilon
+
+			-	The first is a regular grammar; just pairs of open parens.
+			-	The second is not a regular grammar; we're matching open parens with closing ones, hence we need to "count" how many open parens we have in order to close them.
+		-	When looking for left-recursive grammars make sure the left-most token in some chain is a non-terminal, not a terminal, for production (even the ORs).
+
 ## General notes
