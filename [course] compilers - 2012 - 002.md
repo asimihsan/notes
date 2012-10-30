@@ -659,6 +659,131 @@ A -> S beta
 	-	left-recursion must first be eliminated, but can be automatically eliminated.
 	-	Used in gcc.
 
+## 07-01: Predictive Parsing
+
+-	Like recursive descent but parser can predict what production to use.
+	-	By looking at next few tokens, no backtracking, always right.
+-	Accept LL(k) grammars.
+	-	First L: left-to-right scan.
+	-	Second L: left-most derivation.
+	-	k tokens of lookahead.
+		-	In practice k always 1.
+-	Review, in recursive descent:
+	-	At each step many choices of production.
+	-	Backtrack to undo bad choices.
+-	In LL(1)
+	-	Only one choice of production.
+-	Recall our favourite grammar:
+
+E -> T + E | T
+T -> int | int * T | ( E )
+
+-	Hard to predict:
+	-	For T two predictions start with int.
+	-	For E not clear how to predict, both start with T.
+-	Need to **left-factor** the grammar.
+	-	Eliminate the common prefixes of multiple productions for one non-terminal.
+
+E -> T X
+X -> + E | epsilon
+
+T -> int Y | ( E )
+Y -> * T | epsilon
+
+-	Use left-factored grammar to generate an LL(1) parsing table.
+	-	Rows: leftmost non-terminal, i.e. current non-terminal.
+	-	Columns: next input token.
+	-	Value: RHS of production to use.
+-	How to use the table:
+	-	For the leftmost non-terminal S.
+	-	Look at next input token a.
+	-	Choose production shown at [S, a].
+-	A stack records frontier of parse tree.
+	-	Non-terminals that have yet to be expanded.
+	-	Terminals that have yet to be matched against input.
+	-	Top of stack = leftmost pending terminal or non-terminal.
+-	Reject on error state.
+-	Accept on end of input and empty stack.
+-	Dollar sign ($) is special end-of-input symbol, put it on the end of the input and in the stack.
+
+``
+initialize stack = <S $> and next
+repeat
+	case stack of
+		<X, rest>:	if 	 T[X, *next] = Y_1 ... Y_n
+					then stack <- <Y_1 ... Y_n rest>;
+					else error();
+		<t, rest>:	if 	 t == *next++
+					then stack <- <rest>;
+					else error();
+until stack == < >
+``
+
+-	Note: after processing symbol X or t we pop it off the stack. In case of X after popping we push on its children such that first (leftmost) child is top of stack.
+-	When doing this take your LL(1) parse table and draw a new table with columns "stack", "input", "action". Stack starts as "S $", input is "input $".
+-	14:23: worked example.
+-	Quiz at the end is useful, but would like to see parse tree too. Worked example at 14:23 has this.
+
+## 07-02: First Sets
+
+-	Consider leftmost non-terminal A, production $A \to $\alpha$, next input token t.
+-	T[A, t] = $\alpha$ in two cases.
+-	If $\alpha \to* t \beta$.
+	-	alpha can derive t in the first position in zero or more moves.
+	-	We say that that $t \in First(\alpha)$.
+		-	t is one of the terminals that $\alpha$ can produce in the first position.
+-	If $A \to \alpha$ and $\alpha \to * \epsilon$ and $S \to * \Beta A t \delta$.
+	-	Useful if stack has A, input t, and *A cannot derive t*.
+	-	$\alpha$ cannot derive t. t is not in $First(\alpha)$.
+	-	Only option is to get rid of A by deriving $\epsilon$.
+	-	We say that $t \in Follow(A)$.
+	-	Must be a derivation where t comes immediately after A.
+-	Definition
+
+$First(X) = \{ t | X \to * t \alpha} \bigcup \{ \epsilon | X \to * \epsilon \}$
+
+-	All terminals t that can be derived by alpha in the first position.
+-	Also need to keep track of X deriving $\epsilon$.
+-	Trying to figure out all the terminals in the First set.
+
+1. $First(t) = \{ t \}$.
+
+2. $\epsilon \in First(X)$ if
+	-	$X \to \epsilon$, or
+	-	$X \to A_1 ... A_n$ and $\epsilon \in First(A_i)$ for $1 \leq i \leq n$.
+		-	The entire RHS must derive to $\epsilon$, all the A_i. All A_i must be non-terminal.
+
+3. $First(\alpha) \subseteq First(X)$ if $X \to A_1 ... A_n \alpha$.
+	-	and $\epsilon \in First(A_i)$ for $1 \leq i \leq n$.
+	-	All A_i goes to epsilon, i.e. X can go to alpha.
+
+-	Recall our favourite grammar, left-factored:
+
+E -> T X
+X -> + E | epsilon
+
+T -> ( E ) | int Y
+Y -> * T | epsilon
+
+First( + ) = { + }
+First( * ) = { * }
+First( ( ) = { ( }
+First( ) ) = { ) }
+First(int) = { int }
+
+$First(E) \subseteq First(T)$
+First(T) = { (, int}
+
+-	Can T go to epsilon? If it can then First(X) also in First(E).
+-	But no! T can't go to epsilon. So First(X) can never contribute to First(E).
+
+Hence:
+
+$First(E) = First(T)$.
+
+First(X) = { +, epsilon }
+First(Y) = { *, epsilon }
+
 ## Readings notes
 
 -	CPTT: Compilers: Principles, Techniques, and Tools
