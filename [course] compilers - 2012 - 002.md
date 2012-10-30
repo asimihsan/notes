@@ -784,7 +784,196 @@ $First(E) = First(T)$.
 First(X) = { +, epsilon }
 First(Y) = { *, epsilon }
 
-## Readings notes
+## 07-03: Follow sets
+
+-    First sets for what is produced, Follow sets for where the symbol is used.
+
+Follow(X) = { t | S ->* B X t d }
+
+$Follow(X) = \{ t | S \to * \Beta X t \delta\}$
+
+-    All t that immediately follow X in derivations.
+-    Intuition:
+    -    *If X -> A B then $First(B) \subseteq Follow(A)$.*
+        -    Suppose that X -> A B ->* A t beta, implies that anything in the First of B is in the Follow of A.
+    -    Also, *$Follow(X) \subseteq Follow(B)$.*
+        -    Suppose on S -> X t. -> A B t.
+        -    We say that the Follow of X is in the Follow of the last symbol, here B.
+    -    If B ->* epsilon, $Follow(X) \subseteq Follow(A)$.
+    -    If S is the start symbol then $ \in Follow(S). (end of input market).
+
+-    Algorithm
+    1.    $ \in Follow(S).
+    2.    First(beta) - { epsilon } \subseteq Follow(X)
+        -    For each production A -> alpha X beta.
+        -    epsilon never appears in Follow sets. Follow sets are always sets of terminals.
+    3.    Follow(A) \subseteq Follow(X).
+        -    For each production A -> alpha X beta where epsilon in First(beta).
+        
+-    Recall:
+
+E -> T X
+X -> + E | epsilon
+
+T -> ( E ) | int Y
+Y -> * T | epsilon
+
+Follow(E)
+-    = { $, … } (get this for free, always true)
+-    Close paren must be in Follow(E) because it's a terminal following E in first production of T.
+-    E is last symbol in X's first production, so Follow(X) in Follow(E).
+
+Follow(X)
+-    Last symbol in production of E, so Follow(E) in Follow(X).
+-    Hence Follow(X) = Follow(E).
+
+Now nothing else to learn about X or E, so Follow(E) is concluded, and hence Follow(X) is concluded.
+
+Follow(E) = Follow(X) = { $, ) }
+
+Follow(T):
+-    Recall that First(X) = { +, epsilon } (from previous lecture).
+-    First(X) \in Follow(T).
+-    Follow(T) = { + , …} (don't put epsilon there because epsilon never in Follow sets).
+-    As X can go to epsilon, it can disappear, so Follow(E) in Follow(T).
+-    Hence Follow(T) = { +, $, ), …}
+-    T is in rightmost spot of Y, so Follow(Y) in Follow(T).
+
+Follow(Y)
+-    Y appears in rightmost spot of T, so Follow(T) in Follow(Y).
+-    So Follow(T) = Follow(Y).
+
+And now we're done!
+
+Follow(T) = Follow(Y) = { +, $, ) }
+
+Now consider terminals:
+
+Follow('(')
+-    First(E) \in Follow( '(' ).
+-    From first lecture First(E) \in First(T), and T never goes to epsilon, hence First(E) = First(T).
+-    First(E) = First(T) = { (, int }
+-    Hence Follow('(') = { (, int }
+    -    Makes sense because only things that follow open paren is open paren and int.
+    
+Follow(')')
+-    Right end of T, so Follow(T) in Follow(')').
+-    Follow(T) = { +, $, ) }.
+-    Hence Follow(')') = { +, $, ) }.
+
+Follow('+')
+-    First(E) in Follow('+').
+-    First(E) = First(T) = { '(', int }
+-    Hence Follow('+') = { '(', int }
+-    If T went to epsilon we'd need to consider other rules, but it doesn't.
+
+Follow('\*')
+-    First(T) in Follow('\*')
+-    First(T) = { '(', int }
+-    Hence Follow('\*') = { '(', int }
+-    If T went to epsilon we'd need to consider other rules, but it doesn't.
+
+Follow(int)
+-    First(Y) in Follow(int).
+-    First(Y) = { '\*', epsilon }
+-    Hence Follow(int) = { '\*', … }
+-    But Y can go to epsilon!
+-    Hence int could be right end of T's second production.
+-    Hence Follow(T) in Follow(int)
+-    Hence Follow(int) = { '\*', '+', $, ')' }
+
+## 07-04: LL(1) Parsing Tables
+
+-    Construct a parsing table T for CFG G.
+-    For each production A -> \alpha in G do:
+    -    For each terminal t \in First(\alpha) do:
+        -    T[A, t] = \alpha.
+    -    If \epsilon \in First(\alpha), for each t \in Follow(A) do:
+        -    T[A, t] = \alpha.
+        -    If we need to get rid of A.
+    -    If \epsilon in First(\alpha) and $ \in Follow(A) do:
+        -    T[A, $] = \alpha.
+
+-    02:38: worked example, see paper. If it doesn't make sense watch again and work through.
+-    Blank entry in parsing table is parsing error.
+
+-    Consider:
+
+S -> Sa | b
+
+-    This is not an LL(1) grammar, it is left recursive.
+-    First(S) = {b}.
+-    Follow(s) = { $, a }
+-    Small LL(1) table (draw it out).
+-    Given non-terminal S and input b we have multiple moves: b and Sa.
+-    If you build an LL(1) parsing table and some entry has more than one move in it then the CFG G is not LL(1).
+
+-    Quick checks if grammar is not LL(1):
+    -    We know that any grammar that is not left-factored will not be LL(1).
+    -    Also not LL(1) is left recursive.
+    -    Also if ambiguous.
+-    However, other grammars are not LL(1) too.
+-    Most programming language CFGs are not LL(1).
+ 
+## 07-05: Bottom-Up Parsing
+
+-    Bottom-up parsing is more general than top-down parsing.
+    -    Just and efficient.
+    -    Builds on top-down parsing.
+    -    Preferred method.
+-    Don't need left-factored grammars.
+-    Revert to "natural" grammars.
+
+E -> T + E | T
+T -> int * T | int | ( E )
+
+-  *Reduces* a string to the start symbol by inverting productions.
+-    Consider:
+
+int * int + int
+
+-    Productions, read backwards, trace a rightmost derivation.
+-    We parse downwards in *reductions*.
+-    But read upwards it's a right-most derivation.
+
+-    **A bottom-up parser traces a rightmost derivation in reverse**.
+
+## 07-06:Shift-Reduce Parsing
+
+-    Let abw be a step of a bottom-up parse.
+-    Assume the next reduction is by X -> b (replace b by X, remember we run productions backwards).
+-    Then w is a string of terminals.
+-    Why?
+    -    aXw -> abw is a step in a right-most derivation. X must be the right-most non-terminal as we're operating on it. Hence w is a string of terminals.
+    
+-    Idea: Split string into substrings.
+    -   if aXw, w is unexamined input.
+    -    Left substring has terminals and non-terminals.
+    -    Pipe separates the two.
+    -    aX | w.
+    
+ -    Two kinds of moves, shift and reduce.
+ -    Shift:
+     -    Move pipe one place to the right.
+     -    ABC | xyz => ABCx | yz.
+-    Reduce:
+    -    Apply an inverse production at the right end of the left string.
+    -    If A -> xy is a production then:
+    -    Cbxy | ijk => CbA | ijk
+    
+05:00: Example of shift-reduce on int * int + int.
+
+-    Left-string can be implemented by a stack.
+    -    Top of stack is the pipe.
+    -    Shift pushes a terminal on the sack.
+-    Reduce:
+    -    pops symbols off of the stack (production RHS)
+    -    pushes a non-terminal on the stack (production LHS).
+    
+-    **Shift-reduce conflict**: if it is legal to shift or reduce. (Almost expected, use precedence declarations to remove).
+-    **Reduce-reduce conflict**: if it is legal to reduce by two different productions. (Bad!)
+
+Readings notes
 
 -	CPTT: Compilers: Principles, Techniques, and Tools
 -	EC: Engineering a Compiler
