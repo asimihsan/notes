@@ -936,9 +936,9 @@ int * int + int
 -    We parse downwards in *reductions*.
 -    But read upwards it's a right-most derivation.
 
--    **A bottom-up parser traces a rightmost derivation in reverse**.
+-    Important fact #1: **A bottom-up parser traces a rightmost derivation in reverse**.
 
-## 07-06:Shift-Reduce Parsing
+## 07-06: Shift-Reduce Parsing
 
 -    Let abw be a step of a bottom-up parse.
 -    Assume the next reduction is by X -> b (replace b by X, remember we run productions backwards).
@@ -972,6 +972,135 @@ int * int + int
     
 -    **Shift-reduce conflict**: if it is legal to shift or reduce. (Almost expected, use precedence declarations to remove).
 -    **Reduce-reduce conflict**: if it is legal to reduce by two different productions. (Bad!)
+
+## 08-01: Handles
+
+-	Review:
+	-	Shift: move pipe operator by one.
+	-	Reduce: apply inverse production to the right end of the left string.
+	-	Left string can be implemented by stack.
+		-	Top of the stack is the pipe.
+	-	Shift pushes terminal onto the stack.
+	-	Reduce:
+		-	pops >= 0 symbols off stack (production RHS)
+		-	pushes a non-terminal onto the stack (production LHS)
+-	How to decide when to shift or reduce?
+-	Example grammar:
+
+	E -> T + E | T
+	T -> int * T | int | ( E )
+
+-	Consider step:
+
+	int | * int + int
+
+-	Could try reduce T -> int.
+	-	Fatal mistake! Can't then reduce to start symbol E. No production that says "T *".
+-	Intution: only reduce if result can still be reduced to start symbol.
+-	Assume rightmost derivation:
+
+	S ->* aXw -> abw
+
+-	Remember we're going in reverse, reductions.
+-	ab is a **handle** of abw.
+-	A **handle** is a reduction that also allows further reductions back to the start symbol.
+-	Only reduce at handles.
+
+-	Important fact #2: **In shift-reduce parsing, handles appear only at the top of the stack, never inside.**
+	-	Informal proof by induction on number of reduce moves.
+	-	True initially, stack empty.
+	-	Immediately after reducing a handle:
+		-	We reduce to a non-terminal, handle on top of the stack, hence right-most non-terminal on top of the stack.
+		-	Next handle must be to right of right-most non-terminal, because this is a right-most derivation.
+		-	Sequence of shift moves reaches next handle.
+-	Handles never to the left of the rightmost non-terminal.
+	-	Shift-reduce moves sufficient; pipe never need move left.
+-	Bottom-up parsing algorithms based on recognizing handles.
+
+## 08-02: Recognizing Handles
+
+-	Bad news:
+	-	No known efficient algorithms.
+-	Good news:
+	-	Some good heuristics.
+	-	On some CFGs the heuristics always guess correctly.
+-	All CFGs $\subset$ Unambiguous CFGs $\subset$ LR(k) CFGs $\subset$ LALR(k) CFGs %\subset$ SLR(k) CFGs.
+	-	LR(k) means left-to-right, rightmost derivation, k lookahead.
+	-	SLR(k): simple left-to-right rightmost.
+-	$\alpha$ is a **viable prefix** if there is an $\omega$ such that $\alpha | \omega$ is a state of a shift-reduce parser.
+	-	alpha is the stack.
+	-	omega is the rest of the input.
+	-	Parser know about alpha.
+	-	Parser knows about a little of omega due to lookahead but certainly not all of it.
+-	What does this mean?
+	-	Viable prefix does not extend past right end of the handle.
+	-	It is a viable prefix because it is a prefix of the handle.
+	-	As long as the parser has viable prefixes on the stack no parsing error has been detected.
+-	Important fact #3 about bottom-up parsing: **For any grammar, the set of viable prefixes is a regular language**.
+-	Going to show how to compute automata to accept viable prefixes.
+-	An **item** is a production with a "." somewhere on the RHS.
+-	The items for T -> ( E ) are:
+
+	T -> .(E)
+	T -> (.E)
+	T -> (E.)
+	T -> (E).
+
+-	For X -> epsilon only X -> .
+-	Items are often called **LR(0) items**.
+-	Stack has only bits and pieces of the RHS of productions.
+	-	Bits and pieces always *prefixes* of RHS of productions.
+
+-	Consider:
+
+	E -> T + E | T
+	T -> int * T | int | ( E )
+
+-	and input:
+	
+	( int )
+
+-	Then `( E | )` is a state of a shift-reduce parse.
+-	`(E` is a prefix of the RHS of `T -> (E)`.
+	-	Will be reduces after next shift.
+-	Item `T -> (E.)` says that so far we have seen `(E` of this production and hope to see `)`.
+
+-	Stack is actually composed of prefixes of RHS's.
+
+	Prefix_1 Prefix_2 ... Prefix_n
+
+-	Let Prefix_i be prefix of RHS of X_i -> alpha_i.
+	-	Prefix_i eventually reduces to X_i.
+	-	Missing part of alpha_{i-1} starts with X_i.
+	-	i.e. there is a X_{i-1} -> Prefix_{i-1} X_i Beta for some Beta.
+-	Recursively, Prefix_{k+1} ... Prefix_n eventually reduces to the missing part of alpha_k.
+
+-	Favourite grammar with `(int * int)`.
+-	`(int * | int)` is a state of the shift-reduce parse.
+-	`(` is prefix of the RHS of `T -> (E)`.
+-	`epsilon` is prefix of RHS of `E -> T`.
+-	`int *` is prefix of the RHS of `T -> int * T`.
+
+-	The "stack of items" (bottom is the top of the stack):
+
+	T -> (.E)
+	E -> .T
+	T -> int * . T
+
+-	Says:
+	-	We've seen `(` of `T -> (E)`.
+	-	We've seen epsilon of `E -> T`.
+	-	We've seen `int *` of `T -> int * T`.
+	-	Notice each item's LHS becomes part of the RHS of the item below it on the stack.
+
+-	Idea, to recognize viable prefixes:
+	-	Recognize a sequence of partial RHS's of productions.
+		-	Each partial RHS can eventually reduce to part of the missing suffix of its predecessor.
+
+## 08-03: Recognizing Viable Prefixes
+
+-	
+
 
 Readings notes
 
