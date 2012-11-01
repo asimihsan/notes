@@ -800,7 +800,7 @@ $Follow(X) = \{ t | S \to * \Beta X t \delta\}$
         -    Suppose on S -> X t. -> A B t.
         -    We say that the Follow of X is in the Follow of the last symbol, here B.
     -    If B ->* epsilon, $Follow(X) \subseteq Follow(A)$.
-    -    If S is the start symbol then $ \in Follow(S). (end of input market).
+    -    If S is the start symbol then $ \in Follow(S). (end of input marker).
 
 -    Algorithm
     1.    $ \in Follow(S).
@@ -1269,6 +1269,126 @@ E -> .T+E
 -	Bottom of stack is `<any, start>`.
 	-	`any` is any dummy symbol.
 	-	`start` is the start state of the DFA.
+
+-	Define `goto[i, A] = j` if state_i ->A state_j.
+	-	goto is just the transition function of the DFA.
+		-	One of the two parsing tables (the other one is the action table).
+
+-	SLR parsing algorithm has four possible moves.
+	-	Shift x
+		-	Push `<a, x>` on the stack.
+		-	a is current input.
+		-	x is a DFA state.
+	-	Reduce $X \to \alpha$
+		-	As before.
+	-	Accept.
+	-	Error.	
+
+-	For each state s_i and terminal a
+
+	-	If s_i has item $X \to \alpha . a \beta$ and `goto[i, a] = j` then `action[i, a] = shift j`.
+		-	State is s_i, next input is a.
+		-	goto for state_i with input a is state j.
+		-	Hence action on state i with input a is shift j; it's OK to shift.
+
+	-	If s_i has item $X \to \alpha .$ and $a \in Follow(A)$ and $X \neq S'$ then `action[i, a] = reduce $X \to \alpha$`.
+		-	S' is special new start symbol; don't do this if we're reducing to S'.
+
+	-	If s_i has item $S' \to S .$ then `action[i, $] = accept`.
+
+	-	Otherwise, `action[i, a] = error`.
+
+-	Full algorithm
+
+``
+Let I = w$ be initial input
+Let j = 0
+Let DFA state 1 have item S' -> .S
+Let stack = < dummy, 1>
+repeat
+	case action[top_state(stack), I[j]] of
+		shift k: push <I[j++], k>
+		reduce X -> A:
+			pop |A| pairs,
+			push <X, goto[top_state(stack), X]>
+		accept: halt normally
+		error: halt and report error
+``
+
+-	I is input array, indexed by j
+-	Say first DFA state is 1.
+-	pop |A| pairs mean pop number of pairs equal to A (?)
+
+-	Note that we only use DFA staes and the input.
+	-	We don't use stack symbols!
+-	We still need the symbols for semantic actions.
+
+-	Some common constructs are not SLR(1)
+-	LR(1) is more powerful.
+	-	Lookahed built into the items.
+	-	LR(1) item is a pair: LR(0) item, and x lookahead.
+	-	[T -> . int * T, $ ] means
+		-	After seeing T -> int * T reduce if lookahead sees $.
+	-	More accurate than just using follow sets.
+	-	Actual parser will show you LALR(1) automaton.
+
+## 08-08: SLR Examples
+
+``
+S -> Sa
+S -> b
+``
+
+-	Is `b a*`
+-	Left-recursive, but not a problem for LR(k) parsers.
+-	First step: add new production:
+
+``
+S' -> S
+S -> Sa
+S -> b
+``
+
+-	Rather than build NFA and then using subset construction let's just build the DFA.
+-	Start DFA state:
+
+``
+S' -> .S
+``
+
+-	Remember all NFA epsilon moves are due to not seeing a non-terminal on a stack but rather something that derives a non-terminal.
+	-	epsilon moves to all the productions of S.
+	-	We know subset production performs an epsilon closure of the start state of NFA to get the start states of DFA.
+	-	Hence we know all the items in the start state of DFA:
+
+``
+S' -> .S
+S -> .Sa
+S -> .b
+``
+
+-	What symbols may we see on the stack?
+	-	b
+		- Next state is `S -> b`.
+	-	S
+		-	Next state has two items.
+			-	`S' -> S.` (complete, dot all the way on the right)
+			-	`S -> S.a` (not complete)
+-	Last state `S -> Sa.` on input a.
+-	Look for shift-reduce conflicts and reduce-reduce conflicts.
+	-	Any two items that reduce on same start symbol?
+	-	Any ambiguity between needing to shift and needing to reduce on an input? Remember Follow(X) rule.
+-	Key state that may contain problems is:
+
+``
+S' -> S.
+S -> S.a
+``
+
+-	On input a we may either reduce to S' or shift.
+-	Will only reduce if a is in Follow(S').
+-	Follow(S') = { $ }.
+	-	Nothing can follow it, because it is the start symbol. (!!AI really?)
 
 !!AI TOWATCH
 
