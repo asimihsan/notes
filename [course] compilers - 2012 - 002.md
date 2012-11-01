@@ -1099,7 +1099,178 @@ int * int + int
 
 ## 08-03: Recognizing Viable Prefixes
 
--	
+-	Algorithm.
+	-	Should watch the video as explanation.
+
+1.	Add a dummy production S' -> S to G.
+2.	The NFA states are the items of G
+	-	Including the extra production.
+	-	Remember that we claim that the set of viable prefixes is a regular language, so can recognise using NFA.
+	-	NFA(stack) = { yes, no } (viable prefix or not).
+3.	For item E -> a.Xb ($E \to \alpha . X \beta$) add transition.
+	-	E -> aXb ->X E -> aXb
+	-	Seen alpha on the stack.
+4.	For item E -> a.Xb and production X -> y add
+	-	E -> a.Xb ->e X -> .y
+	-	(epsilon move).
+	-	We only have partial RHS's of productions.
+	-	It's possible that we see alpha but then see something that will *eventually* reduce to X.
+5.	Every state is an accepting state.
+6.	Start state is S' -> .S
+
+S' -> E
+E -> T + E | T
+T -> int * T | int | (E)
+
+-	Draw start state.
+
+S' -> .E
+
+-	See E on the stack, so draw ->E to:
+
+S' -> E.
+
+-	This is the state if you've read the entire input and finished parsing.
+-	Then draw an epsilon move from S' -> .E to:
+
+E -> .T
+
+-	Then draw an epsilon move from S' -> .E to:
+
+E -> .T+E
+
+-	Notice this is using the power of an NFA, and not even left factored.
+-	E -> .T ->T E -> T.
+-	When the dot reaches all the way to the right-hand side we say that we've recognised a handle.
+
+-	If we don't see a T then need to see something that reduces to T.
+	-	E -> .T ->e -> T -> .int
+	-	E -> .T ->e -> T -> .(E)
+	-	E -> .T ->e -> T -> .int * T
+
+-	For terminals nothing reduces to them, so you need to see the terminal in order to shift the dot.
+
+## 08-04: Valid items
+
+-	Can convert viable prefix NFA to DFA. !!AI watch lecture 04-04 again.
+-	The states of the DFA are **canonical collections of LR(0) items**.
+	-	The Dragon book gives another way of constructor LR(0) items.
+-	Item X -> b.y is **valid** for viable prefix ab if:
+
+	S' ->* aXw > abyw
+
+	(by a right-most derivation)
+
+-	After parsing ab, the valid items are the possible tops of the stack of items (?).
+
+-	An item I is valid for a viable prefix a if the DFA recognizing viable prefixes terminates on input a in a state s containing I.
+-	The items in s describe what the top of the item stack might be after reading input a.
+
+-	An item is often valid for many prefixes.
+-	e.g. item T -> (.E) is valid for prefixes:
+
+		(
+		((
+		(((
+		((((
+		...
+
+## 08-05: SLR Parsing
+
+-	Define very weak bottom-up parsing algorithm called LR(0) parsing.
+-	Assume:
+	-	stack contains $\alpha$.
+	-	Next input is t.
+	-	DFA on input $\alpha$ terminates in state s.
+-	Reduce by $X \to \beta$ if:
+	-	s contains item $X \to \beta .$
+-	Shift if:
+	-	s contains item $X \to \beta . t \omega$
+	-	Equivalent to saying s has transition labelled t.
+
+-	LR(0) has a reduce/reduce conflict if:
+	-	Any state has two reduce items, i.e.
+	-	$X \to \beta .$ and $Y \to \omega .$
+-	LR(0) has a shift/reduce conflict if:
+	-	Any state has a reduce item and a shift item, i.e.
+	-	$X \to \beta .$ and $Y \to \omega . t \delta$.
+
+-	Example of DFA state with shift-reduce conflict:
+
+		E -> T.
+		E -> T. + E
+
+-	First suggest reduce, second suggest shift, if the input is '+'.
+
+-	SLR = "Simple LR".
+-	SLR improves on LR(0) shift/reduce heuristics.
+	-	Fewer states have conflicts.
+-	Same assumptions as LR(0).
+-	Reduce by $X \to \beta$ if:
+	-	s contains item $X \to beta .$
+	-	**new** $t \in Follow(X)$.
+		-	(if t can't follow X it doesn't make sense to perform this reduction).
+-	Shift if:
+	-	s contains item $X \to \beta . t \omega$.
+-	If there are any conflicts under these rules, the grammar is not SLR.
+
+-	Take another look at shift-reduce conflict under LR(0):
+
+		E -> T.
+		E -> T. + E
+
+-	Will only reduce on input '+' if '+' in Follow(E).
+-	Follow(E) = { $, ')' }
+
+-	Lots of grammar aren't SLR.
+	-	including all ambiguous grammars.
+-	We can parse more grammars by using precedence declarations.
+
+-	Our favourite ambiguous grammar:
+
+		E -> E + E | E * E | (E) | int
+
+-	The DFA for the viable prefixes for this grammar contains a state with the following items, hence shift/reduce conflict:
+
+		E -> E * E .
+		E -> E . + E
+
+-	Declaring "\* has a higher precedence than \+" resolves this conflict in favour of reducing.
+-	These declaration don't define precedence; they define conflict resolutions.
+
+-	SLR parsing algorithm.
+	1.	Let M be DFA for viable prefixes of G.
+	2.	Let `| x_1 ,... x_n $` be the initial configuration.
+	3.	Repeat until configuration is `S | $`.
+		-	Let `$\alpha | $\omega$` be current configuration.
+		-	Run M on current stack $\alpha$.
+		-	If M rejects $\alpha$, report parsing error.
+			-	Stack $\alpha$ is not a viable prefix.
+			-	Rule not needed, rejection below prevents bad stacks.
+		-	If M accepts $\alpha$ with items I, let a be next input.
+			-	Shift if `X -> b . a y` in I.
+			-	Reduce if `X -> b .` in I and a in Follow(X).
+			-	Report parsing error if neither applies.
+
+## 08-06: SLR Parsing Example
+
+-	!!AI just watch it!
+-	Columns: Configuration, DFA Halt State, Action
+
+##	08-07: SLR Improvements
+
+-	Rerunning the viable prefixes automaton on the stack at each step is wasteful.
+	-	Most of work is repeated.
+-	Remember the state of the automaton on each prefix of the stack.
+-	Change stack to contain pairs:
+
+		< Symbol, DFA State >
+
+-	Bottom of stack is `<any, start>`.
+	-	`any` is any dummy symbol.
+	-	`start` is the start state of the DFA.
+
+!!AI TOWATCH
 
 
 Readings notes
