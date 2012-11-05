@@ -517,6 +517,155 @@
 	-	Ed Hutchings, Cognition in the Wild
 	-	Herbert Simon, Sciences of the Artificial
 
+### 6.1: Visual Design
+
+-	**Whitespace conveys grouping.**
+	-	"Some space must be narrow so that others may be wide. Some space must be empty so that other space may be filled."
+-	**Use size contrasts to indicate hierarchy**.
+	-	"Information consists of differences that make a difference."
+-	**Vary scale and weight**.
+-	Three goals for visual design
+	-	*Guide*. Convey structure, relative importance, relationships.
+	-	*Pace*: Draw people in, orient, provide hooks to dive deep.
+	-	*Message*: express meaning and style, breath life into content.
+-	Blur each page; is hierarchy still clear?
+-	Three basic tools of visual design:
+	-	*Typography*.
+	-	*Layout*.
+	-	*Color*.
+-	A minute to learn, a lifetime to master.
+-	Readings:
+	-	Jennefier Tidwell's Designing Interfaces
+
+### 6.2: Typography
+
+-	Gill Sans, upper-case R.
+	-	Perceptual uniformity, as opposed to actual uniformity. It looks uniform, but isn't.
+-	Elements
+	-	*Point size*.
+		-	Implies maximum height, some fonts are less.
+	-	*Leading*.
+		-	Line spacing.
+		-	Pronounced like periodic element; used to use lead to lay out lines.
+		-	Default 20% of point size.
+	-	*x-height*
+		-	Higher => easier to read at lower point sizes and lower resolutions.
+			-	e.g. Lucida Bright.
+		-	Lower => elegance
+			-	e.g. Baskerville.
+	-	*ascenders* and *descenders*
+		-	How far above x-height do letters extend.
+		-	Typically low x-height => bigger ascenders and descenders.
+	-	*weight*
+		-	e.g. light, regular, bold.
+	-	*serifs*
+		-	Flourishes on ends of letters.
+	-	*small caps*
+		-	Sometimes useful for e.g. fitting in numbers with letters.
+		-	By definition no ascenders and descenders.
+-	"Which typeface should I use?"
+	-	Hypothesis: serif more legible for body, sans-serif for headers. 
+	-	No robust evidence for serif hypothesis.
+	-	"Legibility is simply what you're used to" - Gill.
+	-	Top-half of letters contain more information than bottom half.
+	-	Expection plays an important role.
+	-	For book, common font with large x-height.
+	-	For logo, funkier font.
+-	Experiment with different font faces for same text.
+-	Look around you.
+-	Readings:
+	-	Robert Bringhurt, The Elements of Typographic Style
+	-	Jennifer Tidwell, Designing Interfaces
+	-	Edward Tufte, Envisioning Information
+	-	Robin Williams, The Non-Designer's Design Book
+	-	Gary Hustwit, Helvetica
+
+### 6.3: Grids and Alignment
+
+-	Bauhaus Revolution
+	-	Revolution in use of sans-serif typefaces and grids in the 1920's.
+-	**Grid**: set of invisible lines that elements snap 
+to.
+	-	Set of columns.
+	-	Set of **gutters**: spacing between columns.
+	-	Horizontally aligned using **baselines**.
+	-	Add text hierarchically.
+	-	Different elements can punch across columns, more dynamic.
+	-	Focus plus context; make newer items at top bigger.
+	-	Set of columns could be staggered.
+	-	When creating templates, design for the longest text block.
+-	**Alignment**
+	-	In general, left-aligned text is faster to skim for languages read left-to-right.
+	-	*Avoid slight misalignments*: undermine ability to beacon organization.
+	-	*Deviate from patterns strategically* to draw attention.
+	-	*Use visual proximity and scale* to convey semantic information.
+-	*Right-alignment*
+	-	For forms can right-align labels then left-align controls. Easier to determine what to fill out.
+-	*Heading / subheading*
+	-	Put subheading smaller and more gray scale to draw attention to heading.
+-	**Color**
+	-	Pay attention to it.
+	-	Design in grayscale first.
+	-	Keep luminance values from grayscale when moving to color. i.e. black -> gray -> white scale.
+	-	All things equal, less colour is more effective.
+-	Make space, guide the eye.
+-	Readings:
+	-	Kevin Mullet and Darrel Sano, Designing Visual Interfaces.
+	-	Luke Wroblewski, Web Form Design.
+	-	Jan Tschichold, The New Typography.
+
+### 6.4: Reading and Navigating
+
+-	Informavores! People forage and devour information.
+-	Information scent
+	-	Can people figure out how to get the information they want?
+	-	Do they realize what options are available?
+-	How do you detect poor scent?
+	-	Flailing.
+	-	Low confidence.
+		-	Right track before and after clicking links.
+		-	Before => high scent.
+		-	After => information beacons intent.
+	-	Back button.
+-	Low scent pages exhibit e.g.:
+	-	Surprising information architecture.
+	-	Short links ("Transact"?)
+	-	Hidden navigation, require mouseover to discover.
+	-	Icons add little additional information.
+-	When do icons help?
+	-	Facilitate repeat recognition. Reminds you, aids recall.
+	-	When you know what it looks like, but not what it's called. e.g. file extention => application.
+	-	Redundant coding; recall based on either text or icon. Associative learning (icon => text, text => icon).
+-	Improving scent:
+	-	Lengthen links, multi-word.
+	-	Specific, recognizable terms. Not clever terms.
+	-	Also improves accessibility.
+-	**Speaking block navigation**
+	-	Add multiple different words, perhaps in subheadings, to navigation.
+
+-	Location of information matters.
+	-	The Poynter Institute, Eye Track study.
+	-	Top-left is priority 1.
+	-	Secondary ring around top-left, priority 2.
+	-	Further is priority 3.
+
+-	People happy to scroll if there is a scent that implies a reward.
+	-	Put great content in the top fold.
+	-	Put indications that content continues if you scroll.
+
+-	People don't read. Nielsen, 1997.
+-	Interlaced browsing. Multiple tasks at once.
+-	Writing strategies, Nielsen 1997.
+	-	Text more concise.
+	-	Text more scannable using subheadings, bullet lists, paragraphs.
+	-	Text more objective, less market-ese.
+	-	All are effective.
+
+-	Readings
+	-	User Interface Engineering, Designing for the Scent of Information.
+	-	Peter Pirolli, Information Foraging Theory.
+	-	Jakob Nielsen, Alertbox.
+
 #### Readings:
 
 -	3.1 and assignment 2, Prototyping
