@@ -515,7 +515,7 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 -	Assign properties to nodes (spatial location, group membership)
 -	Add or rewire links according to some rule
 	-	Simulated annealing, optimize for property.
-	-	Add links iwth probability, e.g. preferential attachment
+	-	Add links with probability, e.g. preferential attachment
 	-	Simulate nodes as agents making decisions.
 -	What to optimize for?
 	-	E = lambda * L - (1 - lambda) * W // energy, want to minimize
@@ -524,6 +524,30 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 	-	Want small number of hops and short distances.
 -	Source: Small worlds: How and Why, Mathias et. al.
 -	Idea is that can generate small world networks based on different constaints (navigation, group affiliation).
+
+### 6A: Network topology and diffusion
+
+-	How network structure affects diffusion.
+-	Complex contagion thresholds; not enough for only one neighbour to affect you.
+-	ER networks:
+	-	Higher density in ER network => faster diffusion.
+-	Scale-free, those that grow.
+	-	With preferential attachment more hubs so diffusion faster.
+-	Small world networks
+	-	Recall: high clustering yet short average shortest path.
+	-	In ring-lattice model of small-world networks rewiring gives us the short ASP.
+	-	Hence as probability of rewiring increases the rate of diffusion increases.
+	-	Even with a recovery rate greater than infection rate the rewiring allows a model that should die out to survive.
+
+### 6B: Complex contagion
+
+-	Complex contagion is less able to use shortcuts because such shortcuts are typically a single edge, whereas we need > 1 to exceed a threshold.
+-	Network coordination.
+	-	Want to maximize your payoff.
+	-	Given `(p)` fraction play basketball, you get `a` payoff for basketball.
+	-	Given `(1-p)` fraction play football, you get `b` payoff for football.
+
+!!AI TOWATCH
 
 #### Readings:
 
