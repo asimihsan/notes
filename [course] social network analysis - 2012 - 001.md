@@ -544,10 +544,26 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 -	Complex contagion is less able to use shortcuts because such shortcuts are typically a single edge, whereas we need > 1 to exceed a threshold.
 -	Network coordination.
 	-	Want to maximize your payoff.
-	-	Given `(p)` fraction play basketball, you get `a` payoff for basketball.
-	-	Given `(1-p)` fraction play football, you get `b` payoff for football.
+	-	Given `(p)` fraction play basketball, you get `a` payoff per friend for basketball.
+	-	Given `(1-p)` fraction play football, you get `b` payoff per friend for football.
+	-	If your friends don't play what you're playing you get no payoff.
+	-	`d` neighbors.
+	-	If chooses A, payoff = `p * d * a`
+	-	If chooses B, payoff = `(1-p) * d * b`.
+	-	So you should choose A if: `p d a >= (1-p) d b`.
+	-	Or: `p >= b / (a + b)`.
+-	In contagion networks one node changing color / preference can cause a cascade.
+-	Implications for viral marketing - what small subset of nodes to choose to target for influence?
+-	Community structure:
+	-	Enable ideas to spread in the precense of thresholds; the dense intra-community ties allow this.
+	-	Create isolated pockets impervious to outside ideas; the sparse inter-communiy ties allow this.
+	-	Allow different opinions to take hold in different parts of the network, see the previous point.
+-	What if you are bi-colour / bi-preference (i.e. both simultaneously), but with a cost `c`?
+	-	e.g. being bilingual may mean you're average at both, not expert at one.
+	-	Being bilingual reduces the incentive of others to choose between the two preferences, even if one is better or lower cost. Simply because bilingual nodes all the choice to be avoided.
+-	Nodes need to coordinate across a network but have limited horizons.
+	-	Want x neighbours to be a colour / preference.
 
-!!AI TOWATCH
 
 #### Readings:
 
