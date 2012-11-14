@@ -563,9 +563,145 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 	-	Being bilingual reduces the incentive of others to choose between the two preferences, even if one is better or lower cost. Simply because bilingual nodes all the choice to be avoided.
 -	Nodes need to coordinate across a network but have limited horizons.
 	-	Want x neighbours to be a colour / preference.
+	
+### 6C: Innovation in Networks
 
+-    Innovate or imitate?
+    -    Brainstorming: more minds, but groupthink.
+    -    Isolation: independence, slower.
+-    Kauffman's NK model.
+    -    N dimensional problem space, N bits (0 or 1)
+    -    K describes the smoothness of fitness of landscape.
+    -    How similar is fitness of sequences with only 1-2 bits flipped (K=0 => no similarity, K=large => smooth fitness).
+    -    K large => single maxima, smooth.
+    -    K small => very noisy, many maxima.
+    -    K medium => in between.
+    -    Node starts with random bit string.
+    -    Each iteration if neighbour has better solution then imiate by copynig, else innovate by flipping a bit.
+-    If you start with a ring lattice, increasing probability of random edges causes much faster convergence at a worse solution.
+    -    There is a sweet spot, single maxima parabola, some intermediate p.
 
-#### Readings:
+### 7A: Cool and unusual applications
+
+-    Watch other fun videos! !!AI TOWATCH
+-    Laszlo Barbasi on the diseasome (http://youtu.be/10oQMHadGos)
+-    Cesar Hidalgo on economic development (http://www.youtube.com/watch?v=GRp382ynu-Q)
+-    YY Ahn on flavor network (http://www.santafe.edu/research/videos/play/?id=26c05e3e-0955-45ac-8c17-20315e576af7)
+
+### 7B: Predicting recipe ratings using ingredient networks
+
+-    Is a recipe good? Can you tweak it?
+-    allrecipes.com, 46k recipes, 1.9 million reviews.
+-    Cooking methods, ingredients (combination and suggested modifications in comments).
+-    Undirected weighted edges. Weighted using **pointwise mutual information**.
+    -    PMI = log( P(a,b) / P(a)P(b) ).
+    -    P(a,b) = (no. recipes containing a and b) / (no. recipes).
+    -    P(a) (no. recipes containing a) / (no. recipes)
+    -    P(b) = (no. recipes containing b) / (no. recipes).
+-    Compare recipe rating to PMI of its ingredient pairs.
+-    4 star rating have the most suggestions for modifications (almost right!).
+-    High recipe frequency => low deletion/recipe
+-    High recipe frequency => low additon/recipe.
+-    High recipe frequency => low increase/recipe.
+-    Substitution network
+    -    Replace 'a' with 'b'.
+    -    Nodes: ingredients.
+    -    Edge weights: p(b | a). Proportion of substitutions of ingredient a that suggests ingredent b.
+-    Substitutions network and users' preferences.
+    -    Create edge from ingredient a to b if rating(a) < rating(b).
+    -    Only for recipes with sufficient overlap in ingredients (just one or two different ingredients).
+-    Test prediction of ratings from ingredients.
+-    Use *gradient boosting tree*.
+-    Recipes encode our collective cooking knowledge.
+
+### 8A: Network resilience
+
+-    **Node percoluation**: lose nodes.
+-    **Edge percolation**: edges disappear.
+-    Resilience of random vs. preferential growth network.
+-    Targeted attacks (e.g. edges with high betweenness).
+-    In a network with average degree = 4.64, if you remove 25% of edges giant component stays the same before new average degree ~ 3, well above percolation threshold of 1.
+-    Node removal and site percolation
+    -    Fill each square with probability p, then fill with liquid.
+    -    Low p => small island.
+    -    p critical => giant component forms, occupying finite fraction of infinite lattice.
+    -    p above critical value => giant component occupies an increasingly larger portion of the graph.
+-    On node and edge percolation of proportion p, how is size of giant component affected?
+-    On targeted node percolation of high centrality nodes (e.g. degree), how in comparison is size of giant component affected?
+-    In e.g. scale-free networks targeting nodes much more effective.
+-    Also, what is effect on average path length?
+    -    For scale-free, targeting => more impactful on average path length.
+    -    For ER graphs, targeting => no more impactful.
+    
+### 8B: Resilience and assortativity
+
+-    **Assortativity**: like connect with like.
+-    e.g. degree disassortative => hubs in periphery. Scale-free.
+-    **Correlation profiles**
+    -    Compare number of edges between nodes with connectivities k_0 and k_1 between a graph and a properly randomized network.
+    -    Three-degree plot, where third degree is color heat map.
+-    **Average degree of neighbors**
+    -    Plot degree of node vs. average degree of neighbors.
+    -    e.g. on internet negative trend (high node degree => low average degree of node's neighbors).
+    -    another useful way of comparing graphs, to e.g. small-world or random models.
+    -    Another 2D plot.
+-    For a single number, take *Pearson correlation coefficient of nodes on each side of an edge*.
+    -    cor(deg(i), deg(j)) for all edges {ij}.
+    -    Internet is negative, so yes diassortive, but sometimes the correlation profile gives more useful information.
+    -    One number is useful.
+-    Assortative => more resilient. Disassortative => more hubs => less resilient.
+
+### 8C: Resilience and the power grid
+
+-    Internet, terrorist, crimial networks. Is it that simple to damage them?
+-    Of course not; dynamism.
+-    Power grid.
+    -    As electricity flows simultaneously in all available paths failure affects everyone else.
+    -    Each node has a *load* and *capacity*.
+    -    When node removed its load is redistribted to remaining nodes.
+    -    If load of node exceeds capacity then node fails.
+-    Nodes: generators, substations.
+-    Edges: high-voltage transmission lines.
+-    Degree distribution is exponential.
+-    Efficiency of path is 0 if no electricity flows on path, 1 if transmission lines are perfect.
+-    Harmonic composition for path:
+
+e_path = [ sum_edges (1/e_edge) ] ^ -1
+
+-    e.g. path A, 2 edges, each e=0.5, e_path = 1/4.
+-    e.g. path B, 3 edges, each e=0.5, e_path = 1/6.
+-    e.g. path C, 2 edges, e=0 and e=1, e_path=0.
+-    Assume electricity flows along most efficient path.
+-    Efficiency of network is average of most efficient paths from each generator to each distribution center.
+
+E = 1/(N_G N_D) * sum epsilon_ij for all paths ij.
+
+epsilon_ij is efficiency of the most efficient path between i and j.
+
+-    Assume capacity of each node is proportional to its initial load.
+
+C_i = alpha * L_i(0), i = 1, 2, …, N.
+
+-    L represents weighted betweenness of a node.
+-    alpha is overload tolerance.
+-    Failed nodes put extra load onto neighbors.
+-    Overload capacity of 30% higher than initial load is sufficient for network's efficiency to remain roughly the same on loss of most connected node or two.
+-    Power companies have no incentive to provide extra load, extra costs.
+-    But research shows that just 30% extra is needed, not that high.
+
+### 8D: Concluding remarks
+
+-    "Introduction to Networks" by Mark Newman, a tomb.
+    -    How to determine giant component size from degree distribution.
+    -    Statistical look at clustering, is clustering different from random.
+-    Matthew Jackson, "Social and Economic Networks"
+    -    Strategically, if nodes are self-interested, how will network get wired?
+    -    Prisoner's dilemma on networks.
+-    Barbassi, "Network Science"
+    -    Still being written.
+    -    For beginner's.
+
+# Readings:
 
 -	Week 1
 	-	Network Science - Chapter 1
