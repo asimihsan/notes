@@ -1062,7 +1062,7 @@ int * int + int
 
 -	Then `( E | )` is a state of a shift-reduce parse.
 -	`(E` is a prefix of the RHS of `T -> (E)`.
-	-	Will be reduces after next shift.
+	-	Will be reduced after next shift.
 -	Item `T -> (E.)` says that so far we have seen `(E` of this production and hope to see `)`.
 
 -	Stack is actually composed of prefixes of RHS's.
@@ -1072,7 +1072,7 @@ int * int + int
 -	Let Prefix_i be prefix of RHS of X_i -> alpha_i.
 	-	Prefix_i eventually reduces to X_i.
 	-	Missing part of alpha_{i-1} starts with X_i.
-	-	i.e. there is a X_{i-1} -> Prefix_{i-1} X_i Beta for some Beta.
+	-	i.e. there is a X\_{i-1} -> Prefix\_{i-1} X_i Beta for some Beta.
 -	Recursively, Prefix_{k+1} ... Prefix_n eventually reduces to the missing part of alpha_k.
 
 -	Favourite grammar with `(int * int)`.
@@ -1108,10 +1108,12 @@ int * int + int
 	-	Remember that we claim that the set of viable prefixes is a regular language, so can recognise using NFA.
 	-	NFA(stack) = { yes, no } (viable prefix or not).
 3.	For item E -> a.Xb ($E \to \alpha . X \beta$) add transition.
-	-	E -> aXb ->X E -> aXb
-	-	Seen alpha on the stack.
+	-	E -> a.Xb ->X E -> aX.b
+	-	Seen alpha on the stack, next input terminal or non-terminal.
+	-   Shift.
 4.	For item E -> a.Xb and production X -> y add
 	-	E -> a.Xb ->e X -> .y
+	-   Seen alpha, next input is non-terminal.
 	-	(epsilon move).
 	-	We only have partial RHS's of productions.
 	-	It's possible that we see alpha but then see something that will *eventually* reduce to X.
@@ -1388,9 +1390,8 @@ S -> S.a
 -	On input a we may either reduce to S' or shift.
 -	Will only reduce if a is in Follow(S').
 -	Follow(S') = { $ }.
-	-	Nothing can follow it, because it is the start symbol. (!!AI really?)
-
-!!AI TOWATCH
+	-	Nothing can follow it, because it is the start symbol.
+-    Dot all the way on the right => reduction.
 
 
 Readings notes
