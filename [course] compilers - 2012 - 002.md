@@ -1393,6 +1393,137 @@ S -> S.a
 	-	Nothing can follow it, because it is the start symbol.
 -    Dot all the way on the right => reduction.
 
+## 09-01: Introduction to Semantic Analysis
+
+-   Lexical analysis: detects inputs with illegal tokens.
+-   Parsing: detects inputs with ill-formed parse tres.
+-   Sematic analysis: catch rest of errors, the last front-end phase.
+-   Some language constructs are not context-free, parsing can't catch it.
+    -   Just like in lexing some things can't be caught by finite automaton.
+
+## 09-02: Scope
+
+-   Matching identifier declaration with uses.
+-   **Scope of identifier**: portion of program in which identifier is accessible.
+-   Different scopes for same name don't overlap, only one meaning for identifier.
+-   Identifier may have restricted scope.
+-   **Static scope**: scope only depends on program text.
+-   **Dynamic scope**: scope also depends on execution.
+-   A dynamically-scoped variable refers to closest enclosing binding in execution of program.
+-   e.g.
+
+    g(y) = let a <- 4 in f(3); 
+    f(x) = a;
+
+-   What is `a`? Is 4 because of dynamic scope.
+
+## 09-03: Symbol tables
+
+-   Much of semantic analysis is recursive descent of an AST.
+    -   Before: process AST node n.
+    -   Recurse: process children of n.
+    -   After: finish processing AST node n.
+-   e.g. scope of let bindings is one subtree of AST.
+
+    let x: Int <- 0 in e
+
+-   x is in subtree for e.
+-   Idea:
+    -   Before processing e: add definition of x to current definitions, overriding any previous definition of x.
+    -   Recurse.
+    -   After processing e: remove and restore definition of x.
+-   **Symbol table**: tracks current bindings of identifiers.
+-   Could use a stack for the symbol table.
+    -   This handles variable hiding.
+    -   But can't catch multiple definitions in the single scope of a function declaration, e.g.
+
+    f(x: Int, x: Int) { }
+
+-   Fancier symbol table:
+    -   `enter_scope()`: start a new nested scope.
+    -   `find_symbol(x)`: find current x, or null
+    -   `add_symbol(x)`: add symbol x to table
+    -   `check_scope(x)`: true of x defined in current scope.
+    -   `exit_scope()`: exit current scope.
+-   A stack of scopes.
+
+-   Class names can be used before being defined.
+-   Hence need two passes.
+    -   Pass 1: gather all class names.
+    -   Pass 2: do the checking.
+-   Semantic analysis requires multiple passes, probably more than two.
+
+## 09-04: Types
+
+-   Set of values, set of operations on those values.
+-   e.g. int, can +, -, leq, geq.
+-   Classes are one instantiation of the modern notion of type.
+-   Certain operations are legal for values of each type.
+    -   But at the assembly level e.g. adding two integers is always valid, even if e.g. one is int, other is pointer to pointer.
+    -   Language's type system *specifies which operations are valid for which types*.
+
+-   Statically typed: during compilation (C, Java, Cool)
+-   Dynamically typed: during execution (Scheme, Lisp, Python)
+-   No typing: assembly.
+
+-   **Type checking**: fully built AST, verfiying types.
+-   **Type inference**: filling in missing type information.
+-   Two are different, but often used interchangeably.
+
+## 09-05: Type Checking
+
+-   So far seen two example of formal notation:
+    -   Regular expressions
+    -   Context-free grammars.
+-   For type checking formalism is logical rules of inference.
+-   If Hypothesis is true, then Conclusion is true.
+-   Building blocks:
+    -   `^` is "and"
+    -   `=>` is "if-then"
+    -   `x:T` is "x has type T".
+
+e.g.
+
+    If e_1 has type Int, and e_2 has type int, then e_1 + e_2 has type Int.
+
+    (e_1 has type Int ^ e_2 has type Int) => e_1 + e_2 has type Int
+
+    (e_1: Int ^ e_2: Int) => e_1 + e_2: Int
+
+-   Traditionally inference rules are written:
+
+```
+    |- Hypothesis ... |- Hypothesis
+    -------------------------------
+            |- Conclusion
+```
+
+-   `|-` means "it is provable that..." (turnstile).
+
+e.g.
+
+```
+    i is an integer literal     [int]
+    -----------------------
+        |- i : int
+
+
+    |- e_1: Int  |- e_2: Int    [Add]
+    ------------------------
+    |- e_1 + e_2: Int
+
+```
+
+-   A type system is **sound** if:
+    -   Whenever `|- e:T`, when executed e evaluates to a value of type T.
+    -   We only want sound rules.
+    -   But some sound rules are better than others! Need to be as specific as possible.
+
+-   Type checking proves facts e:T.
+    -   Proof is on structure of AST.
+    -   Proof has shape of AST.
+    -   One type rule used per AST node.
+-   Types are computed in a bottom-up pass over AST.
 
 Readings notes
 
