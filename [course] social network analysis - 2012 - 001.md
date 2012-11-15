@@ -780,7 +780,40 @@ C_i = alpha * L_i(0), i = 1, 2, …, N.
 **Week 5**
 
 -    The Small-World Phenomenon (Ch 20 of Networks, Crowds, and Markets)
-    -    
+    -    !!AI TOREAD
+
+**Week 7**
+
+-	The human disease network (Goh et. al)
+	-	(This is an excellent paper, good basis for how to explore a bipartite network).
+	-	**locus heterogeneity**: genetic disorders that arise from mutations in more than one single gene.
+	-	**allelic heterogeneity**: different mutations in the same gene giving rise to phenotypes currently classified as different disorders.
+	-	Should be able to do better than single-gene-single-disorder approach.
+	-	Link all genetic disorders ("disease phenome") with complete list of disease genes ("disease genome").
+	-	"diseasome".
+
+	-	bipartite graph of two disjoint sets of nodes: genetic disorders and genes.
+	-	edge if mutations in that gene are implicated in that disorder.
+	-	with this diseasome bipartite graph generate two biologically relevant network projections:
+		-	"human disease network". nodes are disorders, connected with they share at least one gene.
+		-	"disease gene network". nodes are disease genes, connected if they are associated with same disorder.
+
+	-	large giant component. => genetic origins of most disases are shared with other diseases.
+	-	degree distribution => disorders only connected to a few other diseases.
+	-	large cancer cluster tightly interconnected due to many genes associated with multiple types of cancer.
+	-	Others diseases under-represented in giant component, do not form a single distinct cluster.
+
+-	The Product Space Conditions the Development of Nations
+	-	Imagine a product is a tree, set of products a forest.
+	-	Firms are monkeys jumping tree to tree.
+	-	Traditional growth theory assumes all trees equally within reach.
+	-	However, if forest is heterogenous, with some dense areas and some sparse areas, monkeys may be unable to easily move through some parts of the forest.
+	-	Distance between trees could be:
+		-	intensity of labor, land, capital.
+		-	level of technological sophistication,
+		-	inputs and outputs involved in product's value chain.
+		-	requisite institutions.
+	-	Rather than make a-priori distance assumptions, instead assume that co-produced goods are related. "proximity".
 
 
 ## Assignment notes
