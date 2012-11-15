@@ -666,6 +666,175 @@ to.
 	-	Peter Pirolli, Information Foraging Theory.
 	-	Jakob Nielsen, Alertbox.
 
+### 7.1: Design Studies You Can Learn From
+
+-   Wrong: "Do you like my interface?"
+-   Wrong: "How much do you like my interface?"
+-   Please the experimenter bias, particularly with cultures with power differentials.
+-   Developers are still valuable testers.
+-   Need *specific measures* and *concrete questions*.
+-   **Baserates**: How often does Y occur? Measure Y.
+    -   What fraction of people click on this link?
+-   **Correlations**: Do X and Y co-vary? Measure X and Y.
+    -   e.g. if people click on first search result, does that mean it's a good search result or that they just click on the first thing they see?
+    -   Might need to randomise search results to determine causality.
+-   **Causes**: Does X cause Y?
+    -   Measure X and Y, and manipulate X.
+    -   Somehow also account for effects of other confounding variables.
+
+-   **Independent variables**: what we manipulate. Don't depend on users. 
+-   **Dependent variables**: what user does. e.g. task completion time, accuracy, recall, emotional response.
+-   **Internal validity**: how reliable? If you ran experiment again would you see the same results?
+-   **External validity**: generalizability. Do your results matter?
+
+-   Is my cool new approach better than the industry standard?
+-   Example - the user study of phone users, half physical QWERTY half physical numeric, using iPhones. They suck at it.
+    -   Manipulation: input style.
+    -   Measure: words per minute.
+    -   Benefit of study: absolutely want to measure if new technology is viable.
+    -   Drawback of study: beginners will always be poor at new technology. What happens when they become experts?
+    -   External validity: not so much.
+    -   A better version: actual users.
+    -   No surprise, users get much better and is about the same speed as physical QWERTY. However, iPhone users make more errors.
+
+-   Strategies for fairer comparisons
+    -   Insert your new approach into the production setting.
+        -   Even if no access to live server could use client-side scripting or proxy servers.
+    -   Recreate the production approach in your new setting.
+    -   Scale things down so you're just looking at a piece of a larger system.
+    -   When expertise is relevant, trains people up.
+
+-   Is interface X better than interface Y?
+    -   It depends.
+    -   More importantly, what does it depend on? What is measured, settings and context.
+
+### 7.2: Assign Participants to Conditions
+
+-   Should every participant use every alternative?
+
+-   e.g. which is a better vacuum cleaner, automatic or traditional?
+    -   What are the measures?
+        -   Faster?
+        -   Cleaner?
+        -   Fatigue?
+        -   ...
+    -   Manipulation: vacuum type.
+    -   Measures: speed and type (focus on two).
+    -   **Between subjects design**: assign half subjects to two different measures.
+        -   But with small smaple sizes difficult to tell if results are real.
+    -   **Within subjects design**: everyone uses all measures, both interfaces.
+        -   But what order to try them in? e.g. after trying manual vacuum cleaner you're tired.
+    -   **Counter-balancing**: within subjects design with randomly assigned order.
+        -   Hopefully ordering effects balance out.
+        -   Also try to vary location for first and second trials, possible confounding variable.
+
+-   How about individual differences? Shirt colour, shape of face?
+    -   If you think it has an impact then control for it.
+    -   Random assignment is usually best.
+
+-   What about three or more alternatives?
+    -   **Latin square**. Randomly assign such that in each trial each option is chosen once, and for each participant they try all three options.
+
+-   The importance of random assignment.
+    -   e.g. typing in morning rather than afternoon. Which is faster?
+    -   If people come in as they wish and morning is faster that could just be because they're morning people.
+    -   Hence randomly assign to time blocks.
+
+-   **Hawthorne effect**
+    -   Manipulation: lighting levels in factory.
+    -   Measures: productivity.
+    -   Every manipulation increased productivity.
+    -   Conclusion: someone intervening skewed results.
+    -   Results are disputed.
+
+-   **Counterbalanced assignment**
+    -   Identify potential confounding variables and assign participants accordingly.
+    -   e.g. if typing speed could affect interface usage, use pre-test to identify typing speed, then assign evenly across conditions.
+-   **Offline counterbalancing**
+    -   Pre-test to measure confounding variable, e.g. typing speed.
+    -   Sort by variable.
+    -   For each pair in list flip a coin and choose one of the pair. Heads goes to first condition, tails to second.
+-   **Online counterbalancing**
+    -   If you can't pre-test pick some threshold that's likely to be in the middle.
+-   Pre-test-like counter-balancing trying to make law of large numbers happen faster
+
+-   Danger: regression to the mean.
+    -   With small sample sizes law of large numbers doesn't have a chance to kick in.
+    -   Results just oscillating around mean.
+    -   Pre-test counterbalancing addresses this danger.
+
+-   Three major strategies.
+    -   **Within-subjects**. Everyone tries all options. Good when not worried about learning / practice / exposure issues.
+    -   **Between-participants**: each person tries one. Needs more people, more attention to fair assignment. Benefit: each participant is uncorrupted.
+        -   Most common.
+    -   Use **counterbalancing** to minimize variation in a between-subjects design.
+
+-   Further reading
+    -   David Martin, "Doing Psychology Experiments"
+
+### 7.3: In person experiments
+
+-   Can talk to people, see what they're doing and their confusion.
+-   Higher bandwidth.
+
+-   **Make clear goals**. e.g. for online booking system.
+    -  **Scope**: what we're focusing on.
+    -   **Purpose**: what you hope to learn.
+    -   **Hypothesis**: what you want to test, should be testable.
+    -   **Schedule and location**: choose appropriately. Quiet room? Train station?
+    -   **Participants**: what type of people and how many?
+    -   **Scenarios**: what you want users to try to accomplish. They must be able to care about this.
+    -   **Questions to ask**.
+    -   **Data to be collected**. e.g. task completion, error rate.
+    -   **Experimenter roles**. Try to have at least two people, one facilitator and one note taker.
+
+-   e.g. for online booking system:
+    -   Scope: make meeting room booking system.
+    -   Purpose: create system that encourage people to book right sized room for right duration.
+    -   Hypothesis: splitting up booking process encourages more thought and works better.
+
+-   **Create concrete tasks**. Write them down.
+-   **Ethical considerations**.
+    -   Make consent voluntary. Don't pressure people to participate.
+    -   Remind people: you're testing the site, not them.
+
+-   **Experimental details**.
+    -   *Order of tasks*? Easy to hard? Random?
+    -   *Training*? Ticket machine vs. surgical machine.
+    -   *Do not finish*? Upper bounds for time, small stumbling blocks => nudge them.
+    -   *Pilot study*: work out kinks in experiment itself.
+        -   Recommend having two pilot studies. One with colleague to figure out material needed and tasks. A second with one real user.
+
+-   **Capturing results**.
+    -   At least a notebook or a computer.
+    -   Maybe record video.
+    -   Screen recording.
+
+-   **Think-aloud method**.
+    -   Need to know what users are thinking, not just doing.
+    -   Ask users while they're performing tasks:
+        -   What they are thinking
+        -   What they are trying to do.
+        -   What questions they have.
+        -   What they read.
+    -   Prompt users to keep talking. "Tell me what you are thinking". Avoid specific questions.
+    -   Only help on things you've pre-decided to, write this down.
+    -   Record with watch and notes.
+
+-   Study steps.
+-   Greeting participants - explain study, show setup.
+-   Collecting data.
+    -   Process data, observations, more qualitative.
+    -   Bottom-line data.
+        -   Summaries of time, did they succeed, number of errors. Quantitative.
+        -   i.e. dependent variables.
+    -   Define errors or what success means ahead of time.
+    -   Do not combine thinking aloud with bottom-line data.
+        -   Talking can affect speed and accuracy.
+-   Debrief them at the end.
+    -   Get their holistic last impressions.
+    -   Tell them what they've contributed to. 
+
 #### Readings:
 
 -	3.1 and assignment 2, Prototyping
