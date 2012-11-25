@@ -1,4 +1,4 @@
-z# Social Network Analysis - 2012 - 001
+# Social Network Analysis - 2012 - 001
 
 (via Coursera)
 
@@ -159,14 +159,14 @@ z# Social Network Analysis - 2012 - 001
 	-	Nodes added over time.
 	-	Compared to ER:
 		-	More nodes with degree 1, as there are more younger nodes.
-		-	No more closed triads, because of yound nodes.
+		-	No more closed triads, because of young nodes.
 		-	Smaller giant component.
 		
 ### 2C: Models of network growth
 
 -	In real networks degree distribution is highly skewed.
 	-	Question/answer forums, sexual contact.
--	The Poisson distribution of Erdos-Renyi has very fey high degree nodes.
+-	The Poisson distribution of Erdos-Renyi has very few high degree nodes.
 -	The Power Law of real networks have log(n) high degree nodes.
 	- p(k) (probability of degree k) = C * k ^ (-alpha).
 	- C is constant such that probabilities of all k sum to 1.
@@ -555,12 +555,12 @@ delta is 1 if in same community, using any metric you want, 0 if not.
 -	In contagion networks one node changing color / preference can cause a cascade.
 -	Implications for viral marketing - what small subset of nodes to choose to target for influence?
 -	Community structure:
-	-	Enable ideas to spread in the precense of thresholds; the dense intra-community ties allow this.
+	-	Enable ideas to spread in the presence of thresholds; the dense intra-community ties allow this.
 	-	Create isolated pockets impervious to outside ideas; the sparse inter-communiy ties allow this.
 	-	Allow different opinions to take hold in different parts of the network, see the previous point.
 -	What if you are bi-colour / bi-preference (i.e. both simultaneously), but with a cost `c`?
 	-	e.g. being bilingual may mean you're average at both, not expert at one.
-	-	Being bilingual reduces the incentive of others to choose between the two preferences, even if one is better or lower cost. Simply because bilingual nodes all the choice to be avoided.
+	-	Being bilingual reduces the incentive of others to choose between the two preferences, even if one is better or lower cost. Simply because bilingual nodes allow the choice to be avoided.
 -	Nodes need to coordinate across a network but have limited horizons.
 	-	Want x neighbours to be a colour / preference.
 	
