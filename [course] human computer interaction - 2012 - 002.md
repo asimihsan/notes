@@ -835,6 +835,110 @@ to.
     -   Get their holistic last impressions.
     -   Tell them what they've contributed to. 
 
+### 7.4a: Running Web Experiments (1)
+
+-    A/B testing.
+    -    A: old version, B: potential new version
+    -    Generalisable to multiple tests, randomly assign.
+    -    Collect metrics on specific goals; click throughs, sales, etc.
+-    Web makes it easy to prototype and rapidly try new designs.
+-    Why did multiple columns reduce sales by half for National Alert Registry?
+    -    For sales maybe want one clear funnel of activity, not ambiguous options.
+-    Small differences make big changes, e.g.
+    -    Position and color of primary call to action.
+    -    Position of testimonials.
+    -    White space?
+    -    What is linked?
+    -    Number of columns? Number of different elements?
+-    Metrics for email shots, number of:
+    -    Opened, click throughs, forwards.
+-    Obama sign up campaign.
+    -    Button text: "sign up", "learn more", "sign up now", "join us now".
+    -    Videos worse than images.
+    -    Small changes, big differences.
+    -    Our expectations are often wrong.
+
+### 7.4b: Running web experiments (2)
+
+-    Be clear what you want from users, e.g. not "I'm on Twitter" but "You should follow me on Twitter here".
+-    *Even small changes have detectable differences.*
+-    Beware confounding factors; weekend, daylight savings switch.
+-    Randomness helps imply causality rather than correlation.
+-    "Expedia on how one extra data field can cost $12m".
+    -    Just added their company name.
+-    Microsoft feedback.
+    -    After stars rating revealing text box 50% better than statically showing text box.
+    -    Fewer buttons in feedback form increases feedback by factor of 3.5.
+-    **Commitment escalation**: get user to do a little bit, and then a little bit more. Better than asking for a lot up front.
+    -    Subtle, requires fine tuning.
+    -    Hence needs iterative design and experimentation.
+
+### 7.4c: Running web experiments (3)
+
+-    Principles for Effective Online Experiments.
+-    Equal probability in each variant *in the long run*.
+    -    Ramp up. Start experiment at 0.1%. Helps prevent disasters.
+    -    Automatically abort bad experiments.
+-    Don't just run experiments on dependent variables that are easy to measure. Run experiments on variables that matter.
+-    Run changes for long enough to allow them to become familiar with it.
+-    Rules for random assignment:
+    -    **Consistent**. Same person sees same variant on each login.
+        -    Else users will perceive interface to be random.
+    -    **Durable**. 
+    -    **Independent**. Make sure assignment is truly random, not dependent on e.g. day of the week.
+-    Even with data theorising why the changes matter is still hard.
+-    Use multiple methods to help build theories, e.g. web experiements, in-person studies.
+-    Design in the online age
+    -    Rather than one great design, now many alternatives.
+    -    Rapid experimentation, helps quickly test assumptions.
+
+### 6.5: Comparing rates
+
+-    Three questions
+    1.    **What does my data look like?**
+        -    Visualisations, summaries, plot.
+    2.    **What are the overall numbers?*8
+        -    Aggregate statistics, mean and standard deviations.
+    3.    **Are the differences "real"?**
+        -    Significace, p values.
+        -    Likelihood results are due to chance.
+-    **Test statistic**, how unexpected is result.
+-    **Pearson's Chi-Squared Test**.
+    -    Compare observed to expected, taking into account number of trials.
+    
+            chi^2 = (observed - expected) ^ 2 / expected
+    
+    -    "Normal" outcome variance, Gaussian.
+        -    p = 0.05 means observation in the tails.
+    -    **The Null Hypothesis**: opening assumption is "we don't think there is any difference between observation and expection".
+    -    Critical Values for Chi-Squared. p value vs. chi^2 value. Bigger chi^2 => smaller p. 
+-    **Degrees of freedom**: (number of choices - 1).
+-    Statistical testing:
+    -    Formalizes "we're pretty sure".
+    -    Helps generalize (or not) from small samples.
+-    Guiness beer.
+    -    Student's t-test created for testing quality of stout. 
+    -    If testing consumed all beer then not cost-effective!
+    -    Also, statisticians find math more difficult after drinking a lot of beer.
+-    For continuous data:
+    -    T-tests (compare 2 conditions)
+    -    ANOVA (compare >2 conditions).
+    -    Both for normally distributed data.
+-    Data often isn't "normal"
+    -    Bi-modal, two maxima.
+    -    Skewed, e.g. response rates as time.
+-    Handling non-normal data:
+    -    Knowing is half the battle.
+    -    A/A test. Split users in half and expose to same variant. Any significance?
+    -    Use randomized testing. Repeated simulations to model data. Not covered.
+-    *Graph all the data!*
+-    *Use statistical testing.*
+-    Further reading
+    -    Practical Statistics for HCI, Jacob Wobbrock, http://depts.washington.edu/aimgroup/proj/ps4hci
+    -    Doing Psychology Experiments, David W. Martin
+    -    Statistics as Principles Argument, Robert P. Abelson
+    -    Learnign to use statistical tests in psychology, Judith Greene, Manuela D'Oliveira.
+
 #### Readings:
 
 -	3.1 and assignment 2, Prototyping
