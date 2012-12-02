@@ -30,7 +30,7 @@
 
 -	Different methods achieve different goals.
 -	Iteratively bring people into your office and watch them (usability studies).
-	-	Setting isn't valid, but can stil learn lessons.
+	-	Setting isn't valid, but can still learn lessons.
 	-	Experimental bias; users try harder, be nicer.
 	-	Psychological burden to bring someone to you.
 -	Surveys
@@ -514,7 +514,7 @@
 -	Dialog boxes should be action oriented and guide users to likely next step. Provide them with necessary information.
 -	Further reading:
 	-	Don Norman, Things that Make Us Smart
-	-	Ed Hutchings, Cognition in the Wild
+	-	Edwin Hutchins, Cognition in the Wild
 	-	Herbert Simon, Sciences of the Artificial
 
 ### 6.1: Visual Design
@@ -936,8 +936,8 @@ to.
 -    Further reading
     -    Practical Statistics for HCI, Jacob Wobbrock, http://depts.washington.edu/aimgroup/proj/ps4hci
     -    Doing Psychology Experiments, David W. Martin
-    -    Statistics as Principles Argument, Robert P. Abelson
-    -    Learnign to use statistical tests in psychology, Judith Greene, Manuela D'Oliveira.
+    -    Statistics as Principled Argument, Robert P. Abelson
+    -    Learning to use statistical tests in psychology, Judith Greene, Manuela D'Oliveira.
 
 #### Readings:
 
