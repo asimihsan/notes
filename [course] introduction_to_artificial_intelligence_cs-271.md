@@ -83,6 +83,7 @@ Via Udacity (CS-271)
 ## 2.3: Problem Solving: Example Route Finding
 
 -    **Frontier**: outer edge of explored state space.
+	-	First layer outside of explored space.
 -    **Unexplored**: unencountered state space.
 -    **Explored**: encountered routes.
 
@@ -103,7 +104,11 @@ Via Udacity (CS-271)
                 for a in actions:
                     add [path + a -> Result(s, a)] to frontier
                     
+-	Note that we only check if we're at the goal for explored points, not points on the frontier.
+	-	Hence when you first encounter a node you cannot just finish.
+-	TreeSearch very general, differentiated by `remove_choice`. How do we decide what part of the frontier to explore next?
 -    **Breath-first search**, aka **Shortest-first search**.
+	-	Guaranteed to find path with fewest steps.
 -    Tree searches don't notice that they're back tracking.
     -    All paths are valid, even if we've gone over them before.
     -    Tree search superimposes a tree on top of the state space.
@@ -131,3 +136,63 @@ Via Udacity (CS-271)
 -    BFS will find shortest path in terms of steps, not cost of path.
 
 -    **Uniform-cost search**, aka **Cheapest-first search**.
+	-	Guaranteed to find cheapest path, where edges have costs.
+	-	If there are two paths to the same node we drop the more expensive one.
+		-	!!AI what if they're the same cost? Probably don't drop.
+
+-	**Depth-first search**, aka opposite of breadth-first search.
+	-	Always expand the longest path first.
+
+## 2.19: Search Comparison
+
+### Optimal
+
+-	Which search is **optimal**, i.e. guaranteed to find the shortest path?
+-	BFS is optimal for a balanced binary tree.
+	-	It will always expand level-by-level.
+	-	Guaranteed to encounter shortest path first.
+-	UCS is optimal for a balanced binary tree.
+	-	Assume all individual step costs are non-negative.
+	-	Guaranteed to encounter cheapest path.
+-	DFS is not optimal for a balanced binary tree.
+	-	As it expands longest-path first it may encounter a goal which is longer than the shortest path.
+
+-	So why use DFS it if it isn't optimal?
+	-	Consider a very large, or infinite, state space.
+	-	Assume at level `n`. How many nodes are in the frontier, i.e. what are we tracking?
+	-	BFS will have 2^n nodes.
+	-	UCS will have ~2^n nodes.
+	-	DFS will have n nodes. Cheap!
+	-	This assumes we're not keeping track of the explored space. If we are, don't have this saving.
+
+### Completeness
+
+-	**Completeness**: if there is a solution in an infinite state space will the algorithm find it?
+-	BFS is complete.
+	-	Even if infinite state space we'll find it.
+-	UCS is complete.
+	-	Only complete if:
+		-	Each action has a non-zero cost separate from the path cost.
+		-	No node has an infinite number of successors.
+	-	Imagine a path with costs sum: 1 + 1/2 + 1/4 + 1/8 + 1/16 + ...
+		-	This sums to 2. (1 / 1 - 0.5)
+		-	If there is another path which is the shortest path of cost > 2 UCS is incomplete.
+		-	There must be some non-zero action cost to prevent an infinite geometric cost path affecting us.
+-	DFS is not complete.
+	-	An infinite path that DFS follows will always be followed, because it follows the longest path.
+
+## 2.22: More on Uniform Cost.
+
+-	Looks like a contour map.
+-	On average explore half the space before we encounter a goal.
+-	We explore outwards, with no particular direction.
+-	If we want to explore faster we need to add knowledge.
+-	Can add an *estimate of the distance between the start state and the goal*.
+
+-	**Greedy best-first search** (GBFS)
+	-	Expand first the frontier node that is closest to the goal, i.e. the smallest estimate.
+	-	Rather than circular contours for UCS, looks like elliptical contours.
+	-	Still a risk that, if there's an obstacle, it will consider overly long paths.
+	-	Ideally we want UCS and when we encounter an obstacle we want UCS.
+
+## 2.23: A\* Search
