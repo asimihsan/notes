@@ -193,6 +193,138 @@ Via Udacity (CS-271)
 	-	Expand first the frontier node that is closest to the goal, i.e. the smallest estimate.
 	-	Rather than circular contours for UCS, looks like elliptical contours.
 	-	Still a risk that, if there's an obstacle, it will consider overly long paths.
-	-	Ideally we want UCS and when we encounter an obstacle we want UCS.
+	-	Ideally we want GBFS and when we encounter an obstacle we want UCS.
 
 ## 2.23: A\* Search
+
+-    Always expand path with minimum `f`:
+
+        f = g + h
+        
+        g(path) = path cost
+        
+        h(path) = h(state) = estimated distance to goal
+        
+-    Minimizing `g` keeps path short.
+-    Minimizing `h` keeps focus on goal.
+-    A\* aka *best estimated total path cost first*.
+-    Applying to our Romania map example, define `h` as straight line distance to goal.
+
+-    A\* finds the lowest cost path if
+
+        h(s) < true cost
+        
+-    i.e. `h` must never overestimate
+-    i.e. `h` is **optimistic**.
+-    i.e. `h` is admissable.
+-    Why does optimistic h find lowest-cost path?
+    -    At goal with path p of cost c is actual cost, because h is 0.
+    -    When at goal all other paths on frontier are more expensive, because we explore to minimize f.
+    -    h is optimistic, so estimated cost is less than true cost for all frontier paths.
+    -    Hence path p must have smaller cost than the true cost of all other paths on frontier.
+    -    Because step cost is 0 or more then path p is also smaller than paths beyond frontier.
+-    General intuition holds for graph search too.
+
+## 2.30: State Spaces
+
+-    Robot vacuum cleaner.
+-    Two positions, that may or may not have dirt in it.
+-    8 states.
+    -    2 dirt states in place A
+    -    2 dirt states in place B
+    -    2 robot positions
+
+-    Robot power switch is on, off, or sleep.
+-    Robot has camera which can be on or off.
+-    Robot has brush with five height levels.
+-    Now 10 positions.
+-    10 positions x 3 powers x 2 camera x 5 brushes x 2^10 dirt states = 307200 states.
+-    All variables independent, cross product.
+
+-    Draw out a giant FSM, full of all states and actions.
+-    Could possibly say "Given this state what is the most efficient way to clean up the environment?"
+    -    Literally a shortest path problem through the giant FSM from a start state to an end state.
+
+## 2.34: Sliding Blocks Puzzle
+
+-    4 by 4 grid of number, one number empty, sliding around into order.
+-    What heuristic to use?
+-    h_1 = number of misplaced blocks.
+-    h_2 = sum(distances of blocks)
+    -    distance = shortest number of moves a block would have to move in order to get into place.
+-    Both are admissble heuristics; both are optimistic.
+-    Both notice that h_2 is always >= h_1
+    -    Hence A\* using h_2 always expands fewer paths than h_1, with the exception of breaking ties.
+
+-    But surely providing a heuristic function is the hard part. Not a very intelligent agent if we need to give it intelligence.
+-    Can we derive a good heuristic from a problem description?
+-    **Generating a relaxed problem**.
+    -    Imagine a giant FSM state space.
+    -    We're adding new connections between states that were previously invalid. Only makes the problem easier.
+-    What is the problem?
+    -    A block can move A -> B if (A adjacent to B) and (B is blank).
+    -    If we remove the second condition…
+    -    A block can move A -> B if (A adjacent to B)
+        -    This is h_2.
+    -    If we remove the first condition…
+    -    A block can move A -> B if (B is blank).
+        -    This is h_1.
+-    Hence, can generate candidate heuristics.
+-    Additional heuristics comes from maximum of combinations:
+
+        h = max(h_1, h_2)
+        
+-    The combination is still optimistic, and we want to maximize the value of heuristics to minimize A\* paths.
+    -    There is a computational cost to calculating this combination heuristic.
+    
+## 2.37: Problems with Search
+
+-    Problem solving works when
+    -    Domain must be *fully observable*.
+    -    Domain must be *known*. Must know set of available actions.
+    -    Domain must be *discrete*, finite set of actions.
+    -    Domain must be *deterministic*, must know the results of our actions.
+    -    Domain must be *static*, nothing else can change the world except our actions.
+    
+## 2.38: A Note on Implementation
+
+-    class Node
+    -    state: state at end of path.
+    -    action: action it took to get there.
+    -    cost: total cost.
+    -    parent: pointer to another node.
+-    Linked list of Nodes representing a path.
+-    Frontier and explored lists both have Nodes.
+-    Frontier:
+    -    Removing best item, in some measure.
+    -    Adding in new ones.
+        -    Suggests need a priority queue.
+    -    But also need membership test, i.e. is item already in Frontier.
+        -    Suggests need a set.
+    -    Most efficient implementations have both a priority queue and a set.
+-    Explored
+    -    Add new members, check for membership.
+    -    Represent as a single set; hash table or tree.
+    
+## Problem 1.1: Peg Solitaire
+
+-    Fully observable.
+-    Deterministic.
+-    Discrete.
+-    Benign (not adversarial).
+
+## Problem 1.2: Loaded Coin
+
+-    Partially observable.
+    -    Because it is useful to have memory.    
+-    Stochastic.
+    -    You're flipping a coin.
+-    Discrete.
+-    Benign.
+
+## Problem 1.3: Maze
+
+-    Fully observable.
+-    Deterministic.
+-    Discrete, finite number of paths.
+-    Benign.
