@@ -310,3 +310,21 @@ else:
 -    Learn to test creatively.
 -    Don't ignore weird stuff.
 -    Fun! Profit!
+
+#### Problem Set 1: Blackbox testing buggy Queues
+
+-    Lessons learned.
+    1.    Test maximums and minimums of interfaces.
+        -    If can have a Queue of size x, what about x = 2 ** 16?
+        -    If can hold any integer, what about holding 2 ** 32?
+    2.    Methods that should be idempotent might not be.
+        -    queue.empty() actually dequeues!
+        -    Write tests that check that query methods are idempotent.
+    3.    Test interfaces strictly.
+        -    What do they promise to return when?
+        -    False != None.
+    4.    Test asssumptions.
+        -    If a queue claims to have a size, how do you know? Fill it up then dequeue everything!
+
+
+
