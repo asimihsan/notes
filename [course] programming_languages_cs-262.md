@@ -129,6 +129,122 @@
         
 -    Regular expressions can "sing" "ABC 123" and "BINGO", but _not_ "99 bottles of beer on the wall".
     -    Can't count!
+    
+### 1.29: Representing a FSM
+
+-    "Tracing with a finger" is basically what computers do to evaluate FSMs!
+    -    Where you are in the input.
+    -    What state you are in.
+-    Python dictionaries to represent edges.
+
+        edges[(1, 'a')] = 2
+        
+-    edges[(state, input)] = next_state
+-    also need to know accepting states
+
+        accepting = [3]
+        
+-    don't need a list of states! already encoded in `edges`.
+
+### 1.30: FSM simulator
+
+        edges = {(1, 'a') : 2,
+                 (2, 'a') : 2,
+                 (2, '1') : 3,
+                 (3, '1') : 3}
+        
+        accepting = [3]
+        
+        def fsmsim(string, current, edges, accepting):
+            if len(string) == 0:
+                return current in accepting
+            letter = string[0]
+            next_state = edges.get((current, letter), None)
+            if next_state is None:
+                return False
+            return fsmsim(string[1:], next_state, edges, accepting)
+
+### 1.31: FSM Interpretation
+
+-    What are `edges` and `accepting` for `q*`?
+-    Start state is `1`.
+
+        edges = {(1, 'q'): 1}        
+        accepting = [1]
+        
+### 1:32: More FSM Encoding
+
+-    What are `edges` and `accepting` for RE:
+
+        r"[a-b][c-d]?"
+
+        edges = {(1, 'a'): 2,
+                 (1, 'b'): 2,
+                 (2, 'c'): 3,
+                 (2, 'd'): 3}
+        
+        accepting = [2, 3]
+
+### 1.34: Epsilon and Ambiguity
+
+-    An FSM is **ambiguous** if it has epsilon transitions or has multiple outgoing edges leaving the same state with the same label.
+-    FSM accepts a string s if *there exists even one path* from the start state to *any accepting state*.
+    -    FSMs are generous.
+    -    But this doesn't help us.
+
+### 1.35: Phone It In.
+
+-    Recognize phone numbers with or without hyphens.
+
+        regexp = r'[0-9]+(?:[0-9]|-[0-9])*'
+
+### 1.37: Non-deterministic FSM
+
+-    "Easy-to-write" FSMs with *epsilon* transitions or *ambiguity* are known as **non-deterministic finite state machines** (NFAs).
+    -    Don't know exactly where to put your finger!
+-     A "lock-step" FSM with no epsilon edges or no ambiguity is a **deterministic finite state machine** (DFA).
+    -    Our `fsmsim` function can handle DFAs.
+    
+-    But the non-determinism, just like the real world, is just an illusion of free will.    
+-    Every non-deterministic FSM has a corresponding deterministic FSM that *accepts exactly the same strings*.
+    -    NFAs are *not more powerful* than DFAs, they're just more convenient.
+
+-    Idea: build a deterministic machine D where every state in D corresponds to a set of states in the non-deterministic machine.
+    -    The set of states in the DFA is the **epsilon-closure** of the transitionary states in the NFA (recall the Coursera course).
+    -    On states with two edges with same label take both simultaneously.
+    -    If any state in NFA is accepting then the superset state in DFA is also accepting.
+
+### 1.38: Save the world
+
+-    **Strings** are sqeuences of characters.
+-    **Regular expressions**: concise notation for specifying sets of strings.
+    -    More flexible than fixed string matching. 
+    -    Phone numbers, words, numbers, quotes, strings.
+    -    Search for and match them.
+-    **Finite state machines**: pictorial equivalent of regular expressions.
+-    Every FSM can be converted to a **deterministic** FSM.
+-    **FSM simulation**: It is very easy, ~10 lines of recursive code, to see if a deterministic FSM accepts a string.
+
+### Problem Set 1
+
+-    Given `re.findall()`, there are equivalent problems that do not use `re.findall()`.
+    -    Recall that regular expressions may be expressed as finite state machines, and vice versa.
+    -    Hence write an FSM and use `fsmsim()`. This gives you `re.match()`, only one search.
+    -    Algorithm for matching `re.findall()`:
+    
+            s1 = "12+34"
+            fsmsim() for '[0-9]+'.
+            
+            call fsmsim("1"), it matches.
+            call fsmsim("2"), it matches.
+            call fsmsim("12+"), it doesn't match. Hence one 'token' is '12', and advance input to '3'.
+            
+            call fsmsim("3"), it matches.
+            call fsmsim("4"), it matches.
+            end of string.
+            
+            result is ["12", "34"].
+
 
 
 
