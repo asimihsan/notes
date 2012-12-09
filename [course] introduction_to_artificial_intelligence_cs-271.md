@@ -328,3 +328,217 @@ Via Udacity (CS-271)
 -    Deterministic.
 -    Discrete, finite number of paths.
 -    Benign.
+
+## 3. Probability in AI
+
+### 3.1: Introduction
+
+-    **Bayes network**, aka influences network.
+    -    Directed graph.
+    -    Nodes are typically referred to as **random variables**, i.e. events.
+    -    Child of parent is influenced in a non-deterministic way.
+    -    All leading towards one node, which is a root event.
+    -    Helps identify hidden causes.
+-    Even if assume events are binary (i.e. **discrete**, 2^(events) different configurations.
+-    Can test hypotheses.
+    -    If oil light on (root event), what is the probability that the battery is old?
+-    Uses:
+    -    Diagnostics
+    -    Prediction
+    -    Machine learning.
+    -    Building blocks to more advanced techniques:
+        -    Particle filters
+        -    HMM
+        -    MDPs and POMDPs
+        -    Kalman filters
+
+### 3.7: Probability Summary
+
+-    **Complements**
+
+        P(A) = p, => P(!A) = 1 - p
+        
+-    **Independence**: If A and B are independent events then
+
+        P(A and B) = P(A) * P(B).
+
+-    **Dependence**
+    -    Assume P(X_1 = H) = 0.5
+    -    If X_1 is H then we choose one coin, such that:
+    
+            P(X_2 = H | X_1 = H) = 0.9
+            
+    -    If X_1 is T then we choose a completely different coin, such that:
+    
+            P(X_2 = T | X_1 = T) = 0.8
+            
+    -    What is P(X_2 = H), i.e. the probability of getting H in both cases?
+    
+            P(X_2 = H) = P(X_2 = H | X_1 = H) * P(X_1 = H) + P(X_2 = H | X_1 = T) * P (X_1 = T)
+            = 0.9 * 0.5 + (1 - 0.8) * 0.5
+            = 0.55
+
+-    **Total probability**
+    
+        P(Y) = sum_i P(Y | X=i) * P(x=i)
+            
+-    **Negation of probabilities**:
+            
+        P(!X | Y) = 1 - P(X | Y)
+            
+    -    but *this is not true*:
+    
+            P(X | !Y) != 1 - P(X | Y)
+            
+### 3.17: Bayes Rule
+
+-    **Posterior**: P(A|B)
+-    **Likelihood**: P(B|A)
+-    **Prior**: P(A)
+-    **Marginal likelihood**: P(B)
+
+        Posterior = Likelihood * Prior / Marginal Likelihood
+        
+        P(A|B) = P(B|A) * P(A) / P(B)
+
+-    Posterior sounds like "probability of cause given evidence".
+    -    e.g probability of cancer given positive test result.
+
+-    Marginal likelihood is often determined using **total probability**:
+
+        P(B) = sum_a P(B|A=a) * P(A=a)
+        
+### 3.18: Bayes Network
+
+-    Directed graph. Nodes: A and B.
+-    A is not observable (state of having cancer).
+-    B is observable (positive test result).
+-    Edge from A to B.
+-    **Diagnostic reasoning**. Inverse of causal reasoning.
+-    The graph above has three parameters:
+    -    `P(B | A)`
+    -    `P(B | !A)`
+    -    `P( A )`
+
+### 3.19: Computing Bayes Rule
+
+        P(A|B) = eta * P'(A|B)
+        
+        eta = ( P'(A|B) + P'(!A|B) )^(-1)
+        
+        where
+        
+        P'(A|B) = P(B|A) * P(A)
+        
+-    Use this to defer the calcuation of P(B), which is difficult.
+-    Why do we do this?
+    -    e.g. 2-test cancer example. Run the same test twice.
+    
+### 3.22: Conditional Independence
+
+-    **Conditional independence**: Given we know a hidden event's state the probability of two observable events are independent of one another.
+
+        P(T_2 | C T_1) = P(T_2 | C)
+        
+-    This pops out of the Bayes network diagram.
+    -    C -> T_1, and C -> T_2.
+    -    No causal connection between T_1 and T_2.
+    
+-    Does this imply that T_1 and T_2 are independent, without knowing anything about C?
+    -    *No*. e.g. T_1 giving positive result implies C is a bit more likely, which makes T_2 more likely.
+    
+### 3.23: Conditional Independence 2
+
+    P(+_2 | +_1) =
+    
+    P(+_2 | +_1 C) * P(C | +_1) + P(+_2 | +_1 !C) * P(!C | +_1) =
+    
+Note that:
+
+    P(+_2 | +_1 C) = P(+_2 | C)
+        
+The test result `+_1` gives us no information about the test result `+_2`, so we can drop it.
+
+    P(+_2 | C) * P(C | +_1) + P(+_2 | !C) * P(!C | +_1)
+    
+### 3.24: Absolute and Conditional
+
+-    A absolutely independent of B: Two nodes, no edges.
+-    A independent of B given C: Three nodes, C -> A, C -> B.
+
+-    We just saw that conditional independence does not imply absolute independence.
+-    Also, absolute independence doesn't imply conditional independence.
+
+### 3.25: Confounding Cause
+
+-    Already seen single hidden cause affecting two observational events.
+-    Now, two hidden causes **counfounding** a single observational event.
+-    e.g. happiness affected by sunniness and getting a raise.
+-    Hence, probability of one confounding cause occurring given another is simply the probability of the first. They are absolutely independent.
+-    They are not conditionally independent; the single observational element adds information, and links the previously independent hidden causes.
+
+### 3.27: Explaining Away
+
+-    If we know an observation, then a cause can explain the cause of the observation away.
+-    If we know one confounding cause, the probability of other confounding causes are decreased; they can be explained away.0.97*0.01
+-    Corollary: given an observation event any confounding event which is known not to occur increases the probability of other confounding events occurring.
+-    3.27 and 3.28 are excellent videos showing the calculations behind this.
+
+### 3.30: Conditional Dependence
+
+-    A -> C, B -> C.
+-    A and B are absolutely independent.
+-    However, given information about C, A and B are no longer independent.
+-    Additional information explains away the causes.
+
+### 3.31: General Bayes Net
+
+-    **Bayes networks** define probability distributions over graphs of random variables.
+-    e.g. A -> C, B -> C, C -> D, C -> E.
+-    Don't need to enumerate 2^5 - 1 = 31 probability distributions. This network is characterised by:
+
+        P(A)
+        P(B)
+        P(C | A,B)
+        P(D | C)
+        P(E | C)
+        
+        P(A, B, C, D, E) = P(A) . P(B) . P(C | A,B) . P(D | C) . P(E | C)
+        
+-    The above only need 10 values, not 31.
+
+        P(A) is 1.
+        P(B) is 1.
+        P(C | A,B) is 4.
+        P(D | C) is 2.
+        P(E | C) is 2.
+
+-    Bayes networks scale much better than the combinatorial approach.
+-    Any node with `k` incident edges requires `2^k` variables to specify it.
+
+### 3.35: D Separation
+
+-    Any two variables are independent if their respective nodes are not linked by just unknown variables, i.e.
+    -    Follow *directed* version of graph. If any variables are known in path then independent.
+-    Don't forget about confounding variables! Known variables link these together. The *explain away effect*.
+
+-    **D-Separation**, aka **Reachability**.
+-    Simple chain.
+    -    Given A -> B, B -> C.
+    -    A is dependent with C.
+    -    But if B is known, A is independent of C.
+-    One hidden, two observations.
+    -    Given A -> B, A -> C.
+    -    B is dependent with C.
+    -    But if A is known, B is independent of C.
+-    Two hidden, one observation.
+    -    Given A -> C, B -> C.
+    -    If C is known, A and B are dependent.
+    -    But if C is unknown, A and B are independent.
+-    Known successor.
+    -    Given A -> C, B -> C, C -> … -> Z.
+    -    If Z is known, get information about C, hence A and B are dependent.
+    -    Only counts if Z is in a chain of direct successors.
+    
+-    **Active triplets** vs. **inactive triplets**.
+
