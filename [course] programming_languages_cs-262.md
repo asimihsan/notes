@@ -436,7 +436,7 @@ If we are in the state `htmlcomment` we cannot be doing anything else at the sam
 
     def t_htmlcomment(token):
         r'<!--'
-        token.lexer.being('htmlcomment')
+        token.lexer.begin('htmlcomment')
         
     def t_htmlcomment_end(token):
         r'-->'
@@ -543,6 +543,8 @@ Comments to the end of the line in JavaScript.
     -    *Natural language processing*: real world languages can be lexed, but parsing is much more difficult.
         -    *Document summarisation*. This is very difficult!
         -    Joke is that natural language processing is "AI-complete" (analogous to NP-complete).
+
+
 
 ## References
 

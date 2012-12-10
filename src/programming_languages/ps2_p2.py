@@ -95,7 +95,7 @@ output1 = ['louiseaston@germany.de', 'irmgardkeun@weimar.de', 'rahelvarnhagen@be
 print addresses(input1)
 print addresses(input1) == output1
 
-input2 = """this@is.a.very.long.NOSPAMemail.address"""
+input2 = """this@is.a.very.long.NOSPAMemail.address """
 output2 = ["this@is.a.very.long.email.address"]
 print addresses(input2)
 print addresses(input2) == output2
