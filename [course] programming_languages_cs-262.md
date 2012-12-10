@@ -246,7 +246,303 @@
             result is ["12", "34"].
 
 
+## Unit 2
 
+### 2.1: Introduction
+
+-    Going to make a lexical analyzer.
+
+### 2.3: Specification
+
+-    Recall outline of course.
+    -    Start with webpage. *outline*.
+    -    Break it down to important *words*.
+    -    Put words in a *tree*.
+    -    Get a result.
+
+### 2.8: Taking HTML Apart
+
+-    In both Latin and ancient Japanese, spaces weren't used as delimeters.
+-    Need domain knowledge to lexically analyze them!
+-    Given this fragment
+
+        Wollstonecraft</a>
+
+-    Want the following output
+
+        word                 Wollstonecraft
+        start of closing tag </
+        word                 a
+        end of closing tag   >
+        word                 wrote
+
+### 2.9: HTML Structure
+
+-    **Token**: smallest unit of output of lexical analysis.
+    -    words, strings, numbers, punctuation.
+    -    *not* whitespace.
+
+-    e.g.
+
+         LANGLE        <
+         LANGLESLASH   </
+         RANGLE        >
+         EQUAL         =
+         STRING        "google.com"
+         WORD          Welcome!
+
+-    Left is name, right is example.         
+-    Names of tokens are arbitrary, but would like them to be uppercase.
+
+### 2.10: Specifying tokens
+
+-    Use *regular expressions to specify tokens*. In Python:
+
+        def t_RANGLE(token):
+            r'>' # I am a regexp!
+            return token # return text unchanged, but can transform it.
+             
+        def t_LANGLESLASH(token):
+            r'/>'
+            return token
+            
+### 2.11: Token values
+
+-    By default the value is the string it matches. But we can transform text!
+
+        def t_NUMBER(token):
+            r'[0-9]+'
+            token.value = int(token.value)
+            return token
+
+-    This is returned as an integer, not a string.
+-    Remember that **maximal munch** is being used.
+
+### 2.12: Quoted Strings
+
+        def t_STRING(token):
+            r'"[^"]*"'
+            return token
+
+### 2.13: Whitespace
+
+        def t_WHITESPACE(token):
+            r' '
+            pass
+            
+-    By passing we skip it.
+
+And if we define a word as any number of characters except <, >, or space, leaving the value unchanges:
+
+        def t_WORD(token):
+            r'[^<> ]+'
+            return token
+
+### 2.14: Lexical Analyzer
+
+-    **Lexical Analyzer**, or **lexer**, is just a collection of token definitions.
+
+### 2.15: Ambiguity
+
+-    What if token definitions overlap?
+-    "We don't just serve hamburgers, we serve people!"
+-    **First one wins**, according to where it is in the file.
+
+### 2.17: String snipping
+
+-    For quoted strings really just want the contents of the quotes portion:
+
+         def t_STRING(token):
+             r'"[^"]*"'
+             token.value = token.value[1:-1]
+             return token
+
+Making a lexer
+
+    import ply.lex as lex
+    
+    tokens = (
+        'LANGLE',        # <
+        'LANGLESLASH',   # </
+        'RANGLE',        # >
+        'EQUAL',         # =
+        'STRING',        # ".."
+        'WORD'           # dada
+    )   
+    
+    t_ignore = ' ' # shortcut for whitespace
+   
+    # note this is before t_LANGLE, want it to win
+    def t_LANGLESLASH(token):
+        r'</'
+        return token
+        
+    def t_LANGLE(token):
+        r'<'
+        return token
+        
+    def t_RANGLE(token):
+        r'>'
+        return token
+        
+    def t_EQUAL(token):
+        r'='
+        return token
+       
+    def t_STRING(token):
+        r'"[^"]*"'
+        token.value = token.value[1:-1]
+        return token
+        
+    def t_WORD(token):
+        r'[^ <>]+'
+        return token
+        
+    webpage = "This is <b>my</b> webpage!"
+    htmllexer = lex.lex()
+    htmllexer.input(webpage)
+    while True:
+        tok = htmllexer.token()
+        if not tok: break
+        print tok
+
+-    Output is a list of LexToken objects.
+-    They indicate `LexToken(TYPE, line, character)`. Indicate line and character on that line.
+
+### 2.19: Tracking line numbers
+
+-    Lexer keeps track of column number, but not line number.
+    -    Column number is character since the beginning of the file.
+-    We need to add a rule to help us, right at the top.
+
+         def t_newline(token):
+             r'\n'
+             token.lexer.lineno += 1
+             pass
+   
+-    But then we'd have to remove `\n` from `t_WORD`, just like we're currently ignoring spaces.
+
+### 2.21: Commented HTML
+
+-    Start with `<!--`, end with `-->`
+
+How to add to lexer.
+
+    states = (
+        ('htmlcomment', 'exclusive'),
+    )
+
+If we are in the state `htmlcomment` we cannot be doing anything else at the same time, like looking for strings or words.
+
+    def t_htmlcomment(token):
+        r'<!--'
+        token.lexer.being('htmlcomment')
+        
+    def t_htmlcomment_end(token):
+        r'-->'
+        token.lexer.lineno += token.value.count('\n')
+        token.lexer.begin('INITIAL')
+        
+    def t_htmlcomment_error(token):
+        token.lexer.skip(1)
+        
+-    `INITIAL` just means whatever you were going before coming into this state, i.e. `htmlcomment`.        
+-    Note we even exclude our helpful little line number counter! Hence we need to count line breaks in the entire comment when it finishes.
+-    Finally, we don't match anything in the comments. They all result in errors! Hence let's skip all the errors.
+    -    But instead of `pass` we're actually gathering up all the characters that resulted in the error, so that we can subsequently count for newlines.
+    
+-    Just because a comment returns no tokens, it isn't ignored. It still splits up other tokens.
+
+### 2.26: Identifier
+
+-    **Identifier**: variable name or function name. Identify a value or storage locations.
+    -    factorial, x, tmp, Super, WonderWoman, my_count.
+    -    Not: _blah, 123.
+    
+            def t_identifier(token):
+                r'[A-Za-z][A-Za-z0-9_]+'
+                return token
+
+### 2.27: Number
+
+    def t_NUMBER(token):
+        r'-?[0-9]+(?:\.[0-9]*)?'
+        token.value = float(token.value)
+        return token
+
+### 2.28: The End Of The Line
+
+Comments to the end of the line in JavaScript.
+
+    def t_eolcomment(token):
+        r'//[^\n]*'
+        pass
+
+### 2.30: Wrap Up
+
+-    **Tokens**!
+    -    Number, word, string.
+    -    Specified by **regular expressions**.
+-    HTML, Javascript.
+
+### Office Hours 2
+
+-    `ply` library
+    -    First line of token definition is in the docstring! So `ply` can use reflection to get them.
+    -    Each token has a regular expression.
+    -    Then generate an NFA that has a special new start state, with an epsilon transition to each start state for each token. Massive union!
+    -    Then convert to DFA!
+    -    Lexer doesn't just accept strings. It accepts strings and knows what the token is.
+    
+-    Use of ply lexer states
+    -    Convenience. One FSM per state.
+    -    But not going to use one state for HTML, one state for Javascript.
+    -    Instead we'll use two different lexer files entirely.
+    -    Both running in the same program!
+
+-    Internationalization
+    -    ASCII is OK for English, 256 characters.
+    -    Need more numbers for other langauges!
+    -    How about 65,535?
+    -    Unicode!
+    -    Want to use special regular expression shortcuts, rather than character ranges.
+    
+-    Long Token Definition Rules
+    -    Man, lots of rules! Is it really this long?
+    -    There's no free lunch; yes, languages are complicated.
+    -    But one can take a structured approach and make it manageable.
+    -    Is it difficult to pave a road, build a sewer, paint a beautiful painting?
+    -    Yes, but only need to do it once, then reuse forever.
+    
+-    Ill formed input
+    -    Going to get to his in unit 3.
+    -    But in this class we're going to recognize malformed input and then reject.
+    -    In reality browsers put a huge amount of effort into being forgiving. Most webpages are malformed.
+    -    **Error recovery**, **Error tolerance**, **Fault tolerance**.
+    -    In practice you write duplicate rules, and then print out warnings and keep going.
+    -    Applies to lexical analysis and semantic analysis.
+    
+-    Speak Javascript
+    -    Yes, by the end of the class will have written simple but actual Javascript programs.
+    -    But not going to do flashy DOM manipulation or UI.
+
+-    Use of Lexing Elsewhere
+    -    Yes! Large number of uses for lexing outside of languages.
+    -    *Electronic commerce*; phone numbers, credit numbers use regular expressions.
+    -    *Virus detection*. Based on regular expressions and lexing.
+        -    Virus definition file is a giant list of tokens.
+        -    Each virus gets a corresponding regular expression to find its payload etc.
+    -    *Computational biology*.
+        -    Strings, made up of four characters.
+        -    Longest common substring matching.
+        -    How do we make new drugs?
+        -    Want to make mathematical models, governed by protein folding.
+        -    *BLAST*. Common software project for doing this work.
+    -    *Readability metrics* for both software programs and human languages.
+        -    Grade level of bool by measuring number of words in sentences and number of letters per word.
+    -    *Natural language processing*: real world languages can be lexed, but parsing is much more difficult.
+        -    *Document summarisation*. This is very difficult!
+        -    Joke is that natural language processing is "AI-complete" (analogous to NP-complete).
 
 ## References
 
