@@ -380,7 +380,7 @@ Via Udacity (CS-271)
 
 -    **Total probability**
     
-        P(Y) = sum_i P(Y | X=i) * P(x=i)
+        P(Y) = sum_i P(Y | X=i) * P(X=i)
             
 -    **Negation of probabilities**:
             
@@ -542,3 +542,211 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
     
 -    **Active triplets** vs. **inactive triplets**.
 
+## Unit 4: Probabilistic Inference
+
+### 4.1: Overview and example
+
+-    Just went over:
+    -    Probability theory
+    -    Bayes Nets, represents a joint probability distribution, include random variables. dependence and dependence.
+-    Now, will cover **inference**: how to answer probability questions using bayes nets.
+
+-    Example
+    -    Burglary (B) -> Alarm (A)
+    -    Earthquake (E) -> A
+    -    A -> John (J)
+    -    A -> Mary (M).
+-    What questions can be asked?
+
+-    **Given some inputs, what are the outputs?**
+-    Given B and E, what are J and M?
+-    B and E are **evidence** variables.
+-    J and M are **query** variables.
+-    A is a **hidden** variable.
+-    This question is also known as the **posterior distribution given the evidence**.
+
+        P(Q_1, Q_2, … | E_1 = e_1, E_2 = e_2)
+
+-    Another question: **what is the most likely explanation?**
+
+        argmax_q P(Q_1 = q_1, Q_2 = q_2, … | E_1 = e_1, …)
+
+-    Out of all the possible combinations of query variable values, which combination has the highest probability?
+
+-    Unlike regular programming functions, Bayes nets are bidirectional.
+-    Right now we're going in the causal direction.
+-    Could go inverse, and make J and M be the evidence and B and E be the evidence.
+-    Or in any other combination.
+
+### 4.2: Enumeration
+
+-    **Enumeration**: go through all possibilities, add them up.
+
+        P(+b | +j, +m)
+        
+-    i.e. what is the probability that there is a burglary given that John called and Mary called.
+-    Note that `P(+b)` is `P(b=True)`, etc. 
+-    In these notes can't draw negation operator, so put `P(!b)`.
+
+        Conditional probability
+        P(Q|E) = P(Q,E) / P(E)
+        
+        = P(+b, +j, +m) / P(+j, +m)
+
+-    Looking at numerator. We want to enumerate over the hidden variables, in this case `A` and `E`.
+
+        P(+b, +j, +m)
+        = sum_e sum_a P(+b, +j, +m, e, a)
+
+-    Now going to re-write this in terms of the parents of the nodes in the network:
+
+        = sum_e sum_a P(+b) P(e) P(a|+b,e) P(+j|a) P(+m|a)
+        = sum_e sum_a f(e,a)
+        
+-    (Recall D-Separation, and how nodes are determined by their parents).
+-    Now we enumerate over all values of `e` and `a`. Recall they are binary random variables.
+
+        = f(+e,+a) + f(+e,!a) + f(!e,+a) + f(!e,!a)
+        
+-    Each `f(e,a)` is the product of 5 numbers. We will do this 4 times.
+
+### 4.3: Speeding Up Enumeration
+
+-    Theoretically we're done, have tools to do inference.
+-    But with complex bayes nets this gets tricky.
+-    **Pulling out terms**
+
+        sum_e sum_a P(+b) P(e) P(a|+b,e) P(+j|a) P(+m,a)
+        
+-    `P(+b)` doesn't vary with `e` or `a`:
+
+        P(+b) sum_e sum_a P(e) P(a|+b,e) P(+j|a) P(+m|a)
+        
+-    `P(e)` doesn't vary with `a`:
+
+        P(+b) sum_e P(e) sum_a P(a|+b,e) P(+j|a) P(+m|a)
+        
+-    This reduces inner loop cost.
+
+-    **Maximize independence** of variables.
+-    For a linear network, X_1 -> … -> X_n, inference cost is O(n).
+-    A complete network (every node points to every other node), cost is O(2^n).
+-    Dependence does not imply anything about causality, it just results on "if one is present or not present does that provide information about the other?"
+-    By reasoning about dependence, we take our original graph above and add these edges:
+    -    J -> M. Because knowing if J did or didn't call gives information about A, and hence M.
+    -    B -> E. Because knowing if B occurred gives information about A, and hence E. Explain away effect.
+-    Bayes nets are at their most compact when written in the **causal direction**.
+    -    When network flows from causes to effects.
+
+### 4.8: Variable Elimination
+
+-    **Variable elimination**
+-    Consider nodes:
+    -    R: is it raining.
+    -    T: are there problems with traffic.
+    -    L: will I be late for appointment.
+    -    R -> T -> L.
+    -    Get their conditional probability tables: `P(R)`, `P(T|R)`, `P(L|T)`.
+-    We already know how to enumerate, which works for this simple cause but not for complex ones:
+
+        P(+l) = sum_r sum_t P(r) P(t|r) P(+l|t)
+        
+-    1st operation: **Joining factors**
+-    Choose two factors, `P(R)` and `P(T|R)`.
+-    Join them as `P(R,T)`.
+    -    e.g. first row of `P(R)` is `+r = 0.1`.
+    -    first row of `P(T|R)` is `+r,+t = 0.8`.
+    -    first row of `P(R,T)` is `+r`, `+t`.
+    -    we know that first row of `P(R,T)`is `P(+t|+r)*P(+r)` = `0.08`.
+-    Now, the network is RT -> L. Joined factors.
+
+-    2nd operation: variable elimination, aka **marginalisation**, aka **summing out**.
+-    We have tables for `P(R,T)` and `P(L|T)`.
+-    We can get a table `P(T)`.
+-    We can sum out `R` in first table, leaving us a table `P(T)` with rows `+t` and `!t`.
+    -    Add together probabilities to determine this.
+-    Now have a new network T -> L.
+-    Now want to join on `P(T)` and `P(L|T)`, to give one table `P(T,L)`.
+
+-    Final step, want to sum out to give `P(L)`.
+
+### 4.12: Approximate Inference
+
+-    by means of **sampling**.
+-    e.g. want to determine joint distribution of two coins coming up heads / tails.
+-    Flip them, put into 4-row table.
+-    Then estimate the joint distribution.
+-    Advantage:
+    -    Simpler to compute than exact inference.
+    -    Can be used in cases where precise joint probabilities are not available.
+    
+-   Can sample a bayes net with defined conditional probabilities.
+    -    Just use a random number generator to pick values for evidence variables.
+    -    Then can model the probability of the query variables, without needing to do any calculations.
+-    This sampling method is **consistent**.
+
+### 4.15: Rejecting Sampling
+
+-    But what if we wanted to use this to calculate a conditional probability, e.g. `P(W|-C)`?
+-    **Rejection sampling**: generate samples and reject those that don't fit our conditional requirement.
+-    However, if probabilities are low then we'll reject most the samples.
+-    e.g. B -> A. What is `P(B|+a)`?
+-    B, burglary, is very rare, hences `+a` is rare, so rejection sampling rejects most.
+
+### 4.16: Likelihood Weighting
+
+-    **Likelihood weighting**: fix the evidence variables.
+-    But just fixing the evidences variables is **inconsistent**. Need to add a **probabilistic weight** to each sample.
+-    Going back to cloudy / rain example.
+-    For each choice we're forced to make multiply-in the respective probability from the probability table to the weight.
+-    Likelihood weighting is consistent, because we weight samples.
+-    Still has a problem. If we choose a question such that a variables chooses others to pick low probabilities they'll have very small weights. Not rejecting them but they're unlikely.
+
+### 4.19: Gibbs Sampling
+
+-    **Markov Chain Monte Carlo**, i.e. **MCMC**.
+-    Assign random values, get one sample.
+-    At iteration through the loop, select one non-evidence variable and resample it based on all the other variables.
+
+        +c +s -r -w
+        
+        Choose s.
+        
+        +c -s -r -w
+        
+        Choose r.
+        
+        +c -s +r -w
+        
+-    In rejection and likelihood weighting sampling each sample was independent of the others.
+-    In MCMC samples are not independent.
+-    Adjacent samples are very similar!
+-    This technique is still **consistent**.
+
+### 4.20: Monty Hall Problem
+
+-    Three node Bayes net.
+    -    Prize (P). 3 options: D1, D2, D3.
+    -    First selection (F): 3 options: D1, D2, D3.
+    -    Monty opens (M): 3 options: D1, D2, D3.
+    -    P -> M.
+    -    F -> M.
+-    P and F are absolutely independent.
+-    However, if we know M, P and F become dependent.
+-    This is basic D Separation - we already know P and F are dependent!
+-    There are no hidden variables.
+-    Just work through the problem, drawing four tables:
+    -    `P(P)`. (all 1/3)
+    -    `P(F)`. (all 1/3)
+    -    `P(M|F)`.
+    -    `P(M|P)`.
+-    `P(P=D1 | F=D1, M=D3)` is `a`.
+-    `P(P=D2 | F=D1, M=D3)` is `b`.
+-    Should we switch (`b > a`) or stay (`a <= b`)?
+-    Recall that `P(Q|M) = P(Q,M) / P(M)`.
+-    Key point is here:
+
+        P(M=D3, P=D2, F=D1) = 1 (!!)
+        
+-    If we choose D1, and the prize is behind D2, Monty *must pick* D3.
+-    Above implies `b = 2/3`.
