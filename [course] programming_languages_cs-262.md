@@ -539,10 +539,482 @@ Comments to the end of the line in JavaScript.
         -    Want to make mathematical models, governed by protein folding.
         -    *BLAST*. Common software project for doing this work.
     -    *Readability metrics* for both software programs and human languages.
-        -    Grade level of bool by measuring number of words in sentences and number of letters per word.
+        -    Grade level of text by measuring number of words in sentences and number of letters per word.
     -    *Natural language processing*: real world languages can be lexed, but parsing is much more difficult.
         -    *Document summarisation*. This is very difficult!
         -    Joke is that natural language processing is "AI-complete" (analogous to NP-complete).
+
+## Unit 3: Syntactic Analysis
+
+### 3.2: Bags of Words
+
+-    Recall we've done String -> Lexing -> List of Tokens.
+-    Lexing uses regular expressions.
+-    But having a list of words isn't enough!
+-    A natural language admits an infinite number of utters, but *not* all utterances. There are rules! All **grammars** rule something out.
+
+### 3.3: Syntactic Structure
+
+-    Noam Chomsky, 1955. *Syntactic Structures*
+    -    Utterances have rules, **formal grammars**.
+-    Grammatical sentence: follows the rules.
+-    Can write down formal grammars using a set of **rewrite rules**.
+    -    *Sentence* -> *Subject* *Verb*
+    -    *Subject* -> Teachers
+    -    *Subject* -> Students
+    -    *Verb* -> write
+    -    *Verb* -> think
+    -    (italics => **non-terminals**, non-italcs => **terminals**).
+    -    Non-terminals  can be re-written into terms on right, sometimes terminals,
+    -    You can always replace non-terminals.
+    -    Once you get a terminal it can't be changed.
+-    e.g.
+
+        sentence
+        -> subject verb
+        -> students verb
+        -> students think
+
+-    This is a **derivation**. Use re-write rules.
+-    Can perform multiple derivations, e.g.
+
+        sentence
+        -> subject verb
+        -> subject write
+        -> teachers write    
+
+### 3.5: Infinity and Beyond
+
+-    Add just one rule, gives phenomenal power!
+
+        Sentence -> Subject Verb
+        Subject -> students
+        Subject -> teachers
+        Subject -> Subject and Subject
+        Verb -> think
+        Verb -> write
+        
+-    **Recursion** in a context-free grammar can allow for an infinite number of utterances (but not all utterances).
+-    **Recursive rewrite rules** allow for **recursive grammars**.
+-    Infinite utterances, *all of finite length*.
+-    Formally, the number of strings is **countably infinite**.
+
+### 3.7: An Arithmetic Grammar
+
+-    Finite grammar -> countably infinite utterances.
+-    Chomsky argues this is how a "finite brain" -> infinite creative ideas.
+-    Arithmetic grammar example:
+
+        Exp -> Exp + Exp
+        Exp -> Exp - Exp
+        Exp -> number
+
+-    e.g. `number number` is not valid, `number + number - number` is valid.
+
+### 3.8: Syntactical analysis
+
+-    Recall:
+    -    Lexical Analysis ("lexing"): String -> Token List.
+    -    Syntactical Analysis ("parsing"): Token List -> Valid in Grammar?
+-    Valid in grammar == is in the language of the grammar.
+
+-    Lexing + Parsing = Expressive Power
+-    Word rules + sentence rules = creativity!
+
+        Exp -> Exp + Exp
+        Exp -> Exp - Exp
+        Exp -> Number
+        
+        and
+        
+        def t_NUMBER(token):
+            r'[0-9]+'
+            token.value = int(token.value)
+            return token
+            
+-    Can now check for valid sequence of tokens.
+
+        1 + 2, good
+        7 + 2 - 2, good
+        - - 2, bad.
+        
+### 3.9: Statements
+
+        Stmt -> identifier = Exp
+        Exp -> Exp + Exp
+        Exp -> Exp - Exp
+        Exp -> number
+
+        lata = 1, good
+        lata = lata + 1, bad
+
+### 3.10: Optional Parts
+
+-    "I think" vs. "I think corectly".
+-    Optional adverbs!
+-    Can specify two rewrite rules for the same non-terminal, where one of them goes to epsilon, i.e. the empty string.
+
+        Sentence -> OptionalAdjective Subject Verb
+        Subject -> william
+        Subject -> tell
+        OptionalAdjective -> accurate
+        OptionalAdjective -> \epsilon
+        Verb -> shoots
+        Verb -> bows
+        
+        8 possible utterances!
+        
+### 3.11: More Digits
+
+-    Grammars can encode **regular languages**.
+
+        number - r'[0-9]+'
+        
+        Number -> Digit MoreDigits
+        MoreDigits -> Digit MoreDigits
+        MoreDigits -> \epsilon
+        Digit -> 0
+        Digit -> 1
+        …
+        Digit -> 9
+        
+        Number
+        -> Digit MoreDigits
+        -> Digit Digit MoreDigits
+        -> Digit Digit \epsilon
+        -> Digit 2
+        -> 42
+
+### 3.12: Grammars and Regexps
+
+-    Grammar >= Regexp
+
+        regexp = r'p+i?' # e.g. p, pp, pi, ppi
+        
+        Regexp -> Pplus Iopt
+        Pplus -> p Pplus
+        Pplus -> p
+        Iopt -> i
+        Iopt -> \epsilon
+        
+### 3.13: Context-Free Languages
+
+-    *Regular expressions* describe *regular languages*.
+-    *Context-free grammars* describe *context-free languages*.
+
+        A -> B
+        xyzAxyz -> xyzBxyz
+        
+-    Above, can always go from A -> B regardless of context around A, assuming we keep context the same.
+-    Here are three different regular expression forms, and equivalent context-free grammars.
+
+        r'ab'   => G -> ab
+        
+        r'a*'   => G -> \epsilon
+                   G -> aG
+                   
+        r'a|b'  => G -> a
+                => G -> b
+
+-    But regular languages != context-free languages.
+
+### 3.14: Parentheses
+
+-    Consider:
+
+        P -> ( P )
+        P -> \epsilon  
+
+-    **Balanced parentheses**.
+-    Balanced parenthesis are **not regular**.
+    -    The proof for this follows directly from the [**"pumping lemma" for regular languages**](http://en.wikipedia.org/wiki/Pumping_lemma_for_regular_languages).
+-    Let's try:
+
+        r'\(*\)*'
+        
+-    But it doesn't match parentheses :(.
+
+### 3.16: Intuition
+
+-    *Impossible* for a regular language to balance parentheses.
+-    Here is some intuition.
+-    We want:
+
+        (^N )^N
+        
+-    i.e. both N times.
+-    But all we can write is:
+
+        (* )*
+        
+-    And these stars need not be the same.
+-    Think about finite state machines. We only need to know where we are, not where we came from.
+    -    Regular expressions just don't have that memory.
+
+### 3.18: Extracting Information
+
+-    HTML JavaScript -> formal grammars.
+-    **Parse trees** are inverted trees / pictorial representations of the structure of an utterance.
+-    Start with a non-terminal, then expand downwards. Tree growing upside down.
+-    Interior nodes are non-terminals, leaves are terminals.
+
+### 3.20: Ambiguity
+
+-    Both natural languages and programming language elements can be ambiguous. Two or more interpretations.
+-    e.g. "I saw Jane Austen using binoculars".
+
+        1 - 2 + 3
+        
+        could be 2 or -4!
+        
+-    A grammar is **ambiguous** if there is *at least one* string in the grammar that has *more than one* different parse tree.
+        
+### 3.21: To The Rescue
+
+-    Parentheses can come to the ( Rescue ).
+
+        exp - exp + exp
+        exp -> exp - exp
+        exp -> number
+        exp -> ( exp )
+        
+### 3.23: Grammar for HTML
+
+        <b>Welcome to <i>my</i> webpage!</b>
+        
+        Html -> Element Html
+        Html -> \epsilon
+        Element -> word
+        Element -> TagOpen Html TagClose
+        TagOpen -> < word >
+        TagClose -> </ word >
+
+-    The parse tree for a web page allows us to determine the extent of tags, e.g. how much of a web page should be bolded.
+
+### 3.25: Revenge of JavaScript
+
+-    JavaScript is similar to Python.
+-    In Python:
+
+        def absval(x):
+            if x < 0:
+                return 0 - x
+            else:
+                return x
+
+-    In JavaScript:
+
+        function absval(x) {
+            if x < 0 { 
+                return 0 - x;
+            } else {
+                return x;
+            }
+        }
+
+-    JavaScript uses braces to signify lexical scope. Python uses indentation.
+
+-    In Python
+
+        print "hello" + "!"
+        
+-    In JavaScript:
+
+        document.write("hello" + "!"
+        
+        or
+        
+        write("hello" + "!")
+
+-    All JavaScript function calls require brackets.
+
+### 3.27: Universal Meaning
+
+-    We can translate between Python and JavaScript. Theory of **universal grammar**.
+-    They're both **Turing-Complete**.
+
+Partial grammar for JavaScript:
+
+        Exp -> identifier
+        Exp -> TRUE
+        Exp -> FALSE
+        Exp -> number
+        Exp -> string
+        Exp -> Exp + Exp
+        Exp -> Exp - Exp
+        Exp -> Exp * Exp
+        Exp -> Exp / Exp
+        Exp -> Exp < Exp
+        Exp -> Exp == Exp
+        Exp -> Exp && Exp
+        Exp -> Exp || Exp
+        
+-    !!AI surely missing parentheses, operator precedence?
+-    !!AI not missing quoted strings with escaped characters because this is a lexical definition, not a syntactic one.
+
+### 3.29: JavaScript Grammar
+
+-    Expressions ~= Noun Phrases
+-    Operators ~= Verbs
+-    Statements ~= Sentences
+
+-    Jay becomes three.
+-    -> j = 3;
+
+        Statement -> identifier = Exp
+        Statement -> return Exp
+        Statement -> if Exp CompoundStatement
+        Statement -> if Exp CompoundStatement else CompoundStatement
+        CompoundStatement -> { Statements }
+        Statements -> Statement; Statements
+        Statements -> \epsilon
+
+-    So in addition to expressions we know have statements that build upon expressions.
+-    !!AI surely `CompoundStatement` could also be `Statement` without braces?
+-    !!AI Note the limitations of the above:
+    -    Only one statement allowed; need a similar trick as HTML to make this infinite.
+
+### 3.31: JavaScript Functions
+
+-    We've seen expressions and statemetns.
+-    We need functions!
+    -    Declaration.
+    -    Calling.
+-    Python program = List of statements and function definitions.
+-    JavaScript program the same!
+
+           Js -> Element Js
+           Js -> \epsilon
+           
+           Element -> function identifier ( OptParams ) CompoundStatement // function definition
+           Element -> Statement;
+
+           OptParams -> Params
+           OptParams -> \epsilon
+           
+           Params -> identifier, Params
+           Params -> identifier
+           
+-    Note that Element forces Statements to be *terminated* with semi-colons.
+-    Note that Params forces identifiers to be *delimited* by colons.
+-    This is a cute property of Context-Free Grammars.
+
+           Exp -> … // as before
+           Exp -> identifier( OptArgs ) // function call
+           
+           OptArgs -> Args
+           OptArgs -> \epsilon
+           Args -> Exp, Args
+           Args -> Exp
+
+-    Notice that a string that is in a grammar doesn't prevent certain errors.
+    -    Could define `sin(x)`, but then call it as `sin(50, 60)`.
+
+### 3.33: Lambda
+
+-    Creating grammars vs. checking utterances.
+-    Accept: `(1 + (2 + 3))`
+-    Reject: `1 + + + ) 3`.
+-    But how to check a given string is in the language of a given grammar?
+    -    *Super slow*. Enumerate all valid strings, then see if your string is in there.
+        -    Countably infinite number of strings!
+
+-    **Lambda** (make me a function, **anonymous function**)
+
+           def addtwo(x): return x+2
+           addtwo(2) # = 4
+           
+           mystery = lambda(x): x+2
+           mystery(3) # = 5
+           
+           pele = mystery
+           pele(4) # = 6
+
+### 3.34: List Power
+
+        def mysquare(x): return x*x
+        map(mysquare, [1,2,3,4,5]) # = [1,4,9,16,25]
+        
+        map(lambda(x): x*x, [1,2,3,4,5]) # same!
+
+        [x*x for x in [1,2,3,4,5] # same!
+
+### 3.37: Generators
+
+-    List comprehensions are declarative, awesome.
+-    Downside: need to write down the starting lists.
+
+        def odds_only(numbers):
+            for n in numbers:
+                if n % 2 == 1:
+                    yield n
+
+-    `yield`: not return! A **generator**.
+-    Convenient way to filter.
+-    Even easier:
+
+        [x for x in [1,2,3,4,5] if x % 2 == 1]
+        
+-    **Guard**, aka **predicate**.
+   
+### 3.39: Checking Valid Strings
+
+-    Python program to check a string is in a grammar.
+
+        Exp -> Exp + Exp
+        Exp -> Exp - Exp
+        Exp -> ( Exp )
+        Exp -> num
+        
+        grammar = [
+            ("Exp", ["Exp", "+", "Exp"]),
+            ("Exp", ["Exp", "-", "Exp"]),
+            ("Exp", ["(", "Exp", ")"],
+            ("Exp", ["num"]),
+        ]
+
+-    Given e.g. `print exp;`
+
+        utterance = ["print", "exp", ";"]
+        into:
+        ["print", "exp", "-", "exp", ";"]
+        
+        
+        pos = 1
+        result = utterance[0:pos] + rule[1] + utterance[pos+1:]
+        
+-    We want to enumerate all valid strings in the grammar, the super-slow method.
+-    e.g.
+
+            start with "a exp"
+            with depth 1, get:
+            "a exp + exp"
+            "a exp - exp"
+            "a (exp)"
+            "a num"
+
+-    Let's code it up:
+
+        grammar = … (as above)
+        
+        def expand(tokens, grammar):
+            for i, token in enumerate(tokens):
+                for (rule_lhs, rule_rhs) in grammar:
+                    if token == rule_lhs:
+                        result = tokens[0:i] + rule_rhs + tokens[i+1:]
+                        yield result
+  
+        depth = 2
+        utterances = [["exp"]]
+        for x in xrange(depth):
+            for sentence in utterances:
+                utterances = utterances + [ i for i in expand(sentence, grammar)]
+        
+        for sentence in utterances:
+            print sentence
+
+-    We saw: a slow way to encode grammars and enumerate strings.
+-    But will learn a more efficient way to encode grammar rules and check for validity.
 
 
 
