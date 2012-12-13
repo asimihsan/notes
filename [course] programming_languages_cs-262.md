@@ -1016,7 +1016,69 @@ Partial grammar for JavaScript:
 -    We saw: a slow way to encode grammars and enumerate strings.
 -    But will learn a more efficient way to encode grammar rules and check for validity.
 
+### Office Hours 3
 
+-    Lex and Yacc used in the real world?
+    -    Yes!
+    -    The idea of making a lexer and/or a parser is so common there are many tools for many languages.
+    -    Flex and Bison are free (GNU) versions of Lex and Yacc.
+    -    Nowadays can find Flex and Bison for many languages.
+    -    Java has Cup.
+    -    Ruby has Rubylex and Rubyyacc.
+    -    Python has ply.
+    -    Ocaml has Ocamllex and Ocamlyacc.
+
+-    Beyond Context Free
+    -    Anything besides context-free grammars and regular languages?
+    -    Context-free grammars are not the end-all and be-all.
+    -    The opposite of CFG is **context-sensitive grammar**.
+    -    Local state, memory.
+    -    We will need to keep track of context when we interpret JavaScript and HTML later in the class - we'll need context sensitivity in unit 5.
+    
+-   Testing
+    -    How to write good test cases?
+    -    Formally, *checking that software implementation matches its specification*.
+    -    Software testing gives us *confidence, not certainty*.
+    -    There an infinite number of inputs.
+    -    Hope that test cases are indicative of problems, or highlight errors.
+    -    Goal of a good test suite is that once its run we'll have confidence is that there are no bugs.
+    -    Think of corners, edge cases.
+    -    *Be creative* and think that people are *cheating you or deceiving you* - the human brain is very good at adopting this stance.
+    -    For *numbers*: try 0, try negatives, try positives, prime numbers, compostivies.
+    -    For *lists*: try ascending order, descending order, random, empty, very big.
+    -    For *grammars and strings*: short and long strings, recursive and non-recursive grammars.
+    -    A lot of research in *automated test input generation*, to force programs down different branches.
+    -    Whenever there is an infinite number of possibilities, room for creativity.
+    
+-    Beyond parsing
+    -    Can context-free grammars be used to do anything besides parse languages?
+    -    Yes!
+    -    *Security*
+        -    Regular expressions can be used in virus checking.
+        -    Virus checkers are giant lexers.
+        -    e.g. cross-site scripting and SQL injection.
+        -    Can use CFGs if user input is normal or if it's trying to take advantage of XSS or SQL injection.
+        -    Pretend to parse the string, and if the changes that results from the string or the parse tree is too large then we know that something bad is going on.
+    -    *Optimization*
+        -    Production compilers and intepreters.
+        -    Faster, less memory, less power.
+        -    We will cover basic optimization in unit 6.
+        -    *Data flow analysis*: e.g. if x = 0 then y = x + x is always 0.
+        -    Best known methods for doing data flow analysis use context-free grammars, in particular context-free language         reachability.
+        -    Problem is equivalent to "can be generate a string in this context-free grammar".
+    -    *Computational Linguistics*
+        -    CFGs came out of computational linguistics.
+    -    *Specification mining*
+        -    Determining what a program should be doing by reading its source code.
+        -    Output takes the form of a formal grammar or a state machine.
+        -    e.g. "should always use braces" or "close a file after you've opened it".
+    -    *Encryption*
+        -    Cell phones try to encrypt voice content.
+        -    But if I've used a lot of computational linguistics then we know there are different patterns of speech and pauses.
+        -    Phones try to use silence detection.
+        -    Whoops! We know where the pauses are likely to be, and then work backwards to what language you're speaking and your regional accent.
+        -    But if you sacrifice power then you can workaround by encrypting everything.
+        
 
 ## References
 
