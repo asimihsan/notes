@@ -750,3 +750,175 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
         
 -    If we choose D1, and the prize is behind D2, Monty *must pick* D3.
 -    Above implies `b = 2/3`.
+
+## Unit 5: Machine Learning
+
+### 5.1: What is Machine Learning?
+
+-    We've talked about Bayes networks, where topology is known.
+-    **Machine learning**: learn models from data.
+-    We're going to go through **supervised learning** in this unit.
+
+### 5.2: Taxonomy
+
+-    What?
+    -    **Parameters**: probabilities of Bayes net.
+    -    **Structure**: edges of Bayes Net.
+    -    **Hidden concepts**.
+        -    e.g. types of customer.
+-    What from?
+    -    Always some sort of target data.        
+    -    **Supervised** learning, target labels are present.
+    -    **Unsuperivsed** learning, target labels are missing and we use methods to determine hidden concepts.
+    -    **Reinforcement** learning. Interact with environment, process feedback.
+-    What for?
+    -    **Prediction**: future.
+    -    **Diagnostics**: explain events.
+    -    **Summarisation**: shorten articles.
+-    How?
+    -    **Passive**: agent has no impact on data itself.
+    -    **Active**: agent has impact on data.
+    -    **Online**: while data is being generated.
+    -    **Offline**: data is already present.
+-    Outputs?
+    -    **Classification**: outputs are discrete number of classes. e.g. chair or not chair.
+    -    **Regression**: continuous, e.g. 66C.
+-    Details?
+    -    **Generative**: model the data as generally as possible.
+    -    **Discriminative**: distinguish data, particulars.
+-    This is a very complex list!
+-    Won't learn them all, but at least can identify machine learning methods.
+
+### 5.5: Supervised learning
+
+-    **Feature vector**: x_1, x_2, …, x_n
+-    **Target label**: y
+
+        x_1, x_2, …, x_n -> y
+        
+-    e.g. for credit agency:
+
+        x_1: what is their income?
+        x_2: have they ever defaulted on credit card
+        …
+        y: will the person default on their credt?
+        
+-    e.g. credit agency will take *previous data* of x_n and y and then wish to *predict* for future customers.
+-    Imagine a massive matrix, for all y_n. This is **data**.
+-    With a certain amount of error, want a function:
+
+        f(x_m) = y_m
+        
+-    Then use f(x_k) for future data to get y_k that wasn't encountered before.
+
+### 5.6: Occam's Razor
+
+-    *Everything else being equal, choose the less complex hypothesis*.
+-    Tradeoff between data fit and low complexity.
+-    Chart.
+    -    More complexity => asymptotic lower **training data error**.
+    -    More complexity => initially lower then much higher **generalisation error**.
+    -    More complexity => every increasing **overfitting error**.
+-    There is a sweet spot of complexiy, which is the minima of the generalisation error.
+-    Can try to measure overfitting error using **Bayes variance methods**.
+-    In practice you know the training data error, and you should push back and accept increasing amounts of training data error in order to reduce complexiy.
+
+### 5.7: Spam detection
+
+-    Email -> f(x) -> [Spam, Ham]
+-    Supervised learning, use user input.
+-    How to represent emails?
+-    **Bag of words**: count frequencies of words, in lookup data structure.
+    -    Compare to a fixed list of words in a dictionary.
+    
+### 5.9: Maximum Likelihood
+
+-    **Maximum likelihood**: what is the probability of a query that maximixes the likelihood of the data?
+    -    Infer probabilities from data.
+    -    Assumes data instances are independent.
+-    Going through email example.
+    
+        Emails:
+        
+        SSSHHHHH
+        
+        p(S) = pi
+        
+        P(y_i) = pi if y_i = S
+                = 1 - pi if y_i = H
+                
+        Imagining Spam and Ham as 1's and 0's:
+        
+        11100000
+        
+        p(y_i) = pi^(y_i) * (1 - pi)^(1 - y_i)
+            
+        Assuming independence:
+        
+        p(data) = product (i = 1 to N) p(y_i)
+                = pi^(count(y_i=1)) * (1-pi)^(count(y_i=0))
+                = pi^3 * (1-pi)^5
+                
+-    What is the `pi` that maximizes this expression?
+-    Can also maximize the log of this expression becuase log is monotonic with respect to p.
+
+        log p(data) = 3*log(pi) + 5*log(1-pi)
+   
+-    Maximum is where derivative is 0.
+
+        d/dp p(data) = 0 = 3/pi = 5/(1-pi)
+        3/pi = 5/(1-pi)
+        3(1-pi) = 5pi
+        
+        pi = 3/8  
+        
+-    We've derived that the data likelihood maximizing number for the probability is indeed the empircal count.
+-    Derivation is not important for class.
+
+### 5.10: Relationship to Bayes Network
+
+-    We're building up a Bayes Network, where the *parameters* of the Bayes Network are *estimated* using *supervised learning* by a *maximum likelihood estimator* based on *training data*.
+-    For spam detection, root node is "spam".
+-    Directed edges to children.
+-    One child node for each word in a message.
+-    Each word has a probability, `P(word|spam)`.
+-    Given spam and 12 words, how many parameters?
+    -    23.
+    -    One for the prior, P(spam).
+    -    P(w_i|SPAM), 11 of these.
+        -    The 12th can be figured out as `1 - the rest`.
+    -    P(w_i|HAM), 11 of these.
+        -    The 12th can be figured out as `1 - the rest`.
+-    In example, P(spam|M), where M is message "sports"
+
+        P(spam|M)
+        = P(M|spam) * P(spam) / (P(M|spam)*P(spam) + P(M|ham)*P(ham))
+        
+-    In next example, can do the same with an email with three words by treating each word as independent, hence product.
+-    In a surprising twist if you encounter a word that has never been encountered as spam before then the email cannot every be spam.
+    -    It can't be that a single word determines this!
+    -    This is **overfitting**.
+    
+-    **Laplace smoothing** to deal with overfitting.
+-    In Maximum-Likelihood (ML):
+
+        ML: p(x) = count(x) / N
+        
+-    e.g. in 8 messages, 3 of which are spam, the prior for spam:
+
+        p(spam) = count(spam) / 8 = 3 / 8
+
+-    In Laplace Smoothing:
+
+        LS(k): p(x) = (count(x) + k) / (N + k|x|)
+        
+-    Add `k` to each observation count. **Smoothing parameter**.
+    -    `k = 0` is Maximum-Likelihood estimator.
+-    `N`: total number of occurrences, e.g. spam + ham.
+-    `|x|` is the number of values that variable `x` can take on. Think of it as degrees of freedom.
+    -    In this case either spam or ham, so `|x| = 2`.
+
+
+
+
+     
