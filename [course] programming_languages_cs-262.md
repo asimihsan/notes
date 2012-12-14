@@ -871,6 +871,7 @@ Partial grammar for JavaScript:
 
 -    So in addition to expressions we know have statements that build upon expressions.
 -    !!AI surely `CompoundStatement` could also be `Statement` without braces?
+    -    !!AI Actually no. Better to allow `CompoundStatement` or `Statement` in `Statement`?
 -    !!AI Note the limitations of the above:
     -    Only one statement allowed; need a similar trick as HTML to make this infinite.
 
@@ -1065,7 +1066,7 @@ Partial grammar for JavaScript:
         -    We will cover basic optimization in unit 6.
         -    *Data flow analysis*: e.g. if x = 0 then y = x + x is always 0.
         -    Best known methods for doing data flow analysis use context-free grammars, in particular context-free language         reachability.
-        -    Problem is equivalent to "can be generate a string in this context-free grammar".
+        -    Problem is equivalent to "can we generate a string in this context-free grammar".
     -    *Computational Linguistics*
         -    CFGs came out of computational linguistics.
     -    *Specification mining*
@@ -1079,6 +1080,223 @@ Partial grammar for JavaScript:
         -    Whoops! We know where the pauses are likely to be, and then work backwards to what language you're speaking and your regional accent.
         -    But if you sacrifice power then you can workaround by encrypting everything.
         
+## Unit 4
+
+### 4.1: Introduction
+
+-    Microsoft *SLAM*, now *static driver verifier*.
+    -    Torture test 3rd party devices.
+-   **Model checking**: check software based on knowledge of its source code.
+-   Important to **memoize**, remember what you've already done in order to save time.
+
+### 4.2: Time Flies
+
+-    Given a string S and a grammar G, is string S in the language of G?
+-    "Time flies like an arrow, fruit flies like a banana."
+    -    Ambiguity. Time is flying, but fruit isn't flying, it's 'fruit flies' liking.
+
+### 4.3: Brute Force
+
+-    **Brute force**: try all options exhaustively.
+-    We enumerated all strings in grammar.
+-    For countably infinite grammars this is pretty useless!
+    
+        S -> (S)
+        S -> \epsilon
+        
+        Is '(()' in grammar?
+        
+-    Key insight - we can stop somewhere during our enumeration.
+-    Parsing idea: be lazy, don't duplicate work.
+-    Perl: Pathologically Eclectic Rubbish Lister! :).
+    -    Virtues of a programmer: laziness, impatience, hubris.
+
+### 4.4: Fibonacci numbers
+
+-    Our basic recursive method is really wasteful!
+-    **Memoization**.
+-    Solution: write known answers in a a Python dictionary.
+
+        def memofibo(n, chart = None):
+            if chart is None:
+                chart = {}
+            if n <= 2:
+                chart[n] = 1
+            if n not in chart:
+                chart[n] = memofibo(n-1, chart) + memofibo(n-2, chart)
+            return chart[n]
+
+### 4.8: Memoization for Parsing
+
+-    Cast your mind back to FSMs and regular expressions.
+-    To check if a string is accepted by an FSM we used our finger to keep track.
+-    But FSMs have obvious states to put fingers on.
+-    Where do you put your finger during parsing?
+-    And will need more than one finger!
+
+        S -> E
+        E -> E + E
+        E -> E - E
+        E -> 1
+        E -> 2
+        
+        input = 1 + 2
+        
+-    When you parse `1 +`, where am I?
+-    No states, but we have rules and the next input.
+-    There are rules that are more likely to be used next than others.
+-    Formally we put a red dot inside one or more of the rules' RHS to keep track of where we are.
+    -    Left of red dot: what we've seen.
+    -    Right of red dot: what we haven't seen yet.
+-    Example of a **parsing state**.
+
+### 4.9: Parsing state
+
+-    If the red dot ends up on the right of the start symbol's rule, you've parsed the string! i.e.
+
+        S -> E <dot>
+
+-    A **parsing state** is a rewrite rule from the grammar augmented with one red dot on the right-hand side of the rule.
+
+### 4.10: Possible States
+
+        Input: 1 +
+        State: E -> 1 + <dot> E
+        
+-    This cannot be true! A parsing state must be a rewrite rule *from the grammar* augmented with one red dot. `E -> 1 + E` is not a rule from the grammar.
+
+### 4.11: Charting Parse States
+
+-    Suppose we have `parse([t_1, T_2, …, t_n, …, t_last])`
+-    `chart[N]` = all parse states we could be in after seeing `t_1, t_2, …, t_n` only!
+-    e.g.
+
+        E -> E + E
+        E -> int
+        
+        Input = int + int
+
+        chart[0] =
+            [E -> <dot> E + E,
+             E -> <dot> int]
+             
+        chart[1] = 
+            [E -> int <dot>,
+             E -> E <dot> + E]
+             
+        chart[2] =
+            [E -> E + <dot> E]
+
+### 4:14: Magical Power
+
+-    Grammars can be recursive => power.
+-    We'll need to keep track of one extra piece of information: how many tokens we've seen so far.
+
+        E -> E + E
+        E -> int
+        
+        Input = int + int
+
+        chart[0] =
+            [E -> <dot> E + E,
+             E -> <dot> int - seen 0]
+             
+        chart[1] = 
+            [E -> int <dot>,
+             E -> E <dot> + E]
+             
+        chart[2] =
+            [E -> <dot> int - seen 2,
+             E -> E + <dot> E]
+
+-    Must add **starting position** aka **from position** to our parse states.
+-    Because we want to parse. *Parsing* is the *inverse* of *producing strings*.
+
+        int + int
+        E + int        # apply E -> int
+        E + E          # apply E -> int
+        E              # apply E -> E + E
+        
+-    Parsing is going down.
+-    Generating is going up. 
+
+###  4.16: Building the chart
+
+-    If you build the chart, you have solved parsing!
+
+        S -> E
+        E -> …
+        
+        S -> E <dot> - starting at 0 => we've parsed it.
+        # We want to be in this state!
+        
+-    If inputs is T tokens long:
+
+        S -> E <dot> start at 0 in chart[T]
+        
+-    If we can build the chart, and the above is true, then the string is in the language of the CFG.
+
+
+### 4.17: Closure
+
+-    Start:
+
+        chart[0], S -> <dot> E from 0
+        
+-    End:
+
+        chart[T], S -> E <dot> from 0.
+        
+-    Making intermediate entries
+-    Suppose:
+
+        S -> E + <dot> E, from j, in chart[i] (seen i tokens)
+        
+-    Expecting to see E in the future.
+-    Need to find all rules that go to E and "bring them in".
+
+- - -
+
+-    Let's say:
+
+        chart[i] has X -> ab <dot> cd, from j.
+        
+-    abcd may be terminals, nonterminals, or epsilon.
+-    For all grammar rules:
+        
+        c -> pqr
+        
+-    We add:
+
+        c -> <dot> pqr, from i
+        
+-    To `chart[i]`.
+   
+- - -
+
+-    This is **predicting** aka **computing the closure**.
+
+### 4.18: Computing the Closure
+
+Suppose:
+
+        E -> E -E
+        E -> (F)
+        E -> int
+        F -> string
+        
+        Input: int - int
+        Seen 2 tokens so far
+     
+        chart[2] has E -> - <dot> E, from 0
+
+    
+
+
+
+
+
+
 
 ## References
 
