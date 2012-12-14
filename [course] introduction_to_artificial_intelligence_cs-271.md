@@ -898,7 +898,9 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 -    In a surprising twist if you encounter a word that has never been encountered as spam before then the email cannot every be spam.
     -    It can't be that a single word determines this!
     -    This is **overfitting**.
-    
+
+### 5.14: Laplace smoothing
+
 -    **Laplace smoothing** to deal with overfitting.
 -    In Maximum-Likelihood (ML):
 
@@ -914,11 +916,311 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
         
 -    Add `k` to each observation count. **Smoothing parameter**.
     -    `k = 0` is Maximum-Likelihood estimator.
--    `N`: total number of occurrences, e.g. spam + ham.
+-    `N`: total number of occurrences, e.g.  spam + ham.
 -    `|x|` is the number of values that variable `x` can take on. Think of it as degrees of freedom.
     -    In this case either spam or ham, so `|x| = 2`.
 
+-    In the case of the bag of words model of spam detection, how to do:
+
+        P("today" | SPAM)
+        ML version = 0 / 9
+        LS version = (0 + 1) / (9 + 12)
+        
+-    The degrees of freedom for the random variable spread over all classes, i.e. both ham and spam.
+-    Don't forget in bag of words model the words are independent, so multiword messages can have word-probabilities multiplied together. 
+    -    In LS the probabilities get the k on top and `|x|` on bottom.
+    
+### 5.17: Summary of Naive Bayes
+
+-    Input: features of documents, training data. `x_1 … x_n`.
+-    Output: label, spam or not spam. `y`.
+-    We made a *generative model* for the spam class and non spam class, that described the c*onditional probability of each individual feature*.
+    -    Root node: `y`, the label.
+    -    Directed edges to child nodes, the features.
+    -    Each edge has two parameters: `P(x_n|+y)` and `P(x_n|-y)`.
+-    Then used *maximimum likelihood* and a *Laplacian smoother*    to determine the edge parameters.
+-    Then used *Bayes rule* to take any particular, new training examples and determine the probability of labels.
+-    **Generative model**: the conditional probabilities of each feature all aim to maximize the probability of individual features as if those describe the physical world (?).
+-    **Bag of words model**: representation fo each email counts occurrences of words, irrespective of order.
+-    Powerful spam filtering method, but now not powerful enough.
+
+### 5.18: Advanced spam filters
+
+-    Known spamming IP?
+-    Have you ever emailed this person before?
+-    Have 1,000 other people received the same message?
+-    Is email header consistent? (e.g. if `blah@hsbc.co.uk` do the headers indicate it came from `hsbc.co.uk`?)
+-    Is the email in all capitals?
+-    Do the inline URLs point to pages where they say they point to?
+-    Are you addressed by name?
+
+### 5.19: Digit recognition
+
+-    Hand-written digit recognition.
+-    Data set from US postal service.
+-    Naive bayes.
+    -    Input vector: *pixel values*.
+        -    16x16 input image.
+        -    Hence 256 different values that is brightness of each pixel.
+        -    But this is not **shift invariant**.
+        -    Transposition is mis-recognised.
+    -    Input vector: *pixel values + weight of neighbours*.
+        -    Still 16x16 input image.        
+        -    But a given cell includes a weight of its neighbours.
+        -    An attempt to recognise transposition.
+        -    **Input smoothing**.
+        -    **Convolve the input with a Gaussian variable**.
+-    Naive bayes is not a good choice.
+    -    Assumption of conditional independent of each input vector element for a target class is not true.
+
+### 5.20: Overfitting
+
+-    Overfitting prevention.
+-    Occam's Razor: tradeoff between how well we fit the data and how smooth our method is.
+    -    Laplacian smoothing one way to make our method smoother.
+    -    For digit recognition using input convolution is another way to make our method smoother.
+-    But what `k` do we choose for Laplacian smoothing?
+-    **Cross validation**
+    -    Divide training data into three *non-overlapping* buckets.
+        1.    **Train** ~80%.
+        2.    **Cross-validate** ~10%.
+        3.    **Test** ~10%.
+    -    Use 'train' to determine parameters. 
+    -    Use 'cross-validate' to determine value of `k`.
+        -    Train for a given `k` using 'train' data.
+        -    Evaluate performance on 'cross-validate' data.
+        -    Output: best `k`.
+    -    Only use 'test' data once.
+        -    Evaluate performance of your model.
+        -    This is how you report its validity.
+-    **Ten-fold smoothing**: often run cross-validation in batches of ten to find an optimal `k`.
+
+### 5.21: Classification vs. Regression
+
+-    We've been doing classification.
+    -    Target labels are discrete, in our case binary.
+-    Often we need continuous labels.
+-    **Regression**.
+    -    e.g. line of best fit.
+    
+### 5.22: Linear Regression
+
+-    Data:
+
+        x_11 x_12 … x_1n -> y_1
+        …
+        x_m1 x_m2 … x_mn -> y_m
+        
+        Want:
+        
+        y = f(x)
+        
+-    In linear regression for single-variant x:
+
+        f(x) = w_1 * x + w_0
+        
+-    Where x is a vector, `w` and `w_0` are also vectors:
+
+        f(x) = w . x + w_0
+        
+        # w.x is inner product!
+        
+### 5.23: More Linear Regression
+
+-    **Loss function**: what we're trying to minimize.
+    -    Defined as the **residual error** after fitting our regression equation.
+    
+            Loss = sum_j (y_j - (w_1 * x_j + w_0))^2
+            
+-    Quadratic error between our *target labels in reality* and *what our best hypothesis can produce*.
+-    Solution to regression problem `w^*`:
+
+        w_1^* = argmin_w Loss
+        
+-    Argmin of `Loss` over all possible vectors `w`.
+-    Over all possible `w` what minimizes `Loss`?
+
+### 5.24: Quadratic Loss
+
+        min_w sum(y_i - (w_1 * x_i + w_0))^2
+
+-    Where is derivative 0? Do partial derivative over `w_0`.
+
+        dL/dw_0 = -2 * sum(y_i - (w_1 * x_i + w_0)) = 0
+               => sum(y_i) - w_1 * sum(x_i) = M * w_0
+               
+        # M is number of training samples
+        
+               => w_0 = 1/M * sum(y_i) - (w_1/M) * sum(x_i)
+              
+        # But we don't know w_1, so do this again:
+        
+        dL/dw_1 = -2 * (sum(y_i - (w_1 * x_i + w_0)) * x_i = 0
+               =>  sum_i(x_i * y_i) - w_0 * sum(x_i) = w_1 * sum(x_i^2)
+               
+        # Plug in w_0
+        
+        sum(x_i * y_i) - (1/M) * sum(y_i) * sum(x_i) = (w_1/M)*(sum(x_i))^2
+        
+-    Finally:
+
+        w_1 = M * sum(x_i * y_i) - sum(x_i) * sum(y_i)
+              ----------------------------------------
+              M * sum(x_i^2) - (sum(x_i))^2
+              
+-    Noting, from before: 
+        
+        w_0 = 1/M * sum(y_i) - (w_1/M) * sum(x_i)
+
+### 5.25: Problems with Linear Regression
+
+-    Can't capture nonlinear behaviour.
+-    Bad for predicting outliers.
+-    Bad for data with concentrated x values of large variences in y values. 
+-    No plausible way of predicting data outside of the training data; does the linear behaviour continue?
+    -    **Logistic regression** addresses this.
+    -    Let `f(x)` be the linear function.
+    -    Logistic function is:
+    
+            z = 1
+                -------------
+                1 + e^(-f(x))
+
+### 5.26: Linear Regression and Complexity Control
+
+-    **Regularization**.
+
+        Loss = Loss(data) + Loss(parameters)
+        
+        where:
+        
+        Loss(data) = sum_j (y_j - w_i * x_j - w_0)^2
+        
+        and:
+        
+        Loss(parameters) = sum_i (w_ii |^P), where P is usually 1 or 2.
+        
+-    `Loss(data)` is as before.
+    -    On plot of w_1 vs. w_0 sits somewhere away from origin.
+-    `Loss(parameters)` might just be a function that penalizes large parameters up to some `P`, where `P` is usually 1 or 2
+    -    On plot of w_1 vs. w_0 it tries to pull solution back in towards origin.
+    -    If quadratic error it pulls into a circle around origin. (aka L2 regularization).
+    -    For L1 regularization (?) it pulls into a diamond around origin.
+
+###  5.27: Minimizing More Complicated Loss Functions
+
+-    Need numerical methods to minimize complex loss functions; no closed/analytic solutions.
+-    **Gradient descent**.
+    -    Start with guess w_0.
+    -    Update iteratively:
+    
+            w_i <- w_i - \alpha * gradient(L(w_i)) 
+            
+    -    alpha is **learning rate**, ~0.01.
+    -    Won't usually find global minima, will only find local minima.
+    -    Over time we need to reduce alpha in order to reach a final answer.
+-    Books can cover how to use better methods than gradient descent.
+
+-    Let's apply gradient descent to linear regression, even though we already have a closed/analytic solution:
+
+        dL/dw_1 = -2 * sum_j (y_j - (w_1 * x_j + w_0)) * x_j
+        
+        dL/dw_0 = -2 * sum_j (y_j - (w_1 * x_j + w_0))
+        
+-    So start with (w_1)^0 and (w_0)^0, initial guesses.
+-    Use iterative method for each of `w_1` and `w_0`:
+
+        w_i <- w_i - \alpha * gradient(L(w_i)) 
+        
+### 5.32: Perceptron
+
+-    **Perceptron algorithm**.
+-    Suppose we have data of positive sample and negative samples.
+-    A **linear separator** is a linear equation that separates positive from negative samples.
+-    Not all data have a linear separation, but if it does a perceptron can find it.
+
+        f(x) = 1 if w_1 * x + w_0 >= 0
+             = 0 if w_1 * x + w_0 < 0
+             
+-    **Perceptron update**, an *online* algorithm
+    -    Start with random guess for w_1 and w_0.
+    
+            (w_i)^m <- (w_i)^(m-1) + \alpha * (y_j - f(x_j))
+            
+            Error := y_j - f(x_j)
+            \alpha := learning rate, small
+            
+    -    If error is 0 then no update occurs.
+    -    Perceptron converges if a linear separation exists.
+    
+-    Given many possible separators, which one do you prefer?
+    -    The separator that has largest minimum distance from actual samples.
+    -    Samples are actually noisy.
+    -    Want to maximize the **margin** := distance from separator to the closest training example.
+    
+-    **Maximum margin algorithms**
+    -    **Support vector machines**.
+    -    **Boosting**
+    
+### 5.33: Support Vector Machines.
+
+-    Won't cover in detail in this class.
+-    Derives a linear separator that maximizes the margin.
+-    Use linear techniques to solve non-linear problems.
+    -    e.g. a circle of `+` samples surrounded by a ring of `- samples.
+    -    No linear separation.
+    -    **Kernel trick**: augment the feature set with new features.
+    -    In our example derive a new feature.
+    
+            x_1 and x_2 are axes for features
+            
+            Now derive:
+            
+            x_3 = sqrt( (x_1)^2 + (x_2)^2 )
+            
+    -    i.e. `x_3` is the distance from the origin.
+    -    `x_3` *is* linearly separatable.
+
+-    Can take any non-linear problem and use the kernel trick and add features that subsequent linear methods better.
+-    In SVMs features are added by the kernel, implicitly represented.
+
+### 5.34: Linear Methods Summary
+
+-    Regression vs. classification
+-    Exact vs iterative solutions
+-    Smoothing
+-    Linear methods fro non-linear problems.
+
+### 5.35: K Nearest Neighbours.
+
+-    **Parametric methods**: methods that use parameters, like probabilities or weights, where number of parameters is *independent* of the training set size.
+-    **Nonparametric methods**: number of parameters can grow.
+
+-    **K-nearest neighbours**. (aka KNN)
+    -    Learning: memorize all data.
+    -    New input comes in and you want to classify it.
+        -    Find K nearest neighbours.
+        -    Return the majority class label.
+-    KNN is non-parametric.        
+
+### 5.37: K as a Smoothing Parameter
+
+-    **Voronoi graph**: depicition of results of KNN boundary (of course, non-linear and very complex).
+-    High `k` => smoother boundaries in Voronoi graph.
+-    `k` is a **regulalizer**: it controls the complexity.
+-    Can use *cross-validation* to determine `k`.
+
+### 5.38: Problems of KNN
+
+-    Very large data sets.
+    -    Length searches.
+    -    Want to avoid a O(n) by using a **kdd tree** to make it O(log n)
+-    Very large feature spaces.
+    -    Much more difficult problem.
+    -    As input dimension increases the edge length to neighbours increases. All neighbours are very far away.
+    -    With more dimensions need more points to be close in order to count as "near".
+  
 
 
 
-     
+ 
