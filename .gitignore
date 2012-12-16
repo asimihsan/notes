@@ -2,3 +2,4 @@ tex/
 pdf/
 output/
 
+*.pyc
