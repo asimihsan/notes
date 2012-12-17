@@ -3,3 +3,5 @@ pdf/
 output/
 
 *.pyc
+src/programming_languages/parser.out
+src/programming_languages/parsetab.py
