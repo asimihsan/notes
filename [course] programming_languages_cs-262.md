@@ -1511,6 +1511,9 @@ In Python:
                 
 ### 4.31: Putting it together
 
+        # see notes/src/programming_languages/ps4_parser.py
+        # above has closure, shift, and reductions in-lined.
+
         def parse(tokens, grammar):
             tokens = tokens + ["end_of_input_marker"]
             chart = {}
@@ -1698,7 +1701,86 @@ In Python:
         # into its own function. separate rules give better
         # performance, as the parser has done all of your 
         # len() work for you.
-        
+
+## Office Hours 4
+
+-    Why do we create languages? If we parse JavaScript using Python, why not write everything in Python?
+    -    Languages have different purposes.
+    -    They focus on certain topics, reduce error rates in given domains.
+    -    **Domain-specific langauges**: trying to solve a particular language and do it well.
+    -    Hardware definition, e.g. VHDL and Prolog.
+    -    Game level layout and engines.
+    -    Scientific computing, e.g. FORTRAN.
+    -    Time taken to write a program, and error rate.
+    -    For many applications correctness is more important than performance.
+        -    Python dictionaries are one line, no bugs!
+        -    C dictionaries are modules and memory allocations, many lines - possibly many bugs!
+    -    All languages, however, are Turing complete - fundamentally equivalent.
+    
+-    Parsing tools
+    -    We're using memoization. Why not e.g. LALR(1)?
+    -    Memoization is used in more complex methods like GLR.
+    -    C++ doesn't fit into simpler LR(k) tools, needs GLR.
+        -    e.g. Oink.
+    -    All these tools have similar interfaces.
+    -    Ultimately the question is "if the real world does X, why are we doing Y?"
+    -    Key difference in pedagogy between *knowing how to program* and *knowing how to program in a given language or framework*.
+        -    Former is much more important.
+    -    LALR(1) and recursive descent are much more difficult than the algorithm we've covered in this class.
+    -    Our method is **Earley parsing**, O(n^3) in the worst-case for ambiguous grammars, but handles any grammar. Other methods are faster but handle restricted subsets of grammars.
+    -    Also, our method is O(n) for unambiguous, simple grammrs, i.e. these same restricted subsets.
+    -    Research over the past 10 years is re-focusing on GLR chart-based parsers, similar to ours.
+    -    Just an accident of history that we're using hacks like LALR(1).
+    
+-    We're using memoization. Are we secretly doing dynamic programming?
+    -    **Dynamic programming**: solve a problem by keeping a chart and adding to this chart over time.
+    -    Useful when a problem exhibits the **optimal substructure property**: deal with a problem by dealing with smaller problems.
+    -    Yes!
+    
+-    Compiling vs. interpretation.
+    -    Interpretation: lex, parse, then act!
+    -    Compiling: precompute a lot of this, optimize it, store as a binary file.
+    -    Compiling is like packing really well for a trip. Repeatedly going back to your house for stuff vs. packing a suitcase very well.
+    -    Java compiles down to byte-code, and the byte-code is interpreted by a JVM.
+    -    Even C is compiled down to e.g. x86 assembly, which a processor interprets!
+
+## Problem Set 4
+
+### Problem 1: Parsing States
+
+What is in chart[2], given:
+
+        S -> id(OPTARGS)
+        OPTARGS ->
+        OPTARGS -> ARGS
+        ARGS -> exp,ARGS
+        ARGS -> exp
+
+        input: id(exp,exp)
+
+        chart[0]
+            S -> <dot>id(OPTARGS)$, from 0
+            
+        chart[1]
+            # shift
+            S -> id<dot>(OPTARGS)$, from 0
+            
+        chart[2]
+            # shift
+            S -> id(<dot>OPTARGS)$, from 0
+            
+            # OPTARGS could be epsilon, hence
+            # in one world:
+            S -> id(OPTARGS<dot>)$, from 0
+            
+            # In another world we see OPTARGS
+            # and it isn't epsilon, so we closure.
+            OPTARGS -> <dot>ARGS, from 2
+            OPTARGS -> <dot>, from 2
+            
+            # !!AI I think by recursion we apply closure to ARGS; reminiscent of epsilon-closure during DFA->NFA conversion.
+            ARGS -> <dot>exp,ARGS from 2
+            ARGS -> <dot>exp from 2
 
 ## References
 
