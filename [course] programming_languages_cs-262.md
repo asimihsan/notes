@@ -1236,7 +1236,6 @@ Partial grammar for JavaScript:
         
 -    If we can build the chart, and the above is true, then the string is in the language of the CFG.
 
-
 ### 4.17: Closure
 
 -    Start:
@@ -1290,13 +1289,416 @@ Suppose:
      
         chart[2] has E -> - <dot> E, from 0
 
-    
+Then the result of computing the closure:
 
+        E -> <dot> int from 2
+        E -> <dot> (F) from 2
+        E -> <dot> E - E from 2
+        
+The following are not in the result:
 
+        E -> <dot> E - E from 0 # wrong from
+        F -> <dot> string from 2 # wrong LHS
 
+### 4.19: Consuming the Input
 
+-    **Closures** are one of three methods required to complete the parsing chart.
+-    **Shifting**, aka consuming the input, is another method.
 
+-    Recall parsing state:
 
+           X -> ab <dot> cd, from j in chart [i]
+       
+-    If c is non-terminal, => closure.
+-    If c is terminal, => shift (i.e. consume the terminal).
+
+          X -> abc <dot> from j into chart [i+1]
+
+-    Remember what this means. We've seen `i` tokens, and the `i+1`th token is `c`, a terminal.
+-    We are not updating `from`, because that's where we've come from.
+
+### 4.21: Reduction
+
+        x -> ab <dot> cd
+        
+-    `c` is non-terminal, => closure
+-    `c` is terminal, => shift
+-    `cd` is `\epsilon`, i.e. nothing. => reduce.
+
+-    **Reduction**: apply rewrite rules / productions in reverse.
+
+        E -> E + E
+        E -> int
+        
+        <dot> int + int + int
+        int <dot> + int + int
+        
+        # magical reduction!
+        E <dot> + int + int
+        
+        E + <dot> int + int
+        E + int <dot> + int
+        
+        # magical reduction!
+        E + E <dot> + int
+        
+        # magical reduction!
+        E <dot> + int
+        
+        E + <dot> int
+        ...
+
+-    Reduction makes a parse tree in reverse.
+-    But how to apply reductions?
+
+### 4.23: Reduction Walkthrough
+
+        E -> E + E <dot> from B in chart [A]
+        
+-    We've seen inputs up to B and are about to encounter `E + E`:
+
+        input_1 input_2 … input_B | E + E
+        
+-    It's as if we saw the LHS at this point:
+
+        input_1 input_2 … input_B | E
+        
+-    Where did we come from? Suppose chart[B] has:
+
+        E -> E - <dot> E from C
+
+-    By closure we're predicting to see E. Hence at this point we bring it in (?)
+-    Reduction is a combination of closure and shifting.
+-    So add:
+
+        E -> E - E <dot> from C to chart[A]
+
+-    Example!
+
+        T -> aBc
+        B -> bb
+        
+        input: abbc
+        
+        N = 0
+        chart[0]
+            T -> <dot>aBc, from 0
+            
+        N = 1, a
+        chart[1]
+            # shift
+            T -> a <dot>Bc, from 0
+            
+            # and we see a non-terminal, so bring in closure
+            B -> <dot>bb, from 1
+            
+        N = 2, ab
+            # shift
+            B -> b<dot>b, from 1
+            
+        N = 3, abb
+            # shift
+            B -> bb<dot>, from 1
+            
+            # - red dot at end of rule, so reduce.
+            # - came from state 1.
+            # - Does anyone in state 1 want to see B? 
+            # - Yes! T -> a<dot>Bc is looking for one.    
+            # - So transplant that rule here
+            T -> aB<dot>c, from 0        
+ 
+### 4.25: Addtochart
+
+Adding state to chart:
+
+        def addtochart(chart, index, state):
+            if not state in chart[index]:
+                chart[index] = [state] + chart[index]
+                return True
+            else:
+                return False
+ 
+### 4.26: Revenge of List Comprehensions
+
+Grammar:
+
+        S -> P
+        P -> (P)
+        P ->
+        
+In Python:
+
+        grammar = [
+            ("S", ["P"]),
+            ("P", ["(", "P", ")"]),
+            ("P", []),
+        ] 
+
+Parser state:
+
+        X -> ab<dot>cd from j
+        
+In Python:
+
+        state = ("x", ["a", "b"], ["c", "d"], j)
+
+### 4.27: Writing the closure
+
+-    Know how to seed this table, add first rule with dot on left-most position to `chart[0]`.
+-    Know how to see if a string is in the language of the grammar, check `chart[n]` for n tokens to see if we're in the final state.
+-    Looking at `chart[i]`, we see `x -> ab<dot>cd from j`.
+-    We'll call:
+
+        next_states = closure(grammar, i, x, ab, cd, j)
+        for next_state in next_states:
+            any_changes = addtochart(chart, i, next_state)
+                          or any_changes
+
+-    What is `closure()`?
+
+        def closure(grammar, i, x, ab, cd, j):
+            next_states = [
+                (rule[0], [], rule[1], i)
+                for rule in grammar
+                if len(cd) > 0 and
+                   rule[0] == cd[0]
+            ]
+            return next_states
+
+### 4.29: Writing shift
+
+-    We're currently looking at `chart[i]` and we see `X -> ab<dot>cd from j`.
+-    The input is `tokens`.
+-    We'll write:
+
+        next_state = shift(tokens, i, x, ab, cd, j)
+        if next_state is not None:
+            any_changes = addtochart(chart, i+1, next_state)
+                          or any_changes
+                          
+-    What is `shift()`?
+
+        def shift(tokens, i,x, ab, cd, j):
+            if len(cd) > 0 and tokens[i] == cd[0]:
+                return (x, ab + [cd[0]], cd[1:], j)
+            else:
+                return None
+                
+### 4.30: Writing reductions
+
+-    We're looking at `chart[i]`, we see `X -> ab<dot>cd from j`.
+-    We'll write:
+
+        next_states = reductions(chart, i, x, ab, cd, j)
+        for next_state in next_states:
+            any_changes = addtochart(chart i, next_state)
+                          or any_changes
+                          
+
+        def reductions(chart, i, x, ab, cd, j):
+            # x -> ab<dot> from j
+            # chart[j] has y -> ... <dot>x ... from k
+            return [
+                (jstate[0],
+                 jstate[1] + [x],
+                 jstate[2][1:],
+                 jstate[3])
+                for jstate in chart[j]
+                if len(cd) > 0 and
+                   len(jstate[2]) > 0 and
+                   jstate[2][0] == x
+            ]
+                
+### 4.31: Putting it together
+
+        def parse(tokens, grammar):
+            tokens = tokens + ["end_of_input_marker"]
+            chart = {}
+            start_rule = grammar[0]
+            for i in xrange(len(tokens) + 1):
+                chart[i] = []
+            start_state = (start_rule[0], [], start_rule[1], 0)
+            chart[0] = [start_state]
+            for i in xrange(len(tokens)):
+                while True:
+                    changes = False
+                    for state in chart[i]:
+                        # State === x -> ab<dot>cd, j
+                        (x, ab, cd, j) = state
+                        
+                        # Current state == x -> ab<dot>cd, j
+                        # Option 1: For each grammar rule
+                        # c -> pqr (where the c's match)
+                        # make a next state:
+                        #
+                        # c -> <dot>pqr, i
+                        #
+                        # English: We're about to start
+                        # parsing a "c", but "c" may be
+                        # something like "exp" with its
+                        # own production rules. We'll bring
+                        # those production rules in.
+                        next_states = closure(grammar, i, x, ab, cd, j)
+                        for next_state in next_states:
+                            changes = addtochart(chart, i, next_state) or changes
+                            
+
+                        # Current State == x -> ab<dot>cd, j
+                        # Option 2: If tokens[i] == c,
+                        # make a next state:
+                        #
+                        # x -> abc<dot>d, j
+                        #
+                        # £nglish: We're looking for a parse
+                        # token c next and the current token
+                        # is exactly c! Aren't we lucky!
+                        # So we can parse over it and move
+                        # to j+1.
+                        next_state = shift(tokens, i, x, ab, cd, j)
+                        if next_state is not None:
+                            any_changes = addtochart(chart, i+1, next_state) or any_changes
+                            
+                        # Current state == x -> ab<dot>cd, j
+                        # Option 3: if cd is [], the state is
+                        # just x -> ab<dot>, j
+                        # For each p -> q<dot>xr, l in chart[j]
+                        # Make a new state:
+                        #
+                        # p -> qx<dot>r, l
+                        #
+                        # in chart[i].
+                        #
+                        # English: We've just finished parsing
+                        # an "x" with this token, but that
+                        # may have been a sub-step (like
+                        # matching "exp->2" in "2+3"). We
+                        # should update the higher-level
+                        # rules as well.
+                        next_states = reductions(chart, i, x, ab, cd, j)
+                        for next_state in next_states:
+                            changes = addtochart(chart, i, next_state) or changes
+                            
+                if not changes:
+                    break
+
+            accepting_state = (start_rule[0], start_rule[1], [], 0)
+            return accepting_state in chart[len(tokens)-1]
+        
+        result = parse(tokens, grammar)
+        print result
+
+### 4.33: Parse Trees
+
+-    We can tell if a string is valid.
+-    But we need a parse tree!
+-    Going to represent this as nested tuples.
+
+        # tokens
+        def t_STRING(t):
+            r'"[^"]*"'
+            t.value = t.value[1:-1]
+            return t
+            
+        # parsing rules
+        def p_exp_number(p):
+            'exp : NUMBER' # exp -> NUMBER
+            p[0] = ("number", p[1])
+            # p[0] is returned parse tree
+            # p[0] refers to exp
+            # p[1] refers to NUMBER.
+            
+        def p_exp_not(p):
+            'exp : NOT exp' # exp -> NOT exp
+            p[0] = ("not", p[2])
+            # p[0] refers to exp
+            # p[1] refers to NOT
+            # p[2] refers to exp
+
+-    `p`: parse trees
+
+### 4.34: Parsing HTML
+
+        def p_html(p):
+            'html : elt html'
+            p[0] = [p[1]] + p[2]
+            
+        def p_html_empty(p):
+            'html : '
+            p[0] = []
+            
+        def p_elt_word(p):
+            'elt : WORD'
+            p[0] = ("word-element", p[1])
+
+### 4.35: Parsing tags            
+
+        def p_elt_tag(p):
+            # <span color="red">Text!</span>:
+            'elt : LANGLE WORD tag_args RANGLE html LANGLESLASH WORD RANGLE'
+            p[0] = ("tag-element", p[2], p[3], p[5], p[7])
+
+### 4.36: Parsing JavaScript
+
+        def p_exp_binop(p):
+            """exp : exp PLUS exp
+                   | exp MINUS exp
+                   | exp TIMES exp"""
+            p[0] = ("binop", p[1], p[2], p[3])
+
+-    Oh no! Ambiguity!
+-    input: `1 - 3 - 5`
+    -    **Left-associative**: `(1-3)-5 = -7`
+    -    **Right-associative**: `1-(3-5) = 3`
+-    Function calls
+
+        def p_exp_call(p):
+            'exp : IDENTIFIER LPAREN optargs RPAREN'
+            p[0] = ("call", p[1], p[3])
+
+-    Numbers
+
+        def p_exp_number(p):     
+            'exp : NUMBER'
+            p[0] = ("number", p[1])
+
+### 4.38: Precedence
+
+-    But even with associativity, we need precedence to resolve mixtures/binding of operators.
+-    Below gives precedence and associativity.
+
+        precedence = (
+            # lower precedence at the top
+            ('left', 'PLUS', 'MINUS'),
+            ('left', 'TIMES', 'DIVIDE'),
+            # higher precedence at the bottom 
+        )
+
+### 4.41: Optional Arguments
+
+        def p_exp_call(p):
+            'exp : IDENTIFIER LPAREN optargs RPAREN'
+            p[0] = ("call", p[1], p[3])
+            
+        def p_exp_number(p):
+            'exp : NUMBER'
+            p[0] = ("number", p[1])
+            
+        def p_optargs(p):
+            """optargs : exp COMMA optargs 
+                       | exp
+                       | """
+            if len(p) == 1:
+                p[0] = []
+            elif len(p) == 2:
+                p[0] = [p[1]]
+            else:
+                p[0] = [p[1]] + p[3]
+                
+        # or can separate out parsing rules in OR statement
+        # into its own function. separate rules give better
+        # performance, as the parser has done all of your 
+        # len() work for you.
+        
 
 ## References
 
