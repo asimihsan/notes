@@ -225,7 +225,7 @@ def p_exp_binop(p):
 # optargs is just the list of the parse trees of the component expressions.
 def p_exp_call(p):
     'exp : IDENTIFIER LPAREN optargs RPAREN'
-    p[0] = ("call", p[1], [3])
+    p[0] = ("call", p[1], p[3])
 def p_optargs_args(p):
     'optargs : args'
     p[0] = p[1]
@@ -301,4 +301,13 @@ print test_parser(jstext6) == jstree6
 pprint.pprint(test_parser(jstext6))
 pprint.pprint(jstree6)
 print '-' * 20 + ' jstext6 ' + '-' * 20
+
+# function call
+jstext7 = "apply()"
+jstree7 = ('call', 'apply', [])
+print '-' * 20 + ' jstext7 ' + '-' * 20
+print test_parser(jstext7) == jstree7
+pprint.pprint(test_parser(jstext7))
+pprint.pprint(jstree7)
+print '-' * 20 + ' jstext7 ' + '-' * 20
 
