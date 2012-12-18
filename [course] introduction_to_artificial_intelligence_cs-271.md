@@ -1220,7 +1220,162 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
     -    As input dimension increases the edge length to neighbours increases. All neighbours are very far away.
     -    With more dimensions need more points to be close in order to count as "near".
   
+## Section 6: Unsupervised learning
 
+### 6.1: Unsupervised learning
 
+-    Given features, but no labels.
 
+        x_11 x_12 ... x_1n
+        x_21 x_22 ... x_2n
+        ...
+        x_m1 x_m2 ... x_mn
+
+-   `m` data items
+-   `n` features
+-   Is there structure?
+-   Are there clusters?
+
+### 6.2: Dimensions
+
+-   Data can have a given dimensionality.
+-   However, the major variation of the data may lie along a smaller number of different dimensions.
+-   *Lower dimensionality* is another kind of structure. **Dimensionality reduction**.
+
+### 6.3: Terminology
+
+-   Assume **IID**
+    -   **Independentally drawn**.
+    -   **Identically Distributed**.
+-   **Density estimation**: determine underlying model parameters.
+    -   **Clustering**.
+    -   **Dimensionality reduction**.
+-   **Blind Signal Separation**.
+    -   Two people talk simultaneously.
+    -   Can you recover those two speakers and filter into two separate streams?
+    -   Very difficult, yet unsupervised.
+    -   **Factor analysis**: each speaker is a factor in the recording.
  
+### 6.4: Google Street View and Clustering
+
+-   One of the great unanswered questions is: can you take a look at a collection of images and observe invariant features like houses, pavements, stop signs, cars, and correlate between images?
+-   This class won't teach you that!
+-   Clustering
+    -   **k-means**: intuitive method to derive clusters.
+    -   **Expectation maximization**: probabilistic generalization of k-Means, derived from first principles.
+
+### 6.5: k-means clustering
+
+-   Given points in space.
+-   Guess points at random which are centres of clusters.
+-   Assign each point to its most likely cluster point, using Euclidean distances.
+-   Divide the space such that points on the boundary are equidistant from each cluster point.
+    -   **Vornoi graph**.
+-   For each set of points in a cluster, determine a new cluster centre that is optimal for those points.
+    -   The cluster points will move, and the boundary in the Vornoi graph will move.
+    -   Since the boundary moves the points are reassigned to different clusters.
+-   Iterate
+
+### 6.6: k-means algorithm
+
+-   Initially: select k cluster centres at random.
+-   Repeat:
+    -   Correspond data points to nearest cluster.
+    -   Update cluster centre by mean of corresponding data points.
+    -   Empty cluster centres: restart at random.
+    -   Until no change, convergence.
+-   Algorithm is known to converge to a *locally optimal* solution.
+    -   General problem is NP-hard.
+    -   So locally optimal is the best we can do.
+
+-   Problems with k-means.
+    -   Need to know k.
+    -   Local minimum.
+    -   Can't handle high dimensionality.
+    -   Lack of mathematical basis.
+
+### 6.9: Expectation Maximization
+
+-   Discourse: Gaussian normal distribution.
+-   Bell curve.
+-   Mean is 'mu'.
+-   Variance is 'sigma^2'.
+-   Probability density function, i.e. probability that given `x` will be drawn:
+
+        exp(-0.5*(x - mu)^2/(sigma)^2)
+        ------------------------------
+        sqrt(2*pi)*sigma
+
+-   Can use over interval range `[a,b]`.
+
+-   **Multi-variate Gaussian**: over more than one variables.
+-   Drawn from **level sets**, sets with equal probability.
+-   For two variables looks like a 3D bell curve.
+-   Multi-variate Gaussian probability density function:
+
+        (2*pi)^(-N/2) * |$\Sigma$|^(-0.5) * exp(-0.5*(x-mu)^T * $\Sigma$^(-1) * (x-mu))
+
+-   N is number of dimensions in input space.
+-   $\Sigma$ is a covariance matrix that generalises the single-variate $\sigma$ variance.
+-   The exponential is done using vectors and linear algebra.
+
+### 6.10: Gaussian Learning
+
+        f(x | mu, sigma^2) = (sqrt(2*pi*sigma^2))^(-1) * exp(-0.5*(x-mu)^2/(sigma^2))
+
+-   Fitting data to determine mu and sigma.
+
+        mu = 1/M * sum(j=1 to M) (x_j) # average
+
+        sigma^2 = 1/M * sum(j=1 to M) (x_j - mu)^2 # average quadratic deviation
+
+-   Convince yourself that this is the *maximum likelihood* estimate for the Gaussian parameters.
+
+        Data: x_1, x_2, ..., x_m
+
+        p(x_1, ..., x_m  | mu, sigma^2) = product(i) f(x_i | mu, sigma^2) # because variables are IID
+        = (2*pi*sigma^2)^(-0.5*M) * exp(-0.5*sum(i)(x_i-mu)^2/sigma^2)
+
+-   Note that in doing the product
+    -   the left hand side gets raised to the power of M.
+    -   recalling that `exp(x+y) = exp(x)*exp(y)` the products of the RHS result in a single `exp()` with a summation inside.
+-   Maximum likelihood => we want to maximize this probability using mu, sigma^2.
+-   Trick: we can maximize the logarithm instead, as the logarithm is a monotonic function.
+
+        = M/2 * log(1/(2*pi*sigma^2)) - (1/2*sigma^2) * sum(i=1 to M)(x_i - mu)^2
+
+-   Maximum is where the partial derivative is 0.
+
+        dlogf/dmu = 1/sigma^2 * sum(i=1 to M)(x_i-mu) = 0
+                0 = sum(i=1 to M)(x_i - mu)
+                0 = -M*mu + sum(i=1 to M)(x_i)
+             M*mu = sum(i=1 to M)(x_i)
+               mu = 1/M * sum(i=1 to M)(x_i), QED.
+
+-   Recall that:
+
+        d/dx(log_b(x)) = 1/(x*ln(B))
+        d/dx(ln(x))    = 1/x
+        d/dx[ln(f(x))] = ln'(f(x)) * f'(x) = f'(x) / f(x)
+
+-   Doing the LHS first:
+
+        dlogf/dsigma = M/2 * (2*pi*sigma^2) * (1/2*pi) * d/dsigma(1/(sigma^2))
+                     = M*sigma^2/2 * (-2*(sigma)^-3)
+                     = -M/sigma 
+
+-   Now the RHS:
+
+        dlogf/dsigma = 1/sigma^3 * sum(i=1 to M)(x_i - mu)^2
+
+-   Add both, set equal to 0:
+
+        sigma^2 = 1/M * sum(i=1 to M)(x_i - mu)^2, QED.
+
+-   For multivariate Gaussian, the maximum likelihood estimates:
+
+        mu = 1/M * sum_i (x_i)
+
+        Sigma = 1/M * sum(j){(x_i-mu)^T * (x_i-mu)}
+
+
