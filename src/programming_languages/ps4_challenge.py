@@ -132,17 +132,17 @@ def parse(tokens,grammar):
 
 # Comment this block back in if you'd like to see the chart printed.
 #
-  for i in range(len(tokens)):
-    print "== chart " + str(i)
-    for state in chart[i]:
-      x, ab, cd, j = state
-      print "    " + x + " ->",
-      for sym in ab:
-        print " " + sym,
-      print " .",
-      for sym in cd:
-        print " " + sym,
-      print "  from " + str(j)
+#  for i in range(len(tokens)):
+#    print "== chart " + str(i)
+#    for state in chart[i]:
+#      x, ab, cd, j = state
+#      print "    " + x + " ->",
+#      for sym in ab:
+#        print " " + sym,
+#      print " .",
+#      for sym in cd:
+#        print " " + sym,
+#      print "  from " + str(j)
 
   accepting_state = (start_rule[0], start_rule[1], [], 0)
   return accepting_state in chart[len(tokens)-1]
@@ -212,13 +212,13 @@ grammar = [
 
 import random
 operators = ["+", "-", "*", "/", "<", ">"]
-for i in [2]:
+for i in [5,10,15,20]:
     tokens = []
     for j in xrange(i):
         tokens.append(str(random.randrange(0, 10)))
         tokens.append(random.choice(operators))
     tokens.append(str(random.randrange(0, 10)))
-    print tokens
+    #print tokens
     test_it(grammar,tokens)
 
 grammar = [ ] # put your final answer here
