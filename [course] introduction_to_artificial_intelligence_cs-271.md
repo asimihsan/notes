@@ -833,7 +833,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
     
 ### 5.9: Maximum Likelihood
 
--    **Maximum likelihood**: what is the probability of a query that maximixes the likelihood of the data?
+-    **Maximum likelihood**: what is the probability of a query that maximizes the likelihood of the data?
     -    Infer probabilities from data.
     -    Assumes data instances are independent.
 -    Going through email example.
@@ -860,7 +860,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
                 = pi^3 * (1-pi)^5
                 
 -    What is the `pi` that maximizes this expression?
--    Can also maximize the log of this expression becuase log is monotonic with respect to p.
+-    Can also maximize the log of this expression because log is monotonic with respect to p.
 
         log p(data) = 3*log(pi) + 5*log(1-pi)
    
@@ -895,7 +895,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
         = P(M|spam) * P(spam) / (P(M|spam)*P(spam) + P(M|ham)*P(ham))
         
 -    In next example, can do the same with an email with three words by treating each word as independent, hence product.
--    In a surprising twist if you encounter a word that has never been encountered as spam before then the email cannot every be spam.
+-    In a surprising twist if you encounter a word that has never been encountered as spam before then the email cannot ever be spam.
     -    It can't be that a single word determines this!
     -    This is **overfitting**.
 
@@ -912,7 +912,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 
 -    In Laplace Smoothing:
 
-        LS(k): p(x) = (count(x) + k) / (N + k|x|)
+        LS(k): p(x) = (count(x) + k) / (N + k * |x|)
         
 -    Add `k` to each observation count. **Smoothing parameter**.
     -    `k = 0` is Maximum-Likelihood estimator.
@@ -926,7 +926,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
         ML version = 0 / 9
         LS version = (0 + 1) / (9 + 12)
         
--    The degrees of freedom for the random variable spread over all classes, i.e. both ham and spam.
+-    The degrees of freedom for the random variable spread over all classes, i.e. both ham and spam, and is the number of classes of words.
 -    Don't forget in bag of words model the words are independent, so multiword messages can have word-probabilities multiplied together. 
     -    In LS the probabilities get the k on top and `|x|` on bottom.
     
@@ -938,7 +938,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
     -    Root node: `y`, the label.
     -    Directed edges to child nodes, the features.
     -    Each edge has two parameters: `P(x_n|+y)` and `P(x_n|-y)`.
--    Then used *maximimum likelihood* and a *Laplacian smoother*    to determine the edge parameters.
+-    Then used *maximimum likelihood* and a *Laplacian smoother* to determine the edge parameters.
 -    Then used *Bayes rule* to take any particular, new training examples and determine the probability of labels.
 -    **Generative model**: the conditional probabilities of each feature all aim to maximize the probability of individual features as if those describe the physical world (?).
 -    **Bag of words model**: representation fo each email counts occurrences of words, irrespective of order.
@@ -1137,7 +1137,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 -    **Perceptron algorithm**.
 -    Suppose we have data of positive sample and negative samples.
 -    A **linear separator** is a linear equation that separates positive from negative samples.
--    Not all data have a linear separation, but if it does a perceptron can find it.
+-    Not all data have a linear separation, but if it does a perceptron will always converge and find it.
 
         f(x) = 1 if w_1 * x + w_0 >= 0
              = 0 if w_1 * x + w_0 < 0
@@ -1378,4 +1378,183 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 
         Sigma = 1/M * sum(j){(x_i-mu)^T * (x_i-mu)}
 
+### 6.15: Expection Maximization (E?M) as Generlization of k-means
+
+-   In k-means we have *hard correspondance*: each data point is attracted to one and only one cluster point.
+-   In EM we have **soft correspondance**: each data point is attracted to all cluster points in proportion to the data point's posterior likelihood.
+    -   This is **expectation**.
+-   In the adjustment step the cluster centres are being optimized like before, but correspond to all data point.
+    -   This is **maximization**.
+-   In EM cluster points don't move as much as in k-means.
+
+### 6.16: Expectation Maximization algorithm
+
+-   Each data point is generated from a **mixture**.
+
+        P(x) = sum(i=1 to k) p(C=i) * p(x | C=i)
+
+        k: number of classes
+
+-   Intuition.
+    -   Each cluster point as a Gaussian variable associated with it.
+    -   In generative version of EM we first draw cluster centre, `P(C=i)`, and then draw from the Gaussian associated with the cluster centre, `P(x | C=i)`.
+-   Unknowns:
+    -   *Prior probability for each cluster centre*: `p(C=i)`, i.e. $\pi_i$.   
+    -   Gaussians: `P(x|C=i)`, i.e. $\mu_i$ for single-variate and $\Sigma_i$ for multi-variate.
+    -   i = 1 ... k.
+
+-   Steps
+-   **E-Step**
+    -   Assume we know $\pi_i$, $\mu_i$, $\Sigma_i$.
+
+            e_ij = $\pi_i$ * normalizer * Gaussian expr.
+
+            normalizer = (2*pi)^(-M/2) * |$\Sigma$|^(-1)
+
+            Gaussian = exp(-0.5*(i_j-mu_i)^T * $\Sigma$^(-1) * (x_j-mu_i)
+
+    -   e_ij is the probability that the j-th data point corresponds to the i-th cluster centre.
+
+-   **M-Step**
+        
+        $\pi_i$ <- sum_j(e_ij) / M
+
+        M: total number of data points
+
+        $\mu_i$ <- sum_j(e_ij * x_j) / sum_j(e_ij)
+
+        $\Sigma_i$ <- sum_j(e_ij * (x_j - mu_i)^T * (x_j - mu_i)) / sum_j(e_ij)
+
+-   EM calculate the best Gaussian over all data points given a cluster centre.
+    -   If points are in a straight line and cluster point is on this line $\Sigma$ is elliptical, not circular.
+
+-   EM converges at a slower rate than k-means.
+    -   All points have soft correspondence in EM.
+
+### 6.19: Choosing k
+
+-   Number of clusters, k?
+-   At random, for data points that seem unexplained add a new random cluster point near them and see if the fit gets better.
+-   Minimize this expression:
+
+        -sum_j(log( p(x_j | sigma_1 Sigma_1 k))) + cost * k
+
+-   LHS: EM already minimizes this.
+    -   `p(x_i | ...)` is posterior probability of data
+    -   `log(...)` is a monotonic function.
+    -   negate it so it becomes a minimization problem.
+-   RHS: constant cost per new cluster.
+-   Typically balances out to good k.
+
+-   Method
+    -   Guess initial k
+    -   Run EM
+    -   Remove unnecessary clusters.
+    -   Create new random clusters.
+    -   Go back to "run EM".
+
+-   This algorithm also overcomes local minima.
+    -   Removes redundant clusters.
+    -   Restarts by putting removed clustered somewhere else at random.
+    -   Hence get a better solution.
+
+### 6.20: Clustering summary
+
+-   k-means, EM
+    -   find cluster centres.
+    -   EM is probabilistically sound, can prove convergence in a log-likelihood space.
+    -   k-means also converges.
+    -   Both are prone to local minima; need to know number of clusters k.
+        -   Trick explained before for EM overcomes needing to know k, and local minima to some extent.
+
+### 6.23: Linear Dimensionality Reduction
+
+-   Find a linear subspace onto which to project the data.
+    -   Non-linear is cutting-edge research.
+-   Algorithm is very simple.
+    1.  Fit Gaussian
+        -   Will look elliptical around the dimension(s).
+    2.  Calculate eigenvalues and eigenvectors.
+        -   One eigenvector per linear dimension in subspace.
+    3.  Pick eigenvectors with maximum eigenvalues.
+    4.  Project data onto your chosen eigenvectors.
+
+-   Intuition.
+
+        x = [[0, 1.9],
+             [1, 3.1],
+             [2, 4],
+             [3, 5.1],
+             [4, 5.9]]
+
+        mu = [[2, 4]]
+
+        Sigma = [[2, 2],
+                 [2, 2.008]]
+
+        eigenvectors -> eigenvalues of Sigma, the covariance matrix:
+
+            [[0.7064, 0.7078]] -> 4.004
+            [[-0.7078, 0.7064]] -> 0.004
+
+        Hence the first eigenvector dominates, and it is centred around the mean.
+
+-   Used in face recognition. "Eigenfaces".
+
+### 6.26: Piece Wise Linear Projection
+
+-   Non-linear projection.
+-   Project onto a set of disjoint lines, rather than one single line.
+-   Two common methods
+    -   **Local linear embedding**
+    -   **ISO Map**
+
+### 6.27: Spectral Clustering
+
+-   Cluster by affinity
+    -   EM and k-means work for clusters *centred* around a point.
+    -   What if clusters are just nearby points, not centred around another point?
+    -   Think of a 2D hollow shape with hyperbolic arcs, like a croissant. 
+        -   Cluster centre at the focus point, which is outside the cluster! 
+-   The *connectedness*, aka **affinity**, of the data points ties them together, not centre points.
+
+### 6.28: Spectral Clustering Algorithm
+
+-   **Affinity matrix**, MxM matrix, where M is number of data points.
+-   Put each point in row i and column i.
+-   Affinity is the inverse quadratic distance between two given data points; this is used for matrix cell values.
+-   Assume 9 points in 3 clear clusters.
+-   This is an approximately **rank-deficient** matrix.
+    -   **Column rank**: number of linearly independent column vectors.
+    -   Column rank and row rank are always equal, hence we just talk about **rank**.
+    -   Rank of mxn matrix cannot be > `min(m, n)`.
+    -   Matrix with maximum possible rank is said to have **full rank**.
+    -   Matrix without maximum possible rank is **rank deficient**.
+    -   9x9 matrix, but rank ~3, hence rank-deficient.
+-   **Principal component analysis**, aka PCA: method to identify vectors that are similar in an approximately rank-deficient matrix.
+    -   PCA identifies eigenvectors with large eigenvalues.
+    -   There might be additional eigenvectors, but PCA will not return these because they don't explain much data.
+-   **Dimensionality = number of large eigenvalues**.
+-   When you plot data onto these PCA-returned eigenvectors the points will be very well separated and easily analysed by EM or k-means.
+
+-   **Spectral clustering**, aka **affinity-based clustering**:
+    -   Builds an affinity matrix of the data points.
+    -   Extracts the eigenvectors with the largest eigenvalues.
+    -   Re-maps the data points onto the eigenvectors.
+    -   Clusters using conventional methods (EM, k-means).
+
+-   Consider 9 data points arranged in a 3 x 3 grid.
+    -   The 9x9 affinity matrix will look familiar, in blocks of 3x3 going down the leading diagonal.
+    -   However each sub-block is missing pair of non-leading-diagonal elements, because of 1st-3rd elements in line being far apart.
+    -   This doesn't prevent the same large eigenvalues from appearing.
+
+### 6.30: Supervised vs unsupervised learning
+
+-   Supervised learning is the dominant paradigm.
+-   Unsupervised learning is much less explored, but equally and even more important.
+-   Data is cheap! Web crawlers, logs, sensors.
+-   Labels are expensive! Analysis, humans.
+-   The future is data-cheap and label-expensive.
+-   Hence unsupervised learning is one of the most interesting, open research topics in machine learning.
+-   Half-way between: **semi-supervised**, **self-supervised**.
 
