@@ -1782,6 +1782,367 @@ What is in chart[2], given:
             ARGS -> <dot>exp,ARGS from 2
             ARGS -> <dot>exp from 2
 
+## Unit 5
+
+### 5.1: Formal Semantics
+
+-    Figuring out what code means in context.
+
+### 5.2: Interpreters
+
+-    String of HTML and JavaScript
+-    Lexical analysis: break it down into tokens and words.
+-    Syntactic analysis: parse these into a tree.
+-    **Semantics**, aka **interpreting**: walk the tree and understand it.
+    -    For web pages!
+    -    What do they look like.
+    
+### 5.3: Syntax vs. Semantics
+
+-    We've looked at form, not meaning
+-    "Colorless green ideas sleep furiously!"
+    -    Syntactically correct.
+    -    But semantically ambiguous.
+-    Programming examples
+     
+        1 + 2 # = 3
+        "hello" + " world" # = "hello world"
+
+        1 + "hello" # ???
+
+### 5.4: Bad Programs
+
+-   **Type checking**: one of the goals of *semantic analysis* is to notice and rule out bad programes; programs that will apply the wrong sort of operations to the wrong sort of object.
+
+### 5.5: Types
+
+-   A **type** is a set of similar objects, like *numbers* or *strings*, with associated operations.
+-   Often different types can use the same operations, but for different reasons.
+    -   `len` for string vs. list.
+    -   `+` for numbers, strings, and lists.
+    -   Analogy: the word "execute", and its meanings in different sentences.
+-   Some operations make sense for some types, not for others.
+    -   Division for numbers vs. strings.
+-   **Syllepsis**: humourous semantic incongruity.
+    -   "She lowered her standards by raising her glass, her covrage, her eyes, and his hopes."
+-   **Mismatched tags**.
+    -   In HTML.
+    -   Analogous to matching balanced parantheses.
+
+### 6.7: HTML interpreter
+
+-   Interpreting by walking a parse tree.
+
+        ("word-element", "Hello")
+
+        ("tag-element", "b", ..., "b")
+
+        ("javascript-element", "function fibo(N) { ...")
+        # Embedded JavaScript in HTML.
+
+### 6.8: Graphics
+
+-   Need to make a picture to render a webpage!
+-   We're using `re` for regexps, `ply` for lexing and parsing, `timeit` for benchmarking.
+-   Here is our API:
+
+        graphics.word(string)
+        # draw on screen
+
+        graphics.begintag(string, dictionary)
+        # doesn't draw, just makes a note. like changing pen colours.
+        # dictionary passes in attributes, e.g. href.
+
+        graphics.endtag()
+        # most recent tag.
+
+        graphics.warning(string)
+        # debugging, in bold red color.
+
+-   Example:
+
+        Nelson Mandela <b>was elected</b> democratically.
+
+        # how this calls into graphics API
+
+        graphs.word("Nelson")
+        graphics.word("Mandela")
+        graphics.begintag("b", {})
+        graphics.word("was")
+        graphics.word("elected")
+        graphics.endtag("b")
+        graphics.word("democratically.")
+
+-   Interpret code.
+
+        import graphics
+
+        def interpret(trees): # Hello, friend
+            for tree in trees: # Hello,
+                # ("word-element","Hello")
+                nodetype=tree[0] # "word-element"
+                if nodetype == "word-element":
+                    graphics.word(tree[1])
+                elif nodetype == "tag-element":
+                    # <b>Strong text</b>
+                    tagname = tree[1] # b
+                    tagargs = tree[2] # []
+                    subtrees = tree[3] # ...Strong Text!...
+                    closetagname = tree[4] # b
+                    # QUIZ: (1) check that the tags match
+                    # if not use graphics.warning()
+                    if tagname != closetagname:
+                        graphics.warning("Mismatched tag. start: '%s', end: '%s'" % (tagname, closetagname))
+                    else:
+                        #  (2): Interpret the subtree
+                        # HINT: Call interpret recursively
+                        graphics.begintag(tagname, {})
+                        interpret(subtrees)
+                        graphics.endtag()
+
+### 6.10: Arithmetic
+
+-   That's almost it for HTML!
+    -   `word-element` - done.
+    -   `tag-element` - done.
+    -   `javascript-element` - not done.
+        -   Interpret the JavaScript to a string.
+        -   Call graphics.word() on that string.
+-   However, JavaScript is *semantically richer* than HTML.
+    -   Arithmetic, start here.
+    -   Variables.
+-   e.g.
+
+        input: (1*2) + (3*4)
+
+-   This is **evaluation**, aka **eval**, for arithmetic.
+    -   `eval_exp`.
+-   Code:
+
+        def eval_exp(tree):
+            # ("number" , "5")
+            # ("binop" , ... , "+", ... )
+            nodetype = tree[0]
+            if nodetype == "number":
+                return int(tree[1])
+            elif nodetype == "binop":
+                left_child = tree[1]
+                operator = tree[2]
+                right_child = tree[3]
+                # QUIZ: (1) evaluate left and right child
+                left_value = eval_exp(left_child)
+                right_value = eval_exp(right_child)
+                
+                # (2) perform "operator"'s work
+                assert(operator in ["+", "-"])
+                if operator == "+":
+                    return left_value + right_value
+                elif operator == "-":
+                    return left_value - right_value
+
+### 6.12: Context
+
+-   Variables - need their current value.
+-   e.g. "The king of France is bald."
+    -   Syntax correctly, but semantic correctness requires knowing what time we're talking about.
+    -   Right now there isn't a king of France!
+-   **State** of a program execution is a mapping from variable names to values.
+-   Evaluating an expression requires us to know the current state. 
+-   Tempting to have one dictionary for this state, but one day we might want to make this a bit more complicated.
+-   So we'll hide it behind an API
+
+        def env_lookup(environment, variable_name):
+            ...
+
+-   Code:
+
+        def eval_exp(tree, environment):
+            nodetype = tree[0]
+            if nodetype == "number":
+                return int(tree[1])
+            elif nodetype == "binop":
+                # ...
+            elif nodetype == "identifier":
+                # ("binop", ("identifier","x"), "+", ("number","2"))
+                # QUIZ: (1) find the identifier name
+                # (2) look it up in the environment and return it
+                return env_lookup(environment, tree[1])
+
+### 6.15: Control Flow
+
+-   `if`, `while`, `return` change the flow of control.
+    -   These tokens are called **statements**.
+-   An **expression** is just `2+3` or `x+1`.
+-   Statements often contain expressions, but not the other way around.
+
+        def eval_stmts(tree, environment):
+            stmttype = tree[0]
+            if stmttype == "assign":
+                # ("assign", "x", ("binop", ..., "+",  ...)) <=== x = ... + ...
+                variable_name = tree[1]
+                right_child = tree[2]
+                new_value = eval_exp(right_child, environment)
+                env_update(environment, variable_name, new_value)
+            elif stmttype == "if-then-else": # if x < 5 then A;B; else C;D;
+                conditional_exp = tree[1] # x < 5
+                then_stmts = tree[2] # A;B;
+                else_stmts = tree[3] # C;D;
+                # QUIZ: Complete this code
+                # Assume "eval_stmts(stmts, environment)" exists
+                if eval_exp(conditional_exp, environment):
+                    return eval_stmts(then_stmts, environment)
+                else:
+                    return eval_stmts(else_stmts, environment)
+
+### 6.17: Creating an Environment
+
+        Python:
+            x = 0
+            print x + 1
+
+        JavaScript:
+            var x = 0
+            write(x+1)
+
+-   Can have multiple values in different contexts.
+
+        x = "outside"
+        def myfun(x):
+            print x
+        myfun("inside")
+
+        # get "inside"
+
+### 6.18: Scope
+
+-   Environment cannot be a flat mapping.
+-   Variables have **scope**: can be bound to many values.
+
+### 6.19: Identifiers and storage
+
+-   Identifier (variable) names vs. storage places.
+-   Store values for variables in explicit storage locations.
+-   And as we move into a scope we create a new *child* environment, that knows who its parent is.
+-   Child environments can recurse upwards to get variable values.
+-   Setting variables only go upwards if we don't already have it defined.
+
+### 6.20: Environments.
+
+-   Special, **global environment** to start with.
+-   Child environments have **parent** pointers. The global environment does not have a parent.
+
+### 6.22: Chained environments
+
+1.  Create a new environment.
+    -   Its *parent* is the current environment.
+2.  Create storage places in the new environment for each *formal parameter*.
+    -   Formal parameters are e.g. arguments to a function.
+3.  Fill in these places with the values of the actual arguments.
+4.  Evaluate the function body in the new environment.
+
+### 6.23: Greetings
+
+-   Python supports nested functions!
+-   These have nested envirnoment frames too.
+
+###6.24: Environment Needs
+
+        def env_lookup(var_name, env):
+            # env = (parent, dictionary)
+            if var_name in env[1]:
+                # do we have it?
+                return (env[1])[var_name]
+            elif env[0] is None:
+                # am global?
+                return None
+            else:
+                # ask parents
+                return env_lookup(var_name, env[0])
+
+        def env_update(var_name, value, env):
+            if var_name in env[1]:
+                # do we have it?
+                (env[1])[var_name] = value
+            elif not (env[0] is None):
+                # if not global, ask parents.
+                env_update(var_name, value, env[0])
+
+### 6.25: Declaring and Calling Functions
+
+-   More trickiness than just environments.
+
+        def mean(x):
+            return x
+            print "one thousand and one nights"
+
+-   This is mean! We shouldn't print out anything.
+
+### 6.26: Catching Errors
+
+-   `try`, `except`.
+-   Want to harness exceptions.
+-   We'll use exceptions to simulate return statements.
+
+        def eval_stmt(true, environment):
+            stmttype = tree[0]
+            if stmttype == "return":
+                return_exp = tree[1] # return 1 + 2
+                retval = eval_exp(return_exp, environment)
+                raise Exception(retval)
+
+-   Function calls
+
+        def eval_stmt(tree,environment):
+            stmttype = tree[0]
+            if stmttype == "call": # ("call", "sqrt", [("number","2")])
+                fname = tree[1] # "sqrt"
+                args = tree[2] # [ ("number", "2") ]
+                fvalue = env_lookup(fname, environment)
+                if fvalue[0] == "function":
+                    # We'll make a promise to ourselves:
+                    # ("function", params, body, env)
+                    fparams = fvalue[1] # ["x"]
+                    fbody = fvalue[2]
+                    fenv = fvalue[3]
+                    if len(fparams) <> len(args):
+                        print "ERROR: wrong number of args"
+                    else:
+                        #QUIZ: Make a new environment frame
+                        newfenv = (fenv, {})
+                        for param, value in zip(fparams, args):
+                            newfenv[1][param] = None
+                            eval_value = eval_exp(value, environment)
+                            env_update(param, eval_value, newfenv)
+                        try:
+                            # QUIZ : Evaluate the body
+                            eval_stmts(fbody, newfenv)
+                            return None
+                        except Exception as return_value:
+                            return return_value
+                else:
+                    print  "ERROR: call to non-function"
+            elif stmttype == "return": 
+                retval = eval_exp(tree[1],environment) 
+                raise Exception(retval) 
+            elif stmttype == "exp": 
+                eval_exp(tree[1],environment) 
+
+### 6.29: Calling functions
+
+-   In Python and JavaScript functions can be values. Hence we must represent function values.
+
+        def myfun(x):
+            return x+1
+
+        function myfun(x) {
+            return x+1;
+        }
+
+        ("function", fparams, fbody, fenv)
+
+-   We *don't* need the function name.
+    -   We'll be adding a mapping from the function name to this tuple in the old environment `fenv`.
+
 ## References
 
 ## Unit 1

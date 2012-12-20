@@ -5,3 +5,10 @@ output/
 *.pyc
 src/programming_languages/parser.out
 src/programming_languages/parsetab.py
+src/programming_languages/unit5_l9/student.aux
+src/programming_languages/unit5_l9/student.log
+src/programming_languages/unit5_l9/student.out
+src/programming_languages/unit5_l9/student.pdf
+src/programming_languages/unit5_l9/student.png
+src/programming_languages/unit5_l9/student.taglog
+src/programming_languages/unit5_l9/student.tex
