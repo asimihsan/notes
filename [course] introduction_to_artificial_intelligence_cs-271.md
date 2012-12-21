@@ -1754,3 +1754,209 @@ Probability theory & Facts & $\mathbb{R}[0..1]$ \\ \hline
 
     -   Sometimes we omit quantifiers. Assume that we mean "for all".
 
+### 7.11: Vacuum World
+
+-   Two-location vacuum world.
+    -   Vacuum can be in one location.
+    -   Each location may have dirt or not have dirt.
+
+-   Locations: A (left), B (right)
+-   Vacuum: V
+-   Dirt: D1, D2
+-   Relations
+    -   Loc (true of any location)
+    -   Vacuum (true of vacuum)
+    -   Dirt (true of dirt)
+    -   At(Obj,Loc)
+
+Vacuum at location A  
+$At(V,A)$
+
+No dirt at location  
+$\forall d, \forall l$ $Dirt(d) \land Loc(l) \implies \neg At(d, l)$  
+
+-   If there were thousands of locations instead of 2 then this statement still holds. This is the power of first-order logic.
+
+The vacuum is in a location with dirt, without specifying which location it's in.  
+$\exists l, \exists d$ $Dirt(d) \land Loc(l) \land At(V, l) \land At(d, l)$
+
+-   What does first order mean?
+    -   The relations are on objects, but not on relations.
+    -   In higher order logica we could define the notion of a transitive relation.
+-   e.g., defining the notion of a transitive relation:
+
+$\forall R$ $Transitive(R) \iff (\forall_{c,b,c}~R(a,b) \land R(b,c) \implies R(a,c))$
+
+### 7.12: FOL Question
+
+- - -
+
+$\exists x, y~~ x=y$
+
+-   This is valid, always true.
+-   Every model has to have at least one object.
+-   We can have x and y refer to the same object.
+-   So object must be equal to itself.
+
+- - -
+
+$(\exists x~~x=x) \implies (\forall y~ \exists z~~ y=z)$
+
+-   This is valid.
+-   LHS always true - object is always equal to itself.
+-   The RHS is true. For all y we can choose a z like y itself, and an object is always equal to itself.
+
+- - -
+
+$\forall x~~P(x) \lor \neg P(x)$
+
+-   This is valid.
+-   Always true. Everything has to be either in the relation for P or not in the relation for P.
+
+- - -
+
+$\exists x~~P(x)$
+
+-   This is satisfiable.
+-   True for models in which some x that is a member of P.
+-   But P might be an empty relation.
+
+- - -
+
+### 7.13: FOL Question 2
+
+-   Do the following first-order logic statement(s) apply to the given English sentences?
+
+- - -
+
+-   Sam has two different jobs.
+
+$\exists x, y~~Job(Sam, x) \land Job(Sam, y) \land \neg (x=y)$
+
+-   Yes, it does.
+
+- - -
+
+-   The concept of set membership.
+
+$\forall x, s~~Member(x, Add(x,s))$
+$\forall x, s~~Member(x,s) \implies (\forall y~~Member(x, Add(y,s)))$
+
+-   No, it does not.
+    -   It tells you what is a member.
+    -   But it doesn't tell you about what x is not a member of.
+
+- - -
+
+-   The concept of horizontally/vertically adjacent blocks.
+
+$\forall x, y~~Adj(Sq(x,y), Sq(+(x,1),y)) \land Adj(Sq(x,y), Sq(x,+(y,1)))$
+
+-   No, it does not.
+    -   It'll tell you that (1,1) is adjacent (2,1) and (1,2).
+    -   Doesn't tell you any other directions, e.g. (2,1) to (1,1).
+    -   Doesn't tell you (1,1) is not adjancent to (8,9).
+
+- - -
+
+-   Moral: if you want to do a definition, like adjacent or member, you want a sentence with an "if and only if".
+
+## Unit 8: Planning
+
+### 8.1: Introduction
+
+-   We want to know what an agent should do in an environment.
+-   Existing problem solving methods, e.g. A\* require a fully observable and deterministic.
+-   We're going to relax those constraints.
+-   We need to interleave planning and executing and need feedback from the environment.
+
+### 8.3: Planning vs. Execution
+
+-   *Stochastic* environment, we don't know what an action is going to do.
+-   *Multiagent*, other agents => we need to determine what they are doing and then act accordingly.
+-   *Partial observability*.
+    -   If we want to go `[A, S, F, B]`.
+    -   But sometimes at `S` we see a sign that says `Road to F closed`.
+    -   But we can't see this sign yet.
+    -   We can't differentiate between states `A given road from S to F open` and `A given road from S to F closed`.
+-   *Unknowns*.
+    -   e.g. inaccurate GPS or maps.
+-   *Hierarchical*.
+    -   Want high-level plans, that drill down to lower-level details, etc.
+
+-   Change our point of view.
+-   From planning in the space of *world* states.
+-   To planning in the space of **belief** states.
+
+### 8.4: Vacuum Cleaner Example.
+
+-   8 possible states, with all transitions depending on how vacuum cleaner moves (L and R) or sucks up dirt (S).
+-   If environment fully observable can plan a route to clean both rooms.
+-   What if the robot's sensor breaks, such that it can't tell where it is or if there's dirt in the room?
+    -   Could draw a big circle around all states and say "we could be in any state".
+    -   But this is the state space of world states.
+    -   What if we consider the state space of belief states?
+
+### 8.5: Sensorless Vacuum Cleaner Problem
+
+-   Yes, intial state is full of all world states.
+-   But as we perform actions we move to a subset of world states, which in itself is a state of the belief states.
+    -   starting state has 8 world states.
+    -   e.g. if we move right we must be in the right, with dirt in either square, hence 4 world states.
+    -   if we then suck then we move to a state with only 2 world states left, which is whether or not there's dirt in the other room.
+-   Inverse operations
+    -   In the world, going left and going right are inverses.
+    -   In the state space of belief states, going left and going right are not inverses. We still know something at the end, i.e. we're on the left.
+
+-   **Conform-it plan**: execute a series of actions and reach a goal without ever observing the world.
+    -   e.g. if the goal is to be in a clean location, then suck.
+
+-   It is also possible to transition to a state where we know where we are, without every observing the world.
+
+### 8.6: Partially Observable Vacuum Cleaner
+
+-   Suppose we can sense where we are and if there's dirt in our current location, but can't tell if there's dirt in any other location.
+-   And suppose observing if there's dirt is an explicit action.
+-   Act-observe cycle.
+    -   As we act the size of the state space of belief states may stay the same or may decrease.
+    -   As we observe, we're taking an existing state and partitioning it up into pieces.
+        -   Observations can't introduce new states, but they could put them into correct locations.
+
+### 8.7: Stochastic Environment Problem
+
+-   Assume suck action always works properly.
+-   Assume actions aren't always successful.
+-   In this case actions will increase the the state space, as we're not sure if they've worked!
+-   **Stochastic**: multiple outcomes for each action.
+    -   Actions are now **indeterministic**.
+-   An observation partitions the belief state into smaller believe states, as it allows us to determine our location and dirt state.
+-   How do we plan in a stochastic environment?
+    -   Regardless of the particulars, **you must observe**.
+-   No finite plan is guaranteed to work, as actions may not work.
+
+### 8.8: Infinite Sequences
+
+-   Finite sequence, e.g. `[S, R, S]` (suck, right, suck).
+-   Infinite sequences: as DFAs.
+-   Each action paired with an observation: act-observe cycle.
+-   If an action fails we repeat it. Else we continue.
+
+        [S, while A:R, S]
+
+-   (suck, while we observe A then R, suck)
+-   With probability 1 at the limit this plan will succeed, but we can't specify a bounded number of steps at which it'll succeed (countably infinite steps).
+
+### 8.9: Finding a Successful Plan
+
+-   Draw out a tree of possible states, expressed as DFAs as this is a stochastic environment.
+-   We start off in a single world state.
+-   We pick in this tree a single path to a goal state.
+-   Our backward loops due to failed actions aren't part of the search path, but will be used when acting (!!AI maybe?).
+
+-   In order to guarantee an unbounded solution, every leaf in the plan must end up at a goal.
+    -   We can't pick the results of observations.
+    -   Observations are causing the belief state space to partition.
+    -   Hence all leafs must be goals.
+-   In order to guarantee a bounded solution, there must be no loops in the search path.
+
+
