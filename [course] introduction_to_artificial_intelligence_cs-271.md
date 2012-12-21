@@ -1378,12 +1378,12 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 
         Sigma = 1/M * sum(j){(x_i-mu)^T * (x_i-mu)}
 
-### 6.15: Expection Maximization (E?M) as Generlization of k-means
+### 6.15: Expection Maximization (EM) as Generlization of k-means
 
 -   In k-means we have *hard correspondance*: each data point is attracted to one and only one cluster point.
 -   In EM we have **soft correspondance**: each data point is attracted to all cluster points in proportion to the data point's posterior likelihood.
     -   This is **expectation**.
--   In the adjustment step the cluster centres are being optimized like before, but correspond to all data point.
+-   In the adjustment step the cluster centres are being optimized like before, but correspond to all data points.
     -   This is **maximization**.
 -   In EM cluster points don't move as much as in k-means.
 
@@ -1425,7 +1425,7 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 
         $\Sigma_i$ <- sum_j(e_ij * (x_j - mu_i)^T * (x_j - mu_i)) / sum_j(e_ij)
 
--   EM calculate the best Gaussian over all data points given a cluster centre.
+-   EM calculates the best Gaussian over all data points given a cluster centre.
     -   If points are in a straight line and cluster point is on this line $\Sigma$ is elliptical, not circular.
 
 -   EM converges at a slower rate than k-means.
@@ -1557,4 +1557,200 @@ The test result `+_1` gives us no information about the test result `+_2`, so we
 -   The future is data-cheap and label-expensive.
 -   Hence unsupervised learning is one of the most interesting, open research topics in machine learning.
 -   Half-way between: **semi-supervised**, **self-supervised**.
+
+## Unit 7: Representation with Logic
+
+### 7.1: Introduction
+
+-   Search: sequences of actions to solve problems.
+-   Probability theory: represent and reason with uncertainty.
+-   Machine learning: learn and improve.
+
+-   AI big, dynamic, due to pushing in three directions:
+    1.  Agent design.
+        -   Reflex based agents, the simplest.
+        -   Move into goal/utility based agents.
+    2.  Complexity of environment
+        -   Simple.
+        -   Partial observability.
+        -   Stochastic actions of multiple agents.
+    3.  Representation
+        -   Of the environment, becomes complex.
+
+### 7.2: Propositional Logic
+
+-   Recall the alarm example (Burglary, Earthquake, Alarm, Mary, John).
+-   Denote these with symbols `B E A M J`.
+-   In probabilistic models, these are True or False.
+-   In propositional logic, our degree of belief is True, False, or Unknown.
+
+$(E \lor B) \implies A$
+    
+-   If Earthquake or Burglary then Alarm.
+
+$A \implies (J \land M)$
+
+-   If Alarm then John calls or Mary calls. (and symbol looks like an A for AND without the crossbar)
+
+-   This is subtle:
+    -   $P = false, Q = false, P \implies Q = true$
+    -   $P = false, Q = true, P \implies Q = true$
+    -   $P = true, Q = false, P \implies Q = false$
+    -   $P = true, Q = true, P \implies Q = true$
+
+$J \iff M$
+
+-   John calls if and only if Mary calls.
+
+$J \iff \neg M$
+
+-   John calls if and only if Mary does not call.
+-   This is subtle.
+    -   $P = false, Q = false, P \iff Q = true$
+    -   $P = false, Q = true, P \iff Q = false$
+    -   $P = true, Q = false, P \iff Q = false$
+    -   $P = true, Q = true, P \iff Q = true$
+
+-   A **model** is a set of True/False values for all the propositional logic statements.
+
+        {B: True, E: False, ...}
+
+-   Truth of a statement implied by the truth of statements, represented in a *truth table*.
+
+### 7.3: Truth Tables
+
+-   Lists all possiblities of symbols in rows.
+-   For each possibility it lists the values of all the compound values.
+
+\begin{tabular}{|l|l||l|l|l|l|l|}\hline
+P & Q & $\neg$ P & P $\land$ Q & P $\lor$ Q & P $\implies$ Q & P $\iff$ Q \\ \hline
+false & false & true & false & false & true & true  \\ \hline
+false & true & true & false & true & true & false \\ \hline
+true & false & fase & false & true & false & false  \\ \hline
+true & true & false & true & true & true & true  \\ \hline
+\end{tabular}
+
+### 7.5: Propositional Logic Question
+
+-   In a particular model of the world we know the following propositional logic statements are true:
+
+$(E \lor B) \implies A$
+
+$A \implies (J \land M)$
+
+$B$
+
+-   For each propositional symbol, is that symbol True, False, or Unknown?
+    -   E is Unknown
+    -   B is True
+    -   A is True
+    -   J is True
+    -   M is true
+    -   Work through the implies and iff truth tables to satisfy yourself this is correct.
+
+### 7.6: Terminology
+
+-   **Valid sentence**: true in every possible model, i.e. every possible combination of values for all symbols.
+-   **Satisfiable**: true for some models, but not all models.
+-   **Unsatisfiable**: false in every possible model.
+
+### 7.7: Propositional Logic Limitations
+
+-   Can only handle True/False values.
+-   Can't handle *uncertainty*, as in probability theory.
+-   Can't talk about *objects* that have *properties* (size, weight, colour), or *relations between objects*.
+-   No *shortcuts*.
+    -   e.g. vacuum world with 1000 places, each without direct.
+    -   Need 1000 statements!
+
+### 7.8: First Order Logic
+
+-   First-order logic vs. propositional logic vs. probability theory.
+-   **Ontological commitment**: how does a model talk about the world?
+-   **Epistomological commitments**: what types of beliefs may agents in the world hold?
+
+\begin{tabular}{|l||l|l|}\hline
+Type & World & Beliefs \\ \hline
+First-order logic & Relations, objects, functions & True/False/Unknown \\ \hline
+Propositional logic & Facts & True/False/Unknown \\ \hline
+Probability theory & Facts & $\mathbb{R}[0..1]$ \\ \hline
+\end{tabular}
+
+-   Types of representation.
+-   **Atomic**: representation of a state is just an individual state, no pieces.
+    -   We used it in problem solving an search.
+    -   State A transitions to state B. Are states identical, is one a goal state? Nothing internal.
+-   **Factored**: representation of an individual state of the world is factored into several variables.
+    -   Boolean in propositional logic.
+    -   Other types of variables.
+-   **Structured**: individual state is not just one or a set of values for variables but can have connections between objects.
+    -   Branches, relations.
+    -   See in programming languages, relational databases.
+    -   Structured Query Language (SQL).
+    -   This is what we get in first-order logic.
+
+### 7.9: Models
+
+-   How to model four scrabble pieces laid out in a 2 x 2 grid and their scores:
+
+        A (1)
+        B (3)
+        C (3)
+        D (2)
+
+-   Constants: {A, B, C, D, 1, 2, 3, CEE}
+    -   Does not need to be a one-to-one mapping between constants and objects.
+    -   'CEE' refers to the letter C.
+-   **Function**: mapping from objects to objects.
+-   Functions:
+
+        NumberOf:
+            {A -> 1, B -> 3, C -> 3, D -> 2}
+
+-   Relations:
+
+        Above:
+            { [A, B], [C, D] }
+
+        (A is above B, C is above C)
+
+        Vowel: { [A] }
+
+        Rainy: { }
+        # it isn't rainy today.
+
+        Rainy: { [] }
+        # it is rainy today. "arity" of rainy is zero, so a set of one empty tuple.
+
+### 7.10: Syntax
+
+-   **Sentence**: describes facts that are true or false.
+    -   **Atomic sentences** are predicates corresponding to relations.
+    -   Equality relation is an example of a distinguished relation.
+-   **Term**: describes an object.
+
+-   Sentences
+    -   `Vowel(A)`
+    -   `Above(A, B)`
+    -   `2 = 2`
+    -   Can be combined by propositional logic operators
+
+-   Terms
+    -   `A, B, 2`.
+    -   Variables: `x, y`
+    -   Functions: `NumberOf(A)`
+
+-   **Quantifiers**
+    -   For all, $\forall x$
+    -   There exists, $\exists y$.
+
+    -   Example:
+
+    $\forall x$ $Vowel(x) \implies NumberOf(x) = 1$
+
+    $\exists x$ $NumberOf(x) = 2$
+
+    -   The above is saying "there is some object in the domain such that applying `NumberOf` to it results in the number 2", but we're not saying which particular object it is.
+
+    -   Sometimes we omit quantifiers. Assume that we mean "for all".
 
