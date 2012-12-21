@@ -2142,6 +2142,120 @@ What is in chart[2], given:
 
 -   We *don't* need the function name.
     -   We'll be adding a mapping from the function name to this tuple in the old environment `fenv`.
+-   Code:
+
+        def eval_elt(tree, env):
+            elttype = tree[0]
+            if elttype == "function":
+                fname = tree[1]
+                fparams = tree[2]
+                fbody = tree[3]
+                fvalue = ("function", fparams, fbody, env)
+                add_to_env(env, fname, fvalue)
+
+### 6.31: Double-edged sword
+
+-   We can define functions, call functions, and return from functions.
+-   Function bodies are *statements* which contain *expressions*.
+-   So much power!
+-   Can use Python to simulate any JavaScript program.
+-   Can use JavaScript to simulate any Python program.
+
+-   Are natural languages equal?
+    -   **Sapir-Whorf hypothesis**, aka **linguistic relativity hypothesis**, states that structure of language influences speakers' ability to reason.
+    -   Language influences thought!
+
+### 6.33: Comparing Languages
+
+-   Real world: language influences thought.
+-   Computing: languages are equally expressive.
+    -   Sometimes easier to express in one language than another.
+-   Interpreting is deep.
+-   Downside is that simulation a program requires running it.
+
+        x = 0
+        while True:
+            x = x + 1
+        print x
+
+-   If we interpret an infinite loop, our interpreter will also loop forever!
+
+### 6.34: Infinite Loop
+
+-   Want: look at program source, see if it loops forever or if it halts.
+-   Provably impossible to do this.
+-   Assume we have `halts()` which takes a procedure as an argument and returns `True` if that procedure halts and `False` if it loops forever.
+-   Consider:
+
+        def tsif():
+            if halts(tsif):
+                x = 0
+                while True:
+                    x = x + 1
+            else:
+                return 0
+
+-   If `tsif` halts, then it loops forever.
+-   If `tsif` loops forever, then it halts.
+-   *Contradiction*, hence `halts()` **cannot exist**.
+
+-   Other **self-referential** contradictions:
+    -   "This sentence is false"
+    -   "The town barber only shaves those in the town that don't shave themselves. Who shaves the baber?"
+
+-   Impossible to do it 100%, but there's a market to do it very approximately correctly, 99.99%.
+    -   See "The Road Not Taken: Estimating Path Execution Frequency Statically", Weimer.
+
+## Office Hours 5
+
+-   Domain Specific Languages, why are they the future?
+    -   Turing completeness, so can use any language to express anything.
+    -   But how easy is it, how is the error handling, how is the performance?
+    -   *Conciseness of representation*.
+    -   *Type checking*, *run-time checking*, i.e. *safety*.
+    -   *Compiler and/or runtime optimization*.
+    -   e.g. MATLAB and linear algebra.
+        -   Could do it all in C or C#.
+        -   MATLAB is initially more concise. 
+        -   But once you use operator overloading in C# this argument isn't so strong.
+        -   However safety and optimization arguments are still strong.
+        -   Nowadays contraints are *programmer time*, not *execution time*.
+        -   The higher level statements to give to a compiler, i.e. the more *declarative* you are, the more the compiler is able to optimize effectively.
+            -   Caches.
+            -   Optimum instruction set instructions. 
+        -   This higher-level-argument is analogous to the historical push from assembly to C.
+    -   At the end of the day maybe there is no difference between a well-crafted library and a DSL.
+        -   However, future development will likely include improvements to DSLs first, then libraries.
+
+-   Exceptional Control Flow
+    -   Language-level exception handling is super popular.
+    -   Previous approach involved setting and getting global flags.
+        -   Programmers are consistently poor at safely using global flags.
+    -   Even in modern exception handling programmers make mistakes.
+        -   Control flow is not visible, very non-local.
+        -   Forget to close resources, maintain invariants.
+    -   Exception handling is so popular that in average program 1-5% of code text will be catch/finally blocks.
+    -   In large programs 3-46% of program is transitively reachable via catch/finally blocks.
+    -   Philosophical issue: when you catch an error, you don't have enough time or context to appropriately handle it.
+        -   e.g. file didn't save properly. Do I retry immediately, fail loudly, sleep then retry? Maybe I don't know.
+        -   !!AI reminiscent of Hawkin's "On Intelligence".
+
+-   Extending the course browser
+    -   Right now we're rendering it to static LaTeX.
+    -   Should study "elynx" and "Mosaic".
+    -   First step, add ability for users to click on links.
+        -   After rendering page we should wait for events of user clicking on certain parts of the page, the links.
+    -   Another problem: how to lay out text so that it wraps lines properly?
+        -   Formally, **minimum raggedness word wrapping problem**.
+        -   Can solve this using dynamic programming and memoization.
+
+-   Global Variables
+    -   JavaScript can manipulate global variables. Is this a security issue?
+    -   Oh my yes!
+    -   Huge problem with unintended read and/or write access to variables outside of your scope.
+    -   Early versions of PHP automatically copied form values into the global scope, for convenience. *Register global variables*.
+    -   It is phenomenally easy to access these global variables and bypass business logic.
+    -   PHP `explode()`, aka Python's `string.split()`, assigns to local variables and trusts user to be friendly. Nope!
 
 ## References
 
