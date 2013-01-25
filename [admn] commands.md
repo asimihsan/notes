@@ -11,3 +11,7 @@
 -	sort `du -h` output
 
 		du | sort -nr | cut -f2- | xargs du -hs
+
+-	streaming tcpdump directly to a Windows Wireshark instance (untested)
+
+		tcpdump -w - -v -i eth0 http | "c:\program files\wireshark\wireshark.exe" -k -i -"
