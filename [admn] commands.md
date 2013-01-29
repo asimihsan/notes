@@ -15,3 +15,11 @@
 -	streaming tcpdump directly to a Windows Wireshark instance (untested)
 
 		tcpdump -w - -v -i eth0 http | "c:\program files\wireshark\wireshark.exe" -k -i -"
+
+-	Python profiling
+
+		# Execute command with profiling
+		python -u -m cProfile -o profile.stats script.py arg1 arg2 --hostname blah
+
+		# Sort stats by total time spent in function
+		python -c "import pstats; p = pstats.Stats(\"profile.stats\"); p.sort_stats('time').print_stats(20)"
