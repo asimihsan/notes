@@ -23,3 +23,19 @@
 
 		# Sort stats by total time spent in function
 		python -c "import pstats; p = pstats.Stats(\"profile.stats\"); p.sort_stats('time').print_stats(20)"
+
+-    How to run Wireshark on Mac OS X
+
+        # Install XQuartz, install Wireshark.
+        # Run XQuartz via Spotlight
+        # Open a new Terminal, run:
+        
+        open /Applications/Wireshark.app/
+        
+        # A new xterm instance opens, but Wireshark isn't visible. In the xterm instance run:
+        
+        export DISPLAY:=0
+        
+        # Wireshark should now be visible.
+        
+        
