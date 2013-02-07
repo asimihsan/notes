@@ -1829,7 +1829,7 @@ What is in chart[2], given:
     -   In HTML.
     -   Analogous to matching balanced parantheses.
 
-### 6.7: HTML interpreter
+### 5.7: HTML interpreter
 
 -   Interpreting by walking a parse tree.
 
@@ -1840,7 +1840,7 @@ What is in chart[2], given:
         ("javascript-element", "function fibo(N) { ...")
         # Embedded JavaScript in HTML.
 
-### 6.8: Graphics
+### 5.8: Graphics
 
 -   Need to make a picture to render a webpage!
 -   We're using `re` for regexps, `ply` for lexing and parsing, `timeit` for benchmarking.
@@ -1900,7 +1900,7 @@ What is in chart[2], given:
                         interpret(subtrees)
                         graphics.endtag()
 
-### 6.10: Arithmetic
+### 5.10: Arithmetic
 
 -   That's almost it for HTML!
     -   `word-element` - done.
@@ -1940,7 +1940,7 @@ What is in chart[2], given:
                 elif operator == "-":
                     return left_value - right_value
 
-### 6.12: Context
+### 5.12: Context
 
 -   Variables - need their current value.
 -   e.g. "The king of France is bald."
@@ -1968,7 +1968,7 @@ What is in chart[2], given:
                 # (2) look it up in the environment and return it
                 return env_lookup(environment, tree[1])
 
-### 6.15: Control Flow
+### 5.15: Control Flow
 
 -   `if`, `while`, `return` change the flow of control.
     -   These tokens are called **statements**.
@@ -1994,7 +1994,7 @@ What is in chart[2], given:
                 else:
                     return eval_stmts(else_stmts, environment)
 
-### 6.17: Creating an Environment
+### 5.17: Creating an Environment
 
         Python:
             x = 0
@@ -2013,12 +2013,12 @@ What is in chart[2], given:
 
         # get "inside"
 
-### 6.18: Scope
+### 5.18: Scope
 
 -   Environment cannot be a flat mapping.
 -   Variables have **scope**: can be bound to many values.
 
-### 6.19: Identifiers and storage
+### 5.19: Identifiers and storage
 
 -   Identifier (variable) names vs. storage places.
 -   Store values for variables in explicit storage locations.
@@ -2026,12 +2026,12 @@ What is in chart[2], given:
 -   Child environments can recurse upwards to get variable values.
 -   Setting variables only go upwards if we don't already have it defined.
 
-### 6.20: Environments.
+### 5.20: Environments.
 
 -   Special, **global environment** to start with.
 -   Child environments have **parent** pointers. The global environment does not have a parent.
 
-### 6.22: Chained environments
+### 5.22: Chained environments
 
 1.  Create a new environment.
     -   Its *parent* is the current environment.
@@ -2040,12 +2040,12 @@ What is in chart[2], given:
 3.  Fill in these places with the values of the actual arguments.
 4.  Evaluate the function body in the new environment.
 
-### 6.23: Greetings
+### 5.23: Greetings
 
 -   Python supports nested functions!
 -   These have nested envirnoment frames too.
 
-###6.24: Environment Needs
+### 5.24: Environment Needs
 
         def env_lookup(var_name, env):
             # env = (parent, dictionary)
@@ -2067,7 +2067,7 @@ What is in chart[2], given:
                 # if not global, ask parents.
                 env_update(var_name, value, env[0])
 
-### 6.25: Declaring and Calling Functions
+### 5.25: Declaring and Calling Functions
 
 -   More trickiness than just environments.
 
@@ -2077,7 +2077,7 @@ What is in chart[2], given:
 
 -   This is mean! We shouldn't print out anything.
 
-### 6.26: Catching Errors
+### 5.26: Catching Errors
 
 -   `try`, `except`.
 -   Want to harness exceptions.
@@ -2127,7 +2127,7 @@ What is in chart[2], given:
             elif stmttype == "exp": 
                 eval_exp(tree[1],environment) 
 
-### 6.29: Calling functions
+### 5.29: Calling functions
 
 -   In Python and JavaScript functions can be values. Hence we must represent function values.
 
@@ -2153,7 +2153,7 @@ What is in chart[2], given:
                 fvalue = ("function", fparams, fbody, env)
                 add_to_env(env, fname, fvalue)
 
-### 6.31: Double-edged sword
+### 5.31: Double-edged sword
 
 -   We can define functions, call functions, and return from functions.
 -   Function bodies are *statements* which contain *expressions*.
@@ -2165,7 +2165,7 @@ What is in chart[2], given:
     -   **Sapir-Whorf hypothesis**, aka **linguistic relativity hypothesis**, states that structure of language influences speakers' ability to reason.
     -   Language influences thought!
 
-### 6.33: Comparing Languages
+### 5.33: Comparing Languages
 
 -   Real world: language influences thought.
 -   Computing: languages are equally expressive.
@@ -2180,7 +2180,7 @@ What is in chart[2], given:
 
 -   If we interpret an infinite loop, our interpreter will also loop forever!
 
-### 6.34: Infinite Loop
+### 5.34: Infinite Loop
 
 -   Want: look at program source, see if it loops forever or if it halts.
 -   Provably impossible to do this.
@@ -2257,9 +2257,143 @@ What is in chart[2], given:
     -   It is phenomenally easy to access these global variables and bypass business logic.
     -   PHP `explode()`, aka Python's `string.split()`, assigns to local variables and trusts user to be friendly. Nope!
 
+## Unit 6
+
+-   What we've done so far:
+    -   HTML webpage, -> lexing -> list of tokens
+    -   List of tokens -> parsing -> parse tree.
+    -   Parse tree -> interpreting -> meaning (semantics).
+-   Now we're going to put it all together.
+-   Web browser architecture
+    1.   Web page is lexed and parsed, into an Abstract Syntax Tree (AST)
+    2.   HTML interpreter walks AST, calls JavaScript interpreter.
+    3.  JavaScript code calls `write()`.
+    4.  JavaScript interpeter stores text from `write()`.
+    5.  HTML interpreter receives normal HTML, and JavaScript `write()` output, and calls `graphics` library.
+    6.  Final image of webpage is created.
+
+### Fitting Them Together
+
+-   HTML interpreter calls JavaScript interpreter.
+-   We treat JavaScript as a single HTML token.
+    -   e.g. `5<7` or `a>b` is valid JavaScript, but would confuse an HTML lexer.
+-   How to grab a chunk of embedded JS:
+
+``
+def t_javascript(token):
+    r'\<script\ type=\"text\/javascript\"\>'
+    token.lexer.code_start = token.lexer.lexpos
+    token.lexer.begin('javascript')
+
+    # note that lexpos is such that we've already
+    # stripped off the initial text/javascript part.
+
+def t_javascript_end(token):
+    r'\<\/script\>' # </script>
+    token.value = token.lexer.lexdata[token.lexer.code_start:token.lexer.lexpos-9]
+    token.type = 'JAVASCRIPT'
+    token.lexer.lineno += token.value.count('\n')
+    token.lexer.begin('INITIAL')
+    return token
+
+    # note that lexdata is such that we need to
+    # manually strip off </script> 
+``
+
+### Extending our HTML grammar
+
+-   Review:
+
+``
+def p_element_word(p):
+    'element : WORD'
+    p[0] = ("word-element", p[1])
+
+    # p[0] is the parse tree
+    # p[1] is the child parse tree
+``
+
+-   Now need a JavaScript element:
+
+``
+def p_element_javascript(p):
+    'element : JAVASCRIPT'
+    p[0] = ("javascript-element", p[1])
+``
+
+-   `JAVASCRIPT` in the parser is the same as `token.type` in the lexer. This is intentional: this is the link between the lexer and the parser.
+-   Example:
+
+``
+HTML input:
+
+    hello my
+    <script type="text/javascript">document.write(99);</script>
+    luftballons
+
+Parse tree:
+
+[("word-element", "hello"),
+ ("word-element", "my"),
+ ("javascript-element", "document.write(99)"),
+ ("word-element", "luftballons")]
+``
+
+### Calling the Interpreter
+
+``
+def interpret(trees):
+    for tree in trees:
+        treetype = tree[0]
+        if treetype == "word-element":
+            graphics.word(node[1])
+
+        # covered HTML tags in another quiz...
+
+        elif tree.type == "javascript-element":
+            jstext = tree[1] # "document.write(55);"
+
+            # jstokens is an external module
+            jslexer = lex.lex(module=jstokens)
+
+            # jsgrammar is another external module
+            jsparser = yacc.yacc(module=jsgrammar)
+
+            # jstree is a prse tree for JavaScript
+            jstree = jsparser.parse(jstext, lexer=jslexer)
+
+            # We want to call the interpreter on our AST
+            result = jsinterp.interpret(jstree)
+            graphics.word(result) 
+``
+
+### Evil problem
+
+-   JavaScript may call `document.write()` more than once, but we still want to only return one string from the `jsinterp.interpret()` call.
+-   Need to store text over time...use our environments from before!
+
+### JavaScript output
+
+-   Assume every call to `write` appends to the special "javascript output" variable in the global environment.
+
+``
+def interpret(trees):
+    # recall env = (parent, dictionary), and as this is the global environment the parent pointer is None
+    global_env = (None, {"javascript output": ""})
+    for elt in trees:
+        eval_elt(elt, global_env)
+    return (global_env[1])["javascript output"]
+``
+
+-   `"javascript output"`, in particular the space, is important; the user is not allowed to use a space in an identifier so they can't ever collide with this.
+
+### Updating output
+
+TODO
+
 ## References
 
-## Unit 1
+### Unit 1
 
 -    [Regular Expressions in Python](http://code.google.com/edu/languages/google-python-class/regular-expressions.html) (Google Code University)
 
