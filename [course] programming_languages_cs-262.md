@@ -2583,6 +2583,10 @@ def optimize(tree):
 		b = tree[3]
 		if op == "*" and b == ("number","1"):
 			return a
+        elif op == "*" and b == ("number","0"):
+            return ("number","0")
+        elif op == "+" and b == ("number","0"):
+            return a
 		return tree
 
 i.e. this:
@@ -2601,6 +2605,53 @@ becomes:
 -	In this class we will optionally perform optimization after parsing but before interpreting. Our optimizer takes a parse tree as input and returns a (simpler) parse tree as output.
 	-	We could modify the tree in place but for us returning a new tree is fine.
 
+-	Currently the optimizer is not recursive, so can't optimize e.g. `a \* 1 \* 1`.
+
+### Rebuilding the Parse Tree
+
+1.	Recursive calls
+2.	Look for patterns.
+3.	Done
+
+```
+def optimize(tree): # Expression trees only
+    etype = tree[0]
+    if etype == "binop":
+        # Fix this code so that it handles a + ( 5 * 0 )
+        # recursively! QUIZ!
+        a = optimize(tree[1])
+        op = tree[2]
+        b = optimize(tree[3])
+        if op == "*" and b == ("number","1"):
+            return a
+        elif op == "*" and b == ("number","0"):
+            return ("number","0")
+        elif op == "+" and b == ("number","0"):
+            return a
+    return ("binop", a, op, b) # return optimized tree, not original
+```
+
+### Bending the Rules
+
+-	Optimization is improving performance without sacrificing correctness.
+-	However, in ["Evolutionary Program Repair"](http://genprog.cs.virginia.edu/) use genetic programming to "optimize" a program and alter its semantics to *improve* its correctness, i.e. removing bugs.
+-	With creativity the same concepts of e.g. altering parse trees can be used in many contexts, like above.
+
+### Wrap up
+
+-	Lexing
+	-	Regular expressions
+	-	Finite state machines
+-	Parsing
+	-	Context Free Grammars, CFG (matching parentheses).
+	-	Used Dynamic Programming and memoized Parse States
+-	Optimizing
+	-	Must retain meaning.
+-	Interpreting.
+	-	Walks AST recursively.
+	-	HTML interpreter calls graphics engine and JavaScript interpreter.
+-	Debugging
+	-	Gain confidence.
 
 ## References
 
