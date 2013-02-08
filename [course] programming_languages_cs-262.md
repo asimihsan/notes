@@ -2279,7 +2279,7 @@ What is in chart[2], given:
     -   e.g. `5<7` or `a>b` is valid JavaScript, but would confuse an HTML lexer.
 -   How to grab a chunk of embedded JS:
 
-``
+```
 def t_javascript(token):
     r'\<script\ type=\"text\/javascript\"\>'
     token.lexer.code_start = token.lexer.lexpos
@@ -2298,33 +2298,33 @@ def t_javascript_end(token):
 
     # note that lexdata is such that we need to
     # manually strip off </script> 
-``
+```
 
 ### Extending our HTML grammar
 
 -   Review:
 
-``
+```
 def p_element_word(p):
     'element : WORD'
     p[0] = ("word-element", p[1])
 
     # p[0] is the parse tree
     # p[1] is the child parse tree
-``
+```
 
 -   Now need a JavaScript element:
 
-``
+```
 def p_element_javascript(p):
     'element : JAVASCRIPT'
     p[0] = ("javascript-element", p[1])
-``
+```
 
 -   `JAVASCRIPT` in the parser is the same as `token.type` in the lexer. This is intentional: this is the link between the lexer and the parser.
 -   Example:
 
-``
+```
 HTML input:
 
     hello my
@@ -2337,11 +2337,11 @@ Parse tree:
  ("word-element", "my"),
  ("javascript-element", "document.write(99)"),
  ("word-element", "luftballons")]
-``
+```
 
 ### Calling the Interpreter
 
-``
+```
 def interpret(trees):
     for tree in trees:
         treetype = tree[0]
@@ -2365,7 +2365,7 @@ def interpret(trees):
             # We want to call the interpreter on our AST
             result = jsinterp.interpret(jstree)
             graphics.word(result) 
-``
+```
 
 ### Evil problem
 
@@ -2376,14 +2376,14 @@ def interpret(trees):
 
 -   Assume every call to `write` appends to the special "javascript output" variable in the global environment.
 
-``
+```
 def interpret(trees):
     # recall env = (parent, dictionary), and as this is the global environment the parent pointer is None
     global_env = (None, {"javascript output": ""})
     for elt in trees:
         eval_elt(elt, global_env)
     return (global_env[1])["javascript output"]
-``
+```
 
 -   `"javascript output"`, in particular the space, is important; the user is not allowed to use a space in an identifier so they can't ever collide with this.
 
@@ -2392,7 +2392,7 @@ def interpret(trees):
 -	Treating write specially
 
 
-``
+```
 def eval_exp(tree, env):
 	exptype = tree[0]
 	if exptype == "call":
@@ -2405,13 +2405,13 @@ def eval_exp(tree, env):
 			env_update("javascript output", \
 				output_sofar + str(argval), env)
 			return None
-``
+```
 
 ### Counting Frames
 
 -	Consider the following embedded JS:
 
-``
+```
 function factorial(n) {
 	if (n == 0) {
 		return 1;
@@ -2419,7 +2419,7 @@ function factorial(n) {
 	return n * factorial(n-1);
 }
 document.write(1260 + factorial(6));
-``
+```
 
 -	The above has:
 	-	One global environment frame, which always exists.
@@ -2447,18 +2447,18 @@ document.write(1260 + factorial(6));
 
 -	Suppose we make an error in our environment lookup:
 
-``
+```
 def env_lookup(vname,env):
 	# env = (parent-poiner, {"x": 22, "y": 33})
 	if vname in env[1]:
 		return (env[1])[vname]
 	else: # BUG
 		return None # BUG 
-``
+```
 
 -	Consider this valid code:
 
-``
+```
 var a = 1;
 function mistletoe(baldr) {
 	baldr = baldr + 1;
@@ -2467,7 +2467,7 @@ function mistletoe(baldr) {
 	return baldr;
 }
 write(mistletoe(5));
-``
+```
 
 -	Should be 9.
 -	But we're not looking up parent environments properly, so will get an error!
@@ -2486,7 +2486,7 @@ write(mistletoe(5));
 
 -	In Python:
 
-``
+```
 greeting = "hola"
 def makegreeter(greeting):
 	def greeter(person):
@@ -2494,11 +2494,11 @@ def makegreeter(greeting):
 	return greeter
 sayhello = makegreeter("hello")
 sayhello("gracie")
-``
+```
 
 -	In JavaScript:
 
-``
+```
 var greeting = "hola";
 function makegreeter(greeting) {
 	var greeter = function(person) {
@@ -2507,11 +2507,11 @@ function makegreeter(greeting) {
 	return greeter;
 }
 var sayhello = makegreeter("hello");
-``
+```
 
 -	Let's add anonymous functions to our JS interpreter.
 
-``
+```
 def eval_exp(tree,env):
 	exptype = tree[0]
 	# function(x,y) { return x+y }
@@ -2522,15 +2522,15 @@ def eval_exp(tree,env):
 		return ("function", fparams, fbody, env)
 		# "env" allows local functions to see local variables
 		# can see variables that were in scope *when the function was defined*
-``
+```
 
 ### Mistakes in anonymous functions
 
 -	Suppose we get the return statement wrong:
 
-``
+```
 return ("function", fparams, fbody, global_env)
-``
+```
 
 -	No test input with only one "function" can show the bug.
 	-	However, with one recursive function we could see the bug.
@@ -2542,12 +2542,12 @@ return ("function", fparams, fbody, global_env)
 
 -	An **optimization** improves performance while retaining meaning, i.e. without changing the output.
 
-``
+```
 function factorial(n) {
 	if (n == 0) { return 1; }
 	return 1 * n * factorial(n-1);
 }
-``
+```
 
 -	This is correct, but we're multiplying by `1` a lot.
 -	`1 \* n` can be replaced by `n`.
@@ -2574,7 +2574,7 @@ function factorial(n) {
 -	Program text -> lexing -> tokens -> parsing -> tree -> *optimization* -> tree (simpler) -> interpreting -> result (meaning)
 -	Optimization is optional!
 
-``
+```
 def optimize(tree):
 	etype = tree[0]
 	if etype == "binop": # a * 1 = a
@@ -2596,7 +2596,7 @@ i.e. this:
 becomes:
 
 ("number", "5")
-``
+```
 
 -	In this class we will optionally perform optimization after parsing but before interpreting. Our optimizer takes a parse tree as input and returns a (simpler) parse tree as output.
 	-	We could modify the tree in place but for us returning a new tree is fine.
