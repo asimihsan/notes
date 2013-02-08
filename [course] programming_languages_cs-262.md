@@ -2359,7 +2359,7 @@ def interpret(trees):
             # jsgrammar is another external module
             jsparser = yacc.yacc(module=jsgrammar)
 
-            # jstree is a prse tree for JavaScript
+            # jstree is a parse tree for JavaScript
             jstree = jsparser.parse(jstext, lexer=jslexer)
 
             # We want to call the interpreter on our AST
@@ -2389,7 +2389,218 @@ def interpret(trees):
 
 ### Updating output
 
-TODO
+-	Treating write specially
+
+
+``
+def eval_exp(tree, env):
+	exptype = tree[0]
+	if exptype == "call":
+		fname = tree[1] # myfun in myfun(a,3+4)
+		fargs = tree[2] # [a,3+4] in myfun(a,3+4)
+		fvalue = envlookup(fname,env) # None for "write"; built-in
+		if fname == "write":
+			argval = eval_exp(fargs[0],env)
+			output_sofar = env_lookup("javascript output",env)
+			env_update("javascript output", \
+				output_sofar + str(argval), env)
+			return None
+``
+
+### Counting Frames
+
+-	Consider the following embedded JS:
+
+``
+function factorial(n) {
+	if (n == 0) {
+		return 1;
+	}
+	return n * factorial(n-1);
+}
+document.write(1260 + factorial(6));
+``
+
+-	The above has:
+	-	One global environment frame, which always exists.
+	-	One environment frame per call to `factorial`, so 7.
+	-	A total of eight environment frames.
+	-	No frame shares the same value of `n`.
+	-	(see "`def eval_stmt(tree,environment)`" above).
+
+### Debugging
+
+-	"I would rather have a sandwich *then* be burned alive" (wanted *than*)
+-	A good test case gives us confidence that a program implementation adheres to its specification. In this situation, a good test case reveals a bug.
+
+###	Testing
+
+-	We use **testing** to gain confidence that an implementation (a program) adheres to its specification (the task at hand) and meets all the requirements.
+-	Not a proof! We can only gain more confidence.
+-	If a program accepts an infinite set of inputs, testing alone cannot prove that program's correctness.
+-	Our web page lexer, parser, interpreter, as it accepts inputs based on a CFG, has infinite number of inputs.
+-	Software maintenance (ie.e. testing, debugging, refactoring) carries a huge cost.
+
+-	When comparing a function's output to the expected output, code read and see what features of our interepeter we're using. If you're not using it, you're not testing it!
+
+### Testing in depth
+
+-	Suppose we make an error in our environment lookup:
+
+``
+def env_lookup(vname,env):
+	# env = (parent-poiner, {"x": 22, "y": 33})
+	if vname in env[1]:
+		return (env[1])[vname]
+	else: # BUG
+		return None # BUG 
+``
+
+-	Consider this valid code:
+
+``
+var a = 1;
+function mistletoe(baldr) {
+	baldr = baldr + 1;
+	a = a + 2;
+	baldr = baldr + a;
+	return baldr;
+}
+write(mistletoe(5));
+``
+
+-	Should be 9.
+-	But we're not looking up parent environments properly, so will get an error!
+-	Let's suppose we don't know where the bug is. How do we refine this test case?
+-	Comment out lines, and see if it still happens. **Fault localisation**.
+	-	Comment out the first three lines, just `return baldr`, it works!
+
+### Testing at Mozilla
+
+-	Simple test cases with obvious control flow are better.
+-	Removing parts of a test case help localise faults.
+-	Complex test cases hit more issues but they're more difficult to debug and track down the actual cause.
+-	Linear test cases, with little to no control flow, are easy to "comment out lines" to localise faults.
+
+### Anonymous functions
+
+-	In Python:
+
+``
+greeting = "hola"
+def makegreeter(greeting):
+	def greeter(person):
+		print greeting + " " + person
+	return greeter
+sayhello = makegreeter("hello")
+sayhello("gracie")
+``
+
+-	In JavaScript:
+
+``
+var greeting = "hola";
+function makegreeter(greeting) {
+	var greeter = function(person) {
+		write(greeting + " " + person);
+	}
+	return greeter;
+}
+var sayhello = makegreeter("hello");
+``
+
+-	Let's add anonymous functions to our JS interpreter.
+
+``
+def eval_exp(tree,env):
+	exptype = tree[0]
+	# function(x,y) { return x+y }
+	if exptype == "function":
+		# ("function", ["x","y"], [ ("return", ("binop", ...) ])
+		fparams = tree[1]
+		fbody = tree[2]
+		return ("function", fparams, fbody, env)
+		# "env" allows local functions to see local variables
+		# can see variables that were in scope *when the function was defined*
+``
+
+### Mistakes in anonymous functions
+
+-	Suppose we get the return statement wrong:
+
+``
+return ("function", fparams, fbody, global_env)
+``
+
+-	No test input with only one "function" can show the bug.
+	-	However, with one recursive function we could see the bug.
+-	Need just one variable in the global environment to see the bug.
+-	If there are two functions at the top-level won't see the bug.
+-	Need two functions, one nested in the other, to see the bug.
+
+### Optimization
+
+-	An **optimization** improves performance while retaining meaning, i.e. without changing the output.
+
+``
+function factorial(n) {
+	if (n == 0) { return 1; }
+	return 1 * n * factorial(n-1);
+}
+``
+
+-	This is correct, but we're multiplying by `1` a lot.
+-	`1 \* n` can be replaced by `n`.
+-	Smaller AST, faster recursive walk, fewer multiplications.
+
+-	Note that modifying a local variable in a function, then not returning it, is redundant and can be removed.
+	-	**Dead code**.
+
+### Implementing Optimizations
+
+1.	Think of optimizations
+
+		x \* 1 == x
+		x + 0 == x
+
+2.	Transform parse tree
+
+-	Replacing an expensive multiplication with a cheaper addition is an instance of [**strength reduction**](http://en.wikipedia.org/wiki/Strength_reduction).
+-	`x/x` can't be optimized to `1` because if `x=0` then raises an exception, and we want to keep the same semantics after optimization.
+
+### Optimizing Timing
+
+-	Change the parse tree before interpreting.
+-	Program text -> lexing -> tokens -> parsing -> tree -> *optimization* -> tree (simpler) -> interpreting -> result (meaning)
+-	Optimization is optional!
+
+``
+def optimize(tree):
+	etype = tree[0]
+	if etype == "binop": # a * 1 = a
+		a = tree[1]
+		op = tree[2]
+		b = tree[3]
+		if op == "*" and b == ("number","1"):
+			return a
+		return tree
+
+i.e. this:
+
+("binop",
+	("number", "5"),
+	("*"),
+	("number", "1")
+)
+
+becomes:
+
+("number", "5")
+``
+
+-	In this class we will optionally perform optimization after parsing but before interpreting. Our optimizer takes a parse tree as input and returns a (simpler) parse tree as output.
+	-	We could modify the tree in place but for us returning a new tree is fine.
+
 
 ## References
 
