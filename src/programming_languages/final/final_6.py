@@ -73,8 +73,84 @@
 # Hint: x = y + z makes anything involving y and z un-available, and
 # then makes y + z available (and stored in variable x).
 
+import pprint
+
+def invalidate(variable_name, available):
+    print "invalidate entry. variable_name: %s, available: %s" % (variable_name, pprint.pformat(available))
+    new_available = available.copy()
+    for exp in available:
+        if exp[0] == "binop":
+            (_, (_, var1), _, (_, var2)) = exp
+            variables = [var1, var2]
+        elif exp[0] == "identifier":
+            (_, var1) = exp
+            variables = [var1]
+        else:
+            variables = []
+        if variable_name in variables:
+            import ipdb; ipdb.set_trace()
+            del new_available[exp]
+    print "invalidate returning: %s" % pprint.pformat(new_available)
+    return new_available
+
+def update(variable_name, rhs_expression, available):
+    # The RHS as a whole is now available *recursively*, i.e. if
+    #
+    # a = b + c
+    # x = a
+    #
+    # Then clearly:
+    # - (b+c) is available in a, (a) in x
+    # - But recursively, (b+c) is available in x.
+    new_available = available.copy()
+    if rhs_expression not in new_available:
+        new_available[rhs_expression] = []
+    new_available[rhs_expression].append(("identifier", variable_name))
+
+    reverse_lookup = {}
+    for (key, values) in available.items():
+        for value in values:
+            if value not in reverse_lookup:
+                reverse_lookup[value] = []
+            reverse_lookup[value].append(key)
+    if rhs_expression in reverse_lookup:
+        elem = reverse_lookup[rhs_expression]
+        new_available[elem].append(("identifier", variable_name))
+
+    return new_available
+
 def optimize(ast):
-        # write your answer here
+    available = {}
+    new_ast = []
+    for (ast_operation, variable_name, rhs_expression) in ast:
+        # Invalidate the LHS variable name.
+        available = invalidate(variable_name, available)
+
+#       ("binop", exp, operator, exp)
+#       ("number", number)
+#       ("identifier", variable_name)
+        assert(rhs_expression[0] in ["binop", "number", "identifier"])
+        if rhs_expression[0] == "binop":
+            # Maybe the RHS is available?
+            if rhs_expression in available:
+                new_rhs_expression = available[rhs_expression]
+                new_ast.append((ast_operation, variable_name, new_rhs_expression))
+            else:
+                new_ast.append((ast_operation, variable_name, rhs_expression))
+
+            # invalidate all variables on RHS
+            #print rhs_expression
+            (_, rhs_exp1, rhs_operator, rhs_exp2) = rhs_expression
+            for exp in [rhs_exp1, rhs_exp2]:
+                if exp[0] == "identifier":
+                    available = invalidate(exp[1], available)
+
+            # Refresh "available" recursively (see update() for more info)
+            available = update(variable_name, rhs_expression, available)
+        else:
+            new_ast.append((ast_operation, variable_name, rhs_expression))
+
+    return new_ast
 
 # We have included some testing code to help you check your work. Since
 # this is the final exam, you will definitely want to add your own tests.
@@ -90,7 +166,8 @@ answer1 = [ \
 ("assign", "z", ("identifier", "x")) ,
 ]
 
-print (optimize(example1)) == answer1
+print "test 1"
+#print (optimize(example1)) == answer1
 
 example2 = [ \
 ("assign", "x", ("binop", ("identifier","a"), "+", ("identifier","b"))) ,
@@ -98,7 +175,9 @@ example2 = [ \
 ("assign", "z", ("binop", ("identifier","a"), "+", ("identifier","b"))) ,
 ]
 
-print (optimize(example2)) == example2
+print "test 2"
+#import pprint; pprint.pprint(optimize(example2))
+#print (optimize(example2)) == example2
 
 example3 = [ \
 ("assign", "x", ("binop", ("identifier","a"), "+", ("identifier","b"))) ,
@@ -113,7 +192,8 @@ answer3 = [ \
 ("assign", "z", ("identifier", "y")) , # cannot be "= x"
 ]
 
-print (optimize(example3)) == answer3
+print "test 3"
+#print (optimize(example3)) == answer3
 
 example4 = [ \
 ("assign", "x", ("binop", ("identifier","a"), "+", ("identifier","b"))) ,
@@ -137,5 +217,7 @@ answer4 = [ \
 ("assign", "r", ("identifier", "b")) ,
 ]
 
-print optimize(example4) == answer4
+print "test 4"
+#print optimize(example4) == answer4
+import pprint; pprint.pprint(optimize(example4))
 
