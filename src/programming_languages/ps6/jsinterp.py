@@ -1,29 +1,7 @@
 # Wes Weimer
-# -- STUDENTS WRITE this file 
 #
 # This is an interpreter for a simple subset of JavaScript.
 #
-# Students would write a version of this file as part of the course. 
-#
-# Approach: Basic Scheme-style Apply/Eval mutual recursion with an
-# Environment. Because closures are possible, each Environment has a parent
-# pointer, etc. 
-#
-# Environment is a tuple: 
-#       (parent-pointer,        -- can be None for global environment
-#       string->value)          -- maps identifiers to values
-#
-# We'll use the special value "javascript output" in the global environment to
-# record strings written by JavaScript programs. 
-#
-# Tricky Bits:
-#       Environments With Parent Pointers
-#       Making Functions ("\lambda" = "function")
-#       Reporting String Output from JavaScript's "write" function
-#       Using an Exception to simulate imperative "return" stmts
-#
-# Hardest Bit: 
-#       Calling Functions (new frame, eval args, bind args to formals)
 
 class JSReturn(Exception):
         """Phrasing "return" as an exception allows us to break out of
@@ -123,6 +101,11 @@ def eval_stmt(stmt,env):
                 print "ERROR: unknown statement type ",
                 print stype
 
+def eval_call(exp,env):
+    pass
+
+
+
 def eval_exp(exp,env): 
         etype = exp[0] 
 #        print "eval_exp : " ,
@@ -182,36 +165,7 @@ def eval_exp(exp,env):
                         print op
                         exit(1)
         elif etype == "call": 
-                fname = exp[1]
-                args = exp[2] 
-                fvalue = env_lookup(fname,env) 
-                if fname == "write":
-                        argval = eval_exp(args[0],env)
-                        output_sofar = env_lookup("javascript output",env)
-                        env_update("javascript output",output_sofar + str(argval),env)
-                elif fvalue[0] == "function":
-                        fparams = fvalue[1] 
-                        fbody = fvalue[2] 
-                        fenv = fvalue[3] 
-                        if len(fparams) <> len(args):
-                                print "ERROR: wrong number arguments to " + fname
-                        else: 
-                                # make a new environment frame
-                                newenv = (fenv,{ }) 
-                                for i in range(len(args)):
-                                        argval = eval_exp(args[i],env)
-                                        (newenv[1])[fparams[i]] = argval
-                                # evaluate the body in the new frame
-                                try:
-                                        eval_stmts(fbody,newenv) 
-                                        return None
-                                except JSReturn as r:
-#                                        print "Return: ", r.retval
-#                                        print r.retval
-                                        return r.retval
-                else:
-                        print "ERROR: call to non-function " + fname
-
+            return eval_call(exp,env)
                 # Complicated! 
         else:
                 print "ERROR: unknown expression type ",
