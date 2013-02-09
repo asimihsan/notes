@@ -2653,6 +2653,54 @@ def optimize(tree): # Expression trees only
 -	Debugging
 	-	Gain confidence.
 
+## Unit 7 - The Final unit
+
+### The List
+
+-   A **language** is a set of strings
+-   **Regular expressions**: concise notation for specifying some sets of strings (**regular languages**).
+-   **Finite State Machines**: pictorial representations and way to implement regular expressions (deterministic or not).
+    -   epsilon-transitions or more than one edge means it is non-deterministic.
+    -   not a problem: can convert NFA to DFA.
+-  **Context-Free Grammars**: concise notation for specifying some sets of strings (context-free languages).
+    -   Set of re-write rules.
+    -   NonTerminal -> Terminal Nonterminals.
+    -   Terminals are the same as tokens, trying to match.
+    -   CFGs can match balanced parantheses, this is impossible in regular languages.
+-   **Memoization**, also called **Dynamic Programming**: keep previous results in a chart to save computation.
+-   **Parsing**: determine if a list of tokens is in the language of a CFG. If so, produce a **parse tree**.
+-   **Lexing**: break a big string up into a list of tokens (words).
+    -   Specified using regular expressions.
+-   **Type**: A type is a set of values and associated safe operations.
+    -   Sets of values: Number, string, list.
+    -   Operations: `+, -, /, len()`.
+-   **Semantics**, i.e. **meaning**: a program may have type errors (or other **exceptions**) or it may produce a value.
+-   **Optimization**: replace a program with another that has the *same semantics* (but uses fewer resources).
+    -   `x * 1 === x`
+    -   `x / x !== 1`
+-   **Interpretation**: recursive walk over the (optimized) parse tree. The  meaning of a program is computer from the meanings of its subexpressions.
+    -   Typically tracks **state* in **environments**.
+    -   Environments are often chained together, particularly when you make function calls.
+-   **Web browser**
+    -   Lex and parse HTML, treating JS as a special token.
+    -   HTML interpreter calls JS interpreter, which itself returns a string.
+        -   JS interpreter calls `document.write()`.
+    -   HTML interpreter calls graphics library to display words.
+
+### Regular expressions
+
+-   There is a regular expression for `a^N`: it's `a+`.
+-   There isn't a regular expression for `a^N b^N`, because this involves memory / context / counting. Same as balancing parantheses.
+
+### Context-Free Grammars
+
+-   A context-free grammar (CFG) can capture `a^N b^N`. It looks like this:
+
+        S -> aSb
+        S ->
+
+
+
 ## References
 
 ### Unit 1
