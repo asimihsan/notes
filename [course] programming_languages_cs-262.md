@@ -1279,7 +1279,7 @@ Partial grammar for JavaScript:
 
 Suppose:
 
-        E -> E -E
+        E -> E - E
         E -> (F)
         E -> int
         F -> string
@@ -1287,7 +1287,7 @@ Suppose:
         Input: int - int
         Seen 2 tokens so far
      
-        chart[2] has E -> - <dot> E, from 0
+        chart[2] has E -> E - <dot> E, from 0
 
 Then the result of computing the closure:
 
@@ -1312,7 +1312,7 @@ The following are not in the result:
 -    If c is non-terminal, => closure.
 -    If c is terminal, => shift (i.e. consume the terminal).
 
-          X -> abc <dot> from j into chart [i+1]
+          X -> abc <dot> d from j into chart [i+1]
 
 -    Remember what this means. We've seen `i` tokens, and the `i+1`th token is `c`, a terminal.
 -    We are not updating `from`, because that's where we've come from.
@@ -2699,7 +2699,61 @@ def optimize(tree): # Expression trees only
         S -> aSb
         S ->
 
+### Security
 
+-   **Shrinking the trusted computing base**.
+-   For any software minimize the components within it that needs to be trusted.
+    -   Minimize the number of ways in which disaster may ensue.
+-   An instance of the **halting problem**: if I could look at any piece of code and determine whether it was malicious or not this is equivalent to solving the halting problem.
+    -   Discussed earlier how this is provably impossible to solve.
+
+### Parsing states
+
+```
+S -> aSb
+S -> \epsilon
+S -> c
+
+Input: acb
+
+What parsing states are in chart[2]?
+```
+
+-   `S -> <dot> a S b` is in `chart[0] from 0`, so no.
+-   `S -> a <dot> S b` is in `chart[1] from 0`, so no.
+-   `S -> <dot>` is in `chart[1] from 1`, so no.
+-   `S -> c <dot>` is in `chart[2] from 1`, so yes.
+-   `S -> a S <dot> b` is in `chart[2] from 0`, so yes.
+    -   note that the `from` is not `1`. `from 1` means that there is one hidden input not shown in this rule, whereas we can see all the input here.
+
+### Interpretation and Evaluation
+
+-   Interpreting doesn't always produce a value or an error.
+    -   It can loop forever!
+    -   But if it does return yes it always returns either a value or an error.
+
+### Optimization
+
+-   Given `optimization_OK(f, g)`, which compares a function before-and-after optimization and tells you if it's a safe optimization.
+-   We can implement `optimization_OK` so that it returns a safe answer for optimization in all cases - just never optimize!
+-   We cannot implement an `optimization_OK` that works precisely in all cases - it is undecidable like the Halting Problem.
+    -   If we can solve `optimization_OK` in all cases then we could compare any `optimization_OK` itself to an infinite loop `def loops()`, and hence we'd have solved the Halting Problem.
+-   `optimization_OK` is commutative; `O(f,g) == O(g,f)`
+
+### What next?
+
+-   Wes Weimer recommends...
+    -   **Philosophy** until you've covered epistemology, free will, logic, the philosophy of science, and "what it is like to be a bat."
+    -   **Cognitive psychology**, until you've covered perception, consciousness, and the Flynn effect.
+    -   **Speech** and **Rhetoric** until you've covered persuasion.
+    -   **Anthropology** and **Gender studies** until you've covered Mead and Freeman and have a better feel for which behaviours are socially constructed and which may be essential.
+    -   **Statistics** until you can avoid being fooled.
+    -   **Religion** and **Ethics** until you've covered the relatonshopi between unhappiness and unrealised desires.
+    -   **Phyiscs** and **Engineering** until you can explain how a microphone, radio and speaker all work.
+    -   **Government** until you have an opinion about legislating morality and the relative importance of freedom and equality.
+    -   **History** until you are n ot condemed to repeat the mistakes of the past.
+    -   **Life** until you are happy. They say ignorance is bliss but they are wrong all but finitely often.
+-   !!AI hahaha.
 
 ## References
 
