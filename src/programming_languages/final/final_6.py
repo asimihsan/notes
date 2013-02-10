@@ -75,56 +75,69 @@
 
 import pprint
 
-def invalidate(variable_name, available):
-    print "invalidate entry. variable_name: %s, available: %s" % (variable_name, pprint.pformat(available))
-    new_available = available.copy()
-    for exp in available:
-        if exp[0] == "binop":
-            (_, (_, var1), _, (_, var2)) = exp
-            variables = [var1, var2]
-        elif exp[0] == "identifier":
-            (_, var1) = exp
-            variables = [var1]
-        else:
-            variables = []
-        if variable_name in variables:
-            import ipdb; ipdb.set_trace()
-            del new_available[exp]
-    print "invalidate returning: %s" % pprint.pformat(new_available)
-    return new_available
+class AvailableExpressions(object):
+    def __init__(self):
+        # ---------------------------------------------------------------------
+        #    Track availability of expressions with respect to variable names.
+        # ---------------------------------------------------------------------
+        self.available = []
 
-def update(variable_name, rhs_expression, available):
-    # The RHS as a whole is now available *recursively*, i.e. if
-    #
-    # a = b + c
-    # x = a
-    #
-    # Then clearly:
-    # - (b+c) is available in a, (a) in x
-    # - But recursively, (b+c) is available in x.
-    new_available = available.copy()
-    if rhs_expression not in new_available:
-        new_available[rhs_expression] = []
-    new_available[rhs_expression].append(("identifier", variable_name))
+    def print_available(self):
+        print "available:\n%s" % self.available
 
-    reverse_lookup = {}
-    for (key, values) in available.items():
-        for value in values:
-            if value not in reverse_lookup:
-                reverse_lookup[value] = []
-            reverse_lookup[value].append(key)
-    if rhs_expression in reverse_lookup:
-        elem = reverse_lookup[rhs_expression]
-        new_available[elem].append(("identifier", variable_name))
+    def invalidate(self, variable_name):
+        print "invalidate entry. variable_name: %s" % variable_name
+        self.print_available()
 
-    return new_available
+        new_available = []
+        for (available_variable_name, available_expressions) in self.available:
+            should_be_preserved = True
+            if variable_name == available_variable_name:
+                should_be_preserved = False
+            else:
+                for expression in available_expressions:
+                    if expression[0] == "identifier" and expression[1] == variable_name:
+                        should_be_preserved = False
+            if should_be_preserved:
+                new_available.append((available_variable_name, available_expressions))
+
+        print "invalidate exit. variable_name: %s" % variable_name
+        self.print_available()
+
+    def update(self, variable_name, expression):
+        print "update entry. variable_name: %s, expression: %s" % (variable_name, expression)
+        self.print_available()
+
+        if not any(available_variable_name == variable_name
+                   for (available_variable_name, _) in self.available):
+            self.available.append((variable_name, []))
+        for i, (available_variable_name, available_expressions) in enumerate(self.available):
+            if available_variable_name == variable_name:
+                self.available[i] = (available_variable_name, available_expressions + [expression])
+
+        print "update exit. variable_name: %s, expression: %s" % (variable_name, expression)
+        self.print_available()
+
+    def is_available(self, expression):
+        return any(expression in expressions for (_, expressions) in self.available)
+
+    def get_variable_name_for_expression(self, expression):
+        if not self.is_available(expression):
+            return None
+        for (variable_name, expressions) in self.available:
+            if expression in expressions:
+                return variable_name
+        return None
 
 def optimize(ast):
-    available = {}
+    available = AvailableExpressions()
+
     new_ast = []
     for (ast_operation, variable_name, rhs_expression) in ast:
+        print "optimize. ast_operation: %s, variable_name: %s, rhs_expression: %s" % (ast_operation, variable_name, rhs_expression)
+
         # Invalidate the LHS variable name.
-        available = invalidate(variable_name, available)
+        available.invalidate(variable_name)
 
 #       ("binop", exp, operator, exp)
 #       ("number", number)
@@ -132,8 +145,8 @@ def optimize(ast):
         assert(rhs_expression[0] in ["binop", "number", "identifier"])
         if rhs_expression[0] == "binop":
             # Maybe the RHS is available?
-            if rhs_expression in available:
-                new_rhs_expression = available[rhs_expression]
+            if available.is_available(rhs_expression):
+                new_rhs_expression = available.get_variable_name_for_expression(rhs_expression)
                 new_ast.append((ast_operation, variable_name, new_rhs_expression))
             else:
                 new_ast.append((ast_operation, variable_name, rhs_expression))
@@ -143,10 +156,10 @@ def optimize(ast):
             (_, rhs_exp1, rhs_operator, rhs_exp2) = rhs_expression
             for exp in [rhs_exp1, rhs_exp2]:
                 if exp[0] == "identifier":
-                    available = invalidate(exp[1], available)
+                    available.invalidate(exp[1])
 
             # Refresh "available" recursively (see update() for more info)
-            available = update(variable_name, rhs_expression, available)
+            available.update(variable_name, rhs_expression)
         else:
             new_ast.append((ast_operation, variable_name, rhs_expression))
 
@@ -168,6 +181,7 @@ answer1 = [ \
 
 print "test 1"
 #print (optimize(example1)) == answer1
+#import pprint; pprint.pprint(optimize(example1))
 
 example2 = [ \
 ("assign", "x", ("binop", ("identifier","a"), "+", ("identifier","b"))) ,
@@ -176,7 +190,7 @@ example2 = [ \
 ]
 
 print "test 2"
-#import pprint; pprint.pprint(optimize(example2))
+import pprint; pprint.pprint(optimize(example2))
 #print (optimize(example2)) == example2
 
 example3 = [ \
@@ -219,5 +233,5 @@ answer4 = [ \
 
 print "test 4"
 #print optimize(example4) == answer4
-import pprint; pprint.pprint(optimize(example4))
+#import pprint; pprint.pprint(optimize(example4))
 
