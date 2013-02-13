@@ -38,4 +38,7 @@
         
         # Wireshark should now be visible.
         
-        
+-    Useful httrack one-liner to index a site and all 'near' non-HTML resources and all first-links away in useful directory structure.
+
+        httrack http://www.cs.columbia.edu/~smaskey/CS6998/ -W -O "/Users/ai/websites/smaskey" --extended-parsing --mirrorlinks --structure=4 +*.pdf
+    
