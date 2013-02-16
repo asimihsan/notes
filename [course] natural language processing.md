@@ -337,6 +337,7 @@ $$\implies\; \textrm{Perplexity} = N$$
 
 -   !!AI implying all these calculations use log base 2.
 -   Perplexity is a measure of effective "branching factor".
+    -   The model is as confused on test data as if it had to choose uniformly and independently among P possibilities per word, where P is the perplexity. Source: [Wikipedia:Perplexity](http://en.wikipedia.org/wiki/Perplexity).
 
 - - -
 
@@ -557,4 +558,215 @@ $$
     -   Recall that $\lambda_1$ is for the trigram MLE, and the bigram count is in the denominator.
 
 ### Discounting Methods (Part 1)
+
+-   Suppose we have a table of bigrams, their counts, and corresponding $q_{ML}(w_i\;|\;w_{i-1})$.
+
+x               Count(x) $q_{ML}(w_i\;|\;w_{i-1})$
+------          -------- -------------------------
+the             48                 
+the, dog        15       $^{15}/_{48}$
+the, woman      11       $^{11}/_{48}$ 
+the, man        10       $^{10}/_{48}$
+the, park       5        $^{5}/_{48}$
+the, job        2        $^{2}/_{48}$
+the, telescope  1        $^{1}/_{48}$
+the, manual     1        $^{1}/_{48}$
+the, afternoon  1        $^{1}/_{48}$
+the, country    1        $^{1}/_{48}$
+the, street     1        $^{1}/_{48}$
+
+-   The MLEs are systematically high, especially if we have a large vocabulary. This is particularly true for the low count items.
+-   In a sense these words that follow "the" are just lucky; what about those poor words that don't appear after "the" in this data set but, in the "true" language, actually can appear after "the"?
+
+-   Now define "discounted" counts, $\textrm{Count}^{*}(x) = \textrm{Count}(x) - 0.5$
+
+x               Count(x) Count*(x) $\frac{\textrm{Count*(x)}}{\textrm{Count(the)}}$
+------          -------- --------- -------------------------
+the             48                 
+the, dog        15       14.5      $^{14.5}/_{48}$
+the, woman      11       10.5      $^{10.5}/_{48}$ 
+the, man        10       9.5       $^{9.5}/_{48}$
+the, park       5        4.5       $^{4.5}/_{48}$
+the, job        2        1.5       $^{1.5}/_{48}$
+the, telescope  1        0.5       $^{0.5}/_{48}$
+the, manual     1        0.5       $^{0.5}/_{48}$
+the, afternoon  1        0.5       $^{0.5}/_{48}$
+the, country    1        0.5       $^{0.5}/_{48}$
+the, street     1        0.5       $^{0.5}/_{48}$
+
+-   There is some missing or left over probability mass; if we sum the right-hand column you get $\frac{43}{48} \lt 1$.
+-   The left over probability mass, in this case, is $\frac{5}{48}$.
+-   The essence of discounting is to take this left over probability mass and distribute it back to the words that do not appear after "the" in this data set.
+
+-   We'll define for any word $w_{i-1}$ $\alpha$, which is the left-over or missing probability mass:
+
+$$\alpha(w_{i-1}) = 1 - \sum_{w} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Count}(w_{i-1})}$$
+
+-   e.g. in our example, $\alpha(\textrm{the}) = 10 \times 0.5/48 = 5/48$.
+
+- - -
+
+Quiz: assume that we are given a corpus with the folloiwng properties:
+
+-   Count(the) = 70
+-   |{w: c(the, w) > 0}| = 15, i.e. there are 15 different words that follow "the".
+
+Furthermore assume that the discounted counts are defined as $c^{*}(\textrm{the,w}) = c(\textrm{the,w}) - 0.3$. Under this corpus, what is the missing probability mass $\alpha(\textrm{the})$ to 3dp?
+
+$$
+\begin{align}
+    &\begin{aligned}
+    \alpha(\textrm{the}) & = 1 - \sum_{w} \frac{\textrm{Count}^{*}(\textrm{the, w})}{\textrm{Count(the)}} \\
+    & = \frac{\textrm{Count(the)}}{\textrm{Count(the)}} - \frac{1}{\textrm{Count(the)}} \times \sum_{w} \textrm{Count}^{*}(\textrm{the,w}) \\
+    & = \frac{\textrm{Count(the)} - \sum_{w} \textrm{Count}^{*}\textrm{(the, w)}}{\textrm{Count(the)}} \\
+    & = \frac{\textrm{Count(the)} - \sum_{w} \left\{ \textrm{Count(the, w)} - 0.3\right\}}{\textrm{Count(the)}} \\
+    & = \frac{\textrm{Count(the)} + \sum_{w}(0.3) - \textrm{Count(the)}}{\textrm{Count(the)}} \\
+    & = \frac{0.3w}{\textrm{Count(the)}} \\
+    & = \frac{(0.3)(15)}{70} = 0.064\;\textrm{(3 dp)}
+    \end{aligned}
+\end{align}
+$$
+
+- - -
+
+#### Katz Back-Off Models (Bigrams)
+
+-   For a bigram model, define two sets
+
+$$
+\begin{align}
+    &\begin{aligned}
+        A(w_{i-1}) & = \left\{w : \textrm{Count}(w_{i-1},w) \gt 0\right\} \\
+        B(w_{i-1}) & = \left\{w : \textrm{Count}(w_{i-1},w) = 0\right\}
+    \end{aligned}
+\end{align}
+$$
+
+-   Assuming $\alpha$ such that:
+
+$$\alpha(w_{i-1}) = 1 - \sum_{w \in A(w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Count}(w_{i-1})}$$
+
+-   And $\textrm{Count}^{*}$ is such that:
+
+$$\textrm{Count}^{*}(w_{i-1},w_i) = \textrm{Count}(w_{i-1},w_i) - \gamma\\ \textrm{where $\gamma$ is a constant}$$. 
+
+-   A bigram model
+
+$$
+\begin{equation}
+    q_{BO}(w_i\;|\;w_{i-1}) = \begin{cases}
+        \frac{\textrm{Count}^{*}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}, & \textrm{If } w_i \in A(w_{i-1})\\
+        \alpha(w_{i-1})\frac{q_{ML}(w_i)}{\sum_{w \in B(w_{i-1})} q_{ML}(w)}, & \textrm{If } w_i \in B(w_{i-1}) 
+    \end{cases}
+\end{equation}
+$$
+
+-   $A(w_{i-1})$ is the set of words whose bigram count is greater than 0, so they follow e.g. "the".
+-   $B(w_{i-1})$ is the set of words whose bigram count is 0, so they're never seen to follow e.g. "the".
+-   $\alpha(w_{i-1})$ is the missing probability mass.
+-   $\frac{\textrm{Count}^{*}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}$ is the discounted count for the words who are seen to follow e.g. "the".
+-   If the word is never seen after e.g. "the", rather than set its $q(w_i|w_{i-1})$ parameter to 0 we assign it a portion of the missing probabiliy mass $\alpha(w_{i-1})$, in proportion to its the unigram maximum-likelihood estimate $q_{ML}(w_i)$ divided by the sum of all the unigram MLEs for other such words $\sum_{w \in B(w_{i-1})} q_{ML}(w)$.
+
+- - -
+
+Quiz: Let's return to a smaller version of our corpus:
+
+-   the book STOP
+-   his house STOP
+
+This time we computer a bigram language model using Katz back-off with $c^{*}(v,w) = c(v,w) - 0.5$.
+
+What is the value of $q_{BO}(\textrm{book | his})$ estimated from this corpus?
+
+$$w_i = \textrm{book}, w_{i-1} = \textrm{his}$$
+
+$$
+\begin{align}
+    &\begin{aligned}
+        A(\textrm{his}) & = \textrm{{house}} \\
+        B(\textrm{his}) & = \textrm{{his, the, book, STOP}}
+    \end{aligned}
+\end{align}
+$$
+
+Draw a table for $w_{i-1}$ and all words that follow it, in order to determine $\alpha(w_{i-1})$
+
+x           Count(x)   Count*(x)
+----------  --------   ---------
+his         1          
+his, house  1          0.5
+
+$$\alpha(\textrm{his}) = 1 - (0.5)/(1) = 0.5$$
+
+Since $\textrm{book} \in B(\textrm{his})$, i.e. since "book" never follows "his" in the corpus:
+
+$$
+\begin{align}
+    &\begin{aligned}
+        \sum_{w \in B(w_{i-1})} q_{ML}(w) & = q_{ML}(\textrm{his}) + q_{ML}(\textrm{the}) + q_{ML}(\textrm{book}) + q_{ML}(\textrm{STOP}) \\
+        & = (1/6) + (1/6) + (1/6) + (2/6) \\
+        & = 5/6
+    \end{aligned}
+\end{align}
+$$
+
+$$
+\begin{align}
+    &\begin{aligned}
+        q_{BO}(\textrm{book | his}) & = \alpha(w_{i-1})\frac{q_{ML}(w_i)}{\sum_{w \in B(w_{i-1})} q_{ML}(w)} \\
+        & = (0.5) \times \frac{(1/6)}{(5/6)} \\
+        & = 0.1
+    \end{aligned}
+\end{align}
+$$
+
+- - -
+
+### Discounting Methods (Part 2)
+
+#### Katz Back-Off Models (Trigrams)
+
+-   For a trigram model, first define two sets
+
+$$
+\begin{align}
+    &\begin{aligned}
+        A(w_{i-2},w_{i-1}) & = \left\{w : \textrm{Count}(w_{i-2},w_{i-1},w) \gt 0\right\} \\
+        B(w_{i-2},w_{i-1}) & = \left\{w : \textrm{Count}(w_{i-2},w_{i-1},w) = 0\right\}
+    \end{aligned}
+\end{align}
+$$
+
+-   A trigram model is defined in terms of the bigram model:
+
+$$
+\begin{equation}
+    q_{BO}(w_i\;|\;w_{i-2},w_{i-1}) = \begin{cases}
+        \frac{\textrm{Count}^{*}(w_{i-2},w_{i-1},w_i)}{\textrm{Count}(w_{i-2},w_{i-1})}, & \textrm{If } w_i \in A(w_{i-2},w_{i-1})\\
+        \alpha(w_{i-2},w_{i-1})\frac{q_{BO}(w_i|w_{i-1})}{\sum_{w \in B(w_{i-2},w_{i-1})} q_{BO}(w|w_{i-1})}, & \textrm{If } w_i \in B(w_{i-2},w_{i-1}) 
+    \end{cases}
+\end{equation}
+$$
+
+where
+
+$$\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-2},w_{i-1},w)}{\textrm{Count}(w_{i-2},w_{i-1})}$$
+
+-   The one variable is the discount constant. It is typically between 0 and 1, and it can also be chosen via optimization on a validation data set.
+
+### Summary
+
+-   Three steps in deriving the language model probabilities:
+    1.  Expand $p(w_1, w_2, \ldots, w_n)$ using *Chain Rule*.
+    2.  Make *Markov Independence Assumptions*, i.e. $p(w_i\;|\;w_1, w_2, \ldots, w_{i-2}, w_{i-1}) = p(w_i\;|\;w_{i-2},w_{i-1})$
+    3.  *Smooth* the estimates using low order counts; linear interpolation and discounting.
+
+-   Other methods used to improve language models
+    -   "Topic" or "long-range" features.
+        -   Condition on the topic of the document within which sentences belong.
+        -   Condition on words outside of the two-word window under the second-order Markov assumption.
+    -   Syntactic models
+        -   Grammatical information.
+
+-   It's generally hard to improve on trigram models though!
 
