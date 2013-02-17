@@ -778,6 +778,46 @@ $$\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Co
 
 ### Readings
 
+#### Speech and Language Processing, Chapter 3 (Words and Transducers)
+
+##### 3.9: Word and Sentence Tokenization
+
+-   p75: **Tokenization**: segmenting running text into words and sentences.
+-   Consider:
+
+        Mr.  Sherwood said reaction to Sea
+        Containers' proposal has been "very
+        positive." In New York Stock Exchange
+        composite tradying yesterday, Sea Containers
+        closed at $62.625, up 62.5 cents.
+
+-   Notice that:
+    -   There could be double-spaces, which are just typos and can be considered a word delimeter.
+    -   With quotation marks the end of sentence period is *within* the quotation marks. The word *is not* `positive."`.
+    -   There may be numbers in a sentence.
+-   You might be tempted to treat punctuation as a word boundary.
+    -   But what about `m.p.h.`, `Ph.D`, `AT&T`, `cap'n`, `01/02/06`, `google.com`.
+-   Also want to expand clitic contractions.
+    -   `what're` becomes `what are`.
+    -   But apostrophes aren't always clitic contractions, e.g. `her books' covers`.
+    -   Segmenting and expanding clitics can be done using **morpological parsing** presented in this chapter.
+-   Depending on your application you may want to parse multiple words as single tokens, for example `New York` or `rock 'n' roll`.
+    -   This requires a multiword expression dictionary of some sort.
+    -   Tokenization is hence very closely reliant on **named entity detection**.
+
+-   This is all just word segmentation.
+-   **Sentence segmentation** is also important.
+    -   `?` and `!` are relatively unambiguous markers of sentence endings.
+    -   `.` is more ambiguous.
+        -   `Mr.`, `Inc.`, `he said "howdy."`
+        -   Sentence tokenization and word tokenization hence tend to be addressed together, 
+-   Sentence tokenization methods build a *binary classifier*, either using rules or machine learning, to decide if a period is part of a word or a sentence boundary marker.
+    -   Abbreviation dictionaries help to deal with abbreviations.
+    -   State of the art methods use machine learning, but a sequence of regular expressions is still useful.
+-   p77: Perl script based on Grefenstette, 1999.
+-   p78: this is so simple that this suggests Finite State Transducers (FSTs) may also be easily implemented.
+    -   This is the case. Karttunen et. al 1996 and Beesley and Karttunen 2003 give descriptions.
+
 #### Speech and Language Processing, Chapter 4 (n-gram models)
 
 -   p96: a **word** is the full inflected or derived form of a word.
