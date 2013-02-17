@@ -12,15 +12,21 @@ Other readings (papers, textbooks, other courses) are explicitly inlined as well
 
 In order to use pandoc run (need to include custom LaTeX packages for some symbols):
 
-        pandoc \[course\]\ natural\ language\ processing.md -o pdf/nlp.pdf --include-in-header=latex.template
+        pandoc \[course\]\ natural\ language\ processing.md
+        -o pdf/nlp.pdf --include-in-header=latex.template
 
 or, for Markdown + LaTex to HTML + MathJax output:
 
-        pandoc \[course\]\ natural\ language\ processing.md -o pdf/nlp.html --include-in-header=latex.template --mathjax
+        pandoc \[course\]\ natural\ language\ processing.md
+        -o html/nlp.html
+        --include-in-header=html/_header.html
+        --mathjax -s --toc --smart -c _pandoc.css
 
 and, for the ultimate experience, after `pip install watchdog`:
 
-        watchmedo shell-command --patterns="*.md" --ignore-directories --recursive --command='pandoc \[course\]\ natural\ language\ processing.md -o pdf/nlp.html --include-in-header=latetemplate --mathjax' .
+        watchmedo shell-command --patterns="*.md"
+        --ignore-directories --recursive
+        --command='<command above>' .
 
 ## Week 1 - Introduction to Natural Language Processing
 
