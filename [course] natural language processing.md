@@ -770,3 +770,146 @@ $$\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Co
 
 -   It's generally hard to improve on trigram models though!
 
+### Readings
+
+#### Speech and Language Processing, Chapter 4 (n-gram models)
+
+-   p96: a **word** is the full inflected or derived form of a word.
+    -   In English n-gram models are based on wordforms, not the **lemmas*, i.e. root.
+    -   e.g. cat is the lemma, cats is the inflected wordform.
+-   p96: n-gram models, and counting words in general, requires tokenization or text normalization; separating out punctuation, dealing with abbreviations, normalizing spelling, etc.
+    -   Covered in Chapter 3.
+-   p96: a **type** is a distinct word in a corpus.
+-   p96: a **token** is any instance of a word in the corpus.
+-   p102: typically divide our data ito 80% training, 10% development, and 10% test.
+-   p104: quadrigram sentences based on Shakespeare are actually real Shakespeare.
+    -   The n-gram probability matrices are very sparse.
+-   p104: be sure to choose similar training and test copurses. Don't choose from different genres.
+-   p105: **closed vocabulary** assumes we know all the words in the vocabulary.
+    -   This can't possible be exactly true.
+    -   There will be **out of vocabulary (OOV)** words.
+    -   The percentive of OOV words in the test set is called the **OOV rate**.
+    -   An **open voabulary** is one where we model OOV words by adding a pseudo-word called `<UNK>`. We train these probabilities as follows:
+        1.  *Choose a fixed vocabulary* in advance.
+        2.  *Convert* in the training set any OOV word to the unknown word token `<UNK>` in a text normalization step.
+        3.  *Estimate* the probabilities for `<UNK>` from its counts just like any other regular word in the training set.
+
+-   p105: **extrinsic evaluation** of language models is best; apply them to your problem and see which is best.
+-   difficult in practice, so use **intrinsic evaluation** instead, which measures quality independent of any application.
+-   **perplexity** is the most common intrinsic evaluation metric.
+    -   Perplexity is a **weighted average branching factor** of a language. The number of possible next words that can follow any word.
+    -   p107: It is closely related to the information theoretic notion of entropy.
+-   p108: **smoothing** is modifications made to address poor estimates that are due to variability in small data sets.
+    -   pull in probabiliy mass from higher counts, pile it on to zero counts.
+
+-   p108: Laplacian smoothing.
+
+- - -
+
+p111: Good-Turing Discounting
+
+-   Use count of things you've seen *once* (**singletons** or **hapax legomenons**) to re-estimate the frequency of zero-count things.
+-   The **frequency of frequency c** is the number of n-grams that occur c times.
+-   More formally:
+
+$$N_c = \sum_{x\;:\;\textrm{Count(x)} = c} 1$$
+
+-   The MLE count for $N_c$ is $c$. The Good-Turing estimate replaces this with a smoothed count $c^*$, as a function of $N_{c+1}$:
+
+$$c^* = (c+1)\frac{N_{c+1}}{N_c}$$
+
+-   We can use the equation above to replace the MLE counts for all the bins $N_1, N_2, \ldots$.
+-   However, instead of using this equation directly to re-estimate the smoothed count $c^*$ for $N_0$, use the following which we can call the **missing mass**:
+
+$$P_{GT}^{*}\;\textrm{(things with frequency zero in training)} = \frac{N_1}{N}$$
+
+-   Here $N_1$ is the count of items in bin 1, i.e. seen once in the training set, and $N$ is the total number of items we have seen in training.
+-   p113: some advanced issues in Good-Turing estimation
+-   p114: Good-Turing discounting is not used by itself; it's only used in combination with backoff and interpolation, discused later.
+
+- - -
+
+-   We can use an n-gram "hierarchy", i.e. trigrams, bigrams, and unigrams.
+-   In **backoff** if there is evidence of a higher order N-gram we use it exclusively.
+-   In **interpolation** we always mix the probability esitmates of all N-gram estimators.
+
+-   p115: interpolation.
+-   p116: backoff
+    -   is better than interpolation
+    -   takes into account Good-Turing discounting.
+
+- - -
+
+-   p118: practical issues: toolkits and data formats
+-  Since probabilities by definition are less than 1, the more probabilities we multiply together tha smaller they become.
+-   Hence we use log probabilities rather than raw probabilities, and add in log space rather than multiply in linear space.
+-   In order to report probabilities just take the "exp" of the logprob:
+
+$$p_1 \times p_2 \times p_3 \times p_4 = exp(log p_1 + log p_2 + log p_3 + log p_4)$$
+
+-   Backoff N-gram language models are generally stored in **ARPA format**
+    -   Small header.
+    -   List of all non-zero N-gram probabilities (all unigrams, followed by bigrams, followed by trigrams, etc).
+    -   Each N-gram entry is stored with its discounted log probabiliy (in $\textrm{log}_{10}$ format) and its backoff weight $\alpha$.
+    -   Backoff weights only necessary if the N-gram forms a prefix of a longer N-gram.
+    -   Thus, for trigram grammar, the format of each N-gram is:
+
+<TODO>
+
+-   p119: e.g.
+
+        \data\ 
+        ngram 1=1000
+        ngram 2=10000
+        ngram 3=5000
+
+        \1-grams:
+        -0.4405     </s>
+        -99         <s>
+        -4.34443    the         -1.43973
+        -4.5325     dog         -4.3438
+        <snip>
+
+        \2-grams:
+        -3.43535    <s>     i     -5.353535
+        -4.43333    i       went  0.0430843
+        ...
+
+        \3-grams:
+        -3.3245     <s>     i     prefer     3.434
+        ...
+
+-   In training mode each toolkit takes a raw text file, one sentence per line, words separated by white-space.
+-   It also takes parameters such as order $N$, thresholds, type of discounting. 
+-   It outputs a language model in ARPA format.
+
+-   In perplexity or decoding mode the toolkit take a language model in ARPA format, a sentence or corpus, and produces the probability and perplexity of the sentence or corpus.
+
+- - -
+
+<all TODO>
+
+-   p119: Advanced smoothing methods: Kneser-Ney Smoothing
+-   p121: it turns out that any interpolation model can be represented as a backoff model, hence stored in ARPA backoff format.
+-   p121: class-based N-grams.
+-   p122: language model adaptation and using the web
+-   use web search hits to estimate trigram language model parameters.
+-   works well in practice, even though only getting page counts and not word counts back.
+
+-   p122: using longer distance information: a brief summary
+-   state of the art systems use 4-grams and 5-grams.
+-   After 6-grams up to 20-grams, Goodman found that no useful improvement.
+-   **cache** model: use the preceding part of a test corpus and mix it into your trained language model when making predictions.
+    -   words are often repeated.
+    -   only works well in domains where you have perfect knowledge of words.
+-   **topic-based**: train different language models for different kinds of words.
+-   **latent-semantic indexing**: measure probability based on the word's similarity to preceding words, mix it in.
+-   **trigger**: a word that is not adjacent but highly related, so we mix it in.
+-   **skip N-grams**: we skip over an intermediate word.
+-   **variable-length N-grams**: adjust context size.
+
+-   pruning by removing low-probability events is important, and essential on low-power platforms like cellphones.
+
+- - -
+
+
