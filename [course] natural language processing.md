@@ -776,6 +776,12 @@ $$\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Co
 
 -   It's generally hard to improve on trigram models though!
 
+### Week 2 - Tagging Problems and Hidden Markov Models
+
+#### The Tagging Problem
+
+
+
 ### Readings
 
 #### Speech and Language Processing, Chapter 3 (Words and Transducers)
