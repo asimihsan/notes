@@ -776,11 +776,207 @@ $$\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Co
 
 -   It's generally hard to improve on trigram models though!
 
-### Week 2 - Tagging Problems and Hidden Markov Models
+## Week 2 - Tagging Problems and Hidden Markov Models
 
-#### The Tagging Problem
+### The Tagging Problem
 
+#### Part-of-Speech Tagging
 
+-   **Part-of-Speech Tagging**: a fundamental problem.
+    -   Input: sentence.
+    -   Output: a tag sequence.
+
+-   Input, some sequence of words, a sentence:
+
+```
+Profits soared at Boeing Co., easily topping forecasts on Wall
+Street, as their CEO Alan Nulally announced first quarter
+results.
+```
+
+-   Tags:
+
+```
+N   =   Noun
+V   =   Verb
+P   =   Preposition
+Adv =   Adverb
+Adj =   Adjective
+...
+```
+
+-   Output, a *tag sequence*:
+
+```
+Profiles/N soared/V at/P Boeing/N Co./N ,/, easily/ADV
+topping /V forecasts/N on/P Wall/N Street/N ,/, as/P
+their/POSS CEO/N Alan/N Mulally/N announced/V first/ADJ
+quarter/N results/N ./.
+```
+
+-   But context matters.
+    -   `profits` isn't always a noun, it can sometimes be a verb.
+    -   `topping` is a verb, but can sometimes be a noun.
+    -   ...
+
+#### Named Entity Recognition
+
+-   **Named Entity Recognition**
+    -   Input: a sentence.
+    -   Output: identify names and their type (company, location, person, ...)
+
+-   Input: same as above
+-   Output:
+
+```
+Profits soared at [Company: Boeing Co.], easily ...
+[Location: Wall Street], ..., [Person: Alan Mulally]
+```
+
+-   At first blush named entity recognition looks like segmentation, not part-of-speech tagging. But really they're the same.
+
+#### Named Entity Extraction as Tagging
+
+-   Input: same as above
+-   Tags:
+
+```
+NA  =   No entity
+SC  =   Start Company
+CC  =   Continue Company
+SL  =   Start Location
+CL  =   Continue Location
+...
+```
+
+-   Output:
+
+```
+Profits/NA soared/NA at/NA Boeing/SC Co./CC ,/NA easily/NA
+topping/NA ... Wall/SL Street/CL ,/NA ... CEO/NA Alan/SP
+Mulally/CP ...
+```
+
+-   We are *encoding* the named entity boundaries as a tag sequence.
+
+- - -
+
+Quiz: given sentence: `Profits are topping all estimates`.
+
+We also know:
+
+-   `Profits` can be N or V.
+-   `are` is V
+-   `topping` can be N, ADJ, or V.
+-   `all` can be DT, ADV, or N.
+-   `estimates` can be N or V.
+
+How many tag sequences are possible?
+
+$$= 2 \times 1 \times 3 \times 3 \times 2 = 36$$
+
+- - -
+
+-   Objective: treating this like a supervised machine learning problem
+    -   Use a very common resource, called the "Wall Street Journal Treebank".
+    -   Features: sentences (not individual words).
+    -   Training set: 38,219 sentences, each with tagged words.
+        -   Annotated by hand (!)
+    -   Label: a sentence with each word tagged.
+    -   !!AI there are a lot of tags here. A reference list of tags is available in the [Penn Treebank Tags](http://bulba.sdsu.edu/jeanette/thesis/PennTags.html).
+    -   Output: a functon that maps sentences to tagged words.
+
+-   There are now many corpora available, across many languages.
+
+#### Two Types of Contraints
+
+```
+Influential/JJ members/NNS of/IN ... bailout/NN agency/NN
+can/MD raise/VB capital/NN ./.
+```
+
+-   What will help us in this problem? Two constraints:
+    1.   **Local**: e.g. *can* is more likely to be a modal verb (MD) than a noun (NN).
+        -   A [modal verb](http://en.wikipedia.org/wiki/Modal_verb) (MD) is an auxillary verb used to indicate likelihood, ability, permission, and obligation.
+    2.  **Contextual**: e.g. a noun (NN) is more likely than a verb (VB*) to follow a determiner (DT).
+        -   (e.g. `the can` is more likely to refer to a can of soup than talk about `the`'s ability to do something)
+        -   A [determiner](http://en.wikipedia.org/wiki/Determiner) (DT) is a word, phrase, or affix that occurs together with a noun (NN).
+        -   DT can be indefinite articles (`the`, `a`, `an`), demonstratives (`this`, `that`), quantifiers (`many`, `few`, `several`).
+        -   Recall that an affix is a morpheme that attaches to word stems. Can be prefix, suffix, infix (in the middle of a word) or circumfix (on both sides of the word)
+-   Sometimes the contraints are in conflict:
+
+```
+The trash can is in the garage.
+```  
+
+-   `can` has a *local* preference to be a modal verb (MD) because it follows a noun.
+-   But clearly `can` belongs as a whole with `trash can`, so it depends on *context*.
+-   We can build a model that balances these two contraints.
+
+### Generative Models for Supervised Learning
+
+#### Supervised Learning Problems
+
+-   We have training examples $x^{(i)}, y^{(i)}$ for $i = i \ldots m$.
+-   Each $x^{(i)}$ is an **input**, each $y^{(i)}$ is a **label**.
+-   Objective: learn a function $f$ that maps inputs $x$ to labels $f(x)$.
+-   e.g.
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & x^{(1)} = \textrm{the dog laughs}, & y^{(1)} = \textrm{DT NN VB} \\
+        & x^{(2)} = \textrm{the dog barks}, & y^{(2)} = \textrm{DT NN VB} \\
+        & \ldots & \ldots
+    \end{aligned}
+\end{align}
+$$
+
+-   The first model you may consider is a **conditional model**.
+    -   Learn a distribution $p(y|x)$ from training examples.
+    -   For any test input $x$, define $f(x) = \textrm{arg max}_{y}p(y|x)$.
+        -   The $y$ that maximizes this conditional probability.
+        -   Input $x$, search through all possible $y$'s, return most likely $y$.
+-   Alternative are generative models.
+
+#### Generative Models
+
+-   Same problem.
+-   Learn a *joint distribution* $p(x,y)$ from training examples.
+    -   Before we had $p(y|x)$.
+-   Often we have $p(x,y)$ = $p(y)p(x|y)$.
+    -   **Bayes Rule**.
+    -   $p(y)$ is the **prior** probability; how likely is $y$ a-priori?
+    -   $p(x|y)$ is the **conditional** probability. *Given* $y$ how likely is $x$?
+
+-   Note: by the total probability variant of Bayes Rule we have:
+
+$$p(y|x) = \frac{p(y)p(x|y)}{p(x)}$$
+
+-   where:
+
+$$p(x) = \sum_y p(y)p(x|y)$$
+
+-   Estimating $p(y|x)$ *directly* is often referred to as a **discriminative model**.
+    -   We will see a lot of discriminative models later in the course.
+-   Estimating $p(x,y)$ is a **generative model**.
+-   There are pros and cons to each, a lot of research, back and forth.
+
+-   How do we apply a generative model to a new test example?
+-   Output from the model:
+
+$$
+\begin{align}
+    &\begin{aligned}
+        f(x) & = \textrm{argmax}_{y}\;p(y|x) \\
+             & = \textrm{argmax}_{y}\;\frac{p(y)p(x|y)}{p(x)} \\
+             & = \textrm{argmax}_{y}\;p(y)p(x|y)
+    \end{aligned}
+\end{align}
+$$
+
+-   Second line: assuming we have a generative model, by Bayes Rule.
+-   Third line: $p(x)$ does not vary with $y$. $\textrm{argmax}$ implies we're searchin over $y$, but denominator is constant and hence we can discard it.
 
 ### Readings
 
