@@ -12,12 +12,16 @@
 
 ### 1.5: Selecting Substrings
 
-        "hello"[1:3] = "el"
-        "hello"[1:] = "ello"
+```python
+"hello"[1:3] = "el"
+"hello"[1:] = "ello"
+```
         
 ### 1.6: Split
 
-        "Jane Eyre".split() = ["Jane", "Eyre"]
+```python
+"Jane Eyre".split() = ["Jane", "Eyre"]
+```
         
 ### 1.7: Regular Expressions
 
@@ -27,14 +31,18 @@
 
 ### 1.9: Import Re
 
-        import re
-        re.findall(r"[0-9]", "1+2==3") = ["1", "2", "3"]
+```python
+import re
+re.findall(r"[0-9]", "1+2==3") = ["1", "2", "3"]
+```
 
 ### 1.12: Concatenation
 
-        r"[a-c][1-2]"
-        
-        "a1", "a2", "b1", …
+```python
+r"[a-c][1-2]"
+
+"a1", "a2", "b1", …
+```
         
 ### 1.14: One or more
 
@@ -54,12 +62,15 @@
 -    Two accepting states!
 -    Pipe / or operator.
 
-        impore re
-        r = r"[a-z]+|[0-9]+"
-        re.findall(r, "Goethe 1749") = ["oethe", "1749"]
-        
-        # note that:
-        [0-2] = "0|1|2"   
+
+```python
+impore re
+r = r"[a-z]+|[0-9]+"
+re.findall(r, "Goethe 1749") = ["oethe", "1749"]
+```
+
+# note that:
+[0-2] = "0|1|2"   
 
 ### 1.21: Options
 
@@ -72,9 +83,11 @@
     -    "optional"
     -    "the previous thing 0 or 1 times".
     
-            import re
-            r = r"-?[0-9]+"
-            re.findall(r, "1861-1941 R. Tagore") = ["1861", "-1941"]
+```python
+import re
+r = r"-?[0-9]+"
+re.findall(r, "1861-1941 R. Tagore") = ["1861", "-1941"]
+```
 
 ### 1.22: Escape Sequences
 
@@ -89,7 +102,9 @@
 
 -    Write a regexp to accept lower-cased words, or singly-hyphenated lowercase words.
 
-        r = r"[a-z]+-?[a-z]+"
+```python
+r = r"[a-z]+-?[a-z]+"
+```
   
 -    This is OK, accept can only accept words of length 2 or more.
 -    Tempted to make either one a Kleene star. But then accept bad inputs like "-a" or "a-".
@@ -103,7 +118,9 @@
           
 ### 1.27: Structure
 
-        `(?:xyz)+
+```python
+(?:xyz)+
+```
         
 -    Above is grouped, so matches:
 
@@ -113,11 +130,15 @@
         
 -    e.g. want to match any number of any permutation of `do re mi`.
 
-        r = r"do+|re+|mi+"
+```python
+r = r"do+|re+|mi+"
+```
         
 -    Above doesn't work because the operator binds to the last letter.
 
-        r = r"(?:do|re|mi)+"
+```python
+r = r"(?:do|re|mi)+"
+```
         
 -    Above works, operator binds to the groups of letters.
 
@@ -125,7 +146,9 @@
 
 -    Find a regexp that matches double-quotes string literals and allows for escaped double quotes.
 
-        regexp = r'"(?:(?:\\.)*|[^\\])*"'
+```python
+regexp = r'"(?:(?:\\.)*|[^\\])*"'
+```
         
 -    Regular expressions can "sing" "ABC 123" and "BINGO", but _not_ "99 bottles of beer on the wall".
     -    Can't count!
@@ -137,53 +160,63 @@
     -    What state you are in.
 -    Python dictionaries to represent edges.
 
-        edges[(1, 'a')] = 2
+```python
+edges[(1, 'a')] = 2
+```
         
 -    edges[(state, input)] = next_state
 -    also need to know accepting states
 
-        accepting = [3]
+```python
+accepting = [3]
+```
         
 -    don't need a list of states! already encoded in `edges`.
 
 ### 1.30: FSM simulator
 
-        edges = {(1, 'a') : 2,
-                 (2, 'a') : 2,
-                 (2, '1') : 3,
-                 (3, '1') : 3}
-        
-        accepting = [3]
-        
-        def fsmsim(string, current, edges, accepting):
-            if len(string) == 0:
-                return current in accepting
-            letter = string[0]
-            next_state = edges.get((current, letter), None)
-            if next_state is None:
-                return False
-            return fsmsim(string[1:], next_state, edges, accepting)
+```python
+edges = {(1, 'a') : 2,
+         (2, 'a') : 2,
+         (2, '1') : 3,
+         (3, '1') : 3}
+
+accepting = [3]
+
+def fsmsim(string, current, edges, accepting):
+    if len(string) == 0:
+        return current in accepting
+    letter = string[0]
+    next_state = edges.get((current, letter), None)
+    if next_state is None:
+        return False
+    return fsmsim(string[1:], next_state, edges, accepting)
+```
 
 ### 1.31: FSM Interpretation
 
 -    What are `edges` and `accepting` for `q*`?
 -    Start state is `1`.
 
-        edges = {(1, 'q'): 1}        
-        accepting = [1]
+```python
+edges = {(1, 'q'): 1}        
+accepting = [1]
+```
         
 ### 1:32: More FSM Encoding
 
 -    What are `edges` and `accepting` for RE:
 
-        r"[a-b][c-d]?"
+```python
+r"[a-b][c-d]?"
 
-        edges = {(1, 'a'): 2,
-                 (1, 'b'): 2,
-                 (2, 'c'): 3,
-                 (2, 'd'): 3}
-        
-        accepting = [2, 3]
+edges = {(1, 'a'): 2,
+         (1, 'b'): 2,
+         (2, 'c'): 3,
+         (2, 'd'): 3}
+
+accepting = [2, 3]
+```
 
 ### 1.34: Epsilon and Ambiguity
 
@@ -196,7 +229,9 @@
 
 -    Recognize phone numbers with or without hyphens.
 
-        regexp = r'[0-9]+(?:[0-9]|-[0-9])*'
+```python
+regexp = r'[0-9]+(?:[0-9]|-[0-9])*'
+```
 
 ### 1.37: Non-deterministic FSM
 
@@ -231,19 +266,21 @@
     -    Recall that regular expressions may be expressed as finite state machines, and vice versa.
     -    Hence write an FSM and use `fsmsim()`. This gives you `re.match()`, only one search.
     -    Algorithm for matching `re.findall()`:
-    
-            s1 = "12+34"
-            fsmsim() for '[0-9]+'.
-            
-            call fsmsim("1"), it matches.
-            call fsmsim("2"), it matches.
-            call fsmsim("12+"), it doesn't match. Hence one 'token' is '12', and advance input to '3'.
-            
-            call fsmsim("3"), it matches.
-            call fsmsim("4"), it matches.
-            end of string.
-            
-            result is ["12", "34"].
+
+```    
+s1 = "12+34"
+fsmsim() for '[0-9]+'.
+
+call fsmsim("1"), it matches.
+call fsmsim("2"), it matches.
+call fsmsim("12+"), it doesn't match. Hence one 'token' is '12', and advance input to '3'.
+
+call fsmsim("3"), it matches.
+call fsmsim("4"), it matches.
+end of string.
+
+result is ["12", "34"].
+```
 
 
 ## Unit 2
@@ -298,45 +335,55 @@
 
 -    Use *regular expressions to specify tokens*. In Python:
 
-        def t_RANGLE(token):
-            r'>' # I am a regexp!
-            return token # return text unchanged, but can transform it.
-             
-        def t_LANGLESLASH(token):
-            r'/>'
-            return token
+```python
+def t_RANGLE(token):
+    r'>' # I am a regexp!
+    return token # return text unchanged, but can transform it.
+     
+def t_LANGLESLASH(token):
+    r'/>'
+    return token
+```
             
 ### 2.11: Token values
 
 -    By default the value is the string it matches. But we can transform text!
 
-        def t_NUMBER(token):
-            r'[0-9]+'
-            token.value = int(token.value)
-            return token
+```python
+def t_NUMBER(token):
+    r'[0-9]+'
+    token.value = int(token.value)
+    return token
+```
 
 -    This is returned as an integer, not a string.
 -    Remember that **maximal munch** is being used.
 
 ### 2.12: Quoted Strings
 
-        def t_STRING(token):
-            r'"[^"]*"'
-            return token
+```python
+def t_STRING(token):
+    r'"[^"]*"'
+    return token
+```
 
 ### 2.13: Whitespace
 
-        def t_WHITESPACE(token):
-            r' '
-            pass
+```python
+def t_WHITESPACE(token):
+    r' '
+    pass
+```
             
 -    By passing we skip it.
 
 And if we define a word as any number of characters except <, >, or space, leaving the value unchanges:
 
-        def t_WORD(token):
-            r'[^<> ]+'
-            return token
+```python
+def t_WORD(token):
+    r'[^<> ]+'
+    return token
+```
 
 ### 2.14: Lexical Analyzer
 
@@ -352,59 +399,63 @@ And if we define a word as any number of characters except <, >, or space, leavi
 
 -    For quoted strings really just want the contents of the quotes portion:
 
-         def t_STRING(token):
-             r'"[^"]*"'
-             token.value = token.value[1:-1]
-             return token
+```python
+def t_STRING(token):
+    r'"[^"]*"'
+    token.value = token.value[1:-1]
+    return token
+```
 
 Making a lexer
 
-    import ply.lex as lex
+```python
+import ply.lex as lex
+
+tokens = (
+    'LANGLE',        # <
+    'LANGLESLASH',   # </
+    'RANGLE',        # >
+    'EQUAL',         # =
+    'STRING',        # ".."
+    'WORD'           # dada
+)   
+
+t_ignore = ' ' # shortcut for whitespace
+
+# note this is before t_LANGLE, want it to win
+def t_LANGLESLASH(token):
+    r'</'
+    return token
     
-    tokens = (
-        'LANGLE',        # <
-        'LANGLESLASH',   # </
-        'RANGLE',        # >
-        'EQUAL',         # =
-        'STRING',        # ".."
-        'WORD'           # dada
-    )   
+def t_LANGLE(token):
+    r'<'
+    return token
     
-    t_ignore = ' ' # shortcut for whitespace
+def t_RANGLE(token):
+    r'>'
+    return token
+    
+def t_EQUAL(token):
+    r'='
+    return token
    
-    # note this is before t_LANGLE, want it to win
-    def t_LANGLESLASH(token):
-        r'</'
-        return token
-        
-    def t_LANGLE(token):
-        r'<'
-        return token
-        
-    def t_RANGLE(token):
-        r'>'
-        return token
-        
-    def t_EQUAL(token):
-        r'='
-        return token
-       
-    def t_STRING(token):
-        r'"[^"]*"'
-        token.value = token.value[1:-1]
-        return token
-        
-    def t_WORD(token):
-        r'[^ <>]+'
-        return token
-        
-    webpage = "This is <b>my</b> webpage!"
-    htmllexer = lex.lex()
-    htmllexer.input(webpage)
-    while True:
-        tok = htmllexer.token()
-        if not tok: break
-        print tok
+def t_STRING(token):
+    r'"[^"]*"'
+    token.value = token.value[1:-1]
+    return token
+    
+def t_WORD(token):
+    r'[^ <>]+'
+    return token
+    
+webpage = "This is <b>my</b> webpage!"
+htmllexer = lex.lex()
+htmllexer.input(webpage)
+while True:
+    tok = htmllexer.token()
+    if not tok: break
+    print tok
+```
 
 -    Output is a list of LexToken objects.
 -    They indicate `LexToken(TYPE, line, character)`. Indicate line and character on that line.
@@ -415,10 +466,12 @@ Making a lexer
     -    Column number is character since the beginning of the file.
 -    We need to add a rule to help us, right at the top.
 
-         def t_newline(token):
-             r'\n'
-             token.lexer.lineno += 1
-             pass
+```python
+def t_newline(token):
+    r'\n'
+    token.lexer.lineno += 1
+    pass
+```
    
 -    But then we'd have to remove `\n` from `t_WORD`, just like we're currently ignoring spaces.
 
@@ -428,23 +481,27 @@ Making a lexer
 
 How to add to lexer.
 
-    states = (
-        ('htmlcomment', 'exclusive'),
-    )
+```python
+states = (
+    ('htmlcomment', 'exclusive'),
+)
+```
 
 If we are in the state `htmlcomment` we cannot be doing anything else at the same time, like looking for strings or words.
 
-    def t_htmlcomment(token):
-        r'<!--'
-        token.lexer.begin('htmlcomment')
-        
-    def t_htmlcomment_end(token):
-        r'-->'
-        token.lexer.lineno += token.value.count('\n')
-        token.lexer.begin('INITIAL')
-        
-    def t_htmlcomment_error(token):
-        token.lexer.skip(1)
+```python
+def t_htmlcomment(token):
+    r'<!--'
+    token.lexer.begin('htmlcomment')
+    
+def t_htmlcomment_end(token):
+    r'-->'
+    token.lexer.lineno += token.value.count('\n')
+    token.lexer.begin('INITIAL')
+    
+def t_htmlcomment_error(token):
+    token.lexer.skip(1)
+```
         
 -    `INITIAL` just means whatever you were going before coming into this state, i.e. `htmlcomment`.        
 -    Note we even exclude our helpful little line number counter! Hence we need to count line breaks in the entire comment when it finishes.
@@ -459,24 +516,30 @@ If we are in the state `htmlcomment` we cannot be doing anything else at the sam
     -    factorial, x, tmp, Super, WonderWoman, my_count.
     -    Not: _blah, 123.
     
-            def t_identifier(token):
-                r'[A-Za-z][A-Za-z0-9_]+'
-                return token
+```python
+def t_identifier(token):
+    r'[A-Za-z][A-Za-z0-9_]+'
+    return token
+```
 
 ### 2.27: Number
 
-    def t_NUMBER(token):
-        r'-?[0-9]+(?:\.[0-9]*)?'
-        token.value = float(token.value)
-        return token
+```python
+def t_NUMBER(token):
+    r'-?[0-9]+(?:\.[0-9]*)?'
+    token.value = float(token.value)
+    return token
+```
 
 ### 2.28: The End Of The Line
 
 Comments to the end of the line in JavaScript.
 
-    def t_eolcomment(token):
-        r'//[^\n]*'
-        pass
+```python
+def t_eolcomment(token):
+    r'//[^\n]*'
+    pass
+```
 
 ### 2.30: Wrap Up
 
@@ -796,31 +859,37 @@ Comments to the end of the line in JavaScript.
 -    JavaScript is similar to Python.
 -    In Python:
 
-        def absval(x):
-            if x < 0:
-                return 0 - x
-            else:
-                return x
+```python
+def absval(x):
+    if x < 0:
+        return 0 - x
+    else:
+        return x
+```
 
 -    In JavaScript:
 
-        function absval(x) {
-            if x < 0 { 
-                return 0 - x;
-            } else {
-                return x;
-            }
-        }
+```javascript
+function absval(x) {
+    if x < 0 { 
+        return 0 - x;
+    } else {
+        return x;
+    }
+}
+```
 
 -    JavaScript uses braces to signify lexical scope. Python uses indentation.
 
 -    In Python
 
-        print "hello" + "!"
+```python
+print "hello" + "!"
+```
         
 -    In JavaScript:
 
-        document.write("hello" + "!"
+        document.write("hello" + "!")
         
         or
         
@@ -933,28 +1002,34 @@ Partial grammar for JavaScript:
 
 ### 3.34: List Power
 
-        def mysquare(x): return x*x
-        map(mysquare, [1,2,3,4,5]) # = [1,4,9,16,25]
-        
-        map(lambda(x): x*x, [1,2,3,4,5]) # same!
+```python
+def mysquare(x): return x*x
+map(mysquare, [1,2,3,4,5]) # = [1,4,9,16,25]
 
-        [x*x for x in [1,2,3,4,5] # same!
+map(lambda(x): x*x, [1,2,3,4,5]) # same!
+
+[x*x for x in [1,2,3,4,5] # same!
+```
 
 ### 3.37: Generators
 
 -    List comprehensions are declarative, awesome.
 -    Downside: need to write down the starting lists.
 
-        def odds_only(numbers):
-            for n in numbers:
-                if n % 2 == 1:
-                    yield n
+```python
+def odds_only(numbers):
+    for n in numbers:
+        if n % 2 == 1:
+            yield n
+```
 
 -    `yield`: not return! A **generator**.
 -    Convenient way to filter.
 -    Even easier:
 
-        [x for x in [1,2,3,4,5] if x % 2 == 1]
+```python
+[x for x in [1,2,3,4,5] if x % 2 == 1]
+```
         
 -    **Guard**, aka **predicate**.
    
@@ -996,23 +1071,25 @@ Partial grammar for JavaScript:
 
 -    Let's code it up:
 
-        grammar = … (as above)
-        
-        def expand(tokens, grammar):
-            for i, token in enumerate(tokens):
-                for (rule_lhs, rule_rhs) in grammar:
-                    if token == rule_lhs:
-                        result = tokens[0:i] + rule_rhs + tokens[i+1:]
-                        yield result
-  
-        depth = 2
-        utterances = [["exp"]]
-        for x in xrange(depth):
-            for sentence in utterances:
-                utterances = utterances + [ i for i in expand(sentence, grammar)]
-        
-        for sentence in utterances:
-            print sentence
+```python
+grammar = … (as above)
+
+def expand(tokens, grammar):
+    for i, token in enumerate(tokens):
+        for (rule_lhs, rule_rhs) in grammar:
+            if token == rule_lhs:
+                result = tokens[0:i] + rule_rhs + tokens[i+1:]
+                yield result
+
+depth = 2
+utterances = [["exp"]]
+for x in xrange(depth):
+    for sentence in utterances:
+        utterances = utterances + [ i for i in expand(sentence, grammar)]
+
+for sentence in utterances:
+    print sentence
+```
 
 -    We saw: a slow way to encode grammars and enumerate strings.
 -    But will learn a more efficient way to encode grammar rules and check for validity.
@@ -1117,14 +1194,16 @@ Partial grammar for JavaScript:
 -    **Memoization**.
 -    Solution: write known answers in a a Python dictionary.
 
-        def memofibo(n, chart = None):
-            if chart is None:
-                chart = {}
-            if n <= 2:
-                chart[n] = 1
-            if n not in chart:
-                chart[n] = memofibo(n-1, chart) + memofibo(n-2, chart)
-            return chart[n]
+```python
+def memofibo(n, chart = None):
+    if chart is None:
+        chart = {}
+    if n <= 2:
+        chart[n] = 1
+    if n not in chart:
+        chart[n] = memofibo(n-1, chart) + memofibo(n-2, chart)
+    return chart[n]
+```
 
 ### 4.8: Memoization for Parsing
 
@@ -1411,12 +1490,14 @@ The following are not in the result:
 
 Adding state to chart:
 
-        def addtochart(chart, index, state):
-            if not state in chart[index]:
-                chart[index] = [state] + chart[index]
-                return True
-            else:
-                return False
+```python
+def addtochart(chart, index, state):
+    if not state in chart[index]:
+        chart[index] = [state] + chart[index]
+        return True
+    else:
+        return False
+```
  
 ### 4.26: Revenge of List Comprehensions
 
@@ -1428,11 +1509,13 @@ Grammar:
         
 In Python:
 
-        grammar = [
-            ("S", ["P"]),
-            ("P", ["(", "P", ")"]),
-            ("P", []),
-        ] 
+```python
+grammar = [
+    ("S", ["P"]),
+    ("P", ["(", "P", ")"]),
+    ("P", []),
+] 
+```
 
 Parser state:
 
@@ -1440,7 +1523,9 @@ Parser state:
         
 In Python:
 
-        state = ("x", ["a", "b"], ["c", "d"], j)
+```python
+state = ("x", ["a", "b"], ["c", "d"], j)
+```
 
 ### 4.27: Writing the closure
 
@@ -1456,14 +1541,16 @@ In Python:
 
 -    What is `closure()`?
 
-        def closure(grammar, i, x, ab, cd, j):
-            next_states = [
-                (rule[0], [], rule[1], i)
-                for rule in grammar
-                if len(cd) > 0 and
-                   rule[0] == cd[0]
-            ]
-            return next_states
+```python
+def closure(grammar, i, x, ab, cd, j):
+    next_states = [
+        (rule[0], [], rule[1], i)
+        for rule in grammar
+        if len(cd) > 0 and
+           rule[0] == cd[0]
+    ]
+    return next_states
+```
 
 ### 4.29: Writing shift
 
@@ -1471,124 +1558,132 @@ In Python:
 -    The input is `tokens`.
 -    We'll write:
 
-        next_state = shift(tokens, i, x, ab, cd, j)
-        if next_state is not None:
-            any_changes = addtochart(chart, i+1, next_state)
-                          or any_changes
+```python
+next_state = shift(tokens, i, x, ab, cd, j)
+if next_state is not None:
+    any_changes = addtochart(chart, i+1, next_state)
+                  or any_changes
+```
                           
 -    What is `shift()`?
 
-        def shift(tokens, i,x, ab, cd, j):
-            if len(cd) > 0 and tokens[i] == cd[0]:
-                return (x, ab + [cd[0]], cd[1:], j)
-            else:
-                return None
+```python
+def shift(tokens, i,x, ab, cd, j):
+    if len(cd) > 0 and tokens[i] == cd[0]:
+        return (x, ab + [cd[0]], cd[1:], j)
+    else:
+        return None
+```
                 
 ### 4.30: Writing reductions
 
 -    We're looking at `chart[i]`, we see `X -> ab<dot>cd from j`.
 -    We'll write:
 
-        next_states = reductions(chart, i, x, ab, cd, j)
-        for next_state in next_states:
-            any_changes = addtochart(chart i, next_state)
-                          or any_changes
-                          
+```python
+next_states = reductions(chart, i, x, ab, cd, j)
+for next_state in next_states:
+    any_changes = addtochart(chart i, next_state)
+                  or any_changes
+                  
 
-        def reductions(chart, i, x, ab, cd, j):
-            # x -> ab<dot> from j
-            # chart[j] has y -> ... <dot>x ... from k
-            return [
-                (jstate[0],
-                 jstate[1] + [x],
-                 jstate[2][1:],
-                 jstate[3])
-                for jstate in chart[j]
-                if len(cd) > 0 and
-                   len(jstate[2]) > 0 and
-                   jstate[2][0] == x
-            ]
+def reductions(chart, i, x, ab, cd, j):
+    # x -> ab<dot> from j
+    # chart[j] has y -> ... <dot>x ... from k
+    return [
+        (jstate[0],
+         jstate[1] + [x],
+         jstate[2][1:],
+         jstate[3])
+        for jstate in chart[j]
+        if len(cd) > 0 and
+           len(jstate[2]) > 0 and
+           jstate[2][0] == x
+    ]
+```
                 
 ### 4.31: Putting it together
 
-        # see notes/src/programming_languages/ps4_parser.py
-        # above has closure, shift, and reductions in-lined.
+```python
+# see notes/src/programming_languages/ps4_parser.py
+# above has closure, shift, and reductions in-lined.
 
-        def parse(tokens, grammar):
-            tokens = tokens + ["end_of_input_marker"]
-            chart = {}
-            start_rule = grammar[0]
-            for i in xrange(len(tokens) + 1):
-                chart[i] = []
-            start_state = (start_rule[0], [], start_rule[1], 0)
-            chart[0] = [start_state]
-            for i in xrange(len(tokens)):
-                while True:
-                    changes = False
-                    for state in chart[i]:
-                        # State === x -> ab<dot>cd, j
-                        (x, ab, cd, j) = state
-                        
-                        # Current state == x -> ab<dot>cd, j
-                        # Option 1: For each grammar rule
-                        # c -> pqr (where the c's match)
-                        # make a next state:
-                        #
-                        # c -> <dot>pqr, i
-                        #
-                        # English: We're about to start
-                        # parsing a "c", but "c" may be
-                        # something like "exp" with its
-                        # own production rules. We'll bring
-                        # those production rules in.
-                        next_states = closure(grammar, i, x, ab, cd, j)
-                        for next_state in next_states:
-                            changes = addtochart(chart, i, next_state) or changes
-                            
+def parse(tokens, grammar):
+    tokens = tokens + ["end_of_input_marker"]
+    chart = {}
+    start_rule = grammar[0]
+    for i in xrange(len(tokens) + 1):
+        chart[i] = []
+    start_state = (start_rule[0], [], start_rule[1], 0)
+    chart[0] = [start_state]
+    for i in xrange(len(tokens)):
+        while True:
+            changes = False
+            for state in chart[i]:
+                # State === x -> ab<dot>cd, j
+                (x, ab, cd, j) = state
+                
+                # Current state == x -> ab<dot>cd, j
+                # Option 1: For each grammar rule
+                # c -> pqr (where the c's match)
+                # make a next state:
+                #
+                # c -> <dot>pqr, i
+                #
+                # English: We're about to start
+                # parsing a "c", but "c" may be
+                # something like "exp" with its
+                # own production rules. We'll bring
+                # those production rules in.
+                next_states = closure(grammar, i, x, ab, cd, j)
+                for next_state in next_states:
+                    changes = addtochart(chart, i, next_state) or changes
+                    
 
-                        # Current State == x -> ab<dot>cd, j
-                        # Option 2: If tokens[i] == c,
-                        # make a next state:
-                        #
-                        # x -> abc<dot>d, j
-                        #
-                        # £nglish: We're looking for a parse
-                        # token c next and the current token
-                        # is exactly c! Aren't we lucky!
-                        # So we can parse over it and move
-                        # to j+1.
-                        next_state = shift(tokens, i, x, ab, cd, j)
-                        if next_state is not None:
-                            any_changes = addtochart(chart, i+1, next_state) or any_changes
-                            
-                        # Current state == x -> ab<dot>cd, j
-                        # Option 3: if cd is [], the state is
-                        # just x -> ab<dot>, j
-                        # For each p -> q<dot>xr, l in chart[j]
-                        # Make a new state:
-                        #
-                        # p -> qx<dot>r, l
-                        #
-                        # in chart[i].
-                        #
-                        # English: We've just finished parsing
-                        # an "x" with this token, but that
-                        # may have been a sub-step (like
-                        # matching "exp->2" in "2+3"). We
-                        # should update the higher-level
-                        # rules as well.
-                        next_states = reductions(chart, i, x, ab, cd, j)
-                        for next_state in next_states:
-                            changes = addtochart(chart, i, next_state) or changes
-                            
-                if not changes:
-                    break
+                # Current State == x -> ab<dot>cd, j
+                # Option 2: If tokens[i] == c,
+                # make a next state:
+                #
+                # x -> abc<dot>d, j
+                #
+                # £nglish: We're looking for a parse
+                # token c next and the current token
+                # is exactly c! Aren't we lucky!
+                # So we can parse over it and move
+                # to j+1.
+                next_state = shift(tokens, i, x, ab, cd, j)
+                if next_state is not None:
+                    any_changes = addtochart(chart, i+1, next_state) or any_changes
+                    
+                # Current state == x -> ab<dot>cd, j
+                # Option 3: if cd is [], the state is
+                # just x -> ab<dot>, j
+                # For each p -> q<dot>xr, l in chart[j]
+                # Make a new state:
+                #
+                # p -> qx<dot>r, l
+                #
+                # in chart[i].
+                #
+                # English: We've just finished parsing
+                # an "x" with this token, but that
+                # may have been a sub-step (like
+                # matching "exp->2" in "2+3"). We
+                # should update the higher-level
+                # rules as well.
+                next_states = reductions(chart, i, x, ab, cd, j)
+                for next_state in next_states:
+                    changes = addtochart(chart, i, next_state) or changes
+                    
+        if not changes:
+            break
 
-            accepting_state = (start_rule[0], start_rule[1], [], 0)
-            return accepting_state in chart[len(tokens)-1]
-        
-        result = parse(tokens, grammar)
-        print result
+    accepting_state = (start_rule[0], start_rule[1], [], 0)
+    return accepting_state in chart[len(tokens)-1]
+
+result = parse(tokens, grammar)
+print result
+```
 
 ### 4.33: Parse Trees
 
@@ -1596,57 +1691,65 @@ In Python:
 -    But we need a parse tree!
 -    Going to represent this as nested tuples.
 
-        # tokens
-        def t_STRING(t):
-            r'"[^"]*"'
-            t.value = t.value[1:-1]
-            return t
-            
-        # parsing rules
-        def p_exp_number(p):
-            'exp : NUMBER' # exp -> NUMBER
-            p[0] = ("number", p[1])
-            # p[0] is returned parse tree
-            # p[0] refers to exp
-            # p[1] refers to NUMBER.
-            
-        def p_exp_not(p):
-            'exp : NOT exp' # exp -> NOT exp
-            p[0] = ("not", p[2])
-            # p[0] refers to exp
-            # p[1] refers to NOT
-            # p[2] refers to exp
+```python
+# tokens
+def t_STRING(t):
+    r'"[^"]*"'
+    t.value = t.value[1:-1]
+    return t
+    
+# parsing rules
+def p_exp_number(p):
+    'exp : NUMBER' # exp -> NUMBER
+    p[0] = ("number", p[1])
+    # p[0] is returned parse tree
+    # p[0] refers to exp
+    # p[1] refers to NUMBER.
+    
+def p_exp_not(p):
+    'exp : NOT exp' # exp -> NOT exp
+    p[0] = ("not", p[2])
+    # p[0] refers to exp
+    # p[1] refers to NOT
+    # p[2] refers to exp
+```
 
 -    `p`: parse trees
 
 ### 4.34: Parsing HTML
 
-        def p_html(p):
-            'html : elt html'
-            p[0] = [p[1]] + p[2]
-            
-        def p_html_empty(p):
-            'html : '
-            p[0] = []
-            
-        def p_elt_word(p):
-            'elt : WORD'
-            p[0] = ("word-element", p[1])
+```python
+def p_html(p):
+    'html : elt html'
+    p[0] = [p[1]] + p[2]
+    
+def p_html_empty(p):
+    'html : '
+    p[0] = []
+    
+def p_elt_word(p):
+    'elt : WORD'
+    p[0] = ("word-element", p[1])
+```
 
 ### 4.35: Parsing tags            
 
-        def p_elt_tag(p):
-            # <span color="red">Text!</span>:
-            'elt : LANGLE WORD tag_args RANGLE html LANGLESLASH WORD RANGLE'
-            p[0] = ("tag-element", p[2], p[3], p[5], p[7])
+```python
+def p_elt_tag(p):
+    # <span color="red">Text!</span>:
+    'elt : LANGLE WORD tag_args RANGLE html LANGLESLASH WORD RANGLE'
+    p[0] = ("tag-element", p[2], p[3], p[5], p[7])
+```
 
 ### 4.36: Parsing JavaScript
 
-        def p_exp_binop(p):
-            """exp : exp PLUS exp
-                   | exp MINUS exp
-                   | exp TIMES exp"""
-            p[0] = ("binop", p[1], p[2], p[3])
+```python
+def p_exp_binop(p):
+    """exp : exp PLUS exp
+           | exp MINUS exp
+           | exp TIMES exp"""
+    p[0] = ("binop", p[1], p[2], p[3])
+```
 
 -    Oh no! Ambiguity!
 -    input: `1 - 3 - 5`
@@ -1654,53 +1757,61 @@ In Python:
     -    **Right-associative**: `1-(3-5) = 3`
 -    Function calls
 
-        def p_exp_call(p):
-            'exp : IDENTIFIER LPAREN optargs RPAREN'
-            p[0] = ("call", p[1], p[3])
+```python
+def p_exp_call(p):
+    'exp : IDENTIFIER LPAREN optargs RPAREN'
+    p[0] = ("call", p[1], p[3])
+```
 
 -    Numbers
 
-        def p_exp_number(p):     
-            'exp : NUMBER'
-            p[0] = ("number", p[1])
+```python
+def p_exp_number(p):     
+    'exp : NUMBER'
+    p[0] = ("number", p[1])
+```
 
 ### 4.38: Precedence
 
 -    But even with associativity, we need precedence to resolve mixtures/binding of operators.
 -    Below gives precedence and associativity.
 
-        precedence = (
-            # lower precedence at the top
-            ('left', 'PLUS', 'MINUS'),
-            ('left', 'TIMES', 'DIVIDE'),
-            # higher precedence at the bottom 
-        )
+```python
+precedence = (
+    # lower precedence at the top
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'TIMES', 'DIVIDE'),
+    # higher precedence at the bottom 
+)
+```
 
 ### 4.41: Optional Arguments
 
-        def p_exp_call(p):
-            'exp : IDENTIFIER LPAREN optargs RPAREN'
-            p[0] = ("call", p[1], p[3])
-            
-        def p_exp_number(p):
-            'exp : NUMBER'
-            p[0] = ("number", p[1])
-            
-        def p_optargs(p):
-            """optargs : exp COMMA optargs 
-                       | exp
-                       | """
-            if len(p) == 1:
-                p[0] = []
-            elif len(p) == 2:
-                p[0] = [p[1]]
-            else:
-                p[0] = [p[1]] + p[3]
-                
-        # or can separate out parsing rules in OR statement
-        # into its own function. separate rules give better
-        # performance, as the parser has done all of your 
-        # len() work for you.
+```python
+def p_exp_call(p):
+    'exp : IDENTIFIER LPAREN optargs RPAREN'
+    p[0] = ("call", p[1], p[3])
+    
+def p_exp_number(p):
+    'exp : NUMBER'
+    p[0] = ("number", p[1])
+    
+def p_optargs(p):
+    """optargs : exp COMMA optargs 
+               | exp
+               | """
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[3]
+        
+# or can separate out parsing rules in OR statement
+# into its own function. separate rules give better
+# performance, as the parser has done all of your 
+# len() work for you.
+```
 
 ## Office Hours 4
 
@@ -1846,18 +1957,20 @@ What is in chart[2], given:
 -   We're using `re` for regexps, `ply` for lexing and parsing, `timeit` for benchmarking.
 -   Here is our API:
 
-        graphics.word(string)
-        # draw on screen
+```python
+graphics.word(string)
+# draw on screen
 
-        graphics.begintag(string, dictionary)
-        # doesn't draw, just makes a note. like changing pen colours.
-        # dictionary passes in attributes, e.g. href.
+graphics.begintag(string, dictionary)
+# doesn't draw, just makes a note. like changing pen colours.
+# dictionary passes in attributes, e.g. href.
 
-        graphics.endtag()
-        # most recent tag.
+graphics.endtag()
+# most recent tag.
 
-        graphics.warning(string)
-        # debugging, in bold red color.
+graphics.warning(string)
+# debugging, in bold red color.
+```
 
 -   Example:
 
@@ -1875,30 +1988,32 @@ What is in chart[2], given:
 
 -   Interpret code.
 
-        import graphics
+```python
+import graphics
 
-        def interpret(trees): # Hello, friend
-            for tree in trees: # Hello,
-                # ("word-element","Hello")
-                nodetype=tree[0] # "word-element"
-                if nodetype == "word-element":
-                    graphics.word(tree[1])
-                elif nodetype == "tag-element":
-                    # <b>Strong text</b>
-                    tagname = tree[1] # b
-                    tagargs = tree[2] # []
-                    subtrees = tree[3] # ...Strong Text!...
-                    closetagname = tree[4] # b
-                    # QUIZ: (1) check that the tags match
-                    # if not use graphics.warning()
-                    if tagname != closetagname:
-                        graphics.warning("Mismatched tag. start: '%s', end: '%s'" % (tagname, closetagname))
-                    else:
-                        #  (2): Interpret the subtree
-                        # HINT: Call interpret recursively
-                        graphics.begintag(tagname, {})
-                        interpret(subtrees)
-                        graphics.endtag()
+def interpret(trees): # Hello, friend
+    for tree in trees: # Hello,
+        # ("word-element","Hello")
+        nodetype=tree[0] # "word-element"
+        if nodetype == "word-element":
+            graphics.word(tree[1])
+        elif nodetype == "tag-element":
+            # <b>Strong text</b>
+            tagname = tree[1] # b
+            tagargs = tree[2] # []
+            subtrees = tree[3] # ...Strong Text!...
+            closetagname = tree[4] # b
+            # QUIZ: (1) check that the tags match
+            # if not use graphics.warning()
+            if tagname != closetagname:
+                graphics.warning("Mismatched tag. start: '%s', end: '%s'" % (tagname, closetagname))
+            else:
+                #  (2): Interpret the subtree
+                # HINT: Call interpret recursively
+                graphics.begintag(tagname, {})
+                interpret(subtrees)
+                graphics.endtag()
+```
 
 ### 5.10: Arithmetic
 
@@ -1919,26 +2034,28 @@ What is in chart[2], given:
     -   `eval_exp`.
 -   Code:
 
-        def eval_exp(tree):
-            # ("number" , "5")
-            # ("binop" , ... , "+", ... )
-            nodetype = tree[0]
-            if nodetype == "number":
-                return int(tree[1])
-            elif nodetype == "binop":
-                left_child = tree[1]
-                operator = tree[2]
-                right_child = tree[3]
-                # QUIZ: (1) evaluate left and right child
-                left_value = eval_exp(left_child)
-                right_value = eval_exp(right_child)
-                
-                # (2) perform "operator"'s work
-                assert(operator in ["+", "-"])
-                if operator == "+":
-                    return left_value + right_value
-                elif operator == "-":
-                    return left_value - right_value
+```python
+def eval_exp(tree):
+    # ("number" , "5")
+    # ("binop" , ... , "+", ... )
+    nodetype = tree[0]
+    if nodetype == "number":
+        return int(tree[1])
+    elif nodetype == "binop":
+        left_child = tree[1]
+        operator = tree[2]
+        right_child = tree[3]
+        # QUIZ: (1) evaluate left and right child
+        left_value = eval_exp(left_child)
+        right_value = eval_exp(right_child)
+        
+        # (2) perform "operator"'s work
+        assert(operator in ["+", "-"])
+        if operator == "+":
+            return left_value + right_value
+        elif operator == "-":
+            return left_value - right_value
+```
 
 ### 5.12: Context
 
@@ -1951,22 +2068,26 @@ What is in chart[2], given:
 -   Tempting to have one dictionary for this state, but one day we might want to make this a bit more complicated.
 -   So we'll hide it behind an API
 
-        def env_lookup(environment, variable_name):
-            ...
+```python
+def env_lookup(environment, variable_name):
+    ...
+```
 
 -   Code:
 
-        def eval_exp(tree, environment):
-            nodetype = tree[0]
-            if nodetype == "number":
-                return int(tree[1])
-            elif nodetype == "binop":
-                # ...
-            elif nodetype == "identifier":
-                # ("binop", ("identifier","x"), "+", ("number","2"))
-                # QUIZ: (1) find the identifier name
-                # (2) look it up in the environment and return it
-                return env_lookup(environment, tree[1])
+```python
+def eval_exp(tree, environment):
+    nodetype = tree[0]
+    if nodetype == "number":
+        return int(tree[1])
+    elif nodetype == "binop":
+        # ...
+    elif nodetype == "identifier":
+        # ("binop", ("identifier","x"), "+", ("number","2"))
+        # QUIZ: (1) find the identifier name
+        # (2) look it up in the environment and return it
+        return env_lookup(environment, tree[1])
+```
 
 ### 5.15: Control Flow
 
@@ -1975,24 +2096,26 @@ What is in chart[2], given:
 -   An **expression** is just `2+3` or `x+1`.
 -   Statements often contain expressions, but not the other way around.
 
-        def eval_stmts(tree, environment):
-            stmttype = tree[0]
-            if stmttype == "assign":
-                # ("assign", "x", ("binop", ..., "+",  ...)) <=== x = ... + ...
-                variable_name = tree[1]
-                right_child = tree[2]
-                new_value = eval_exp(right_child, environment)
-                env_update(environment, variable_name, new_value)
-            elif stmttype == "if-then-else": # if x < 5 then A;B; else C;D;
-                conditional_exp = tree[1] # x < 5
-                then_stmts = tree[2] # A;B;
-                else_stmts = tree[3] # C;D;
-                # QUIZ: Complete this code
-                # Assume "eval_stmts(stmts, environment)" exists
-                if eval_exp(conditional_exp, environment):
-                    return eval_stmts(then_stmts, environment)
-                else:
-                    return eval_stmts(else_stmts, environment)
+```python
+def eval_stmts(tree, environment):
+    stmttype = tree[0]
+    if stmttype == "assign":
+        # ("assign", "x", ("binop", ..., "+",  ...)) <=== x = ... + ...
+        variable_name = tree[1]
+        right_child = tree[2]
+        new_value = eval_exp(right_child, environment)
+        env_update(environment, variable_name, new_value)
+    elif stmttype == "if-then-else": # if x < 5 then A;B; else C;D;
+        conditional_exp = tree[1] # x < 5
+        then_stmts = tree[2] # A;B;
+        else_stmts = tree[3] # C;D;
+        # QUIZ: Complete this code
+        # Assume "eval_stmts(stmts, environment)" exists
+        if eval_exp(conditional_exp, environment):
+            return eval_stmts(then_stmts, environment)
+        else:
+            return eval_stmts(else_stmts, environment)
+```
 
 ### 5.17: Creating an Environment
 
@@ -2047,33 +2170,37 @@ What is in chart[2], given:
 
 ### 5.24: Environment Needs
 
-        def env_lookup(var_name, env):
-            # env = (parent, dictionary)
-            if var_name in env[1]:
-                # do we have it?
-                return (env[1])[var_name]
-            elif env[0] is None:
-                # am global?
-                return None
-            else:
-                # ask parents
-                return env_lookup(var_name, env[0])
+```python
+def env_lookup(var_name, env):
+    # env = (parent, dictionary)
+    if var_name in env[1]:
+        # do we have it?
+        return (env[1])[var_name]
+    elif env[0] is None:
+        # am global?
+        return None
+    else:
+        # ask parents
+        return env_lookup(var_name, env[0])
 
-        def env_update(var_name, value, env):
-            if var_name in env[1]:
-                # do we have it?
-                (env[1])[var_name] = value
-            elif not (env[0] is None):
-                # if not global, ask parents.
-                env_update(var_name, value, env[0])
+def env_update(var_name, value, env):
+    if var_name in env[1]:
+        # do we have it?
+        (env[1])[var_name] = value
+    elif not (env[0] is None):
+        # if not global, ask parents.
+        env_update(var_name, value, env[0])
+```
 
 ### 5.25: Declaring and Calling Functions
 
 -   More trickiness than just environments.
 
-        def mean(x):
-            return x
-            print "one thousand and one nights"
+```python
+def mean(x):
+    return x
+    print "one thousand and one nights"
+```
 
 -   This is mean! We shouldn't print out anything.
 
@@ -2083,49 +2210,53 @@ What is in chart[2], given:
 -   Want to harness exceptions.
 -   We'll use exceptions to simulate return statements.
 
-        def eval_stmt(true, environment):
-            stmttype = tree[0]
-            if stmttype == "return":
-                return_exp = tree[1] # return 1 + 2
-                retval = eval_exp(return_exp, environment)
-                raise Exception(retval)
+```python
+def eval_stmt(true, environment):
+    stmttype = tree[0]
+    if stmttype == "return":
+        return_exp = tree[1] # return 1 + 2
+        retval = eval_exp(return_exp, environment)
+        raise Exception(retval)
+```
 
 -   Function calls
 
-        def eval_stmt(tree,environment):
-            stmttype = tree[0]
-            if stmttype == "call": # ("call", "sqrt", [("number","2")])
-                fname = tree[1] # "sqrt"
-                args = tree[2] # [ ("number", "2") ]
-                fvalue = env_lookup(fname, environment)
-                if fvalue[0] == "function":
-                    # We'll make a promise to ourselves:
-                    # ("function", params, body, env)
-                    fparams = fvalue[1] # ["x"]
-                    fbody = fvalue[2]
-                    fenv = fvalue[3]
-                    if len(fparams) <> len(args):
-                        print "ERROR: wrong number of args"
-                    else:
-                        #QUIZ: Make a new environment frame
-                        newfenv = (fenv, {})
-                        for param, value in zip(fparams, args):
-                            newfenv[1][param] = None
-                            eval_value = eval_exp(value, environment)
-                            env_update(param, eval_value, newfenv)
-                        try:
-                            # QUIZ : Evaluate the body
-                            eval_stmts(fbody, newfenv)
-                            return None
-                        except Exception as return_value:
-                            return return_value
-                else:
-                    print  "ERROR: call to non-function"
-            elif stmttype == "return": 
-                retval = eval_exp(tree[1],environment) 
-                raise Exception(retval) 
-            elif stmttype == "exp": 
-                eval_exp(tree[1],environment) 
+```python
+def eval_stmt(tree,environment):
+    stmttype = tree[0]
+    if stmttype == "call": # ("call", "sqrt", [("number","2")])
+        fname = tree[1] # "sqrt"
+        args = tree[2] # [ ("number", "2") ]
+        fvalue = env_lookup(fname, environment)
+        if fvalue[0] == "function":
+            # We'll make a promise to ourselves:
+            # ("function", params, body, env)
+            fparams = fvalue[1] # ["x"]
+            fbody = fvalue[2]
+            fenv = fvalue[3]
+            if len(fparams) <> len(args):
+                print "ERROR: wrong number of args"
+            else:
+                #QUIZ: Make a new environment frame
+                newfenv = (fenv, {})
+                for param, value in zip(fparams, args):
+                    newfenv[1][param] = None
+                    eval_value = eval_exp(value, environment)
+                    env_update(param, eval_value, newfenv)
+                try:
+                    # QUIZ : Evaluate the body
+                    eval_stmts(fbody, newfenv)
+                    return None
+                except Exception as return_value:
+                    return return_value
+        else:
+            print  "ERROR: call to non-function"
+    elif stmttype == "return": 
+        retval = eval_exp(tree[1],environment) 
+        raise Exception(retval) 
+    elif stmttype == "exp": 
+        eval_exp(tree[1],environment) 
+```
 
 ### 5.29: Calling functions
 
@@ -2144,14 +2275,16 @@ What is in chart[2], given:
     -   We'll be adding a mapping from the function name to this tuple in the old environment `fenv`.
 -   Code:
 
-        def eval_elt(tree, env):
-            elttype = tree[0]
-            if elttype == "function":
-                fname = tree[1]
-                fparams = tree[2]
-                fbody = tree[3]
-                fvalue = ("function", fparams, fbody, env)
-                add_to_env(env, fname, fvalue)
+```python
+def eval_elt(tree, env):
+    elttype = tree[0]
+    if elttype == "function":
+        fname = tree[1]
+        fparams = tree[2]
+        fbody = tree[3]
+        fvalue = ("function", fparams, fbody, env)
+        add_to_env(env, fname, fvalue)
+```
 
 ### 5.31: Double-edged sword
 
@@ -2173,10 +2306,12 @@ What is in chart[2], given:
 -   Interpreting is deep.
 -   Downside is that simulation a program requires running it.
 
-        x = 0
-        while True:
-            x = x + 1
-        print x
+```python
+x = 0
+while True:
+    x = x + 1
+print x
+```
 
 -   If we interpret an infinite loop, our interpreter will also loop forever!
 
@@ -2187,13 +2322,15 @@ What is in chart[2], given:
 -   Assume we have `halts()` which takes a procedure as an argument and returns `True` if that procedure halts and `False` if it loops forever.
 -   Consider:
 
-        def tsif():
-            if halts(tsif):
-                x = 0
-                while True:
-                    x = x + 1
-            else:
-                return 0
+```python
+def tsif():
+    if halts(tsif):
+        x = 0
+        while True:
+            x = x + 1
+    else:
+        return 0
+```
 
 -   If `tsif` halts, then it loops forever.
 -   If `tsif` loops forever, then it halts.
@@ -2279,7 +2416,7 @@ What is in chart[2], given:
     -   e.g. `5<7` or `a>b` is valid JavaScript, but would confuse an HTML lexer.
 -   How to grab a chunk of embedded JS:
 
-```
+```python
 def t_javascript(token):
     r'\<script\ type=\"text\/javascript\"\>'
     token.lexer.code_start = token.lexer.lexpos
@@ -2304,7 +2441,7 @@ def t_javascript_end(token):
 
 -   Review:
 
-```
+```python
 def p_element_word(p):
     'element : WORD'
     p[0] = ("word-element", p[1])
@@ -2315,7 +2452,7 @@ def p_element_word(p):
 
 -   Now need a JavaScript element:
 
-```
+```python
 def p_element_javascript(p):
     'element : JAVASCRIPT'
     p[0] = ("javascript-element", p[1])
@@ -2341,7 +2478,7 @@ Parse tree:
 
 ### Calling the Interpreter
 
-```
+```python
 def interpret(trees):
     for tree in trees:
         treetype = tree[0]
@@ -2376,7 +2513,7 @@ def interpret(trees):
 
 -   Assume every call to `write` appends to the special "javascript output" variable in the global environment.
 
-```
+```python
 def interpret(trees):
     # recall env = (parent, dictionary), and as this is the global environment the parent pointer is None
     global_env = (None, {"javascript output": ""})
@@ -2391,8 +2528,7 @@ def interpret(trees):
 
 -	Treating write specially
 
-
-```
+```python
 def eval_exp(tree, env):
 	exptype = tree[0]
 	if exptype == "call":
@@ -2411,7 +2547,7 @@ def eval_exp(tree, env):
 
 -	Consider the following embedded JS:
 
-```
+```javascript
 function factorial(n) {
 	if (n == 0) {
 		return 1;
@@ -2447,7 +2583,7 @@ document.write(1260 + factorial(6));
 
 -	Suppose we make an error in our environment lookup:
 
-```
+```python
 def env_lookup(vname,env):
 	# env = (parent-poiner, {"x": 22, "y": 33})
 	if vname in env[1]:
@@ -2458,7 +2594,7 @@ def env_lookup(vname,env):
 
 -	Consider this valid code:
 
-```
+```javascript
 var a = 1;
 function mistletoe(baldr) {
 	baldr = baldr + 1;
@@ -2486,7 +2622,7 @@ write(mistletoe(5));
 
 -	In Python:
 
-```
+```python
 greeting = "hola"
 def makegreeter(greeting):
 	def greeter(person):
@@ -2498,7 +2634,7 @@ sayhello("gracie")
 
 -	In JavaScript:
 
-```
+```javascript
 var greeting = "hola";
 function makegreeter(greeting) {
 	var greeter = function(person) {
@@ -2511,7 +2647,7 @@ var sayhello = makegreeter("hello");
 
 -	Let's add anonymous functions to our JS interpreter.
 
-```
+```python
 def eval_exp(tree,env):
 	exptype = tree[0]
 	# function(x,y) { return x+y }
@@ -2528,7 +2664,7 @@ def eval_exp(tree,env):
 
 -	Suppose we get the return statement wrong:
 
-```
+```python
 return ("function", fparams, fbody, global_env)
 ```
 
@@ -2542,7 +2678,7 @@ return ("function", fparams, fbody, global_env)
 
 -	An **optimization** improves performance while retaining meaning, i.e. without changing the output.
 
-```
+```javascript
 function factorial(n) {
 	if (n == 0) { return 1; }
 	return 1 * n * factorial(n-1);
@@ -2574,7 +2710,7 @@ function factorial(n) {
 -	Program text -> lexing -> tokens -> parsing -> tree -> *optimization* -> tree (simpler) -> interpreting -> result (meaning)
 -	Optimization is optional!
 
-```
+```python
 def optimize(tree):
 	etype = tree[0]
 	if etype == "binop": # a * 1 = a
@@ -2613,7 +2749,7 @@ becomes:
 2.	Look for patterns.
 3.	Done
 
-```
+```python
 def optimize(tree): # Expression trees only
     etype = tree[0]
     if etype == "binop":

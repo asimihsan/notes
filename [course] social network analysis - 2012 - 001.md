@@ -224,8 +224,8 @@
 
 $$ C_B(i) = /sum{j<k} \frac{g_jk(i)}{g_jk} $$
 
--	$$g_jk(i)$$ is number of shortest paths node $$i$$ is on between $$j$$ and $$k$$.
--	$$g_jk$$ is the total number of shortest paths between $$j$$ and $$k$$.
+-	$g_jk(i)$ is number of shortest paths node $i$ is on between $j$ and $k$.
+-	$g_jk$ is the total number of shortest paths between $j$ and $k$.
 -	**Normalized betweenness**:
 
 $$ C_B(i) = \frac{C_B(i)}{[(n-1)(n-2)/2]} $$
