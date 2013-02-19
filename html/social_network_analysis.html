@@ -1,0 +1,1137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <link rel="stylesheet" href="_pandoc.css" type="text/css" />
+  <script src="https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,700,300italic' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#social-network-analysis---2012---001">Social Network Analysis - 2012 - 001</a><ul>
+<li><a href="#lecture-notes">Lecture notes</a><ul>
+<li><a href="#a-why-social-network-analysis">1A Why Social Network Analysis?</a></li>
+<li><a href="#b-software-tools">1B Software Tools</a></li>
+<li><a href="#c-degree-and-connected-components">1C Degree and Connected Components</a></li>
+<li><a href="#d-gephi-demo">1D Gephi demo</a></li>
+<li><a href="#a-introduction-to-random-graph-models">2A Introduction to random graph models</a></li>
+<li><a href="#b-random-graphs-and-alternative-models">2B: Random graphs and alternative models</a></li>
+<li><a href="#c-models-of-network-growth">2C: Models of network growth</a></li>
+<li><a href="#a-centrality">3A: Centrality</a></li>
+<li><a href="#b-eigenvector-and-directed-networks">3B: Eigenvector and directed networks</a></li>
+<li><a href="#c-centrality-applications-optional">3C: Centrality applications (optional)</a></li>
+<li><a href="#a---why-detect-communities">4A - Why detect communities?</a></li>
+<li><a href="#b---heuristics-for-finding-communities">4B - Heuristics for finding communities</a></li>
+<li><a href="#c---community-finding">4C - Community Finding</a></li>
+<li><a href="#a---small-world-experiments">5A - Small world experiments</a></li>
+<li><a href="#b---clustering-and-motifs">5B - Clustering and motifs</a></li>
+<li><a href="#c---small-world-models">5C - Small world models</a></li>
+<li><a href="#d---origins-of-small-worlds">5D - Origins of small worlds</a></li>
+<li><a href="#a-network-topology-and-diffusion">6A: Network topology and diffusion</a></li>
+<li><a href="#b-complex-contagion">6B: Complex contagion</a></li>
+<li><a href="#c-innovation-in-networks">6C: Innovation in Networks</a></li>
+<li><a href="#a-cool-and-unusual-applications">7A: Cool and unusual applications</a></li>
+<li><a href="#b-predicting-recipe-ratings-using-ingredient-networks">7B: Predicting recipe ratings using ingredient networks</a></li>
+<li><a href="#a-network-resilience">8A: Network resilience</a></li>
+<li><a href="#b-resilience-and-assortativity">8B: Resilience and assortativity</a></li>
+<li><a href="#c-resilience-and-the-power-grid">8C: Resilience and the power grid</a></li>
+<li><a href="#d-concluding-remarks">8D: Concluding remarks</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#readings">Readings:</a><ul>
+<li><a href="#assignment-notes">Assignment notes</a></li>
+<li><a href="#general-notes">General notes</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="social-network-analysis---2012---001"><a href="#TOC">Social Network Analysis - 2012 - 001</a></h1>
+<p>(via Coursera)</p>
+<h2 id="lecture-notes"><a href="#TOC">Lecture notes</a></h2>
+<h3 id="a-why-social-network-analysis"><a href="#TOC">1A Why Social Network Analysis?</a></h3>
+<ul>
+<li>Can use Gephi to do auto community and clustering detection.</li>
+<li>Organisation hierarchies often reflected in clustered graphs, but shortcuts present too.</li>
+<li>Characterising networks and nodes.
+<ul>
+<li>Are nodes connected?</li>
+<li>How far apart are nodes?</li>
+<li>Are some nodes more important due to position?</li>
+<li>Are there communities in the network?</li>
+</ul></li>
+<li>Modelling networks (where structure comes from).
+<ul>
+<li>Randomly generated.</li>
+<li>Small-world structures.</li>
+</ul></li>
+<li>How network structure affects processes.</li>
+</ul>
+<h3 id="b-software-tools"><a href="#TOC">1B Software Tools</a></h3>
+<ul>
+<li>In this course:
+<ul>
+<li>Gephi - visualization and basic network metrics
+<ul>
+<li>http://gephi.org, download dining.gephi.</li>
+</ul></li>
+<li>NetLogo - modelling network dynamics</li>
+<li>iGraph - programming</li>
+</ul></li>
+<li>Alternatives:
+<ul>
+<li>Pajek (http://pajek.iimfm.si/doku.php), Windows only</li>
+<li>UINet (not free, Windows)</li>
+<li>NodeXL (http://nodexl.codeplex.com) (Windows, free, beta)</li>
+<li>NetworkX (Python)</li>
+<li>sna package for R (http://cran.r-project.org/web/packages/sna/index.html)
+<ul>
+<li>Test hypotheses</li>
+</ul></li>
+<li>SoNIA (Social Network Image Animator) (http://www.stanford.edu/group/sonia)</li>
+</ul></li>
+<li>Using Gephi
+<ul>
+<li>Load dataset.</li>
+<li>Select Layout -&gt; ForceAtlas 2. Want to put nodes into communities.</li>
+<li>Right click on colour/size, select, close dialog, then left click on the button again to apply.</li>
+<li>Layout -&gt; Label adjust to adjust labels.</li>
+<li>Partition -&gt; Edges, then reload, then select a parameter, then click run. Edges coloured by parameter.</li>
+<li>Buttons at top (Overview, Data Laboratory, Preview)
+<ul>
+<li>Can explore data in Data Laboratory.</li>
+<li>Can export using Preview.</li>
+</ul></li>
+<li>(bottom) big T to show node labels.</li>
+</ul></li>
+</ul>
+<h3 id="c-degree-and-connected-components"><a href="#TOC">1C Degree and Connected Components</a></h3>
+<ul>
+<li>Tufte principles
+<ul>
+<li>Above all else show the data.</li>
+<li>Maximise the data-ink ratio, within reason.</li>
+<li>Erase non-data ink, within reason.</li>
+<li>Erase redundant data-ink.</li>
+<li>Revise and edit.</li>
+</ul></li>
+<li>Aesthetic criteria for network visualisations.
+<ul>
+<li>Minimise edge crossings.</li>
+<li>Uniform edge lengths (but not if edges have weight).</li>
+<li>Don’t allow nodes to overlap with edges that’s aren’t incident on them.</li>
+</ul></li>
+<li>Edge attributes
+<ul>
+<li>Weight (positive and negative)</li>
+<li>Ranking (1st, 2nd, …)</li>
+<li>Type</li>
+<li>Properties depending on the rest of the graph, e.g. betweenness.</li>
+</ul></li>
+<li>Data representation
+<ul>
+<li><strong>Adjacency matrix</strong>
+<ul>
+<li>N x N for N nodes. Row 1 is node 1, …</li>
+<li>A_ij is 1 if node i has edge to node j.</li>
+<li>A_ii = 0, unless there are self loops.</li>
+<li>A_ij = A_ji if undirected.</li>
+</ul></li>
+<li><strong>Edge list</strong>
+<ul>
+<li>[2,3], [2,4], …</li>
+</ul></li>
+<li><strong>Adjacency list</strong>
+<ul>
+<li>If graph very large and very sparse.</li>
+<li>For each node a list of neighbours.</li>
+</ul></li>
+</ul></li>
+<li><strong>Node degree</strong> - number of edges incident to node
+<ul>
+<li>Indegree, outdegree, or degree (in and out).</li>
+</ul></li>
+<li>Graph properties: betweenness, centrality.</li>
+<li><strong>Outdegree</strong> = Sum of row in adjacency matrix.</li>
+<li><strong>Indegree</strong> = Sum of column in adjacency matrix.</li>
+<li><strong>Indegree sequence</strong> = ordered list of indegree of each node.</li>
+<li><strong>Outdegree sequence</strong> = ordered list of outdegree of each node.</li>
+<li><strong>Degree sequence</strong> = order list of degree of each node.</li>
+<li><strong>Degree distribution</strong> = freqency count of each degree.</li>
+<li><strong>Strongly connected components</strong> - each node can reach every other node by following directed edges.</li>
+<li><strong>Weakly connected components</strong> - each node can be reached from every other node by following edges in either direction (even if directed).</li>
+<li><strong>Giant component</strong> - if largest component encompasss a significant fraction of graph.</li>
+</ul>
+<h3 id="d-gephi-demo"><a href="#TOC">1D Gephi demo</a></h3>
+<ul>
+<li>(top left) Ranking -&gt; Nodes -&gt; Indegree, set min/max size by clicking on the red ruby icon, spline, apply. Nodes sized by indegree.</li>
+<li>(right) Statistics -&gt; Network Overview -&gt; Average degree -&gt; Run.
+<ul>
+<li>Not only visual but will put new columns in Data Laboratory.</li>
+</ul></li>
+<li>(right) Statistics -&gt; Network Overview -&gt; Connected Components -&gt; Run. Then should be able to Partition -&gt; Edges -&gt; refresh, choose strongly connected ID.</li>
+</ul>
+<h3 id="a-introduction-to-random-graph-models"><a href="#TOC">2A Introduction to random graph models</a></h3>
+<ul>
+<li>simple representation to test and predict properties.</li>
+<li>a strawman: how is the real world different, what insights are there?</li>
+<li>Erdos and Renyi, random network model.</li>
+<li>Assumptions:
+<ul>
+<li>Nodes connect at random.</li>
+<li>Undirected.</li>
+</ul></li>
+<li>Two parameters:
+<ul>
+<li>N: number of nodes.</li>
+<li>p: probability that any two nodes share an edge, OR</li>
+<li>M: total number of edges.</li>
+</ul></li>
+<li>(N, p) model is binomial (review this). p = node, (1 - p) = no node.</li>
+<li>Average degree = (N - 1) * p.
+<ul>
+<li>Each node has (N - 1) tries to get an edge.</li>
+</ul></li>
+<li>Binomial cofficient
+<ul>
+<li>N choose k. = n! / (k!) * (n - k)!</li>
+</ul></li>
+<li>B(7;4;p) = 7_C_4 * p^4 * (1-p)^3.</li>
+<li>In general average degree is the mean, expected(x) = sum(x) * p(x).</li>
+<li>Variance in degree = (n-1) * p * (1-p)</li>
+<li>In general variance = E[(X-u)^2] = sum(X-u)^2 * p(x).</li>
+<li>Binomial approximations:
+<ul>
+<li>Small p =&gt; Poisson. p_k = z^k * e^(-z) / k!</li>
+<li>Large n =&gt; Normal.</li>
+</ul></li>
+<li>Insights:
+<ul>
+<li>No hubs, no nodes with very high degrees.</li>
+</ul></li>
+</ul>
+<h3 id="b-random-graphs-and-alternative-models"><a href="#TOC">2B: Random graphs and alternative models</a></h3>
+<ul>
+<li>For a growing random graph there’s a marked increase in the giant component size when average degree = 1.
+<ul>
+<li>NetLogo -&gt; Sample Models -&gt; Network -&gt; Giant Component.</li>
+<li>Imagine network of friends. If average degree = 1 there’s a chain of a friend to a friend to a …, hence giant component.</li>
+</ul></li>
+<li>Lattice percolation.
+<ul>
+<li>2D grid, each point has a probability p of being occupied.</li>
+<li>How far can infinite liquid starting at origin travel?</li>
+<li>Critical point at p = 0.5 - 0.55</li>
+</ul></li>
+<li>In general: at what average degree (i.e. density) to giant components appear?</li>
+<li>In random graphs degree distribution has an exponential distribution.</li>
+<li>In random graphs size of giant components ~ N, whereas size of other components ~ log(n).
+<ul>
+<li>Given two very large components any additional random edges are very likely to join them, hence intuitively only one giant component likely.</li>
+</ul></li>
+<li>Given Erdos-Renyi graph with nodes N, average degree z, =&gt; average shortest path ~= log(N) / log(z).
+<ul>
+<li>Very hard to derive.</li>
+<li>Intuitively N^l = z^l. i.e. the number of friends distance l away from you is z^l.</li>
+</ul></li>
+<li>Closed triad: A -&gt; B -&gt; C -&gt; A.</li>
+<li><strong>Introduction model</strong>
+<ul>
+<li>Like ER except only (1 - p_intro) chance of random edge. Else we ask an adjacent node for one of their edges (friend of a friend).</li>
+<li>Relative to ER the <strong>introduction model</strong> has:
+<ul>
+<li>more closed triads (friends introduce you to friends)</li>
+<li>longer average shortest path (instead of randomly connecting to distant nodes edges kept more local).</li>
+<li>more uneven degree distribution (people with more connections get more edges, increasing returns)</li>
+<li>smaller giant component at low p.</li>
+</ul></li>
+</ul></li>
+<li><strong>Static geographical model</strong>
+<ul>
+<li>Randomly place nodes on a 2D grid. Each node tries to connect to M neighbours.</li>
+<li>Relative to ER:
+<ul>
+<li>narrower degree distribution (each node is aiming for the same number of neighbours).</li>
+<li>longer average shortest path (geographically localised)</li>
+<li>smaller giant component (less chance of random connections)</li>
+</ul></li>
+</ul></li>
+<li><strong>Random encounter model</strong>
+<ul>
+<li>Nodes at random on 2D grid. Then each node moves randomly until it encounters a node, and then makes an edge.</li>
+<li>Relative to ER:
+<ul>
+<li>longer average shortest path.</li>
+<li>smaller giant component.</li>
+<li>more closed triads.</li>
+</ul></li>
+</ul></li>
+<li><strong>Growth model</strong>
+<ul>
+<li>Nodes added over time.</li>
+<li>Compared to ER:
+<ul>
+<li>More nodes with degree 1, as there are more younger nodes.</li>
+<li>No more closed triads, because of young nodes.</li>
+<li>Smaller giant component.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="c-models-of-network-growth"><a href="#TOC">2C: Models of network growth</a></h3>
+<ul>
+<li>In real networks degree distribution is highly skewed.
+<ul>
+<li>Question/answer forums, sexual contact.</li>
+</ul></li>
+<li>The Poisson distribution of Erdos-Renyi has very few high degree nodes.</li>
+<li>The Power Law of real networks have log(n) high degree nodes.
+<ul>
+<li>p(k) (probability of degree k) = C * k ^ (-alpha).</li>
+<li>C is constant such that probabilities of all k sum to 1.</li>
+<li>i.e. log(p(k)) = c - alpha * log(k).</li>
+<li>alpha &gt; 3 =&gt; no longer heavy tailed distribution.</li>
+</ul></li>
+<li>Preferential attachment / cumulative advantage is increasing returns, those with many edges get more edges.</li>
+<li>Power law model networks <strong>grow over time</strong>, nodes make m edges per tick. (first ingredient)
+<ul>
+<li>If at time t there are t nodes, k_i is degree of node i born at time i, then dk_i(t) / dt = m / t.</li>
+<li>k_i(t) = m * (log(t) + c)</li>
+<li>At t = i, k_i(t) = m, =&gt; m = m * (log(i) + c), =&gt; c = 1 - log(i)</li>
+<li><p>=&gt; <strong>k_i(t) = m * (1 + log(t/i))</strong></p></li>
+<li>If tau(100) is time when node of degree 100 is born, fraction of nodes that have degree &lt;= 100 is (t - tau) / t, or 1 - tau/t.</li>
+<li>log(t/tau) = k/m - 1</li>
+<li>t/tau = e^(k/m - 1)</li>
+<li>tau/t = e^(-(k/m - 1)))</li>
+<li>P(k &lt; k’) = 1 - e^(-(k/m - 1))</li>
+</ul></li>
+<li>Power law model networks show <strong>preferential attachment</strong> (second ingredient).
+<ul>
+<li>Price [65] model for citations.
+<ul>
+<li>Papers start with m citations.</li>
+<li>Probability of citing a paper with degree k proportional to k + 1.</li>
+<li>Power law, alpha = 2 + 1/m.</li>
+</ul></li>
+</ul></li>
+<li>Barbasi-Albert model
+<ul>
+<li>New nodes form m attachments. Form to nodes in proportion to vertex degree / sum of all degrees of all vertices.</li>
+<li>dk_i(t) / dt = m * (k_i/2tm) = k_i/2t, and k_i(i) = m.</li>
+<li>k_i(t) = m * (t/i) ^ (1/2)</li>
+<li>p(k) = 2m^2 / k^3</li>
+<li>Distribution is scale free (i.e. power law) with alpha = 3.</li>
+<li>Graph is connected.</li>
+<li>Older are richer.</li>
+</ul></li>
+</ul>
+<h3 id="a-centrality"><a href="#TOC">3A: Centrality</a></h3>
+<ul>
+<li>www.moviegalaxies.com</li>
+<li>Indegree/outdegree, discussed before.</li>
+<li>Trade in petroleum, source: NBER / UN Trade Doha</li>
+<li>Ask yourself what your network represents and what its scope is.</li>
+<li>Common tactic - size node by in-degree, colour node by out-degree or ratio of in/out degree.</li>
+<li><strong>Normalization</strong>
+<ul>
+<li>Divide degree by maximum possible degree, \[N-1\].</li>
+</ul></li>
+<li><strong>Skew in distribution of degree centrality</strong>
+<ul>
+<li>Could just do stdev of degree.</li>
+<li>Freeman’s general formula.
+<ul>
+<li>Sum over all nodes of difference between maximum centrality and this node’s centrality, divided by number of pairs [(N-1)(N-2)].</li>
+</ul>
+sum<a href="C_D(n*)%20-%20C_D(i)">i = 1 to g</a> / [(N-1)(N-2)]</li>
+</ul></li>
+<li><strong>Brokerage</strong>: how nodes lie between other nodes.
+<ul>
+<li>Having to go through other key nodes to each everyone.</li>
+<li>How many pairs of nodes do you have to go through to reach one another in a minimum number of hops?</li>
+</ul></li>
+<li>Degree centralization doesn’t capture brokerage.</li>
+<li><strong>Constraint</strong>: how dependent on other nodes are you to communicate.
+<ul>
+<li>In a brokerage position you experience low constraint.</li>
+</ul></li>
+<li><strong>Betweenness</strong> definition:</li>
+</ul>
+<p>\[ C_B(i) = /sum{j&lt;k} \frac{g_jk(i)}{g_jk} \]</p>
+<ul>
+<li>\(g_jk(i)\) is number of shortest paths node \(i\) is on between \(j\) and \(k\).</li>
+<li>\(g_jk\) is the total number of shortest paths between \(j\) and \(k\).</li>
+<li><strong>Normalized betweenness</strong>:</li>
+</ul>
+<p>\[ C_B(i) = \frac{C_B(i)}{[(n-1)(n-2)/2]} \]</p>
+<ul>
+<li>Denominator is number of pairs of nodes excluding the node itself.</li>
+<li>Size nodes by degree, colour by betweenness.
+<ul>
+<li>Notice low degree nodes with high betweenness, bridge networks.</li>
+</ul></li>
+<li>What if it’s not important to have many direct edges, but just to be “not too far”?</li>
+<li><strong>Closenesss</strong>: length of average shortest path between a node and all other nodes in the graph.</li>
+</ul>
+<p>\[ C_c(i) = [\sum{j=1}^{N} d(i,j)]^(-1) \]</p>
+<ul>
+<li><strong>Normalized closeness centrality</strong></li>
+</ul>
+<p>\[ C&#39;_C(i) = \frac{C_C(i)}{(N-1)} \]</p>
+<ul>
+<li>Sometimes the graph isn’t fully connected, so some distances are infinite. Instead can invert each distance and then sum those.</li>
+</ul>
+<h3 id="b-eigenvector-and-directed-networks"><a href="#TOC">3B: Eigenvector and directed networks</a></h3>
+<ul>
+<li><strong>Eigenvector centrality</strong>: you are as central as your neighbours, recursively.
+<ul>
+<li>Solving for eigenvector of adjacency matrix with eigvenvalue = 1.</li>
+</ul></li>
+<li><strong>Bonacich eigenvector centrality</strong>
+<ul>
+<li>Tunable via beta.</li>
+</ul></li>
+</ul>
+<p><code>c_i(\Beta) = \sum{j} (\alpha + \Beta c_j)A_(ji)</code></p>
+<p><code>c(\Beta) = \alpha(I - \Beta A)^-1 \times A \times 1</code></p>
+<ul>
+<li>Meaning:
+<ul>
+<li>alpha: normalization constant.</li>
+<li>beta: how important the centrality of your neighbours is.</li>
+<li>A: adjacency matrix (can be weighted)</li>
+<li>I: identity matrix</li>
+<li>1: matrix of all ones.</li>
+</ul></li>
+<li>Beta:
+<ul>
+<li>0 yields simple degree centrality.</li>
+<li>Small beta =&gt; high attenuation. Only your immediate friends matter.</li>
+<li>High beta =&gt; low atteuation. Global network structure matters.</li>
+<li>Negative =&gt; node is more central when connected to less central nodes.</li>
+</ul></li>
+<li><strong>Betweenness centrality in directed networks</strong>
+<ul>
+<li>Watch out which paths you’re actually on.</li>
+<li>Normalization denominator changes, loses factor of 2:</li>
+</ul></li>
+</ul>
+<p>\[ C&#39;_B(i) = \frac{C_B(i)}{[(N-1)(N-2)]} \]</p>
+<ul>
+<li><strong>Directed closeness centrality</strong>
+<ul>
+<li>In-closeness (prestige in citation networks)</li>
+<li>Out-closeness.</li>
+<li>Only consider nodes you can reach.</li>
+</ul></li>
+<li><strong>Eigenvector centrality in directed networks</strong>
+<ul>
+<li><strong>PageRank.</strong></li>
+<li>Recursive, directed. Difficult to artificially inflate it because it’s recursive.</li>
+</ul></li>
+<li><strong>Random walk</strong> is like the eigenvector centrality measure.
+<ul>
+<li>Just walk randomly, measure time you spend at each node.</li>
+<li>More time =&gt; more important.</li>
+<li>But could get trapped in circles!</li>
+<li>PageRank allows random teleportation to work around cycles.</li>
+<li>As you increase random teleportation probability PageRank score distribution flattens. Not walking, just jumping around.</li>
+</ul></li>
+</ul>
+<h3 id="c-centrality-applications-optional"><a href="#TOC">3C: Centrality applications (optional)</a></h3>
+<ul>
+<li><strong>Hospital patient transfers</strong>, simulation.
+<ul>
+<li>Patients transfer, take diseases.</li>
+<li>Hospitals could collaborate to find hubs of key disease transfer points.</li>
+<li>Want to allocate money to hospitals to fight disease, but who to give money to?</li>
+<li>Strategies, and how they affect probability of getting infected:
+<ul>
+<li>Random, no effective.</li>
+<li>Degree (some hospitals have more transfers than others), geometric mean (sqrt(indegree + outdegree)), a bit effective.</li>
+<li>Betweenness, even more effective.</li>
+<li>Greedy (simulation based), most effective.</li>
+<li>Eigenvector (as effective as greedy).</li>
+</ul></li>
+</ul></li>
+<li><strong>Identifying expertise</strong> in an expertise network
+<ul>
+<li>Response time gap between the questions you ask and when they’re answered.</li>
+<li>Directed edges.
+<ul>
+<li>A -&gt; thread =&gt; A asked the question.</li>
+<li>Thread -&gt; B and C =&gt; B and C answered.</li>
+<li>Could weigh edges by:
+<ul>
+<li>number of threads.</li>
+<li>shared credit (all responders get equal weight)</li>
+<li>backflow (questions that are answered get a backward edge).</li>
+</ul></li>
+</ul></li>
+<li><strong>Bow tie model</strong> of web and forums
+<ul>
+<li>Core: strongly connected component, everyone asks and answers.</li>
+<li>In: mostly askers</li>
+<li>Out: mostly helpers.</li>
+<li>Forums are skewed; indegree is much higher, small core. Not a community as such.</li>
+<li>Question: what is the indegree/outdegree of the largest connected component?</li>
+</ul></li>
+<li>Is centrality, using various measures, a good measure of expertise?
+<ul>
+<li>Compared with human evaluation: yes.</li>
+</ul></li>
+<li>Very interesting is that recursive PageRank wasn’t the best!
+<ul>
+<li>To investigate, simulated two models:
+<ul>
+<li>‘Best’ preferred. Experts answer questions that are high enough quality to be worth answering.</li>
+<li>‘Just better’ preferred: people answer questions just a bit more challenging than their expertise level.</li>
+<li>Centrality measure perform differently depending on model.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="a---why-detect-communities"><a href="#TOC">4A - Why detect communities?</a></h3>
+<ul>
+<li>Sometimes communities bridge different organisation units.</li>
+<li>Strong communities =&gt; there are brokers, which are bottle-necks in information flow. Key influencers.</li>
+<li>Communities can maintain divergent opinions; influenced by neighbours, less by other communities.
+<ul>
+<li>Unlike Erdos-Renyi random graphs.</li>
+</ul></li>
+<li>Community finding in scientific papers, how areas influence one another.</li>
+</ul>
+<h3 id="b---heuristics-for-finding-communities"><a href="#TOC">4B - Heuristics for finding communities</a></h3>
+<ul>
+<li>What makes a community?
+<ul>
+<li>Mutuality of ties?</li>
+<li>Frequency of ties among members?</li>
+<li>Closeness of reachability of subgroup members?</li>
+<li>Relative frequency of ties within subgroup?</li>
+</ul></li>
+<li><strong>Affiliation networks , i.e. bipartite graphs</strong>.
+<ul>
+<li>e.g. two types of nodes: people, and events they attended.</li>
+<li>People who attended the same event are connected.</li>
+<li><strong>Multi-modal network</strong>.</li>
+</ul></li>
+<li><strong>Clique</strong>: fully connected subgraph.
+<ul>
+<li>Every member connected to every other member.</li>
+<li>Cliques may overlap.</li>
+</ul></li>
+<li>Communities are cliquish.</li>
+<li>Meaningfulness of cliques.
+<ul>
+<li>Not robust; just one missing link disqualifies it.</li>
+<li>Not interesting; no core, no centrality.</li>
+<li>Overlaps are more interesting than just existence.</li>
+</ul></li>
+<li><strong>k-cores</strong>: similar idea, but just need to know k other nodes, not fully connected.
+<ul>
+<li>But even this is too stringent.</li>
+</ul></li>
+<li><strong>n-cliques</strong>: maximal distance between any two nodes in subgroup is n.
+<ul>
+<li>Reachability.</li>
+<li><strong>Diameter</strong>: longest path between any two nodes.</li>
+<li>Diameter may be greater than n, so paths go through nodes not in subgroup.</li>
+</ul></li>
+<li><strong>n-club</strong>: maximal subgraph of diameter 2.</li>
+<li><strong>p-cliques</strong>: cluster has vertices with at least proportion p of neighbours in cluster.</li>
+<li>Cohesion in directed and weighted networks
+<ul>
+<li>Could only keep edges above a threshold weight</li>
+</ul></li>
+</ul>
+<h3 id="c---community-finding"><a href="#TOC">4C - Community Finding</a></h3>
+<ul>
+<li><strong>Hierarchical clustering</strong>
+<ul>
+<li>Calculate some notion of distance between all pairs of nodes (e.g. number of shared neighbours, weight).</li>
+<li>Add edges between pairs one by one in order of decreasing weight.</li>
+<li>Can choose when to stop. Early =&gt; fine structure, late =&gt; coarse structure.</li>
+</ul></li>
+<li>Pajek has efficient and successful implementation, not in Gephi, igraph, networkx.</li>
+<li>Pajek can random permute rows of adjacency matrix such that same graph but clear clusters appear.</li>
+<li><strong>Dendrogram</strong>: view of hierarchical clustering.</li>
+<li><strong>Betweenness clustering</strong> (Girvan and Newman)
+<ul>
+<li>Compute betweenesss of all edges.</li>
+<li>while (betweenness of any edges &gt; threshold)
+<ul>
+<li>Remove edge with highest betweeneness</li>
+<li>Recalculate betweenness.</li>
+</ul></li>
+<li>Very inefficient; all pairs shortest path is O(N^3), need to do it up to N times but intuitive.</li>
+<li>Does not scale &gt; 100 nodes.</li>
+</ul></li>
+<li>How do you know when to stop for hierarchical and betweenness clustering?
+<ul>
+<li><strong>Modularity</strong>, maximize it.</li>
+<li>How many more edges in community than would be expected randomly?</li>
+</ul></li>
+</ul>
+<p>Q = 1/2m * sum(all pairs)[A_vw - k_v * k_w / 2m] * delta(c_v, c_w)</p>
+<p>i.e.</p>
+<p>sum over all pairs of difference between adjacency matrix and probability of an edge between two vertices proportional to their degrees.</p>
+<p>delta is 1 if in same community, using any metric you want, 0 if not.</p>
+<ul>
+<li><p>Modularity used to find community structure in graphs with &gt; 400,000 nodes and &gt; 2 million edges</p></li>
+<li>Very large, dense graphs like Orkut and Flickr difficult to partition. Communities no larger than 100 nodes because traditional algorithms do not allow overlap.
+<ul>
+<li><em>Statistical Properties of Community Structure in Large Social and Information Networks</em> (Leskovec et. al 2008)</li>
+</ul></li>
+<li>Key is to <em>allow overlap</em>, nodes belong to more than one community.
+<ul>
+<li><em>Uncovering the overlapping community structure of complex networks in nature and society</em> (Palla et. al 2005).</li>
+<li>http://cfinder.org.</li>
+<li>Finding cliques by removing a given node then adding someone nearby?</li>
+<li>“Natural” community boundaries.</li>
+</ul></li>
+<li><p>Ingredient networks - what goes with what?</p></li>
+</ul>
+<h3 id="a---small-world-experiments"><a href="#TOC">5A - Small world experiments</a></h3>
+<ul>
+<li>Small world phenomenon: Stanley Milgran’s experiment.
+<ul>
+<li>“Six degrees of separation”.</li>
+<li>Send a message to someone far from you by sending to “closest”.</li>
+</ul></li>
+<li>In random graphs with noone sharing any neighbours you’d expect massive numbers of neighbours-of-neighbours etc.
+<ul>
+<li>So if friendship networks are random six degrees of separation not surprising.</li>
+<li>But what if network is very cliquish? Worst case, what if all neighbours-of-neighbours were your neighbours?</li>
+<li>In this case impossible to reach rest of network.</li>
+</ul></li>
+<li>Is 6 an accurate number?
+<ul>
+<li><strong>Attrition</strong>. As path gets longer smaller probability of successfully passing on message. Bias to shorter paths.
+<ul>
+<li>Research indicates attrition rate is constant over position in path. See “An Experimental Study of Search in Global Social Networks”, Dodds et al.</li>
+</ul></li>
+<li><strong>Navigation and accuracy</strong>. Do people find shortest paths? Of course not.
+<ul>
+<li>See “Killworth, McCarty, Bernard, &amp; House”, 2005. Less than optimal choice for next hop is made 0.5 of the time.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="b---clustering-and-motifs"><a href="#TOC">5B - Clustering and motifs</a></h3>
+<ul>
+<li>Local phenomenon.</li>
+<li><strong>Transitivity</strong>
+<ul>
+<li>If A -&gt; B and B -&gt; C, what is probability that A -&gt; C?</li>
+</ul></li>
+<li><strong>Triadic closure</strong> - A, B, and C connected.</li>
+<li><strong>Global clustering coefficient</strong>: to what extent is clustering present?
+<ul>
+<li>C = 3 x number of triangles in graph / number of connected triples of vertices.</li>
+</ul></li>
+<li><strong>Local clustering coefficient</strong>
+<ul>
+<li>C_i = number of connections between i’s neighbours / maximum possible connections.</li>
+<li>n_i = number of neighbours of i.</li>
+<li>C_i directed = number of directed connections / n_i * (n_i - 1)</li>
+<li>C_i undirected = number of undirected connections / 0.5 * n_i * (n_i - 1)</li>
+<li>C = 1/n * sum(C_i) over all i.</li>
+</ul></li>
+<li><strong>Embeddedness</strong>: number of common neighbours that two endpoints have.
+<ul>
+<li>E = nodes that are neighbours of both A and B / nodes that are neighbours of at least one of A or B.</li>
+<li>Implies shared context, e.g. high school class, but not necessarily closeness, i.e. actually friends.</li>
+</ul></li>
+<li>Snowball sampling (souce: Information and Social Capital, Alstyne).
+<ul>
+<li>Ask to name 1st and 2nd best friends, more clustered (i.e. embedded).</li>
+<li>Ask to name 7th and 8th best friend, less clustered and hence longest possible path is larger so easier to reach more people.</li>
+<li>Hence being more embedded can limit your ability to project information and intercept varied information.</li>
+</ul></li>
+<li>Onnella et al., 2007. (10:12)
+<ul>
+<li>Characterizing the large-scale structure and the tie strengths of the mobile call graph.
+<ul>
+<li>Tie strength is how frequently two people communicate.</li>
+</ul></li>
+<li>Log distribution of degree (skewed, very few with high degree).</li>
+<li>Log distribution of link weight (skewed, very few with high weight).</li>
+<li>Embeddedness of the tie (?)</li>
+<li>Edge neighbourhood overlap (embeddedness) as a function of tie strength.
+<ul>
+<li>Positive linear. =&gt; more embedded means greater tie strength.</li>
+</ul></li>
+<li>Intermediate tie strength neighbours are whom you spread most novel information with, not weak or strong.</li>
+</ul></li>
+<li>Can do better if you look at directionality in local structure.
+<ul>
+<li><strong>Motif</strong>: particular directed configuration of a closed triad and closed four-node subgraphs.</li>
+<li><strong>Feed forward loop</strong>: X -&gt; Y, Y -&gt; Z, X -&gt; Z.
+<ul>
+<li>Filters out noise.</li>
+</ul></li>
+<li>Compare number of instances of motifs to “equivalent” random graph.
+<ul>
+<li>Generate a random graph where the degree distribution matches the actual graph.</li>
+<li>Then calculate Z-score (x - mean_x / stdev_x). Z &gt; 0 =&gt; more often than random, Z &lt; 0 =&gt; less often than random.</li>
+</ul></li>
+<li>Software: use FANMOD or igraph.</li>
+</ul></li>
+<li>Onnella found that there are superfamilies of networks. (16:47)
+<ul>
+<li><strong>Motif profiles</strong>: characterise using graphs by Z-scores for 3-node motifs.</li>
+<li>e.g. graphs of different languages have similar distribution of Z-scores of motifs. (e.g. to-&gt;be-&gt;or-&gt;not-&gt;to-&gt;be).</li>
+<li>Web and social graphs have similar distributions. Suggests similar mechanisms.</li>
+</ul></li>
+<li><strong>Forbidden triad</strong>: A -&gt; B, B -&gt; C, but not A -&gt; C.</li>
+<li>Can use motif profiles to compare models to actual networks.</li>
+</ul>
+<h3 id="c---small-world-models"><a href="#TOC">5C - Small world models</a></h3>
+<ul>
+<li>Small world phenomenon
+<ul>
+<li><em>High clustering</em>: C_network &gt;&gt; C_{random_graph}</li>
+<li><em>Low average shortest path</em>: l_network ~= ln(N)</li>
+<li>ER graphs also have similar low average shortest path.</li>
+<li>Many closed triads.</li>
+</ul></li>
+<li>Watts/Strogatz model reconciles these two observations.
+<ul>
+<li>Generating small world graphs.</li>
+<li>Take a ring of nodes, connect each node to its two physical neighbours on either side (four edges).</li>
+<li>Either:
+<ul>
+<li>Randomly reposition edges, or</li>
+<li>Add fraction p of new edges, leaving the old ones.</li>
+</ul></li>
+<li>Disallow self-edges and multiple edges.</li>
+<li>At p ~= 0.01 high clustering and low average shortest path.</li>
+<li>At p &gt; 0.1 clustering coefficient collapses, as expected; become ER network.</li>
+<li>Probability that a connected triple stays connected is (1 - p)^3.</li>
+<li>Hence clustering coefficient = C(p) = C(p=0) * (1-p)^3</li>
+<li>What is missing?
+<ul>
+<li>Too many long range links.</li>
+<li>No hierarchical structure and groups.</li>
+<li>No hubs.</li>
+</ul></li>
+</ul></li>
+<li>Kleinberg’s geographical small world model.
+<ul>
+<li>Nodes on 2-D lattice. Each node as local lattice edges (north, south, east, west)</li>
+<li>Additional links with p(link between u and v) = (distance(u, b)) ^ (-r).</li>
+<li>r is constant that determines navigability.</li>
+<li>Greedy search (i.e. choosing node that is closest to target) reveals pattern similar to Milgram’s experiement: many large hops initially, small hops towards the end.</li>
+<li>r = 0 =&gt; randomly distributed, ASP ~= ln(n), so no very small local ties.</li>
+<li>r &gt; 2, p ~ 1 / d^4. search time ~= N^{(r-2)/(r-1)}. No large ties.</li>
+<li>r = 2 is about right. p = ~ 1/d^2. (probabilty of forming tie is inverse squared). Greedy search works.</li>
+</ul></li>
+<li>15:08: group affiliations.
+<ul>
+<li>Bipartite networks. Individuals share contexts, imply edges between individuals as a unipartite network.</li>
+</ul></li>
+<li>Kleinburg’s hierarchical network models (Small-world phenomena and the dyanmics of information):
+<ul>
+<li>h_ij = height of least common ancestor</li>
+<li>p_ij = b^{-alpha * h_ij}</li>
+<li>b is branching factor of the hierarchy.</li>
+<li>alpha is measured from network.</li>
+</ul></li>
+<li>Kleinburg’s group structure models (same paper):
+<ul>
+<li>f(q) ~ q^(-alpha).p</li>
+</ul></li>
+<li>Watts, Dodds, Newman (2001), Identity and Search in Social Networks
+<ul>
+<li>Individual belong to hierarchically nested groups.</li>
+</ul></li>
+<li>Columbia experiment
+<ul>
+<li>Successful chains disproportionately use professional ties.</li>
+<li>Successful chains disproportionatly avoided hubs and family/friends.</li>
+<li>Strategy: Geography first then work when close to target.</li>
+</ul></li>
+</ul>
+<h3 id="d---origins-of-small-worlds"><a href="#TOC">5D - Origins of small worlds</a></h3>
+<ul>
+<li>Generating small-world networks.</li>
+<li>Assign properties to nodes (spatial location, group membership)</li>
+<li>Add or rewire links according to some rule
+<ul>
+<li>Simulated annealing, optimize for property.</li>
+<li>Add links with probability, e.g. preferential attachment</li>
+<li>Simulate nodes as agents making decisions.</li>
+</ul></li>
+<li>What to optimize for?
+<ul>
+<li>E = lambda * L - (1 - lambda) * W // energy, want to minimize</li>
+<li>L = average shortest path.</li>
+<li>W = cartesian distance between two nodes.</li>
+<li>Want small number of hops and short distances.</li>
+</ul></li>
+<li>Source: Small worlds: How and Why, Mathias et. al.</li>
+<li>Idea is that can generate small world networks based on different constaints (navigation, group affiliation).</li>
+</ul>
+<h3 id="a-network-topology-and-diffusion"><a href="#TOC">6A: Network topology and diffusion</a></h3>
+<ul>
+<li>How network structure affects diffusion.</li>
+<li>Complex contagion thresholds; not enough for only one neighbour to affect you.</li>
+<li>ER networks:
+<ul>
+<li>Higher density in ER network =&gt; faster diffusion.</li>
+</ul></li>
+<li>Scale-free, those that grow.
+<ul>
+<li>With preferential attachment more hubs so diffusion faster.</li>
+</ul></li>
+<li>Small world networks
+<ul>
+<li>Recall: high clustering yet short average shortest path.</li>
+<li>In ring-lattice model of small-world networks rewiring gives us the short ASP.</li>
+<li>Hence as probability of rewiring increases the rate of diffusion increases.</li>
+<li>Even with a recovery rate greater than infection rate the rewiring allows a model that should die out to survive.</li>
+</ul></li>
+</ul>
+<h3 id="b-complex-contagion"><a href="#TOC">6B: Complex contagion</a></h3>
+<ul>
+<li>Complex contagion is less able to use shortcuts because such shortcuts are typically a single edge, whereas we need &gt; 1 to exceed a threshold.</li>
+<li>Network coordination.
+<ul>
+<li>Want to maximize your payoff.</li>
+<li>Given <code>(p)</code> fraction play basketball, you get <code>a</code> payoff per friend for basketball.</li>
+<li>Given <code>(1-p)</code> fraction play football, you get <code>b</code> payoff per friend for football.</li>
+<li>If your friends don’t play what you’re playing you get no payoff.</li>
+<li><code>d</code> neighbors.</li>
+<li>If chooses A, payoff = <code>p * d * a</code></li>
+<li>If chooses B, payoff = <code>(1-p) * d * b</code>.</li>
+<li>So you should choose A if: <code>p d a &gt;= (1-p) d b</code>.</li>
+<li>Or: <code>p &gt;= b / (a + b)</code>.</li>
+</ul></li>
+<li>In contagion networks one node changing color / preference can cause a cascade.</li>
+<li>Implications for viral marketing - what small subset of nodes to choose to target for influence?</li>
+<li>Community structure:
+<ul>
+<li>Enable ideas to spread in the presence of thresholds; the dense intra-community ties allow this.</li>
+<li>Create isolated pockets impervious to outside ideas; the sparse inter-communiy ties allow this.</li>
+<li>Allow different opinions to take hold in different parts of the network, see the previous point.</li>
+</ul></li>
+<li>What if you are bi-colour / bi-preference (i.e. both simultaneously), but with a cost <code>c</code>?
+<ul>
+<li>e.g. being bilingual may mean you’re average at both, not expert at one.</li>
+<li>Being bilingual reduces the incentive of others to choose between the two preferences, even if one is better or lower cost. Simply because bilingual nodes allow the choice to be avoided.</li>
+</ul></li>
+<li>Nodes need to coordinate across a network but have limited horizons.
+<ul>
+<li>Want x neighbours to be a colour / preference.</li>
+</ul></li>
+</ul>
+<h3 id="c-innovation-in-networks"><a href="#TOC">6C: Innovation in Networks</a></h3>
+<ul>
+<li>Innovate or imitate?
+<ul>
+<li>Brainstorming: more minds, but groupthink.</li>
+<li>Isolation: independence, slower.</li>
+</ul></li>
+<li>Kauffman’s NK model.
+<ul>
+<li>N dimensional problem space, N bits (0 or 1)</li>
+<li>K describes the smoothness of fitness of landscape.</li>
+<li>How similar is fitness of sequences with only 1-2 bits flipped (K=0 =&gt; no similarity, K=large =&gt; smooth fitness).</li>
+<li>K large =&gt; single maxima, smooth.</li>
+<li>K small =&gt; very noisy, many maxima.</li>
+<li>K medium =&gt; in between.</li>
+<li>Node starts with random bit string.</li>
+<li>Each iteration if neighbour has better solution then imiate by copynig, else innovate by flipping a bit.</li>
+</ul></li>
+<li>If you start with a ring lattice, increasing probability of random edges causes much faster convergence at a worse solution.
+<ul>
+<li>There is a sweet spot, single maxima parabola, some intermediate p.</li>
+</ul></li>
+</ul>
+<h3 id="a-cool-and-unusual-applications"><a href="#TOC">7A: Cool and unusual applications</a></h3>
+<ul>
+<li>Watch other fun videos! !!AI TOWATCH</li>
+<li>Laszlo Barbasi on the diseasome (http://youtu.be/10oQMHadGos)</li>
+<li>Cesar Hidalgo on economic development (http://www.youtube.com/watch?v=GRp382ynu-Q)</li>
+<li>YY Ahn on flavor network (http://www.santafe.edu/research/videos/play/?id=26c05e3e-0955-45ac-8c17-20315e576af7)</li>
+</ul>
+<h3 id="b-predicting-recipe-ratings-using-ingredient-networks"><a href="#TOC">7B: Predicting recipe ratings using ingredient networks</a></h3>
+<ul>
+<li>Is a recipe good? Can you tweak it?</li>
+<li>allrecipes.com, 46k recipes, 1.9 million reviews.</li>
+<li>Cooking methods, ingredients (combination and suggested modifications in comments).</li>
+<li>Undirected weighted edges. Weighted using <strong>pointwise mutual information</strong>.
+<ul>
+<li>PMI = log( P(a,b) / P(a)P(b) ).</li>
+<li>P(a,b) = (no. recipes containing a and b) / (no. recipes).</li>
+<li>P(a) (no. recipes containing a) / (no. recipes)</li>
+<li>P(b) = (no. recipes containing b) / (no. recipes).</li>
+</ul></li>
+<li>Compare recipe rating to PMI of its ingredient pairs.</li>
+<li>4 star rating have the most suggestions for modifications (almost right!).</li>
+<li>High recipe frequency =&gt; low deletion/recipe</li>
+<li>High recipe frequency =&gt; low additon/recipe.</li>
+<li>High recipe frequency =&gt; low increase/recipe.</li>
+<li>Substitution network
+<ul>
+<li>Replace ‘a’ with ‘b’.</li>
+<li>Nodes: ingredients.</li>
+<li>Edge weights: p(b | a). Proportion of substitutions of ingredient a that suggests ingredent b.</li>
+</ul></li>
+<li>Substitutions network and users’ preferences.
+<ul>
+<li>Create edge from ingredient a to b if rating(a) &lt; rating(b).</li>
+<li>Only for recipes with sufficient overlap in ingredients (just one or two different ingredients).</li>
+</ul></li>
+<li>Test prediction of ratings from ingredients.</li>
+<li>Use <em>gradient boosting tree</em>.</li>
+<li>Recipes encode our collective cooking knowledge.</li>
+</ul>
+<h3 id="a-network-resilience"><a href="#TOC">8A: Network resilience</a></h3>
+<ul>
+<li><strong>Node percoluation</strong>: lose nodes.</li>
+<li><strong>Edge percolation</strong>: edges disappear.</li>
+<li>Resilience of random vs. preferential growth network.</li>
+<li>Targeted attacks (e.g. edges with high betweenness).</li>
+<li>In a network with average degree = 4.64, if you remove 25% of edges giant component stays the same before new average degree ~ 3, well above percolation threshold of 1.</li>
+<li>Node removal and site percolation
+<ul>
+<li>Fill each square with probability p, then fill with liquid.</li>
+<li>Low p =&gt; small island.</li>
+<li>p critical =&gt; giant component forms, occupying finite fraction of infinite lattice.</li>
+<li>p above critical value =&gt; giant component occupies an increasingly larger portion of the graph.</li>
+</ul></li>
+<li>On node and edge percolation of proportion p, how is size of giant component affected?</li>
+<li>On targeted node percolation of high centrality nodes (e.g. degree), how in comparison is size of giant component affected?</li>
+<li>In e.g. scale-free networks targeting nodes much more effective.</li>
+<li>Also, what is effect on average path length?
+<ul>
+<li>For scale-free, targeting =&gt; more impactful on average path length.</li>
+<li>For ER graphs, targeting =&gt; no more impactful.</li>
+</ul></li>
+</ul>
+<h3 id="b-resilience-and-assortativity"><a href="#TOC">8B: Resilience and assortativity</a></h3>
+<ul>
+<li><strong>Assortativity</strong>: like connect with like.</li>
+<li>e.g. degree disassortative =&gt; hubs in periphery. Scale-free.</li>
+<li><strong>Correlation profiles</strong>
+<ul>
+<li>Compare number of edges between nodes with connectivities k_0 and k_1 between a graph and a properly randomized network.</li>
+<li>Three-degree plot, where third degree is color heat map.</li>
+</ul></li>
+<li><strong>Average degree of neighbors</strong>
+<ul>
+<li>Plot degree of node vs. average degree of neighbors.</li>
+<li>e.g. on internet negative trend (high node degree =&gt; low average degree of node’s neighbors).</li>
+<li>another useful way of comparing graphs, to e.g. small-world or random models.</li>
+<li>Another 2D plot.</li>
+</ul></li>
+<li>For a single number, take <em>Pearson correlation coefficient of nodes on each side of an edge</em>.
+<ul>
+<li>cor(deg(i), deg(j)) for all edges {ij}.</li>
+<li>Internet is negative, so yes diassortive, but sometimes the correlation profile gives more useful information.</li>
+<li>One number is useful.</li>
+</ul></li>
+<li>Assortative =&gt; more resilient. Disassortative =&gt; more hubs =&gt; less resilient.</li>
+</ul>
+<h3 id="c-resilience-and-the-power-grid"><a href="#TOC">8C: Resilience and the power grid</a></h3>
+<ul>
+<li>Internet, terrorist, crimial networks. Is it that simple to damage them?</li>
+<li>Of course not; dynamism.</li>
+<li>Power grid.
+<ul>
+<li>As electricity flows simultaneously in all available paths failure affects everyone else.</li>
+<li>Each node has a <em>load</em> and <em>capacity</em>.</li>
+<li>When node removed its load is redistribted to remaining nodes.</li>
+<li>If load of node exceeds capacity then node fails.</li>
+</ul></li>
+<li>Nodes: generators, substations.</li>
+<li>Edges: high-voltage transmission lines.</li>
+<li>Degree distribution is exponential.</li>
+<li>Efficiency of path is 0 if no electricity flows on path, 1 if transmission lines are perfect.</li>
+<li>Harmonic composition for path:</li>
+</ul>
+<p>e_path = [ sum_edges (1/e_edge) ] ^ -1</p>
+<ul>
+<li>e.g. path A, 2 edges, each e=0.5, e_path = 1/4.</li>
+<li>e.g. path B, 3 edges, each e=0.5, e_path = 1/6.</li>
+<li>e.g. path C, 2 edges, e=0 and e=1, e_path=0.</li>
+<li>Assume electricity flows along most efficient path.</li>
+<li>Efficiency of network is average of most efficient paths from each generator to each distribution center.</li>
+</ul>
+<p>E = 1/(N_G N_D) * sum epsilon_ij for all paths ij.</p>
+<p>epsilon_ij is efficiency of the most efficient path between i and j.</p>
+<ul>
+<li>Assume capacity of each node is proportional to its initial load.</li>
+</ul>
+<p>C_i = alpha * L_i(0), i = 1, 2, …, N.</p>
+<ul>
+<li>L represents weighted betweenness of a node.</li>
+<li>alpha is overload tolerance.</li>
+<li>Failed nodes put extra load onto neighbors.</li>
+<li>Overload capacity of 30% higher than initial load is sufficient for network’s efficiency to remain roughly the same on loss of most connected node or two.</li>
+<li>Power companies have no incentive to provide extra load, extra costs.</li>
+<li>But research shows that just 30% extra is needed, not that high.</li>
+</ul>
+<h3 id="d-concluding-remarks"><a href="#TOC">8D: Concluding remarks</a></h3>
+<ul>
+<li>“Introduction to Networks” by Mark Newman, a tomb.
+<ul>
+<li>How to determine giant component size from degree distribution.</li>
+<li>Statistical look at clustering, is clustering different from random.</li>
+</ul></li>
+<li>Matthew Jackson, “Social and Economic Networks”
+<ul>
+<li>Strategically, if nodes are self-interested, how will network get wired?</li>
+<li>Prisoner’s dilemma on networks.</li>
+</ul></li>
+<li>Barbassi, “Network Science”
+<ul>
+<li>Still being written.</li>
+<li>For beginner’s.</li>
+</ul></li>
+</ul>
+<h1 id="readings"><a href="#TOC">Readings:</a></h1>
+<ul>
+<li>Week 1
+<ul>
+<li>Network Science - Chapter 1
+<ul>
+<li>Networks have predictive power.</li>
+<li>Networks are remarkably stable.</li>
+<li>The choice of network we focus on makes a huge difference.</li>
+<li>Cascading faliures - where nodes depend on each other. Network structure critical.</li>
+<li>Behind each complex system is an intricate network.</li>
+<li>There are fundamental principles and reproducible mechanisms behind all networks.</li>
+<li>Interdisciplinary.</li>
+<li>Empirical, data driven.</li>
+<li>Quantitative and mathematical nature. Physics, engineering, statistics, etc.</li>
+<li>Computational nature. Big databases, algorithms, data mining.</li>
+</ul></li>
+</ul></li>
+<li>Week 2
+<ul>
+<li>Giant component (Wikipedia)
+<ul>
+<li>For n nodes, p = 1 / n, size of giant component is likely to be proportional to n^(2/3).</li>
+</ul></li>
+</ul></li>
+<li>Week 3
+<ul>
+<li><strong>The Social Organization of Conspiracy - Illegal Networks in the Heavy Electrical Equipment Industry (Baker / Faulkner)</strong>
+<ul>
+<li>Price fixing.</li>
+<li>Conclusion: maximise concealment rather than efficiency.</li>
+<li>In switchgear “phase of the moon” price scheduling, i.e. decentralized. Product standardized, flow of orders predictable, easy to synchronize price fixing. Not true of more complex products like turbines.</li>
+<li>In transformers also decentralized price fixing.</li>
+<li>In turbines very lumpy market, low volume, non-standardized. High information processing requirements for conspirators.</li>
+<li>Industrial organization economics examines effects of market system imperfections on behaviour of producers, and how producers satisfy society’s economic needs.
+<ul>
+<li>Collusion likely in certain industry structures; few sellers, high seller concentration, homogenous products.</li>
+<li>Number of two-way flows is N(N-1)/2, so fewer sellers =&gt; easier to coordinate.</li>
+<li>Treat the internals of the conspiracy as a black box.</li>
+</ul></li>
+<li>Organizational crime examines individuals as agents, representing their organization and themselves.
+<ul>
+<li>Makes many simplifications about conspirator social organization, almost a black box as well.</li>
+</ul></li>
+<li>Expect <em>sparse, decentralized networks</em> if secrecy is only factor. But also need to communicate efficiently.</li>
+<li>Small group research applies here: more routine tasks are more efficiently performed in centralized structures, more complex tasks in decentralized structures.</li>
+<li>Organizational theorists have similar conclusions - more information-processing requires more decentralization.</li>
+<li>Concealment vs. coordination.</li>
+<li>Centrality: more central =&gt; can get better illegal deals for your company, but also mean more personal culpability.</li>
+<li>Executives can delegate so can afford to be less central, hence predict less likely to get fined or prosectured.</li>
+<li>Degree =&gt; legal culpability, where betweenness and closensess amounts to hearsay.</li>
+<li>Undirected graph of Senate testimony where witnesses mention someone else. Also measure organizational rank.</li>
+<li>Freeman’s three point centrality measures used. Also could have used Bonacich’s measures of sociometric status (Bonacich 1972) and influence (Bonacich 1987), Coleman’s measure of power (Coleman 1973), Burt’s measure of prestige (1980).</li>
+<li>Also Stephenson and Zelen (1989)’s measure of point centrality where shortest paths are deliberately avoided.</li>
+<li>Graph density =&gt; observed number of edges as percentage of maximum possible.</li>
+<li>p849, figure 2: decentralized and centralized networks.</li>
+<li>Graph centralization =&gt; ratio of centrality of most central point to maxmium possible centrality.</li>
+<li>Results.</li>
+<li>Turbines (recall, most information processing) had highest density and most centralization, contradicting small group and organizational theory.</li>
+<li>Network decentralization did not protect against successful prosection; in turbine network less likely to be found guilty.</li>
+<li>Top executives in decentralized conspiracies able to shield themselves from prosection, but when found guilty had larger fines.</li>
+<li>Top executives in centralized conspiracies could not shield themselves, but when found guilty had smaller fines.</li>
+<li>Middle managers more vulnerable than junior managers.</li>
+<li>Degree centrality increases vulnerability. Not betweenness or closeness. However, degree does not affect penalities.</li>
+<li>In centralized networks, e.g. turbines, small connected core and large periphery. Core dominated by top executives, who need to be hands on. Hence lower conviction rate but more top executives found guilty.</li>
+</ul></li>
+<li><strong>Network Structure and Information Advantage (Aral / Alstyne)</strong>
+<ul>
+<li>How and why social structure affects economic outcomes.</li>
+<li>Burt (1992) shows that structurally diverse networks (low in cohesion and structural equivalence) are more successful in e.g. wages, promotion, job placement, creativity (Burt 2004a). Other studies show similar. More novel information.
+<ul>
+<li>See p11 figure 1 for diagram of cohesion and structural equivalence.</li>
+<li>p12 =&gt; sructural equivalence of two actors is Euclidean distance of their contact vectors.</li>
+</ul></li>
+<li>Conclusion: total amount and diversity of novel information increases at decreasing rate with network size and network diversity.</li>
+<li>Weak ties to other parts of network important source of inormation (Granovetter 1973: 1371). Get redudant information from well connected local network (Burt 1992).</li>
+<li>Burt (2004b): “creativity is an import-export game, not a creation game”.</li>
+<li>Do diverse networks actually provide access to more novel information? No.
+<ul>
+<li>Less diverse, stronger connected links have less novel information but higher bandwidth, so maybe more information.</li>
+<li>Nodes aware of more redundant information in local network so they adjust their transmission to avoid redundancy.</li>
+</ul></li>
+<li>Even with new information does productivity necessarily rise? No.</li>
+<li>p19, vector space model of communication content. Emails categorized into set of topic vectors, individuals’ email’s diversity is variance of topic vectors.</li>
+<li>Results.</li>
+<li>Total and diversity of novel information increasing with node’s network size and network diversity, but marginal increase decreses with network size.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>Week 4</strong></p>
+<ul>
+<li><p>Modularity and community structure in networks</p></li>
+<li><p>Uncovering the overlapping community structure of complex networks in nature and society</p></li>
+</ul>
+<p><strong>Week 5</strong></p>
+<ul>
+<li>The Small-World Phenomenon (Ch 20 of Networks, Crowds, and Markets)
+<ul>
+<li>!!AI TOREAD</li>
+</ul></li>
+</ul>
+<p><strong>Week 7</strong></p>
+<ul>
+<li>The human disease network (Goh et. al)
+<ul>
+<li>(This is an excellent paper, good basis for how to explore a bipartite network).</li>
+<li><strong>locus heterogeneity</strong>: genetic disorders that arise from mutations in more than one single gene.</li>
+<li><strong>allelic heterogeneity</strong>: different mutations in the same gene giving rise to phenotypes currently classified as different disorders.</li>
+<li>Should be able to do better than single-gene-single-disorder approach.</li>
+<li>Link all genetic disorders (“disease phenome”) with complete list of disease genes (“disease genome”).</li>
+<li><p>“diseasome”.</p></li>
+<li>bipartite graph of two disjoint sets of nodes: genetic disorders and genes.</li>
+<li>edge if mutations in that gene are implicated in that disorder.</li>
+<li>with this diseasome bipartite graph generate two biologically relevant network projections:
+<ul>
+<li>“human disease network”. nodes are disorders, connected with they share at least one gene.</li>
+<li>“disease gene network”. nodes are disease genes, connected if they are associated with same disorder.</li>
+</ul></li>
+<li>large giant component. =&gt; genetic origins of most disases are shared with other diseases.</li>
+<li>degree distribution =&gt; disorders only connected to a few other diseases.</li>
+<li>large cancer cluster tightly interconnected due to many genes associated with multiple types of cancer.</li>
+<li><p>Others diseases under-represented in giant component, do not form a single distinct cluster.</p></li>
+</ul></li>
+<li>The Product Space Conditions the Development of Nations
+<ul>
+<li>Imagine a product is a tree, set of products a forest.</li>
+<li>Firms are monkeys jumping tree to tree.</li>
+<li>Traditional growth theory assumes all trees equally within reach.</li>
+<li>However, if forest is heterogenous, with some dense areas and some sparse areas, monkeys may be unable to easily move through some parts of the forest.</li>
+<li>Distance between trees could be:
+<ul>
+<li>intensity of labor, land, capital.</li>
+<li>level of technological sophistication,</li>
+<li>inputs and outputs involved in product’s value chain.</li>
+<li>requisite institutions.</li>
+</ul></li>
+<li>Rather than make a-priori distance assumptions, instead assume that co-produced goods are related. “proximity”.</li>
+</ul></li>
+</ul>
+<h2 id="assignment-notes"><a href="#TOC">Assignment notes</a></h2>
+<h2 id="general-notes"><a href="#TOC">General notes</a></h2>
+</body>
+</html>
