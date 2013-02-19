@@ -808,8 +808,8 @@ Adj =   Adjective
 -   Output, a *tag sequence*:
 
 ```
-Profiles/N soared/V at/P Boeing/N Co./N ,/, easily/ADV
-topping /V forecasts/N on/P Wall/N Street/N ,/, as/P
+Profits/N soared/V at/P Boeing/N Co./N ,/, easily/ADV
+topping/V forecasts/N on/P Wall/N Street/N ,/, as/P
 their/POSS CEO/N Alan/N Mulally/N announced/V first/ADJ
 quarter/N results/N ./.
 ```
@@ -917,7 +917,7 @@ The trash can is in the garage.
 
 #### Supervised Learning Problems
 
--   We have training examples $x^{(i)}, y^{(i)}$ for $i = i \ldots m$.
+-   We have training examples $x^{(i)}, y^{(i)}$ for $i = 1 \ldots m$.
 -   Each $x^{(i)}$ is an **input**, each $y^{(i)}$ is a **label**.
 -   Objective: learn a function $f$ that maps inputs $x$ to labels $f(x)$.
 -   e.g.
@@ -976,7 +976,296 @@ $$
 $$
 
 -   Second line: assuming we have a generative model, by Bayes Rule.
--   Third line: $p(x)$ does not vary with $y$. $\textrm{argmax}$ implies we're searchin over $y$, but denominator is constant and hence we can discard it.
+-   Third line: $p(x)$ does not vary with $y$. $\textrm{argmax}$ implies we're searching over $y$, but denominator is constant and hence we can discard it.
+    -   This is computationally very useful, can be expensive to calculate.
+
+### Hidden Markov Models
+
+-   We have an input sentence $x = x_1, x_2, \ldots, x_n$. ($x_i$ is the $i$'th word in the sentence).
+-   We have a tag sequence $y = y_1, y_2, \ldots, y_n$. ($y_i$ is the $i$'th tag in the sentence).
+-   We'll use an HMM to define:
+
+$$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n)$$
+
+-   for any sentence $x_1 \ldots x_n$ and tag sequence $y_1 \ldots y_n$ of the same length.
+    -   Note this is **generative** ($p(x,y)$), not **discriminative** ($p(y|x)$).
+    -   Think of the $x_i$ as an input and the $y_i$ as a label.
+
+-   Then the most likely tag sequence for $x$ is:
+
+$$\textrm{arg}\underset{y_1 \ldots y_n}{\textrm{max}} p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n)$$
+
+-   The number of total possible sequences is $O(2^n)$, so brute force search is not feasible.
+
+#### Trigram Hidden Markov Models (Triagram HMMs)
+
+-   For any sentence $x_1, x_2, \ldots, x_n$, where $x_i \in V$ for $i = 1, 2, \ldots, n$, and
+-   For any tag sequence $y_1, y_2, \ldots, y_{n+1}$, where $y_i \in S$ for $i = 1, 2, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
+-   The joint probability of the sentence and tag sequence is:
+
+$$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-2}) \prod_{i=1}^{n} e(x_i|y_i)$$
+
+-   An example of the joint probability could be $p(\textrm{the, dog barks, DT, NN, VB, STOP})$.
+-   The first product is a trigram model applied to tag sequences! Very similar to before.
+    -   One $q$ term for each tag *including the STOP symbol*.
+-   The second product could have e.g. $e(\textrm{the | DT})$ is the probability of a tag emitting or generating a word.
+    -   One $e$ term for each (tagged) word.
+
+-   where we've assumed, as before in Markov Models, that $x_0 = x_{-1} = {*}$ (the start symbol).
+-   $V$ is the set of possible words in the language, e.g. $\{\textrm{the, dog, book, ate, his}\}$
+-   $S$ is the set of possible tags, e.g. $\{\textrm{DT, NN, VB, P, ADV, ...}\}$.
+    -   $\simeq$ hundreds of tags; the Wall Street Journal courpus has $\simeq$ 50 tags.
+
+-   Parameters of the model:
+    -   $q(s|u,v)\;\forall\;s \in S \cup \{\textrm{STOP}\},\;u,v \in S \cup \{\textrm{*}\}$
+        -   **Trigram parameters** (but referred to in a quiz as **transition parameters**).
+    -   $e(x|s)\;\forall\;s \in S, x \in V$
+        -   **Emission parameters**.
+
+- - -
+
+Quiz: Given tagset $S = \{\textrm{D, N}\}$, a vocabulary $V = \{\textrm{the, dog}\}$, and a HMM with transition parameters:
+
+-   $q(\textrm{D | *, *}) = 1$
+-   $q(\textrm{N | *, D}) = 1$
+-   $q(\textrm{STOP | D, N}) = 1$
+-   $q(s|u,v) = 0$ for all other $q$ params.
+
+and emission parameters:
+
+-   $e(\textrm{the | D}) = 0.9$
+-   $e(\textrm{dog | D}) = 0.1$
+-   $e(\textrm{dog | N}) = 1$
+
+Under this model how many pairs of sequences $x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}$ satisfy $p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) \gt 0$?
+
+First: how many non-zero-probability tag sequences are there? Enumerate them by drawing a graph of nodes and edges, where a node is a word and an edge is labelled with the transition probability to another word. Then follow all paths from any start symbol to any stop symbol whose product of probabilities is $\gt$ 0.
+
+```
+D, N, STOP
+```
+
+There's only one! OK. Refer back to your taq sequence graph and copy it for each possible word that a given tag (i.e. node) that it may "generate".  If e.g. N could generate two words, not one, we would have *four* possible sentences.
+
+```
+the dog
+dog dog
+```
+
+There's only two! OK. Hence the answer itself is two, because we have just generated a sentence for each possible (tag, word) pair.
+
+- - -
+
+#### An example
+
+If we have:
+
+-   $n = 3$,
+-   The sentence $\{x_1, x_2, x_3\} = \{\textrm{the, dog, laughs}\}$, and
+-   The tag sequence $\{y_1, y_2, y_3, y_4\} = \{\textrm{D, N, V, STOP}\}$.
+
+Then:
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) \\
+      = & q(\textrm{D | *, *}) \times q(\textrm{N | *, D}) \times q(\textrm{V | D, N}) \times q(\textrm{STOP | N, V}) \times \\
+        & e(\textrm{the | D}) \times e(\textrm{dog | N}) \times e(\textrm{laughs | V})
+    \end{aligned}
+\end{align}
+$$
+
+-   STOP is a special tag that terminates the sequence.
+-   We take $y_0 = y_{-1} = \textrm{*}$, where $\textrm{*}$ is a special "padding" symbol.
+
+- - -
+
+Quiz: given set $S = \{\textrm{D, N, V}\}$, and vocabulary $V = \{\textrm{the, cat, drinks, milk, dog}\}$, and an HMM model:
+
+-   transition parameters $q(s|u,v) = \frac{1}{4}\;\forall\;s, u, v$
+-   generative parameters $e(x|s) = \frac{1}{5}\;\forall\; \textrm{tags}\;s\;\textrm{and words}\;x$.
+
+What is the value, under this model, of:
+
+$$p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP})$$
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP}) \\
+      = & \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-2}) \prod_{i=1}^{n} e(x_i|y_i) \\
+      = & \{ p(\textrm{the | *, *}) \times p(\textrm{cat | *, the}) \times p(\textrm{drinks | the, cat}) \times p(\textrm{milk | cat, drinks}) \times p(\textrm{STOP | drinks, milk}) \} \times \\
+        & e(\textrm{the | D}) \times e(\textrm{cat | N}) \times e(\textrm{drinks | V}) \times e(\textrm{milk | N}) \\
+      = & \left(\frac{1}{4}\right)^5 \times \left(\frac{1}{5}\right)^4
+    \end{aligned}
+\end{align}
+$$
+
+- - -
+
+#### Why the Name?
+
+-   The first product is a **second-order Markov Chain**
+    -   Recall $p(x,y) = p(y) \times p(x|y)$
+    -   This product is solving for $p(y)$.
+-   The second project is $x_j$'s **being observed**.
+    -   Strong independence assumption that each word depends only on its underlying, generating tag.
+-   The generative process: we choose a sequence of tags, and then for each tag generate an associated word.
+    -   The $y$'s are *not observed*.
+    -   The $x$'s are *observed*.
+-   And so we will flip this: given an observation find the most likely underlying (**hidden**) tag sequence.
+
+- - -
+
+Quiz: for a bigram HMM:
+
+$$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n) = \prod_{i=1}^{n+1} q(y_i|y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)$$
+
+- - -
+
+### Parameter Estimation in HMMs
+
+#### Smoothed Estimation
+
+e.g.
+
+$$
+\begin{align}
+    &\begin{aligned}
+        q(\textrm{Vt | DT, JJ}) & = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ}} \\
+                                & + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ}} \\
+                                & + \lambda_3 \times \frac{\textrm{Count(Vt)}}{\textrm{Count()}}
+    \end{aligned}
+\end{align}
+$$
+
+$$\lambda_1 + \lambda_2 + \lambda_3 = 1$$
+$$\forall\;i, \lambda_i \ge 0$$
+
+$$e(\textrm{base | Vt}) = \frac{\textrm{Count(Vt, base)}}{\textrm{Count(Vt)}}$$
+
+-   For trigram / transition parameters:
+    -   We can of course induce counts of tag sequences directly from our corpus, and then determine **maximum-likelihood estimates**.
+        -   $\lambda_1$ for **trigram MLE**.
+        -   $\lambda_2$ for **bigram MLE**.
+        -   $\lambda_3$ for **unigram MLE**.
+    -   Linear interpolation is used, as seen before.
+-   For emission parameters:
+    -   Can use **bigram MLEs**.
+
+-   One problem.
+-   $e(x|y) = 0\;\forall\;y$ if $x$ is never seen in the training data.
+    -   !!AI sounds familiar! Will we do Laplacian smoothing, we we "add fudge" to everything, or back-off smoothing, where high mass gets re-distributed to zero mass, or something else?
+
+- - -
+
+Quiz: Given the following corpus:
+
+-   the dog barks -> D N V STOP
+-   the cat sings -> D N V STOP
+
+Assume we've calculated MLEs of a trigram HMM from this data. What is the value of the emission parameter $e(\textrm{cat | N})$ from this HMM?
+
+$$
+\begin{align}
+    &\begin{aligned}
+        e(\textrm{cat | N}) = & \frac{\textrm{Count(N, cat)}}{\textrm{Count(N)}} \\
+                            = & \frac{(1)}{(2)}
+    \end{aligned}
+\end{align}
+$$
+
+Say we estimate the transition parameters for a trigram HMM using linear interpolation, such that $\lambda_i = \frac{1}{3}$ for $i = \{1, 2, 3\}$. What is the value of the transition parameter $q(\textrm{STOP | N, V})$ under this model?
+
+$$
+\begin{align}
+    &\begin{aligned}
+        q(\textrm{STOP | N, V}) = & \lambda_1 \times \frac{\textrm{Count(N, V, STOP)}}{\textrm{Count(N, V)}} \\
+                                + & \lambda_2 \times \frac{\textrm{Count(V, STOP)}}{\textrm{Count(V)}} \\
+                                + & \lambda_3 \times \frac{\textrm{Count(STOP)}}{\textrm{Count()}} \\
+                                = & \left(\frac{1}{3} \times \frac{(2)}{(2)}\right) \\
+                                + & \left(\frac{1}{3} \times \frac{(2)}{(2)}\right) \\
+                                + & \left(\frac{1}{3} \times \frac{(2)}{(8)}\right) \\
+                                = & 0.75
+    \end{aligned}
+\end{align}
+$$
+
+- - -
+
+#### Dealing with Low-Frequency Words: An Example
+
+-   Test sentence
+
+```
+Profits soared at Boeing Co., easily topping ...
+CEO Alan Mulally.
+```
+
+-   `topping` and `Mulally` are likely to be infrequent.
+-   Long tail: you will frequently encounter words in test data that you have never encountered in training data.
+-   And hence: $e(\textrm{Mulally | y}) = 0$ for all tags $y$.
+-   And it can be verified that the joint probability $p(x_1, \ldots, x_n, y_1, \ldots, y_{n+1}) = 0$ for all tag sequences $y_1, \ldots, y_{n+1}$.
+-   This is because all tag sequences will involve this emission parameter.
+-   And hence all tag sequences are equally likely; applying argmax to an expression that *always* evaluates to zero implies that $y$ is equally maximum everywhere!
+
+-   A common way of dealing with this:
+    1.  **Split the vocabulary into two sets**.
+        -   *Frequent words*: words occurring $\ge$ 5 times in training (or some threshold).
+        -   *Low frequency words*: all other words.
+    2.  **Map** low frequency words into a small, finite set, depending on affixes.
+-   The set of low frequency words is very large.
+-   Map each low frequency word to a small set of e.g. 20 new words.
+
+-   from [Bikel et. al 1999] for named-entity recognition.
+
+Word class               Example        Intuition
+----------               ---------      ---------
+twoDigitNum              90             Two digit year
+fourDigitNum             1990           Four digit year
+containsDigitAndAlpha    A8956-67       Product code
+containsDigitAndDash     09-96          Date
+containsDigitAndSlash    11/9/89        Date
+containsDigitAndComma    23,000.00      Monetary amount
+containsDigitAndPeriod   1.00           Monetary, financial
+othernum                 456789         Other
+allCaps                  BBN            Organization
+capsPeriod               M.             Initial
+firstWord                first          no useful capitalisation infomation
+initCap                  Sally          Capitalized word
+lowercase                can            Uncapitalized word
+other                    ,              Punctuation, other words
+
+-   These were chosen by hand with intuition.
+-   We want to preserve some useful information for the specific task at hand, i.e. named entity recognition.
+-   e.g. `firstWord` will be capitalized in the corpus, but we lowercase it because the capitalization does not give us useful information, because all words at the start of a sentence are capitalized.
+-   We're mapping low-frequency words to classes that preserve spelling features.
+
+Return to an old example. Before transformation:
+
+```
+Profits/NA soared/NA at/NA Boeing/SC Co./CC easily/NA
+topping/NA forecasts/NA on/NA Wall/SL Street/CL ,/NA their/NA
+CEO/NA Alan/SP Mulally/CP announced/NA first/NA quarter/NA
+results/NA ./NA
+```
+
+After transformation:
+
+```
+firstword/NA soared/NA at/NA initCap/SC Co./CC ,/NA easily/NA
+lowercase/NA forecasts/NA on/NA initCap/SL Street/CL ,/NA as/NA
+their/NA CEO/NA Alan/SP initCap/CP announced/NA first/NA
+quarter/NA results/NA ./NA
+```
+
+-   Resolving low-frequency words in a way that preserves their spelling is useful for the named-entity recognition problem.
+-   Build our HMM on this transformed data.
+    -   $e(\textrm{firstword | NA})$
+    -   $e(\textrm{initCap | SC})$
+-   We're **closing** the vocabulary.
+-   This is a simple method, but requires human heuristics.
 
 ### Readings
 
