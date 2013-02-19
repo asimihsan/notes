@@ -1,0 +1,2941 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="_pandoc.css" type="text/css" />
+  <script src="https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,700,300italic' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#programming-languages-udacity-cs-262">Programming Languages (Udacity, CS-262)</a><ul>
+<li><a href="#unit-1">Unit 1</a><ul>
+<li><a href="#breaking-up-strings">1.4: Breaking Up Strings</a></li>
+<li><a href="#selecting-substrings">1.5: Selecting Substrings</a></li>
+<li><a href="#split">1.6: Split</a></li>
+<li><a href="#regular-expressions">1.7: Regular Expressions</a></li>
+<li><a href="#import-re">1.9: Import Re</a></li>
+<li><a href="#concatenation">1.12: Concatenation</a></li>
+<li><a href="#one-or-more">1.14: One or more</a></li>
+<li><a href="#finite-state-machines">1.15: Finite State Machines</a></li>
+<li><a href="#disjunction">1.18: Disjunction</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#note-that">note that:</a><ul>
+<li><a href="#options">1.21: Options</a></li>
+<li><a href="#escape-sequences">1.22: Escape Sequences</a></li>
+<li><a href="#hyphenation">1.23: Hyphenation</a></li>
+<li><a href="#quoted-strings">1.26: Quoted Strings</a></li>
+<li><a href="#structure">1.27: Structure</a></li>
+<li><a href="#escaping-the-escape">1.28: Escaping the escape</a></li>
+<li><a href="#representing-a-fsm">1.29: Representing a FSM</a></li>
+<li><a href="#fsm-simulator"> 1.30: FSM simulator</a></li>
+<li><a href="#fsm-interpretation">1.31: FSM Interpretation</a></li>
+<li><a href="#more-fsm-encoding">1:32: More FSM Encoding</a></li>
+<li><a href="#epsilon-and-ambiguity"> 1.34: Epsilon and Ambiguity</a></li>
+<li><a href="#phone-it-in.">1.35: Phone It In.</a></li>
+<li><a href="#non-deterministic-fsm">1.37: Non-deterministic FSM</a></li>
+<li><a href="#save-the-world">1.38: Save the world</a></li>
+<li><a href="#problem-set-1">Problem Set 1</a></li>
+<li><a href="#unit-2">Unit 2</a><ul>
+<li><a href="#introduction">2.1: Introduction</a></li>
+<li><a href="#specification">2.3: Specification</a></li>
+<li><a href="#taking-html-apart">2.8: Taking HTML Apart</a></li>
+<li><a href="#html-structure">2.9: HTML Structure</a></li>
+<li><a href="#specifying-tokens">2.10: Specifying tokens</a></li>
+<li><a href="#token-values">2.11: Token values</a></li>
+<li><a href="#quoted-strings-1">2.12: Quoted Strings</a></li>
+<li><a href="#whitespace">2.13: Whitespace</a></li>
+<li><a href="#lexical-analyzer">2.14: Lexical Analyzer</a></li>
+<li><a href="#ambiguity">2.15: Ambiguity</a></li>
+<li><a href="#string-snipping">2.17: String snipping</a></li>
+<li><a href="#tracking-line-numbers">2.19: Tracking line numbers</a></li>
+<li><a href="#commented-html">2.21: Commented HTML</a></li>
+<li><a href="#identifier">2.26: Identifier</a></li>
+<li><a href="#number">2.27: Number</a></li>
+<li><a href="#the-end-of-the-line">2.28: The End Of The Line</a></li>
+<li><a href="#wrap-up">2.30: Wrap Up</a></li>
+<li><a href="#office-hours-2">Office Hours 2</a></li>
+</ul></li>
+<li><a href="#unit-3-syntactic-analysis"> Unit 3: Syntactic Analysis</a><ul>
+<li><a href="#bags-of-words">3.2: Bags of Words</a></li>
+<li><a href="#syntactic-structure">3.3: Syntactic Structure</a></li>
+<li><a href="#infinity-and-beyond">3.5: Infinity and Beyond</a></li>
+<li><a href="#an-arithmetic-grammar">3.7: An Arithmetic Grammar</a></li>
+<li><a href="#syntactical-analysis">3.8: Syntactical analysis</a></li>
+<li><a href="#statements">3.9: Statements</a></li>
+<li><a href="#optional-parts">3.10: Optional Parts</a></li>
+<li><a href="#more-digits"> 3.11: More Digits</a></li>
+<li><a href="#grammars-and-regexps">3.12: Grammars and Regexps</a></li>
+<li><a href="#context-free-languages">3.13: Context-Free Languages</a></li>
+<li><a href="#parentheses">3.14: Parentheses</a></li>
+<li><a href="#intuition"> 3.16: Intuition</a></li>
+<li><a href="#extracting-information"> 3.18: Extracting Information</a></li>
+<li><a href="#ambiguity-1">3.20: Ambiguity</a></li>
+<li><a href="#to-the-rescue">3.21: To The Rescue</a></li>
+<li><a href="#grammar-for-html">3.23: Grammar for HTML</a></li>
+<li><a href="#revenge-of-javascript">3.25: Revenge of JavaScript</a></li>
+<li><a href="#universal-meaning">3.27: Universal Meaning</a></li>
+<li><a href="#javascript-grammar">3.29: JavaScript Grammar</a></li>
+<li><a href="#javascript-functions">3.31: JavaScript Functions</a></li>
+<li><a href="#lambda">3.33: Lambda</a></li>
+<li><a href="#list-power">3.34: List Power</a></li>
+<li><a href="#generators">3.37: Generators</a></li>
+<li><a href="#checking-valid-strings">3.39: Checking Valid Strings</a></li>
+<li><a href="#office-hours-3">Office Hours 3</a></li>
+</ul></li>
+<li><a href="#unit-4">Unit 4</a><ul>
+<li><a href="#introduction-1">4.1: Introduction</a></li>
+<li><a href="#time-flies">4.2: Time Flies</a></li>
+<li><a href="#brute-force">4.3: Brute Force</a></li>
+<li><a href="#fibonacci-numbers">4.4: Fibonacci numbers</a></li>
+<li><a href="#memoization-for-parsing">4.8: Memoization for Parsing</a></li>
+<li><a href="#parsing-state">4.9: Parsing state</a></li>
+<li><a href="#possible-states">4.10: Possible States</a></li>
+<li><a href="#charting-parse-states">4.11: Charting Parse States</a></li>
+<li><a href="#magical-power">4:14: Magical Power</a></li>
+<li><a href="#building-the-chart">4.16: Building the chart</a></li>
+<li><a href="#closure">4.17: Closure</a></li>
+<li><a href="#computing-the-closure">4.18: Computing the Closure</a></li>
+<li><a href="#consuming-the-input">4.19: Consuming the Input</a></li>
+<li><a href="#reduction">4.21: Reduction</a></li>
+<li><a href="#reduction-walkthrough">4.23: Reduction Walkthrough</a></li>
+<li><a href="#addtochart">4.25: Addtochart</a></li>
+<li><a href="#revenge-of-list-comprehensions">4.26: Revenge of List Comprehensions</a></li>
+<li><a href="#writing-the-closure">4.27: Writing the closure</a></li>
+<li><a href="#writing-shift">4.29: Writing shift</a></li>
+<li><a href="#writing-reductions">4.30: Writing reductions</a></li>
+<li><a href="#putting-it-together">4.31: Putting it together</a></li>
+<li><a href="#parse-trees">4.33: Parse Trees</a></li>
+<li><a href="#parsing-html">4.34: Parsing HTML</a></li>
+<li><a href="#parsing-tags">4.35: Parsing tags</a></li>
+<li><a href="#parsing-javascript">4.36: Parsing JavaScript</a></li>
+<li><a href="#precedence">4.38: Precedence</a></li>
+<li><a href="#optional-arguments">4.41: Optional Arguments</a></li>
+</ul></li>
+<li><a href="#office-hours-4">Office Hours 4</a></li>
+<li><a href="#problem-set-4">Problem Set 4</a><ul>
+<li><a href="#problem-1-parsing-states">Problem 1: Parsing States</a></li>
+</ul></li>
+<li><a href="#unit-5">Unit 5</a><ul>
+<li><a href="#formal-semantics">5.1: Formal Semantics</a></li>
+<li><a href="#interpreters">5.2: Interpreters</a></li>
+<li><a href="#syntax-vs.semantics">5.3: Syntax vs. Semantics</a></li>
+<li><a href="#bad-programs">5.4: Bad Programs</a></li>
+<li><a href="#types">5.5: Types</a></li>
+<li><a href="#html-interpreter">5.7: HTML interpreter</a></li>
+<li><a href="#graphics">5.8: Graphics</a></li>
+<li><a href="#arithmetic">5.10: Arithmetic</a></li>
+<li><a href="#context">5.12: Context</a></li>
+<li><a href="#control-flow"> 5.15: Control Flow</a></li>
+<li><a href="#creating-an-environment">5.17: Creating an Environment</a></li>
+<li><a href="#scope">5.18: Scope</a></li>
+<li><a href="#identifiers-and-storage"> 5.19: Identifiers and storage</a></li>
+<li><a href="#environments.">5.20: Environments.</a></li>
+<li><a href="#chained-environments">5.22: Chained environments</a></li>
+<li><a href="#greetings">5.23: Greetings</a></li>
+<li><a href="#environment-needs">5.24: Environment Needs</a></li>
+<li><a href="#declaring-and-calling-functions">5.25: Declaring and Calling Functions</a></li>
+<li><a href="#catching-errors">5.26: Catching Errors</a></li>
+<li><a href="#calling-functions">5.29: Calling functions</a></li>
+<li><a href="#double-edged-sword">5.31: Double-edged sword</a></li>
+<li><a href="#comparing-languages">5.33: Comparing Languages</a></li>
+<li><a href="#infinite-loop">5.34: Infinite Loop</a></li>
+</ul></li>
+<li><a href="#office-hours-5">Office Hours 5</a></li>
+<li><a href="#unit-6">Unit 6</a><ul>
+<li><a href="#fitting-them-together">Fitting Them Together</a></li>
+<li><a href="#extending-our-html-grammar"> Extending our HTML grammar</a></li>
+<li><a href="#calling-the-interpreter"> Calling the Interpreter</a></li>
+<li><a href="#evil-problem"> Evil problem</a></li>
+<li><a href="#javascript-output"> JavaScript output</a></li>
+<li><a href="#updating-output">Updating output</a></li>
+<li><a href="#counting-frames">Counting Frames</a></li>
+<li><a href="#debugging">Debugging</a></li>
+<li><a href="#testing">Testing</a></li>
+<li><a href="#testing-in-depth">Testing in depth</a></li>
+<li><a href="#testing-at-mozilla">Testing at Mozilla</a></li>
+<li><a href="#anonymous-functions">Anonymous functions</a></li>
+<li><a href="#mistakes-in-anonymous-functions">Mistakes in anonymous functions</a></li>
+<li><a href="#optimization">Optimization</a></li>
+<li><a href="#implementing-optimizations">Implementing Optimizations</a></li>
+<li><a href="#optimizing-timing">Optimizing Timing</a></li>
+<li><a href="#rebuilding-the-parse-tree">Rebuilding the Parse Tree</a></li>
+<li><a href="#bending-the-rules">Bending the Rules</a></li>
+<li><a href="#wrap-up-1">Wrap up</a></li>
+</ul></li>
+<li><a href="#unit-7---the-final-unit">Unit 7 - The Final unit</a><ul>
+<li><a href="#the-list">The List</a></li>
+<li><a href="#regular-expressions-1">Regular expressions</a></li>
+<li><a href="#context-free-grammars">Context-Free Grammars</a></li>
+<li><a href="#security">Security</a></li>
+<li><a href="#parsing-states">Parsing states</a></li>
+<li><a href="#interpretation-and-evaluation">Interpretation and Evaluation</a></li>
+<li><a href="#optimization-1">Optimization</a></li>
+<li><a href="#what-next">What next?</a></li>
+</ul></li>
+<li><a href="#references">References</a><ul>
+<li><a href="#unit-1-1">Unit 1</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="programming-languages-udacity-cs-262"><a href="#TOC">Programming Languages (Udacity, CS-262)</a></h1>
+<h2 id="unit-1"><a href="#TOC">Unit 1</a></h2>
+<h3 id="breaking-up-strings"><a href="#TOC">1.4: Breaking Up Strings</a></h3>
+<ul>
+<li><p>Input</p>
+<pre><code>&lt;b&gt;Hello 1</code></pre></li>
+<li><p>Can use <code>string.find()</code>, look for space.</p></li>
+</ul>
+<h3 id="selecting-substrings"><a href="#TOC">1.5: Selecting Substrings</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="st">&quot;hello&quot;</span>[<span class="dv">1</span>:<span class="dv">3</span>] = <span class="st">&quot;el&quot;</span>
+<span class="st">&quot;hello&quot;</span>[<span class="dv">1</span>:] = <span class="st">&quot;ello&quot;</span></code></pre>
+<h3 id="split"><a href="#TOC">1.6: Split</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="st">&quot;Jane Eyre&quot;</span>.split() = [<span class="st">&quot;Jane&quot;</span>, <span class="st">&quot;Eyre&quot;</span>]</code></pre>
+<h3 id="regular-expressions"><a href="#TOC">1.7: Regular Expressions</a></h3>
+<ul>
+<li>Regular = “simple strings”</li>
+<li>Expression = “concise notation”</li>
+<li>Efficiently describe ranges of simple strings.</li>
+</ul>
+<h3 id="import-re"><a href="#TOC">1.9: Import Re</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> re
+re.findall(<span class="st">r&quot;[0-9]&quot;</span>, <span class="st">&quot;1+2==3&quot;</span>) = [<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>]</code></pre>
+<h3 id="concatenation"><a href="#TOC">1.12: Concatenation</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="st">r&quot;[a-c][1-2]&quot;</span>
+
+<span class="st">&quot;a1&quot;</span>, <span class="st">&quot;a2&quot;</span>, <span class="st">&quot;b1&quot;</span>, …</code></pre>
+<h3 id="one-or-more"><a href="#TOC">1.14: One or more</a></h3>
+<ul>
+<li><strong>Maximal munch</strong>: REs should consume the longest possible strings. Default.</li>
+</ul>
+<h3 id="finite-state-machines"><a href="#TOC">1.15: Finite State Machines</a></h3>
+<ul>
+<li>Visual representation of REs.</li>
+<li>States.
+<ul>
+<li>Start state.</li>
+<li>Accept state(s).</li>
+</ul></li>
+<li>Transitions based on input.</li>
+<li><strong>Self-loop</strong>: transition from and to the same state.</li>
+</ul>
+<h3 id="disjunction"><a href="#TOC">1.18: Disjunction</a></h3>
+<ul>
+<li>Two accepting states!</li>
+<li>Pipe / or operator.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">impore re
+r = <span class="st">r&quot;[a-z]+|[0-9]+&quot;</span>
+re.findall(r, <span class="st">&quot;Goethe 1749&quot;</span>) = [<span class="st">&quot;oethe&quot;</span>, <span class="st">&quot;1749&quot;</span>]</code></pre>
+<h1 id="note-that"><a href="#TOC">note that:</a></h1>
+<p>[0-2] = “0|1|2”</p>
+<h3 id="options"><a href="#TOC">1.21: Options</a></h3>
+<ul>
+<li>i.e. optional parts.</li>
+<li>e.g. postive and negative integers. minus sign is optional.</li>
+<li>Naive FSM is wasteful, too many states.</li>
+<li>Can we have an edge that consumes no input?</li>
+<li>Yes: \(\epsilon\). aka “the empty string”. aka “consume no input”.</li>
+<li>For regular expressions, can use a question mark, <code>?</code>
+<ul>
+<li>“optional”</li>
+<li>“the previous thing 0 or 1 times”.</li>
+</ul></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> re
+r = <span class="st">r&quot;-?[0-9]+&quot;</span>
+re.findall(r, <span class="st">&quot;1861-1941 R. Tagore&quot;</span>) = [<span class="st">&quot;1861&quot;</span>, <span class="st">&quot;-1941&quot;</span>]</code></pre>
+<h3 id="escape-sequences"><a href="#TOC">1.22: Escape Sequences</a></h3>
+<ul>
+<li><p>Star, <code>*</code>, zero or more copies.</p>
+<pre><code>a+ === aa*</code></pre></li>
+<li>But how to match actual stars, question marks, brackets?</li>
+<li><p>Escape using <code>\</code>.</p></li>
+</ul>
+<h3 id="hyphenation"><a href="#TOC">1.23: Hyphenation</a></h3>
+<ul>
+<li>Write a regexp to accept lower-cased words, or singly-hyphenated lowercase words.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">r = <span class="st">r&quot;[a-z]+-?[a-z]+&quot;</span></code></pre>
+<ul>
+<li>This is OK, accept can only accept words of length 2 or more.</li>
+<li>Tempted to make either one a Kleene star. But then accept bad inputs like “-a” or “a-”.</li>
+<li>Would like to group the ? operator!</li>
+</ul>
+<h3 id="quoted-strings"><a href="#TOC">1.26: Quoted Strings</a></h3>
+<ul>
+<li><code>.</code>: any character except new-line.</li>
+<li>Note regexps are <strong>non-overlapping</strong>: will not return extra characters!</li>
+<li><code>[^ab]</code>: any characters that aren’t a or b.</li>
+</ul>
+<h3 id="structure"><a href="#TOC">1.27: Structure</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python">(?:xyz)+</code></pre>
+<ul>
+<li><p>Above is grouped, so matches:</p>
+<pre><code>xyz
+xyzxyz
+…</code></pre></li>
+<li><p>e.g. want to match any number of any permutation of <code>do re mi</code>.</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">r = <span class="st">r&quot;do+|re+|mi+&quot;</span></code></pre>
+<ul>
+<li>Above doesn’t work because the operator binds to the last letter.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">r = <span class="st">r&quot;(?:do|re|mi)+&quot;</span></code></pre>
+<ul>
+<li>Above works, operator binds to the groups of letters.</li>
+</ul>
+<h3 id="escaping-the-escape"><a href="#TOC">1.28: Escaping the escape</a></h3>
+<ul>
+<li>Find a regexp that matches double-quotes string literals and allows for escaped double quotes.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">regexp = <span class="st">r&#39;&quot;(?:(?:\\.)*|[^\\])*&quot;&#39;</span></code></pre>
+<ul>
+<li>Regular expressions can “sing” “ABC 123” and “BINGO”, but <em>not</em> “99 bottles of beer on the wall”.
+<ul>
+<li>Can’t count!</li>
+</ul></li>
+</ul>
+<h3 id="representing-a-fsm"><a href="#TOC">1.29: Representing a FSM</a></h3>
+<ul>
+<li>“Tracing with a finger” is basically what computers do to evaluate FSMs!
+<ul>
+<li>Where you are in the input.</li>
+<li>What state you are in.</li>
+</ul></li>
+<li>Python dictionaries to represent edges.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">edges[(<span class="dv">1</span>, <span class="st">&#39;a&#39;</span>)] = <span class="dv">2</span></code></pre>
+<ul>
+<li>edges[(state, input)] = next_state</li>
+<li>also need to know accepting states</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">accepting = [<span class="dv">3</span>]</code></pre>
+<ul>
+<li>don’t need a list of states! already encoded in <code>edges</code>.</li>
+</ul>
+<h3 id="fsm-simulator"><a href="#TOC"> 1.30: FSM simulator</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python">edges = {(<span class="dv">1</span>, <span class="st">&#39;a&#39;</span>) : <span class="dv">2</span>,
+         (<span class="dv">2</span>, <span class="st">&#39;a&#39;</span>) : <span class="dv">2</span>,
+         (<span class="dv">2</span>, <span class="st">&#39;1&#39;</span>) : <span class="dv">3</span>,
+         (<span class="dv">3</span>, <span class="st">&#39;1&#39;</span>) : <span class="dv">3</span>}
+
+accepting = [<span class="dv">3</span>]
+
+<span class="kw">def</span> fsmsim(string, current, edges, accepting):
+    <span class="kw">if</span> <span class="dt">len</span>(string) == <span class="dv">0</span>:
+        <span class="kw">return</span> current in accepting
+    letter = string[<span class="dv">0</span>]
+    next_state = edges.get((current, letter), <span class="ot">None</span>)
+    <span class="kw">if</span> next_state is <span class="ot">None</span>:
+        <span class="kw">return</span> <span class="ot">False</span>
+    <span class="kw">return</span> fsmsim(string[<span class="dv">1</span>:], next_state, edges, accepting)</code></pre>
+<h3 id="fsm-interpretation"><a href="#TOC">1.31: FSM Interpretation</a></h3>
+<ul>
+<li>What are <code>edges</code> and <code>accepting</code> for <code>q*</code>?</li>
+<li>Start state is <code>1</code>.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">edges = {(<span class="dv">1</span>, <span class="st">&#39;q&#39;</span>): <span class="dv">1</span>}        
+accepting = [<span class="dv">1</span>]</code></pre>
+<h3 id="more-fsm-encoding"><a href="#TOC">1:32: More FSM Encoding</a></h3>
+<ul>
+<li>What are <code>edges</code> and <code>accepting</code> for RE:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="st">r&quot;[a-b][c-d]?&quot;</span>
+
+edges = {(<span class="dv">1</span>, <span class="st">&#39;a&#39;</span>): <span class="dv">2</span>,
+         (<span class="dv">1</span>, <span class="st">&#39;b&#39;</span>): <span class="dv">2</span>,
+         (<span class="dv">2</span>, <span class="st">&#39;c&#39;</span>): <span class="dv">3</span>,
+         (<span class="dv">2</span>, <span class="st">&#39;d&#39;</span>): <span class="dv">3</span>}
+
+accepting = [<span class="dv">2</span>, <span class="dv">3</span>]</code></pre>
+<h3 id="epsilon-and-ambiguity"><a href="#TOC"> 1.34: Epsilon and Ambiguity</a></h3>
+<ul>
+<li>An FSM is <strong>ambiguous</strong> if it has epsilon transitions or has multiple outgoing edges leaving the same state with the same label.</li>
+<li>FSM accepts a string s if <em>there exists even one path</em> from the start state to <em>any accepting state</em>.
+<ul>
+<li>FSMs are generous.</li>
+<li>But this doesn’t help us.</li>
+</ul></li>
+</ul>
+<h3 id="phone-it-in."><a href="#TOC">1.35: Phone It In.</a></h3>
+<ul>
+<li>Recognize phone numbers with or without hyphens.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">regexp = <span class="st">r&#39;[0-9]+(?:[0-9]|-[0-9])*&#39;</span></code></pre>
+<h3 id="non-deterministic-fsm"><a href="#TOC">1.37: Non-deterministic FSM</a></h3>
+<ul>
+<li>“Easy-to-write” FSMs with <em>epsilon</em> transitions or <em>ambiguity</em> are known as <strong>non-deterministic finite state machines</strong> (NFAs).
+<ul>
+<li>Don’t know exactly where to put your finger!</li>
+</ul></li>
+<li>A “lock-step” FSM with no epsilon edges or no ambiguity is a <strong>deterministic finite state machine</strong> (DFA).
+<ul>
+<li>Our <code>fsmsim</code> function can handle DFAs.</li>
+</ul></li>
+<li>But the non-determinism, just like the real world, is just an illusion of free will.<br /></li>
+<li>Every non-deterministic FSM has a corresponding deterministic FSM that <em>accepts exactly the same strings</em>.
+<ul>
+<li>NFAs are <em>not more powerful</em> than DFAs, they’re just more convenient.</li>
+</ul></li>
+<li>Idea: build a deterministic machine D where every state in D corresponds to a set of states in the non-deterministic machine.
+<ul>
+<li>The set of states in the DFA is the <strong>epsilon-closure</strong> of the transitionary states in the NFA (recall the Coursera course).</li>
+<li>On states with two edges with same label take both simultaneously.</li>
+<li>If any state in NFA is accepting then the superset state in DFA is also accepting.</li>
+</ul></li>
+</ul>
+<h3 id="save-the-world"><a href="#TOC">1.38: Save the world</a></h3>
+<ul>
+<li><strong>Strings</strong> are sqeuences of characters.</li>
+<li><strong>Regular expressions</strong>: concise notation for specifying sets of strings.
+<ul>
+<li>More flexible than fixed string matching.</li>
+<li>Phone numbers, words, numbers, quotes, strings.</li>
+<li>Search for and match them.</li>
+</ul></li>
+<li><strong>Finite state machines</strong>: pictorial equivalent of regular expressions.</li>
+<li>Every FSM can be converted to a <strong>deterministic</strong> FSM.</li>
+<li><strong>FSM simulation</strong>: It is very easy, ~10 lines of recursive code, to see if a deterministic FSM accepts a string.</li>
+</ul>
+<h3 id="problem-set-1"><a href="#TOC">Problem Set 1</a></h3>
+<ul>
+<li>Given <code>re.findall()</code>, there are equivalent problems that do not use <code>re.findall()</code>.
+<ul>
+<li>Recall that regular expressions may be expressed as finite state machines, and vice versa.</li>
+<li>Hence write an FSM and use <code>fsmsim()</code>. This gives you <code>re.match()</code>, only one search.</li>
+<li>Algorithm for matching <code>re.findall()</code>:</li>
+</ul></li>
+</ul>
+<pre><code>s1 = &quot;12+34&quot;
+fsmsim() for &#39;[0-9]+&#39;.
+
+call fsmsim(&quot;1&quot;), it matches.
+call fsmsim(&quot;2&quot;), it matches.
+call fsmsim(&quot;12+&quot;), it doesn&#39;t match. Hence one &#39;token&#39; is &#39;12&#39;, and advance input to &#39;3&#39;.
+
+call fsmsim(&quot;3&quot;), it matches.
+call fsmsim(&quot;4&quot;), it matches.
+end of string.
+
+result is [&quot;12&quot;, &quot;34&quot;].</code></pre>
+<h2 id="unit-2"><a href="#TOC">Unit 2</a></h2>
+<h3 id="introduction"><a href="#TOC">2.1: Introduction</a></h3>
+<ul>
+<li>Going to make a lexical analyzer.</li>
+</ul>
+<h3 id="specification"><a href="#TOC">2.3: Specification</a></h3>
+<ul>
+<li>Recall outline of course.
+<ul>
+<li>Start with webpage. <em>outline</em>.</li>
+<li>Break it down to important <em>words</em>.</li>
+<li>Put words in a <em>tree</em>.</li>
+<li>Get a result.</li>
+</ul></li>
+</ul>
+<h3 id="taking-html-apart"><a href="#TOC">2.8: Taking HTML Apart</a></h3>
+<ul>
+<li>In both Latin and ancient Japanese, spaces weren’t used as delimeters.</li>
+<li>Need domain knowledge to lexically analyze them!</li>
+<li><p>Given this fragment</p>
+<pre><code>Wollstonecraft&lt;/a&gt;</code></pre></li>
+<li><p>Want the following output</p>
+<pre><code>word                 Wollstonecraft
+start of closing tag &lt;/
+word                 a
+end of closing tag   &gt;
+word                 wrote</code></pre></li>
+</ul>
+<h3 id="html-structure"><a href="#TOC">2.9: HTML Structure</a></h3>
+<ul>
+<li><strong>Token</strong>: smallest unit of output of lexical analysis.
+<ul>
+<li>words, strings, numbers, punctuation.</li>
+<li><em>not</em> whitespace.</li>
+</ul></li>
+<li><p>e.g.</p>
+<pre><code> LANGLE        &lt;
+ LANGLESLASH   &lt;/
+ RANGLE        &gt;
+ EQUAL         =
+ STRING        &quot;google.com&quot;
+ WORD          Welcome!</code></pre></li>
+<li>Left is name, right is example.<br /></li>
+<li><p>Names of tokens are arbitrary, but would like them to be uppercase.</p></li>
+</ul>
+<h3 id="specifying-tokens"><a href="#TOC">2.10: Specifying tokens</a></h3>
+<ul>
+<li>Use <em>regular expressions to specify tokens</em>. In Python:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_RANGLE(token):
+    <span class="st">r&#39;&gt;&#39;</span> <span class="co"># I am a regexp!</span>
+    <span class="kw">return</span> token <span class="co"># return text unchanged, but can transform it.</span>
+     
+<span class="kw">def</span> t_LANGLESLASH(token):
+    <span class="st">r&#39;/&gt;&#39;</span>
+    <span class="kw">return</span> token</code></pre>
+<h3 id="token-values"><a href="#TOC">2.11: Token values</a></h3>
+<ul>
+<li>By default the value is the string it matches. But we can transform text!</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_NUMBER(token):
+    <span class="st">r&#39;[0-9]+&#39;</span>
+    token.value = <span class="dt">int</span>(token.value)
+    <span class="kw">return</span> token</code></pre>
+<ul>
+<li>This is returned as an integer, not a string.</li>
+<li>Remember that <strong>maximal munch</strong> is being used.</li>
+</ul>
+<h3 id="quoted-strings-1"><a href="#TOC">2.12: Quoted Strings</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_STRING(token):
+    <span class="st">r&#39;&quot;[^&quot;]*&quot;&#39;</span>
+    <span class="kw">return</span> token</code></pre>
+<h3 id="whitespace"><a href="#TOC">2.13: Whitespace</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_WHITESPACE(token):
+    <span class="st">r&#39; &#39;</span>
+    <span class="kw">pass</span></code></pre>
+<ul>
+<li>By passing we skip it.</li>
+</ul>
+<p>And if we define a word as any number of characters except &lt;, &gt;, or space, leaving the value unchanges:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_WORD(token):
+    <span class="st">r&#39;[^&lt;&gt; ]+&#39;</span>
+    <span class="kw">return</span> token</code></pre>
+<h3 id="lexical-analyzer"><a href="#TOC">2.14: Lexical Analyzer</a></h3>
+<ul>
+<li><strong>Lexical Analyzer</strong>, or <strong>lexer</strong>, is just a collection of token definitions.</li>
+</ul>
+<h3 id="ambiguity"><a href="#TOC">2.15: Ambiguity</a></h3>
+<ul>
+<li>What if token definitions overlap?</li>
+<li>“We don’t just serve hamburgers, we serve people!”</li>
+<li><strong>First one wins</strong>, according to where it is in the file.</li>
+</ul>
+<h3 id="string-snipping"><a href="#TOC">2.17: String snipping</a></h3>
+<ul>
+<li>For quoted strings really just want the contents of the quotes portion:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_STRING(token):
+    <span class="st">r&#39;&quot;[^&quot;]*&quot;&#39;</span>
+    token.value = token.value[<span class="dv">1</span>:-<span class="dv">1</span>]
+    <span class="kw">return</span> token</code></pre>
+<p>Making a lexer</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> ply.lex <span class="ch">as</span> lex
+
+tokens = (
+    <span class="st">&#39;LANGLE&#39;</span>,        <span class="co"># &lt;</span>
+    <span class="st">&#39;LANGLESLASH&#39;</span>,   <span class="co"># &lt;/</span>
+    <span class="st">&#39;RANGLE&#39;</span>,        <span class="co"># &gt;</span>
+    <span class="st">&#39;EQUAL&#39;</span>,         <span class="co"># =</span>
+    <span class="st">&#39;STRING&#39;</span>,        <span class="co"># &quot;..&quot;</span>
+    <span class="st">&#39;WORD&#39;</span>           <span class="co"># dada</span>
+)   
+
+t_ignore = <span class="st">&#39; &#39;</span> <span class="co"># shortcut for whitespace</span>
+
+<span class="co"># note this is before t_LANGLE, want it to win</span>
+<span class="kw">def</span> t_LANGLESLASH(token):
+    <span class="st">r&#39;&lt;/&#39;</span>
+    <span class="kw">return</span> token
+    
+<span class="kw">def</span> t_LANGLE(token):
+    <span class="st">r&#39;&lt;&#39;</span>
+    <span class="kw">return</span> token
+    
+<span class="kw">def</span> t_RANGLE(token):
+    <span class="st">r&#39;&gt;&#39;</span>
+    <span class="kw">return</span> token
+    
+<span class="kw">def</span> t_EQUAL(token):
+    <span class="st">r&#39;=&#39;</span>
+    <span class="kw">return</span> token
+   
+<span class="kw">def</span> t_STRING(token):
+    <span class="st">r&#39;&quot;[^&quot;]*&quot;&#39;</span>
+    token.value = token.value[<span class="dv">1</span>:-<span class="dv">1</span>]
+    <span class="kw">return</span> token
+    
+<span class="kw">def</span> t_WORD(token):
+    <span class="st">r&#39;[^ &lt;&gt;]+&#39;</span>
+    <span class="kw">return</span> token
+    
+webpage = <span class="st">&quot;This is &lt;b&gt;my&lt;/b&gt; webpage!&quot;</span>
+htmllexer = lex.lex()
+htmllexer.<span class="dt">input</span>(webpage)
+<span class="kw">while</span> <span class="ot">True</span>:
+    tok = htmllexer.token()
+    <span class="kw">if</span> not tok: <span class="kw">break</span>
+    <span class="kw">print</span> tok</code></pre>
+<ul>
+<li>Output is a list of LexToken objects.</li>
+<li>They indicate <code>LexToken(TYPE, line, character)</code>. Indicate line and character on that line.</li>
+</ul>
+<h3 id="tracking-line-numbers"><a href="#TOC">2.19: Tracking line numbers</a></h3>
+<ul>
+<li>Lexer keeps track of column number, but not line number.
+<ul>
+<li>Column number is character since the beginning of the file.</li>
+</ul></li>
+<li>We need to add a rule to help us, right at the top.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_newline(token):
+    <span class="st">r&#39;\n&#39;</span>
+    token.lexer.lineno += <span class="dv">1</span>
+    <span class="kw">pass</span></code></pre>
+<ul>
+<li>But then we’d have to remove <code>\n</code> from <code>t_WORD</code>, just like we’re currently ignoring spaces.</li>
+</ul>
+<h3 id="commented-html"><a href="#TOC">2.21: Commented HTML</a></h3>
+<ul>
+<li>Start with <code>&lt;!--</code>, end with <code>--&gt;</code></li>
+</ul>
+<p>How to add to lexer.</p>
+<pre class="sourceCode python"><code class="sourceCode python">states = (
+    (<span class="st">&#39;htmlcomment&#39;</span>, <span class="st">&#39;exclusive&#39;</span>),
+)</code></pre>
+<p>If we are in the state <code>htmlcomment</code> we cannot be doing anything else at the same time, like looking for strings or words.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_htmlcomment(token):
+    <span class="st">r&#39;&lt;!--&#39;</span>
+    token.lexer.begin(<span class="st">&#39;htmlcomment&#39;</span>)
+    
+<span class="kw">def</span> t_htmlcomment_end(token):
+    <span class="st">r&#39;--&gt;&#39;</span>
+    token.lexer.lineno += token.value.count(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)
+    token.lexer.begin(<span class="st">&#39;INITIAL&#39;</span>)
+    
+<span class="kw">def</span> t_htmlcomment_error(token):
+    token.lexer.skip(<span class="dv">1</span>)</code></pre>
+<ul>
+<li><code>INITIAL</code> just means whatever you were going before coming into this state, i.e. <code>htmlcomment</code>.<br /></li>
+<li>Note we even exclude our helpful little line number counter! Hence we need to count line breaks in the entire comment when it finishes.</li>
+<li>Finally, we don’t match anything in the comments. They all result in errors! Hence let’s skip all the errors.
+<ul>
+<li>But instead of <code>pass</code> we’re actually gathering up all the characters that resulted in the error, so that we can subsequently count for newlines.</li>
+</ul></li>
+<li>Just because a comment returns no tokens, it isn’t ignored. It still splits up other tokens.</li>
+</ul>
+<h3 id="identifier"><a href="#TOC">2.26: Identifier</a></h3>
+<ul>
+<li><strong>Identifier</strong>: variable name or function name. Identify a value or storage locations.
+<ul>
+<li>factorial, x, tmp, Super, WonderWoman, my_count.</li>
+<li>Not: _blah, 123.</li>
+</ul></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_identifier(token):
+    <span class="st">r&#39;[A-Za-z][A-Za-z0-9_]+&#39;</span>
+    <span class="kw">return</span> token</code></pre>
+<h3 id="number"><a href="#TOC">2.27: Number</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_NUMBER(token):
+    <span class="st">r&#39;-?[0-9]+(?:\.[0-9]*)?&#39;</span>
+    token.value = <span class="dt">float</span>(token.value)
+    <span class="kw">return</span> token</code></pre>
+<h3 id="the-end-of-the-line"><a href="#TOC">2.28: The End Of The Line</a></h3>
+<p>Comments to the end of the line in JavaScript.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_eolcomment(token):
+    <span class="st">r&#39;//[^\n]*&#39;</span>
+    <span class="kw">pass</span></code></pre>
+<h3 id="wrap-up"><a href="#TOC">2.30: Wrap Up</a></h3>
+<ul>
+<li><strong>Tokens</strong>!
+<ul>
+<li>Number, word, string.</li>
+<li>Specified by <strong>regular expressions</strong>.</li>
+</ul></li>
+<li>HTML, Javascript.</li>
+</ul>
+<h3 id="office-hours-2"><a href="#TOC">Office Hours 2</a></h3>
+<ul>
+<li><code>ply</code> library
+<ul>
+<li>First line of token definition is in the docstring! So <code>ply</code> can use reflection to get them.</li>
+<li>Each token has a regular expression.</li>
+<li>Then generate an NFA that has a special new start state, with an epsilon transition to each start state for each token. Massive union!</li>
+<li>Then convert to DFA!</li>
+<li>Lexer doesn’t just accept strings. It accepts strings and knows what the token is.</li>
+</ul></li>
+<li>Use of ply lexer states
+<ul>
+<li>Convenience. One FSM per state.</li>
+<li>But not going to use one state for HTML, one state for Javascript.</li>
+<li>Instead we’ll use two different lexer files entirely.</li>
+<li>Both running in the same program!</li>
+</ul></li>
+<li>Internationalization
+<ul>
+<li>ASCII is OK for English, 256 characters.</li>
+<li>Need more numbers for other langauges!</li>
+<li>How about 65,535?</li>
+<li>Unicode!</li>
+<li>Want to use special regular expression shortcuts, rather than character ranges.</li>
+</ul></li>
+<li>Long Token Definition Rules
+<ul>
+<li>Man, lots of rules! Is it really this long?</li>
+<li>There’s no free lunch; yes, languages are complicated.</li>
+<li>But one can take a structured approach and make it manageable.</li>
+<li>Is it difficult to pave a road, build a sewer, paint a beautiful painting?</li>
+<li>Yes, but only need to do it once, then reuse forever.</li>
+</ul></li>
+<li>Ill formed input
+<ul>
+<li>Going to get to his in unit 3.</li>
+<li>But in this class we’re going to recognize malformed input and then reject.</li>
+<li>In reality browsers put a huge amount of effort into being forgiving. Most webpages are malformed.</li>
+<li><strong>Error recovery</strong>, <strong>Error tolerance</strong>, <strong>Fault tolerance</strong>.</li>
+<li>In practice you write duplicate rules, and then print out warnings and keep going.</li>
+<li>Applies to lexical analysis and semantic analysis.</li>
+</ul></li>
+<li>Speak Javascript
+<ul>
+<li>Yes, by the end of the class will have written simple but actual Javascript programs.</li>
+<li>But not going to do flashy DOM manipulation or UI.</li>
+</ul></li>
+<li>Use of Lexing Elsewhere
+<ul>
+<li>Yes! Large number of uses for lexing outside of languages.</li>
+<li><em>Electronic commerce</em>; phone numbers, credit numbers use regular expressions.</li>
+<li><em>Virus detection</em>. Based on regular expressions and lexing.
+<ul>
+<li>Virus definition file is a giant list of tokens.</li>
+<li>Each virus gets a corresponding regular expression to find its payload etc.</li>
+</ul></li>
+<li><em>Computational biology</em>.
+<ul>
+<li>Strings, made up of four characters.</li>
+<li>Longest common substring matching.</li>
+<li>How do we make new drugs?</li>
+<li>Want to make mathematical models, governed by protein folding.</li>
+<li><em>BLAST</em>. Common software project for doing this work.</li>
+</ul></li>
+<li><em>Readability metrics</em> for both software programs and human languages.
+<ul>
+<li>Grade level of text by measuring number of words in sentences and number of letters per word.</li>
+</ul></li>
+<li><em>Natural language processing</em>: real world languages can be lexed, but parsing is much more difficult.
+<ul>
+<li><em>Document summarisation</em>. This is very difficult!</li>
+<li>Joke is that natural language processing is “AI-complete” (analogous to NP-complete).</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="unit-3-syntactic-analysis"><a href="#TOC"> Unit 3: Syntactic Analysis</a></h2>
+<h3 id="bags-of-words"><a href="#TOC">3.2: Bags of Words</a></h3>
+<ul>
+<li>Recall we’ve done String -&gt; Lexing -&gt; List of Tokens.</li>
+<li>Lexing uses regular expressions.</li>
+<li>But having a list of words isn’t enough!</li>
+<li>A natural language admits an infinite number of utters, but <em>not</em> all utterances. There are rules! All <strong>grammars</strong> rule something out.</li>
+</ul>
+<h3 id="syntactic-structure"><a href="#TOC">3.3: Syntactic Structure</a></h3>
+<ul>
+<li>Noam Chomsky, 1955. <em>Syntactic Structures</em>
+<ul>
+<li>Utterances have rules, <strong>formal grammars</strong>.</li>
+</ul></li>
+<li>Grammatical sentence: follows the rules.</li>
+<li>Can write down formal grammars using a set of <strong>rewrite rules</strong>.
+<ul>
+<li><em>Sentence</em> -&gt; <em>Subject</em> <em>Verb</em></li>
+<li><em>Subject</em> -&gt; Teachers</li>
+<li><em>Subject</em> -&gt; Students</li>
+<li><em>Verb</em> -&gt; write</li>
+<li><em>Verb</em> -&gt; think</li>
+<li>(italics =&gt; <strong>non-terminals</strong>, non-italcs =&gt; <strong>terminals</strong>).</li>
+<li>Non-terminals can be re-written into terms on right, sometimes terminals,</li>
+<li>You can always replace non-terminals.</li>
+<li>Once you get a terminal it can’t be changed.</li>
+</ul></li>
+<li><p>e.g.</p>
+<pre><code>sentence
+-&gt; subject verb
+-&gt; students verb
+-&gt; students think</code></pre></li>
+<li>This is a <strong>derivation</strong>. Use re-write rules.</li>
+<li><p>Can perform multiple derivations, e.g.</p>
+<pre><code>sentence
+-&gt; subject verb
+-&gt; subject write
+-&gt; teachers write    </code></pre></li>
+</ul>
+<h3 id="infinity-and-beyond"><a href="#TOC">3.5: Infinity and Beyond</a></h3>
+<ul>
+<li><p>Add just one rule, gives phenomenal power!</p>
+<pre><code>Sentence -&gt; Subject Verb
+Subject -&gt; students
+Subject -&gt; teachers
+Subject -&gt; Subject and Subject
+Verb -&gt; think
+Verb -&gt; write</code></pre></li>
+<li><strong>Recursion</strong> in a context-free grammar can allow for an infinite number of utterances (but not all utterances).</li>
+<li><strong>Recursive rewrite rules</strong> allow for <strong>recursive grammars</strong>.</li>
+<li>Infinite utterances, <em>all of finite length</em>.</li>
+<li><p>Formally, the number of strings is <strong>countably infinite</strong>.</p></li>
+</ul>
+<h3 id="an-arithmetic-grammar"><a href="#TOC">3.7: An Arithmetic Grammar</a></h3>
+<ul>
+<li>Finite grammar -&gt; countably infinite utterances.</li>
+<li>Chomsky argues this is how a “finite brain” -&gt; infinite creative ideas.</li>
+<li><p>Arithmetic grammar example:</p>
+<pre><code>Exp -&gt; Exp + Exp
+Exp -&gt; Exp - Exp
+Exp -&gt; number</code></pre></li>
+<li><p>e.g. <code>number number</code> is not valid, <code>number + number - number</code> is valid.</p></li>
+</ul>
+<h3 id="syntactical-analysis"><a href="#TOC">3.8: Syntactical analysis</a></h3>
+<ul>
+<li>Recall:
+<ul>
+<li>Lexical Analysis (“lexing”): String -&gt; Token List.</li>
+<li>Syntactical Analysis (“parsing”): Token List -&gt; Valid in Grammar?</li>
+</ul></li>
+<li><p>Valid in grammar == is in the language of the grammar.</p></li>
+<li>Lexing + Parsing = Expressive Power</li>
+<li><p>Word rules + sentence rules = creativity!</p>
+<pre><code>Exp -&gt; Exp + Exp
+Exp -&gt; Exp - Exp
+Exp -&gt; Number
+
+and
+
+def t_NUMBER(token):
+    r&#39;[0-9]+&#39;
+    token.value = int(token.value)
+    return token</code></pre></li>
+<li><p>Can now check for valid sequence of tokens.</p>
+<pre><code>1 + 2, good
+7 + 2 - 2, good
+- - 2, bad.</code></pre></li>
+</ul>
+<h3 id="statements"><a href="#TOC">3.9: Statements</a></h3>
+<pre><code>    Stmt -&gt; identifier = Exp
+    Exp -&gt; Exp + Exp
+    Exp -&gt; Exp - Exp
+    Exp -&gt; number
+
+    lata = 1, good
+    lata = lata + 1, bad</code></pre>
+<h3 id="optional-parts"><a href="#TOC">3.10: Optional Parts</a></h3>
+<ul>
+<li>“I think” vs. “I think corectly”.</li>
+<li>Optional adverbs!</li>
+<li><p>Can specify two rewrite rules for the same non-terminal, where one of them goes to epsilon, i.e. the empty string.</p>
+<pre><code>Sentence -&gt; OptionalAdjective Subject Verb
+Subject -&gt; william
+Subject -&gt; tell
+OptionalAdjective -&gt; accurate
+OptionalAdjective -&gt; \epsilon
+Verb -&gt; shoots
+Verb -&gt; bows
+
+8 possible utterances!</code></pre></li>
+</ul>
+<h3 id="more-digits"><a href="#TOC"> 3.11: More Digits</a></h3>
+<ul>
+<li><p>Grammars can encode <strong>regular languages</strong>.</p>
+<pre><code>number - r&#39;[0-9]+&#39;
+
+Number -&gt; Digit MoreDigits
+MoreDigits -&gt; Digit MoreDigits
+MoreDigits -&gt; \epsilon
+Digit -&gt; 0
+Digit -&gt; 1
+…
+Digit -&gt; 9
+
+Number
+-&gt; Digit MoreDigits
+-&gt; Digit Digit MoreDigits
+-&gt; Digit Digit \epsilon
+-&gt; Digit 2
+-&gt; 42</code></pre></li>
+</ul>
+<h3 id="grammars-and-regexps"><a href="#TOC">3.12: Grammars and Regexps</a></h3>
+<ul>
+<li><p>Grammar &gt;= Regexp</p>
+<pre><code>regexp = r&#39;p+i?&#39; # e.g. p, pp, pi, ppi
+
+Regexp -&gt; Pplus Iopt
+Pplus -&gt; p Pplus
+Pplus -&gt; p
+Iopt -&gt; i
+Iopt -&gt; \epsilon</code></pre></li>
+</ul>
+<h3 id="context-free-languages"><a href="#TOC">3.13: Context-Free Languages</a></h3>
+<ul>
+<li><em>Regular expressions</em> describe <em>regular languages</em>.</li>
+<li><p><em>Context-free grammars</em> describe <em>context-free languages</em>.</p>
+<pre><code>A -&gt; B
+xyzAxyz -&gt; xyzBxyz</code></pre></li>
+<li>Above, can always go from A -&gt; B regardless of context around A, assuming we keep context the same.</li>
+<li><p>Here are three different regular expression forms, and equivalent context-free grammars.</p>
+<pre><code>r&#39;ab&#39;   =&gt; G -&gt; ab
+
+r&#39;a*&#39;   =&gt; G -&gt; \epsilon
+           G -&gt; aG
+
+r&#39;a|b&#39;  =&gt; G -&gt; a
+        =&gt; G -&gt; b</code></pre></li>
+<li><p>But regular languages != context-free languages.</p></li>
+</ul>
+<h3 id="parentheses"><a href="#TOC">3.14: Parentheses</a></h3>
+<ul>
+<li><p>Consider:</p>
+<pre><code>P -&gt; ( P )
+P -&gt; \epsilon  </code></pre></li>
+<li><strong>Balanced parentheses</strong>.</li>
+<li>Balanced parenthesis are <strong>not regular</strong>.
+<ul>
+<li>The proof for this follows directly from the <a href="http://en.wikipedia.org/wiki/Pumping_lemma_for_regular_languages"><strong>“pumping lemma” for regular languages</strong></a>.</li>
+</ul></li>
+<li><p>Let’s try:</p>
+<pre><code>r&#39;\(*\)*&#39;</code></pre></li>
+<li><p>But it doesn’t match parentheses :(.</p></li>
+</ul>
+<h3 id="intuition"><a href="#TOC"> 3.16: Intuition</a></h3>
+<ul>
+<li><em>Impossible</em> for a regular language to balance parentheses.</li>
+<li>Here is some intuition.</li>
+<li><p>We want:</p>
+<pre><code>(^N )^N</code></pre></li>
+<li>i.e. both N times.</li>
+<li><p>But all we can write is:</p>
+<pre><code>(* )*</code></pre></li>
+<li>And these stars need not be the same.</li>
+<li>Think about finite state machines. We only need to know where we are, not where we came from.
+<ul>
+<li>Regular expressions just don’t have that memory.</li>
+</ul></li>
+</ul>
+<h3 id="extracting-information"><a href="#TOC"> 3.18: Extracting Information</a></h3>
+<ul>
+<li>HTML JavaScript -&gt; formal grammars.</li>
+<li><strong>Parse trees</strong> are inverted trees / pictorial representations of the structure of an utterance.</li>
+<li>Start with a non-terminal, then expand downwards. Tree growing upside down.</li>
+<li>Interior nodes are non-terminals, leaves are terminals.</li>
+</ul>
+<h3 id="ambiguity-1"><a href="#TOC">3.20: Ambiguity</a></h3>
+<ul>
+<li>Both natural languages and programming language elements can be ambiguous. Two or more interpretations.</li>
+<li><p>e.g. “I saw Jane Austen using binoculars”.</p>
+<pre><code>1 - 2 + 3
+
+could be 2 or -4!</code></pre></li>
+<li><p>A grammar is <strong>ambiguous</strong> if there is <em>at least one</em> string in the grammar that has <em>more than one</em> different parse tree.</p></li>
+</ul>
+<h3 id="to-the-rescue"><a href="#TOC">3.21: To The Rescue</a></h3>
+<ul>
+<li><p>Parentheses can come to the ( Rescue ).</p>
+<pre><code>exp - exp + exp
+exp -&gt; exp - exp
+exp -&gt; number
+exp -&gt; ( exp )</code></pre></li>
+</ul>
+<h3 id="grammar-for-html"><a href="#TOC">3.23: Grammar for HTML</a></h3>
+<pre><code>    &lt;b&gt;Welcome to &lt;i&gt;my&lt;/i&gt; webpage!&lt;/b&gt;
+
+    Html -&gt; Element Html
+    Html -&gt; \epsilon
+    Element -&gt; word
+    Element -&gt; TagOpen Html TagClose
+    TagOpen -&gt; &lt; word &gt;
+    TagClose -&gt; &lt;/ word &gt;</code></pre>
+<ul>
+<li>The parse tree for a web page allows us to determine the extent of tags, e.g. how much of a web page should be bolded.</li>
+</ul>
+<h3 id="revenge-of-javascript"><a href="#TOC">3.25: Revenge of JavaScript</a></h3>
+<ul>
+<li>JavaScript is similar to Python.</li>
+<li>In Python:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> absval(x):
+    <span class="kw">if</span> x &lt; <span class="dv">0</span>:
+        <span class="kw">return</span> <span class="dv">0</span> - x
+    <span class="kw">else</span>:
+        <span class="kw">return</span> x</code></pre>
+<ul>
+<li>In JavaScript:</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> absval(x) {
+    <span class="kw">if</span> x &lt; <span class="dv">0</span> { 
+        <span class="kw">return</span> <span class="dv">0</span> - x;
+    } <span class="kw">else</span> {
+        <span class="kw">return</span> x;
+    }
+}</code></pre>
+<ul>
+<li><p>JavaScript uses braces to signify lexical scope. Python uses indentation.</p></li>
+<li><p>In Python</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">print</span> <span class="st">&quot;hello&quot;</span> + <span class="st">&quot;!&quot;</span></code></pre>
+<ul>
+<li><p>In JavaScript:</p>
+<pre><code>document.write(&quot;hello&quot; + &quot;!&quot;)
+
+or
+
+write(&quot;hello&quot; + &quot;!&quot;)</code></pre></li>
+<li><p>All JavaScript function calls require brackets.</p></li>
+</ul>
+<h3 id="universal-meaning"><a href="#TOC">3.27: Universal Meaning</a></h3>
+<ul>
+<li>We can translate between Python and JavaScript. Theory of <strong>universal grammar</strong>.</li>
+<li>They’re both <strong>Turing-Complete</strong>.</li>
+</ul>
+<p>Partial grammar for JavaScript:</p>
+<pre><code>    Exp -&gt; identifier
+    Exp -&gt; TRUE
+    Exp -&gt; FALSE
+    Exp -&gt; number
+    Exp -&gt; string
+    Exp -&gt; Exp + Exp
+    Exp -&gt; Exp - Exp
+    Exp -&gt; Exp * Exp
+    Exp -&gt; Exp / Exp
+    Exp -&gt; Exp &lt; Exp
+    Exp -&gt; Exp == Exp
+    Exp -&gt; Exp &amp;&amp; Exp
+    Exp -&gt; Exp || Exp</code></pre>
+<ul>
+<li>!!AI surely missing parentheses, operator precedence?</li>
+<li>!!AI not missing quoted strings with escaped characters because this is a lexical definition, not a syntactic one.</li>
+</ul>
+<h3 id="javascript-grammar"><a href="#TOC">3.29: JavaScript Grammar</a></h3>
+<ul>
+<li>Expressions ~= Noun Phrases</li>
+<li>Operators ~= Verbs</li>
+<li><p>Statements ~= Sentences</p></li>
+<li>Jay becomes three.</li>
+<li><p>-&gt; j = 3;</p>
+<pre><code>Statement -&gt; identifier = Exp
+Statement -&gt; return Exp
+Statement -&gt; if Exp CompoundStatement
+Statement -&gt; if Exp CompoundStatement else CompoundStatement
+CompoundStatement -&gt; { Statements }
+Statements -&gt; Statement; Statements
+Statements -&gt; \epsilon</code></pre></li>
+<li>So in addition to expressions we know have statements that build upon expressions.</li>
+<li>!!AI surely <code>CompoundStatement</code> could also be <code>Statement</code> without braces?
+<ul>
+<li>!!AI Actually no. Better to allow <code>CompoundStatement</code> or <code>Statement</code> in <code>Statement</code>?</li>
+</ul></li>
+<li>!!AI Note the limitations of the above:
+<ul>
+<li>Only one statement allowed; need a similar trick as HTML to make this infinite.</li>
+</ul></li>
+</ul>
+<h3 id="javascript-functions"><a href="#TOC">3.31: JavaScript Functions</a></h3>
+<ul>
+<li>We’ve seen expressions and statemetns.</li>
+<li>We need functions!
+<ul>
+<li>Declaration.</li>
+<li>Calling.</li>
+</ul></li>
+<li>Python program = List of statements and function definitions.</li>
+<li><p>JavaScript program the same!</p>
+<pre><code>   Js -&gt; Element Js
+   Js -&gt; \epsilon
+
+   Element -&gt; function identifier ( OptParams ) CompoundStatement // function definition
+   Element -&gt; Statement;
+
+   OptParams -&gt; Params
+   OptParams -&gt; \epsilon
+
+   Params -&gt; identifier, Params
+   Params -&gt; identifier</code></pre></li>
+<li>Note that Element forces Statements to be <em>terminated</em> with semi-colons.</li>
+<li>Note that Params forces identifiers to be <em>delimited</em> by colons.</li>
+<li><p>This is a cute property of Context-Free Grammars.</p>
+<pre><code>   Exp -&gt; … // as before
+   Exp -&gt; identifier( OptArgs ) // function call
+
+   OptArgs -&gt; Args
+   OptArgs -&gt; \epsilon
+   Args -&gt; Exp, Args
+   Args -&gt; Exp</code></pre></li>
+<li>Notice that a string that is in a grammar doesn’t prevent certain errors.
+<ul>
+<li>Could define <code>sin(x)</code>, but then call it as <code>sin(50, 60)</code>.</li>
+</ul></li>
+</ul>
+<h3 id="lambda"><a href="#TOC">3.33: Lambda</a></h3>
+<ul>
+<li>Creating grammars vs. checking utterances.</li>
+<li>Accept: <code>(1 + (2 + 3))</code></li>
+<li>Reject: <code>1 + + + ) 3</code>.</li>
+<li>But how to check a given string is in the language of a given grammar?
+<ul>
+<li><em>Super slow</em>. Enumerate all valid strings, then see if your string is in there.
+<ul>
+<li>Countably infinite number of strings!</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Lambda</strong> (make me a function, <strong>anonymous function</strong>)</p>
+<pre><code>   def addtwo(x): return x+2
+   addtwo(2) # = 4
+
+   mystery = lambda(x): x+2
+   mystery(3) # = 5
+
+   pele = mystery
+   pele(4) # = 6</code></pre></li>
+</ul>
+<h3 id="list-power"><a href="#TOC">3.34: List Power</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> mysquare(x): <span class="kw">return</span> x*x
+<span class="dt">map</span>(mysquare, [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]) <span class="co"># = [1,4,9,16,25]</span>
+
+<span class="dt">map</span>(<span class="kw">lambda</span>(x): x*x, [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]) <span class="co"># same!</span>
+
+[x*x <span class="kw">for</span> x in [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>] <span class="co"># same!</span></code></pre>
+<h3 id="generators"><a href="#TOC">3.37: Generators</a></h3>
+<ul>
+<li>List comprehensions are declarative, awesome.</li>
+<li>Downside: need to write down the starting lists.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> odds_only(numbers):
+    <span class="kw">for</span> n in numbers:
+        <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">1</span>:
+            <span class="kw">yield</span> n</code></pre>
+<ul>
+<li><code>yield</code>: not return! A <strong>generator</strong>.</li>
+<li>Convenient way to filter.</li>
+<li>Even easier:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">[x <span class="kw">for</span> x in [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>] <span class="kw">if</span> x % <span class="dv">2</span> == <span class="dv">1</span>]</code></pre>
+<ul>
+<li><strong>Guard</strong>, aka <strong>predicate</strong>.</li>
+</ul>
+<h3 id="checking-valid-strings"><a href="#TOC">3.39: Checking Valid Strings</a></h3>
+<ul>
+<li><p>Python program to check a string is in a grammar.</p>
+<pre><code>Exp -&gt; Exp + Exp
+Exp -&gt; Exp - Exp
+Exp -&gt; ( Exp )
+Exp -&gt; num
+
+grammar = [
+    (&quot;Exp&quot;, [&quot;Exp&quot;, &quot;+&quot;, &quot;Exp&quot;]),
+    (&quot;Exp&quot;, [&quot;Exp&quot;, &quot;-&quot;, &quot;Exp&quot;]),
+    (&quot;Exp&quot;, [&quot;(&quot;, &quot;Exp&quot;, &quot;)&quot;],
+    (&quot;Exp&quot;, [&quot;num&quot;]),
+]</code></pre></li>
+<li><p>Given e.g. <code>print exp;</code></p>
+<pre><code>utterance = [&quot;print&quot;, &quot;exp&quot;, &quot;;&quot;]
+into:
+[&quot;print&quot;, &quot;exp&quot;, &quot;-&quot;, &quot;exp&quot;, &quot;;&quot;]
+
+
+pos = 1
+result = utterance[0:pos] + rule[1] + utterance[pos+1:]</code></pre></li>
+<li>We want to enumerate all valid strings in the grammar, the super-slow method.</li>
+<li><p>e.g.</p>
+<pre><code>    start with &quot;a exp&quot;
+    with depth 1, get:
+    &quot;a exp + exp&quot;
+    &quot;a exp - exp&quot;
+    &quot;a (exp)&quot;
+    &quot;a num&quot;</code></pre></li>
+<li><p>Let’s code it up:</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">grammar = … (<span class="ch">as</span> above)
+
+<span class="kw">def</span> expand(tokens, grammar):
+    <span class="kw">for</span> i, token in <span class="dt">enumerate</span>(tokens):
+        <span class="kw">for</span> (rule_lhs, rule_rhs) in grammar:
+            <span class="kw">if</span> token == rule_lhs:
+                result = tokens[<span class="dv">0</span>:i] + rule_rhs + tokens[i<span class="dv">+1</span>:]
+                <span class="kw">yield</span> result
+
+depth = <span class="dv">2</span>
+utterances = [[<span class="st">&quot;exp&quot;</span>]]
+<span class="kw">for</span> x in <span class="dt">xrange</span>(depth):
+    <span class="kw">for</span> sentence in utterances:
+        utterances = utterances + [ i <span class="kw">for</span> i in expand(sentence, grammar)]
+
+<span class="kw">for</span> sentence in utterances:
+    <span class="kw">print</span> sentence</code></pre>
+<ul>
+<li>We saw: a slow way to encode grammars and enumerate strings.</li>
+<li>But will learn a more efficient way to encode grammar rules and check for validity.</li>
+</ul>
+<h3 id="office-hours-3"><a href="#TOC">Office Hours 3</a></h3>
+<ul>
+<li>Lex and Yacc used in the real world?
+<ul>
+<li>Yes!</li>
+<li>The idea of making a lexer and/or a parser is so common there are many tools for many languages.</li>
+<li>Flex and Bison are free (GNU) versions of Lex and Yacc.</li>
+<li>Nowadays can find Flex and Bison for many languages.</li>
+<li>Java has Cup.</li>
+<li>Ruby has Rubylex and Rubyyacc.</li>
+<li>Python has ply.</li>
+<li>Ocaml has Ocamllex and Ocamlyacc.</li>
+</ul></li>
+<li>Beyond Context Free
+<ul>
+<li>Anything besides context-free grammars and regular languages?</li>
+<li>Context-free grammars are not the end-all and be-all.</li>
+<li>The opposite of CFG is <strong>context-sensitive grammar</strong>.</li>
+<li>Local state, memory.</li>
+<li>We will need to keep track of context when we interpret JavaScript and HTML later in the class - we’ll need context sensitivity in unit 5.</li>
+</ul></li>
+<li>Testing
+<ul>
+<li>How to write good test cases?</li>
+<li>Formally, <em>checking that software implementation matches its specification</em>.</li>
+<li>Software testing gives us <em>confidence, not certainty</em>.</li>
+<li>There an infinite number of inputs.</li>
+<li>Hope that test cases are indicative of problems, or highlight errors.</li>
+<li>Goal of a good test suite is that once its run we’ll have confidence is that there are no bugs.</li>
+<li>Think of corners, edge cases.</li>
+<li><em>Be creative</em> and think that people are <em>cheating you or deceiving you</em> - the human brain is very good at adopting this stance.</li>
+<li>For <em>numbers</em>: try 0, try negatives, try positives, prime numbers, compostivies.</li>
+<li>For <em>lists</em>: try ascending order, descending order, random, empty, very big.</li>
+<li>For <em>grammars and strings</em>: short and long strings, recursive and non-recursive grammars.</li>
+<li>A lot of research in <em>automated test input generation</em>, to force programs down different branches.</li>
+<li>Whenever there is an infinite number of possibilities, room for creativity.</li>
+</ul></li>
+<li>Beyond parsing
+<ul>
+<li>Can context-free grammars be used to do anything besides parse languages?</li>
+<li>Yes!</li>
+<li><em>Security</em>
+<ul>
+<li>Regular expressions can be used in virus checking.</li>
+<li>Virus checkers are giant lexers.</li>
+<li>e.g. cross-site scripting and SQL injection.</li>
+<li>Can use CFGs if user input is normal or if it’s trying to take advantage of XSS or SQL injection.</li>
+<li>Pretend to parse the string, and if the changes that results from the string or the parse tree is too large then we know that something bad is going on.</li>
+</ul></li>
+<li><em>Optimization</em>
+<ul>
+<li>Production compilers and intepreters.</li>
+<li>Faster, less memory, less power.</li>
+<li>We will cover basic optimization in unit 6.</li>
+<li><em>Data flow analysis</em>: e.g. if x = 0 then y = x + x is always 0.</li>
+<li>Best known methods for doing data flow analysis use context-free grammars, in particular context-free language reachability.</li>
+<li>Problem is equivalent to “can we generate a string in this context-free grammar”.</li>
+</ul></li>
+<li><em>Computational Linguistics</em>
+<ul>
+<li>CFGs came out of computational linguistics.</li>
+</ul></li>
+<li><em>Specification mining</em>
+<ul>
+<li>Determining what a program should be doing by reading its source code.</li>
+<li>Output takes the form of a formal grammar or a state machine.</li>
+<li>e.g. “should always use braces” or “close a file after you’ve opened it”.</li>
+</ul></li>
+<li><em>Encryption</em>
+<ul>
+<li>Cell phones try to encrypt voice content.</li>
+<li>But if I’ve used a lot of computational linguistics then we know there are different patterns of speech and pauses.</li>
+<li>Phones try to use silence detection.</li>
+<li>Whoops! We know where the pauses are likely to be, and then work backwards to what language you’re speaking and your regional accent.</li>
+<li>But if you sacrifice power then you can workaround by encrypting everything.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="unit-4"><a href="#TOC">Unit 4</a></h2>
+<h3 id="introduction-1"><a href="#TOC">4.1: Introduction</a></h3>
+<ul>
+<li>Microsoft <em>SLAM</em>, now <em>static driver verifier</em>.
+<ul>
+<li>Torture test 3rd party devices.</li>
+</ul></li>
+<li><strong>Model checking</strong>: check software based on knowledge of its source code.</li>
+<li>Important to <strong>memoize</strong>, remember what you’ve already done in order to save time.</li>
+</ul>
+<h3 id="time-flies"><a href="#TOC">4.2: Time Flies</a></h3>
+<ul>
+<li>Given a string S and a grammar G, is string S in the language of G?</li>
+<li>“Time flies like an arrow, fruit flies like a banana.”
+<ul>
+<li>Ambiguity. Time is flying, but fruit isn’t flying, it’s ‘fruit flies’ liking.</li>
+</ul></li>
+</ul>
+<h3 id="brute-force"><a href="#TOC">4.3: Brute Force</a></h3>
+<ul>
+<li><strong>Brute force</strong>: try all options exhaustively.</li>
+<li>We enumerated all strings in grammar.</li>
+<li><p>For countably infinite grammars this is pretty useless!</p>
+<pre><code>S -&gt; (S)
+S -&gt; \epsilon
+
+Is &#39;(()&#39; in grammar?</code></pre></li>
+<li>Key insight - we can stop somewhere during our enumeration.</li>
+<li>Parsing idea: be lazy, don’t duplicate work.</li>
+<li>Perl: Pathologically Eclectic Rubbish Lister! :).
+<ul>
+<li>Virtues of a programmer: laziness, impatience, hubris.</li>
+</ul></li>
+</ul>
+<h3 id="fibonacci-numbers"><a href="#TOC">4.4: Fibonacci numbers</a></h3>
+<ul>
+<li>Our basic recursive method is really wasteful!</li>
+<li><strong>Memoization</strong>.</li>
+<li>Solution: write known answers in a a Python dictionary.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> memofibo(n, chart = <span class="ot">None</span>):
+    <span class="kw">if</span> chart is <span class="ot">None</span>:
+        chart = {}
+    <span class="kw">if</span> n &lt;= <span class="dv">2</span>:
+        chart[n] = <span class="dv">1</span>
+    <span class="kw">if</span> n not in chart:
+        chart[n] = memofibo(n<span class="dv">-1</span>, chart) + memofibo(n<span class="dv">-2</span>, chart)
+    <span class="kw">return</span> chart[n]</code></pre>
+<h3 id="memoization-for-parsing"><a href="#TOC">4.8: Memoization for Parsing</a></h3>
+<ul>
+<li>Cast your mind back to FSMs and regular expressions.</li>
+<li>To check if a string is accepted by an FSM we used our finger to keep track.</li>
+<li>But FSMs have obvious states to put fingers on.</li>
+<li>Where do you put your finger during parsing?</li>
+<li><p>And will need more than one finger!</p>
+<pre><code>S -&gt; E
+E -&gt; E + E
+E -&gt; E - E
+E -&gt; 1
+E -&gt; 2
+
+input = 1 + 2</code></pre></li>
+<li>When you parse <code>1 +</code>, where am I?</li>
+<li>No states, but we have rules and the next input.</li>
+<li>There are rules that are more likely to be used next than others.</li>
+<li>Formally we put a red dot inside one or more of the rules’ RHS to keep track of where we are.
+<ul>
+<li>Left of red dot: what we’ve seen.</li>
+<li>Right of red dot: what we haven’t seen yet.</li>
+</ul></li>
+<li><p>Example of a <strong>parsing state</strong>.</p></li>
+</ul>
+<h3 id="parsing-state"><a href="#TOC">4.9: Parsing state</a></h3>
+<ul>
+<li><p>If the red dot ends up on the right of the start symbol’s rule, you’ve parsed the string! i.e.</p>
+<pre><code>S -&gt; E &lt;dot&gt;</code></pre></li>
+<li><p>A <strong>parsing state</strong> is a rewrite rule from the grammar augmented with one red dot on the right-hand side of the rule.</p></li>
+</ul>
+<h3 id="possible-states"><a href="#TOC">4.10: Possible States</a></h3>
+<pre><code>    Input: 1 +
+    State: E -&gt; 1 + &lt;dot&gt; E</code></pre>
+<ul>
+<li>This cannot be true! A parsing state must be a rewrite rule <em>from the grammar</em> augmented with one red dot. <code>E -&gt; 1 + E</code> is not a rule from the grammar.</li>
+</ul>
+<h3 id="charting-parse-states"><a href="#TOC">4.11: Charting Parse States</a></h3>
+<ul>
+<li>Suppose we have <code>parse([t_1, T_2, …, t_n, …, t_last])</code></li>
+<li><code>chart[N]</code> = all parse states we could be in after seeing <code>t_1, t_2, …, t_n</code> only!</li>
+<li><p>e.g.</p>
+<pre><code>E -&gt; E + E
+E -&gt; int
+
+Input = int + int
+
+chart[0] =
+    [E -&gt; &lt;dot&gt; E + E,
+     E -&gt; &lt;dot&gt; int]
+
+chart[1] = 
+    [E -&gt; int &lt;dot&gt;,
+     E -&gt; E &lt;dot&gt; + E]
+
+chart[2] =
+    [E -&gt; E + &lt;dot&gt; E]</code></pre></li>
+</ul>
+<h3 id="magical-power"><a href="#TOC">4:14: Magical Power</a></h3>
+<ul>
+<li>Grammars can be recursive =&gt; power.</li>
+<li><p>We’ll need to keep track of one extra piece of information: how many tokens we’ve seen so far.</p>
+<pre><code>E -&gt; E + E
+E -&gt; int
+
+Input = int + int
+
+chart[0] =
+    [E -&gt; &lt;dot&gt; E + E,
+     E -&gt; &lt;dot&gt; int - seen 0]
+
+chart[1] = 
+    [E -&gt; int &lt;dot&gt;,
+     E -&gt; E &lt;dot&gt; + E]
+
+chart[2] =
+    [E -&gt; &lt;dot&gt; int - seen 2,
+     E -&gt; E + &lt;dot&gt; E]</code></pre></li>
+<li>Must add <strong>starting position</strong> aka <strong>from position</strong> to our parse states.</li>
+<li><p>Because we want to parse. <em>Parsing</em> is the <em>inverse</em> of <em>producing strings</em>.</p>
+<pre><code>int + int
+E + int        # apply E -&gt; int
+E + E          # apply E -&gt; int
+E              # apply E -&gt; E + E</code></pre></li>
+<li>Parsing is going down.</li>
+<li><p>Generating is going up.</p></li>
+</ul>
+<h3 id="building-the-chart"><a href="#TOC">4.16: Building the chart</a></h3>
+<ul>
+<li><p>If you build the chart, you have solved parsing!</p>
+<pre><code>S -&gt; E
+E -&gt; …
+
+S -&gt; E &lt;dot&gt; - starting at 0 =&gt; we&#39;ve parsed it.
+# We want to be in this state!</code></pre></li>
+<li><p>If inputs is T tokens long:</p>
+<pre><code>S -&gt; E &lt;dot&gt; start at 0 in chart[T]</code></pre></li>
+<li><p>If we can build the chart, and the above is true, then the string is in the language of the CFG.</p></li>
+</ul>
+<h3 id="closure"><a href="#TOC">4.17: Closure</a></h3>
+<ul>
+<li><p>Start:</p>
+<pre><code>chart[0], S -&gt; &lt;dot&gt; E from 0</code></pre></li>
+<li><p>End:</p>
+<pre><code>chart[T], S -&gt; E &lt;dot&gt; from 0.</code></pre></li>
+<li>Making intermediate entries</li>
+<li><p>Suppose:</p>
+<pre><code>S -&gt; E + &lt;dot&gt; E, from j, in chart[i] (seen i tokens)</code></pre></li>
+<li>Expecting to see E in the future.</li>
+<li><p>Need to find all rules that go to E and “bring them in”.</p></li>
+</ul>
+<hr />
+<ul>
+<li><p>Let’s say:</p>
+<pre><code>chart[i] has X -&gt; ab &lt;dot&gt; cd, from j.</code></pre></li>
+<li>abcd may be terminals, nonterminals, or epsilon.</li>
+<li><p>For all grammar rules:</p>
+<pre><code>c -&gt; pqr</code></pre></li>
+<li><p>We add:</p>
+<pre><code>c -&gt; &lt;dot&gt; pqr, from i</code></pre></li>
+<li><p>To <code>chart[i]</code>.</p></li>
+</ul>
+<hr />
+<ul>
+<li>This is <strong>predicting</strong> aka <strong>computing the closure</strong>.</li>
+</ul>
+<h3 id="computing-the-closure"><a href="#TOC">4.18: Computing the Closure</a></h3>
+<p>Suppose:</p>
+<pre><code>    E -&gt; E - E
+    E -&gt; (F)
+    E -&gt; int
+    F -&gt; string
+
+    Input: int - int
+    Seen 2 tokens so far
+
+    chart[2] has E -&gt; E - &lt;dot&gt; E, from 0</code></pre>
+<p>Then the result of computing the closure:</p>
+<pre><code>    E -&gt; &lt;dot&gt; int from 2
+    E -&gt; &lt;dot&gt; (F) from 2
+    E -&gt; &lt;dot&gt; E - E from 2</code></pre>
+<p>The following are not in the result:</p>
+<pre><code>    E -&gt; &lt;dot&gt; E - E from 0 # wrong from
+    F -&gt; &lt;dot&gt; string from 2 # wrong LHS</code></pre>
+<h3 id="consuming-the-input"><a href="#TOC">4.19: Consuming the Input</a></h3>
+<ul>
+<li><strong>Closures</strong> are one of three methods required to complete the parsing chart.</li>
+<li><p><strong>Shifting</strong>, aka consuming the input, is another method.</p></li>
+<li><p>Recall parsing state:</p>
+<pre><code>   X -&gt; ab &lt;dot&gt; cd, from j in chart [i]</code></pre></li>
+<li>If c is non-terminal, =&gt; closure.</li>
+<li><p>If c is terminal, =&gt; shift (i.e. consume the terminal).</p>
+<pre><code>  X -&gt; abc &lt;dot&gt; d from j into chart [i+1]</code></pre></li>
+<li>Remember what this means. We’ve seen <code>i</code> tokens, and the <code>i+1</code>th token is <code>c</code>, a terminal.</li>
+<li><p>We are not updating <code>from</code>, because that’s where we’ve come from.</p></li>
+</ul>
+<h3 id="reduction"><a href="#TOC">4.21: Reduction</a></h3>
+<pre><code>    x -&gt; ab &lt;dot&gt; cd</code></pre>
+<ul>
+<li><code>c</code> is non-terminal, =&gt; closure</li>
+<li><code>c</code> is terminal, =&gt; shift</li>
+<li><p><code>cd</code> is <code>\epsilon</code>, i.e. nothing. =&gt; reduce.</p></li>
+<li><p><strong>Reduction</strong>: apply rewrite rules / productions in reverse.</p>
+<pre><code>E -&gt; E + E
+E -&gt; int
+
+&lt;dot&gt; int + int + int
+int &lt;dot&gt; + int + int
+
+# magical reduction!
+E &lt;dot&gt; + int + int
+
+E + &lt;dot&gt; int + int
+E + int &lt;dot&gt; + int
+
+# magical reduction!
+E + E &lt;dot&gt; + int
+
+# magical reduction!
+E &lt;dot&gt; + int
+
+E + &lt;dot&gt; int
+...</code></pre></li>
+<li>Reduction makes a parse tree in reverse.</li>
+<li><p>But how to apply reductions?</p></li>
+</ul>
+<h3 id="reduction-walkthrough"><a href="#TOC">4.23: Reduction Walkthrough</a></h3>
+<pre><code>    E -&gt; E + E &lt;dot&gt; from B in chart [A]</code></pre>
+<ul>
+<li><p>We’ve seen inputs up to B and are about to encounter <code>E + E</code>:</p>
+<pre><code>input_1 input_2 … input_B | E + E</code></pre></li>
+<li><p>It’s as if we saw the LHS at this point:</p>
+<pre><code>input_1 input_2 … input_B | E</code></pre></li>
+<li><p>Where did we come from? Suppose chart[B] has:</p>
+<pre><code>E -&gt; E - &lt;dot&gt; E from C</code></pre></li>
+<li>By closure we’re predicting to see E. Hence at this point we bring it in (?)</li>
+<li>Reduction is a combination of closure and shifting.</li>
+<li><p>So add:</p>
+<pre><code>E -&gt; E - E &lt;dot&gt; from C to chart[A]</code></pre></li>
+<li><p>Example!</p>
+<pre><code>T -&gt; aBc
+B -&gt; bb
+
+input: abbc
+
+N = 0
+chart[0]
+    T -&gt; &lt;dot&gt;aBc, from 0
+
+N = 1, a
+chart[1]
+    # shift
+    T -&gt; a &lt;dot&gt;Bc, from 0
+
+    # and we see a non-terminal, so bring in closure
+    B -&gt; &lt;dot&gt;bb, from 1
+
+N = 2, ab
+    # shift
+    B -&gt; b&lt;dot&gt;b, from 1
+
+N = 3, abb
+    # shift
+    B -&gt; bb&lt;dot&gt;, from 1
+
+    # - red dot at end of rule, so reduce.
+    # - came from state 1.
+    # - Does anyone in state 1 want to see B? 
+    # - Yes! T -&gt; a&lt;dot&gt;Bc is looking for one.    
+    # - So transplant that rule here
+    T -&gt; aB&lt;dot&gt;c, from 0        </code></pre></li>
+</ul>
+<h3 id="addtochart"><a href="#TOC">4.25: Addtochart</a></h3>
+<p>Adding state to chart:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> addtochart(chart, index, state):
+    <span class="kw">if</span> not state in chart[index]:
+        chart[index] = [state] + chart[index]
+        <span class="kw">return</span> <span class="ot">True</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="ot">False</span></code></pre>
+<h3 id="revenge-of-list-comprehensions"><a href="#TOC">4.26: Revenge of List Comprehensions</a></h3>
+<p>Grammar:</p>
+<pre><code>    S -&gt; P
+    P -&gt; (P)
+    P -&gt;</code></pre>
+<p>In Python:</p>
+<pre class="sourceCode python"><code class="sourceCode python">grammar = [
+    (<span class="st">&quot;S&quot;</span>, [<span class="st">&quot;P&quot;</span>]),
+    (<span class="st">&quot;P&quot;</span>, [<span class="st">&quot;(&quot;</span>, <span class="st">&quot;P&quot;</span>, <span class="st">&quot;)&quot;</span>]),
+    (<span class="st">&quot;P&quot;</span>, []),
+] </code></pre>
+<p>Parser state:</p>
+<pre><code>    X -&gt; ab&lt;dot&gt;cd from j</code></pre>
+<p>In Python:</p>
+<pre class="sourceCode python"><code class="sourceCode python">state = (<span class="st">&quot;x&quot;</span>, [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>], [<span class="st">&quot;c&quot;</span>, <span class="st">&quot;d&quot;</span>], j)</code></pre>
+<h3 id="writing-the-closure"><a href="#TOC">4.27: Writing the closure</a></h3>
+<ul>
+<li>Know how to seed this table, add first rule with dot on left-most position to <code>chart[0]</code>.</li>
+<li>Know how to see if a string is in the language of the grammar, check <code>chart[n]</code> for n tokens to see if we’re in the final state.</li>
+<li>Looking at <code>chart[i]</code>, we see <code>x -&gt; ab&lt;dot&gt;cd from j</code>.</li>
+<li><p>We’ll call:</p>
+<pre><code>next_states = closure(grammar, i, x, ab, cd, j)
+for next_state in next_states:
+    any_changes = addtochart(chart, i, next_state)
+                  or any_changes</code></pre></li>
+<li><p>What is <code>closure()</code>?</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> closure(grammar, i, x, ab, cd, j):
+    next_states = [
+        (rule[<span class="dv">0</span>], [], rule[<span class="dv">1</span>], i)
+        <span class="kw">for</span> rule in grammar
+        <span class="kw">if</span> <span class="dt">len</span>(cd) &gt; <span class="dv">0</span> and
+           rule[<span class="dv">0</span>] == cd[<span class="dv">0</span>]
+    ]
+    <span class="kw">return</span> next_states</code></pre>
+<h3 id="writing-shift"><a href="#TOC">4.29: Writing shift</a></h3>
+<ul>
+<li>We’re currently looking at <code>chart[i]</code> and we see <code>X -&gt; ab&lt;dot&gt;cd from j</code>.</li>
+<li>The input is <code>tokens</code>.</li>
+<li>We’ll write:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">next_state = shift(tokens, i, x, ab, cd, j)
+<span class="kw">if</span> next_state is not <span class="ot">None</span>:
+    any_changes = addtochart(chart, i<span class="dv">+1</span>, next_state)
+                  or any_changes</code></pre>
+<ul>
+<li>What is <code>shift()</code>?</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> shift(tokens, i,x, ab, cd, j):
+    <span class="kw">if</span> <span class="dt">len</span>(cd) &gt; <span class="dv">0</span> and tokens[i] == cd[<span class="dv">0</span>]:
+        <span class="kw">return</span> (x, ab + [cd[<span class="dv">0</span>]], cd[<span class="dv">1</span>:], j)
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="ot">None</span></code></pre>
+<h3 id="writing-reductions"><a href="#TOC">4.30: Writing reductions</a></h3>
+<ul>
+<li>We’re looking at <code>chart[i]</code>, we see <code>X -&gt; ab&lt;dot&gt;cd from j</code>.</li>
+<li>We’ll write:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">next_states = reductions(chart, i, x, ab, cd, j)
+<span class="kw">for</span> next_state in next_states:
+    any_changes = addtochart(chart i, next_state)
+                  or any_changes
+                  
+
+<span class="kw">def</span> reductions(chart, i, x, ab, cd, j):
+    <span class="co"># x -&gt; ab&lt;dot&gt; from j</span>
+    <span class="co"># chart[j] has y -&gt; ... &lt;dot&gt;x ... from k</span>
+    <span class="kw">return</span> [
+        (jstate[<span class="dv">0</span>],
+         jstate[<span class="dv">1</span>] + [x],
+         jstate[<span class="dv">2</span>][<span class="dv">1</span>:],
+         jstate[<span class="dv">3</span>])
+        <span class="kw">for</span> jstate in chart[j]
+        <span class="kw">if</span> <span class="dt">len</span>(cd) &gt; <span class="dv">0</span> and
+           <span class="dt">len</span>(jstate[<span class="dv">2</span>]) &gt; <span class="dv">0</span> and
+           jstate[<span class="dv">2</span>][<span class="dv">0</span>] == x
+    ]</code></pre>
+<h3 id="putting-it-together"><a href="#TOC">4.31: Putting it together</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="co"># see notes/src/programming_languages/ps4_parser.py</span>
+<span class="co"># above has closure, shift, and reductions in-lined.</span>
+
+<span class="kw">def</span> parse(tokens, grammar):
+    tokens = tokens + [<span class="st">&quot;end_of_input_marker&quot;</span>]
+    chart = {}
+    start_rule = grammar[<span class="dv">0</span>]
+    <span class="kw">for</span> i in <span class="dt">xrange</span>(<span class="dt">len</span>(tokens) + <span class="dv">1</span>):
+        chart[i] = []
+    start_state = (start_rule[<span class="dv">0</span>], [], start_rule[<span class="dv">1</span>], <span class="dv">0</span>)
+    chart[<span class="dv">0</span>] = [start_state]
+    <span class="kw">for</span> i in <span class="dt">xrange</span>(<span class="dt">len</span>(tokens)):
+        <span class="kw">while</span> <span class="ot">True</span>:
+            changes = <span class="ot">False</span>
+            <span class="kw">for</span> state in chart[i]:
+                <span class="co"># State === x -&gt; ab&lt;dot&gt;cd, j</span>
+                (x, ab, cd, j) = state
+                
+                <span class="co"># Current state == x -&gt; ab&lt;dot&gt;cd, j</span>
+                <span class="co"># Option 1: For each grammar rule</span>
+                <span class="co"># c -&gt; pqr (where the c&#39;s match)</span>
+                <span class="co"># make a next state:</span>
+                <span class="co">#</span>
+                <span class="co"># c -&gt; &lt;dot&gt;pqr, i</span>
+                <span class="co">#</span>
+                <span class="co"># English: We&#39;re about to start</span>
+                <span class="co"># parsing a &quot;c&quot;, but &quot;c&quot; may be</span>
+                <span class="co"># something like &quot;exp&quot; with its</span>
+                <span class="co"># own production rules. We&#39;ll bring</span>
+                <span class="co"># those production rules in.</span>
+                next_states = closure(grammar, i, x, ab, cd, j)
+                <span class="kw">for</span> next_state in next_states:
+                    changes = addtochart(chart, i, next_state) or changes
+                    
+
+                <span class="co"># Current State == x -&gt; ab&lt;dot&gt;cd, j</span>
+                <span class="co"># Option 2: If tokens[i] == c,</span>
+                <span class="co"># make a next state:</span>
+                <span class="co">#</span>
+                <span class="co"># x -&gt; abc&lt;dot&gt;d, j</span>
+                <span class="co">#</span>
+                <span class="co"># £nglish: We&#39;re looking for a parse</span>
+                <span class="co"># token c next and the current token</span>
+                <span class="co"># is exactly c! Aren&#39;t we lucky!</span>
+                <span class="co"># So we can parse over it and move</span>
+                <span class="co"># to j+1.</span>
+                next_state = shift(tokens, i, x, ab, cd, j)
+                <span class="kw">if</span> next_state is not <span class="ot">None</span>:
+                    any_changes = addtochart(chart, i<span class="dv">+1</span>, next_state) or any_changes
+                    
+                <span class="co"># Current state == x -&gt; ab&lt;dot&gt;cd, j</span>
+                <span class="co"># Option 3: if cd is [], the state is</span>
+                <span class="co"># just x -&gt; ab&lt;dot&gt;, j</span>
+                <span class="co"># For each p -&gt; q&lt;dot&gt;xr, l in chart[j]</span>
+                <span class="co"># Make a new state:</span>
+                <span class="co">#</span>
+                <span class="co"># p -&gt; qx&lt;dot&gt;r, l</span>
+                <span class="co">#</span>
+                <span class="co"># in chart[i].</span>
+                <span class="co">#</span>
+                <span class="co"># English: We&#39;ve just finished parsing</span>
+                <span class="co"># an &quot;x&quot; with this token, but that</span>
+                <span class="co"># may have been a sub-step (like</span>
+                <span class="co"># matching &quot;exp-&gt;2&quot; in &quot;2+3&quot;). We</span>
+                <span class="co"># should update the higher-level</span>
+                <span class="co"># rules as well.</span>
+                next_states = reductions(chart, i, x, ab, cd, j)
+                <span class="kw">for</span> next_state in next_states:
+                    changes = addtochart(chart, i, next_state) or changes
+                    
+        <span class="kw">if</span> not changes:
+            <span class="kw">break</span>
+
+    accepting_state = (start_rule[<span class="dv">0</span>], start_rule[<span class="dv">1</span>], [], <span class="dv">0</span>)
+    <span class="kw">return</span> accepting_state in chart[<span class="dt">len</span>(tokens)-<span class="dv">1</span>]
+
+result = parse(tokens, grammar)
+<span class="kw">print</span> result</code></pre>
+<h3 id="parse-trees"><a href="#TOC">4.33: Parse Trees</a></h3>
+<ul>
+<li>We can tell if a string is valid.</li>
+<li>But we need a parse tree!</li>
+<li>Going to represent this as nested tuples.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="co"># tokens</span>
+<span class="kw">def</span> t_STRING(t):
+    <span class="st">r&#39;&quot;[^&quot;]*&quot;&#39;</span>
+    t.value = t.value[<span class="dv">1</span>:-<span class="dv">1</span>]
+    <span class="kw">return</span> t
+    
+<span class="co"># parsing rules</span>
+<span class="kw">def</span> p_exp_number(p):
+    <span class="st">&#39;exp : NUMBER&#39;</span> <span class="co"># exp -&gt; NUMBER</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;number&quot;</span>, p[<span class="dv">1</span>])
+    <span class="co"># p[0] is returned parse tree</span>
+    <span class="co"># p[0] refers to exp</span>
+    <span class="co"># p[1] refers to NUMBER.</span>
+    
+<span class="kw">def</span> p_exp_not(p):
+    <span class="st">&#39;exp : NOT exp&#39;</span> <span class="co"># exp -&gt; NOT exp</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;not&quot;</span>, p[<span class="dv">2</span>])
+    <span class="co"># p[0] refers to exp</span>
+    <span class="co"># p[1] refers to NOT</span>
+    <span class="co"># p[2] refers to exp</span></code></pre>
+<ul>
+<li><code>p</code>: parse trees</li>
+</ul>
+<h3 id="parsing-html"><a href="#TOC">4.34: Parsing HTML</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_html(p):
+    <span class="st">&#39;html : elt html&#39;</span>
+    p[<span class="dv">0</span>] = [p[<span class="dv">1</span>]] + p[<span class="dv">2</span>]
+    
+<span class="kw">def</span> p_html_empty(p):
+    <span class="st">&#39;html : &#39;</span>
+    p[<span class="dv">0</span>] = []
+    
+<span class="kw">def</span> p_elt_word(p):
+    <span class="st">&#39;elt : WORD&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;word-element&quot;</span>, p[<span class="dv">1</span>])</code></pre>
+<h3 id="parsing-tags"><a href="#TOC">4.35: Parsing tags</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_elt_tag(p):
+    <span class="co"># &lt;span color=&quot;red&quot;&gt;Text!&lt;/span&gt;:</span>
+    <span class="st">&#39;elt : LANGLE WORD tag_args RANGLE html LANGLESLASH WORD RANGLE&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;tag-element&quot;</span>, p[<span class="dv">2</span>], p[<span class="dv">3</span>], p[<span class="dv">5</span>], p[<span class="dv">7</span>])</code></pre>
+<h3 id="parsing-javascript"><a href="#TOC">4.36: Parsing JavaScript</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_exp_binop(p):
+    <span class="co">&quot;&quot;&quot;exp : exp PLUS exp</span>
+<span class="co">           | exp MINUS exp</span>
+<span class="co">           | exp TIMES exp&quot;&quot;&quot;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;binop&quot;</span>, p[<span class="dv">1</span>], p[<span class="dv">2</span>], p[<span class="dv">3</span>])</code></pre>
+<ul>
+<li>Oh no! Ambiguity!</li>
+<li>input: <code>1 - 3 - 5</code>
+<ul>
+<li><strong>Left-associative</strong>: <code>(1-3)-5 = -7</code></li>
+<li><strong>Right-associative</strong>: <code>1-(3-5) = 3</code></li>
+</ul></li>
+<li>Function calls</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_exp_call(p):
+    <span class="st">&#39;exp : IDENTIFIER LPAREN optargs RPAREN&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;call&quot;</span>, p[<span class="dv">1</span>], p[<span class="dv">3</span>])</code></pre>
+<ul>
+<li>Numbers</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_exp_number(p):     
+    <span class="st">&#39;exp : NUMBER&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;number&quot;</span>, p[<span class="dv">1</span>])</code></pre>
+<h3 id="precedence"><a href="#TOC">4.38: Precedence</a></h3>
+<ul>
+<li>But even with associativity, we need precedence to resolve mixtures/binding of operators.</li>
+<li>Below gives precedence and associativity.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">precedence = (
+    <span class="co"># lower precedence at the top</span>
+    (<span class="st">&#39;left&#39;</span>, <span class="st">&#39;PLUS&#39;</span>, <span class="st">&#39;MINUS&#39;</span>),
+    (<span class="st">&#39;left&#39;</span>, <span class="st">&#39;TIMES&#39;</span>, <span class="st">&#39;DIVIDE&#39;</span>),
+    <span class="co"># higher precedence at the bottom </span>
+)</code></pre>
+<h3 id="optional-arguments"><a href="#TOC">4.41: Optional Arguments</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_exp_call(p):
+    <span class="st">&#39;exp : IDENTIFIER LPAREN optargs RPAREN&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;call&quot;</span>, p[<span class="dv">1</span>], p[<span class="dv">3</span>])
+    
+<span class="kw">def</span> p_exp_number(p):
+    <span class="st">&#39;exp : NUMBER&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;number&quot;</span>, p[<span class="dv">1</span>])
+    
+<span class="kw">def</span> p_optargs(p):
+    <span class="co">&quot;&quot;&quot;optargs : exp COMMA optargs </span>
+<span class="co">               | exp</span>
+<span class="co">               | &quot;&quot;&quot;</span>
+    <span class="kw">if</span> <span class="dt">len</span>(p) == <span class="dv">1</span>:
+        p[<span class="dv">0</span>] = []
+    <span class="kw">elif</span> <span class="dt">len</span>(p) == <span class="dv">2</span>:
+        p[<span class="dv">0</span>] = [p[<span class="dv">1</span>]]
+    <span class="kw">else</span>:
+        p[<span class="dv">0</span>] = [p[<span class="dv">1</span>]] + p[<span class="dv">3</span>]
+        
+<span class="co"># or can separate out parsing rules in OR statement</span>
+<span class="co"># into its own function. separate rules give better</span>
+<span class="co"># performance, as the parser has done all of your </span>
+<span class="co"># len() work for you.</span></code></pre>
+<h2 id="office-hours-4"><a href="#TOC">Office Hours 4</a></h2>
+<ul>
+<li>Why do we create languages? If we parse JavaScript using Python, why not write everything in Python?
+<ul>
+<li>Languages have different purposes.</li>
+<li>They focus on certain topics, reduce error rates in given domains.</li>
+<li><strong>Domain-specific langauges</strong>: trying to solve a particular language and do it well.</li>
+<li>Hardware definition, e.g. VHDL and Prolog.</li>
+<li>Game level layout and engines.</li>
+<li>Scientific computing, e.g. FORTRAN.</li>
+<li>Time taken to write a program, and error rate.</li>
+<li>For many applications correctness is more important than performance.
+<ul>
+<li>Python dictionaries are one line, no bugs!</li>
+<li>C dictionaries are modules and memory allocations, many lines - possibly many bugs!</li>
+</ul></li>
+<li>All languages, however, are Turing complete - fundamentally equivalent.</li>
+</ul></li>
+<li>Parsing tools
+<ul>
+<li>We’re using memoization. Why not e.g. LALR(1)?</li>
+<li>Memoization is used in more complex methods like GLR.</li>
+<li>C++ doesn’t fit into simpler LR(k) tools, needs GLR.
+<ul>
+<li>e.g. Oink.</li>
+</ul></li>
+<li>All these tools have similar interfaces.</li>
+<li>Ultimately the question is “if the real world does X, why are we doing Y?”</li>
+<li>Key difference in pedagogy between <em>knowing how to program</em> and <em>knowing how to program in a given language or framework</em>.
+<ul>
+<li>Former is much more important.</li>
+</ul></li>
+<li>LALR(1) and recursive descent are much more difficult than the algorithm we’ve covered in this class.</li>
+<li>Our method is <strong>Earley parsing</strong>, O(n^3) in the worst-case for ambiguous grammars, but handles any grammar. Other methods are faster but handle restricted subsets of grammars.</li>
+<li>Also, our method is O(n) for unambiguous, simple grammrs, i.e. these same restricted subsets.</li>
+<li>Research over the past 10 years is re-focusing on GLR chart-based parsers, similar to ours.</li>
+<li>Just an accident of history that we’re using hacks like LALR(1).</li>
+</ul></li>
+<li>We’re using memoization. Are we secretly doing dynamic programming?
+<ul>
+<li><strong>Dynamic programming</strong>: solve a problem by keeping a chart and adding to this chart over time.</li>
+<li>Useful when a problem exhibits the <strong>optimal substructure property</strong>: deal with a problem by dealing with smaller problems.</li>
+<li>Yes!</li>
+</ul></li>
+<li>Compiling vs. interpretation.
+<ul>
+<li>Interpretation: lex, parse, then act!</li>
+<li>Compiling: precompute a lot of this, optimize it, store as a binary file.</li>
+<li>Compiling is like packing really well for a trip. Repeatedly going back to your house for stuff vs. packing a suitcase very well.</li>
+<li>Java compiles down to byte-code, and the byte-code is interpreted by a JVM.</li>
+<li>Even C is compiled down to e.g. x86 assembly, which a processor interprets!</li>
+</ul></li>
+</ul>
+<h2 id="problem-set-4"><a href="#TOC">Problem Set 4</a></h2>
+<h3 id="problem-1-parsing-states"><a href="#TOC">Problem 1: Parsing States</a></h3>
+<p>What is in chart[2], given:</p>
+<pre><code>    S -&gt; id(OPTARGS)
+    OPTARGS -&gt;
+    OPTARGS -&gt; ARGS
+    ARGS -&gt; exp,ARGS
+    ARGS -&gt; exp
+
+    input: id(exp,exp)
+
+    chart[0]
+        S -&gt; &lt;dot&gt;id(OPTARGS)$, from 0
+
+    chart[1]
+        # shift
+        S -&gt; id&lt;dot&gt;(OPTARGS)$, from 0
+
+    chart[2]
+        # shift
+        S -&gt; id(&lt;dot&gt;OPTARGS)$, from 0
+
+        # OPTARGS could be epsilon, hence
+        # in one world:
+        S -&gt; id(OPTARGS&lt;dot&gt;)$, from 0
+
+        # In another world we see OPTARGS
+        # and it isn&#39;t epsilon, so we closure.
+        OPTARGS -&gt; &lt;dot&gt;ARGS, from 2
+        OPTARGS -&gt; &lt;dot&gt;, from 2
+
+        # !!AI I think by recursion we apply closure to ARGS; reminiscent of epsilon-closure during DFA-&gt;NFA conversion.
+        ARGS -&gt; &lt;dot&gt;exp,ARGS from 2
+        ARGS -&gt; &lt;dot&gt;exp from 2</code></pre>
+<h2 id="unit-5"><a href="#TOC">Unit 5</a></h2>
+<h3 id="formal-semantics"><a href="#TOC">5.1: Formal Semantics</a></h3>
+<ul>
+<li>Figuring out what code means in context.</li>
+</ul>
+<h3 id="interpreters"><a href="#TOC">5.2: Interpreters</a></h3>
+<ul>
+<li>String of HTML and JavaScript</li>
+<li>Lexical analysis: break it down into tokens and words.</li>
+<li>Syntactic analysis: parse these into a tree.</li>
+<li><strong>Semantics</strong>, aka <strong>interpreting</strong>: walk the tree and understand it.
+<ul>
+<li>For web pages!</li>
+<li>What do they look like.</li>
+</ul></li>
+</ul>
+<h3 id="syntax-vs.semantics"><a href="#TOC">5.3: Syntax vs. Semantics</a></h3>
+<ul>
+<li>We’ve looked at form, not meaning</li>
+<li>“Colorless green ideas sleep furiously!”
+<ul>
+<li>Syntactically correct.</li>
+<li>But semantically ambiguous.</li>
+</ul></li>
+<li><p>Programming examples</p>
+<pre><code>1 + 2 # = 3
+&quot;hello&quot; + &quot; world&quot; # = &quot;hello world&quot;
+
+1 + &quot;hello&quot; # ???</code></pre></li>
+</ul>
+<h3 id="bad-programs"><a href="#TOC">5.4: Bad Programs</a></h3>
+<ul>
+<li><strong>Type checking</strong>: one of the goals of <em>semantic analysis</em> is to notice and rule out bad programes; programs that will apply the wrong sort of operations to the wrong sort of object.</li>
+</ul>
+<h3 id="types"><a href="#TOC">5.5: Types</a></h3>
+<ul>
+<li>A <strong>type</strong> is a set of similar objects, like <em>numbers</em> or <em>strings</em>, with associated operations.</li>
+<li>Often different types can use the same operations, but for different reasons.
+<ul>
+<li><code>len</code> for string vs. list.</li>
+<li><code>+</code> for numbers, strings, and lists.</li>
+<li>Analogy: the word “execute”, and its meanings in different sentences.</li>
+</ul></li>
+<li>Some operations make sense for some types, not for others.
+<ul>
+<li>Division for numbers vs. strings.</li>
+</ul></li>
+<li><strong>Syllepsis</strong>: humourous semantic incongruity.
+<ul>
+<li>“She lowered her standards by raising her glass, her covrage, her eyes, and his hopes.”</li>
+</ul></li>
+<li><strong>Mismatched tags</strong>.
+<ul>
+<li>In HTML.</li>
+<li>Analogous to matching balanced parantheses.</li>
+</ul></li>
+</ul>
+<h3 id="html-interpreter"><a href="#TOC">5.7: HTML interpreter</a></h3>
+<ul>
+<li><p>Interpreting by walking a parse tree.</p>
+<pre><code>(&quot;word-element&quot;, &quot;Hello&quot;)
+
+(&quot;tag-element&quot;, &quot;b&quot;, ..., &quot;b&quot;)
+
+(&quot;javascript-element&quot;, &quot;function fibo(N) { ...&quot;)
+# Embedded JavaScript in HTML.</code></pre></li>
+</ul>
+<h3 id="graphics"><a href="#TOC">5.8: Graphics</a></h3>
+<ul>
+<li>Need to make a picture to render a webpage!</li>
+<li>We’re using <code>re</code> for regexps, <code>ply</code> for lexing and parsing, <code>timeit</code> for benchmarking.</li>
+<li>Here is our API:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">graphics.word(string)
+<span class="co"># draw on screen</span>
+
+graphics.begintag(string, dictionary)
+<span class="co"># doesn&#39;t draw, just makes a note. like changing pen colours.</span>
+<span class="co"># dictionary passes in attributes, e.g. href.</span>
+
+graphics.endtag()
+<span class="co"># most recent tag.</span>
+
+graphics.warning(string)
+<span class="co"># debugging, in bold red color.</span></code></pre>
+<ul>
+<li><p>Example:</p>
+<pre><code>Nelson Mandela &lt;b&gt;was elected&lt;/b&gt; democratically.
+
+# how this calls into graphics API
+
+graphs.word(&quot;Nelson&quot;)
+graphics.word(&quot;Mandela&quot;)
+graphics.begintag(&quot;b&quot;, {})
+graphics.word(&quot;was&quot;)
+graphics.word(&quot;elected&quot;)
+graphics.endtag(&quot;b&quot;)
+graphics.word(&quot;democratically.&quot;)</code></pre></li>
+<li><p>Interpret code.</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> graphics
+
+<span class="kw">def</span> interpret(trees): <span class="co"># Hello, friend</span>
+    <span class="kw">for</span> tree in trees: <span class="co"># Hello,</span>
+        <span class="co"># (&quot;word-element&quot;,&quot;Hello&quot;)</span>
+        nodetype=tree[<span class="dv">0</span>] <span class="co"># &quot;word-element&quot;</span>
+        <span class="kw">if</span> nodetype == <span class="st">&quot;word-element&quot;</span>:
+            graphics.word(tree[<span class="dv">1</span>])
+        <span class="kw">elif</span> nodetype == <span class="st">&quot;tag-element&quot;</span>:
+            <span class="co"># &lt;b&gt;Strong text&lt;/b&gt;</span>
+            tagname = tree[<span class="dv">1</span>] <span class="co"># b</span>
+            tagargs = tree[<span class="dv">2</span>] <span class="co"># []</span>
+            subtrees = tree[<span class="dv">3</span>] <span class="co"># ...Strong Text!...</span>
+            closetagname = tree[<span class="dv">4</span>] <span class="co"># b</span>
+            <span class="co"># QUIZ: (1) check that the tags match</span>
+            <span class="co"># if not use graphics.warning()</span>
+            <span class="kw">if</span> tagname != closetagname:
+                graphics.warning(<span class="st">&quot;Mismatched tag. start: &#39;</span><span class="ot">%s</span><span class="st">&#39;, end: &#39;</span><span class="ot">%s</span><span class="st">&#39;&quot;</span> % (tagname, closetagname))
+            <span class="kw">else</span>:
+                <span class="co">#  (2): Interpret the subtree</span>
+                <span class="co"># HINT: Call interpret recursively</span>
+                graphics.begintag(tagname, {})
+                interpret(subtrees)
+                graphics.endtag()</code></pre>
+<h3 id="arithmetic"><a href="#TOC">5.10: Arithmetic</a></h3>
+<ul>
+<li>That’s almost it for HTML!
+<ul>
+<li><code>word-element</code> - done.</li>
+<li><code>tag-element</code> - done.</li>
+<li><code>javascript-element</code> - not done.
+<ul>
+<li>Interpret the JavaScript to a string.</li>
+<li>Call graphics.word() on that string.</li>
+</ul></li>
+</ul></li>
+<li>However, JavaScript is <em>semantically richer</em> than HTML.
+<ul>
+<li>Arithmetic, start here.</li>
+<li>Variables.</li>
+</ul></li>
+<li><p>e.g.</p>
+<pre><code>input: (1*2) + (3*4)</code></pre></li>
+<li>This is <strong>evaluation</strong>, aka <strong>eval</strong>, for arithmetic.
+<ul>
+<li><code>eval_exp</code>.</li>
+</ul></li>
+<li><p>Code:</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_exp(tree):
+    <span class="co"># (&quot;number&quot; , &quot;5&quot;)</span>
+    <span class="co"># (&quot;binop&quot; , ... , &quot;+&quot;, ... )</span>
+    nodetype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> nodetype == <span class="st">&quot;number&quot;</span>:
+        <span class="kw">return</span> <span class="dt">int</span>(tree[<span class="dv">1</span>])
+    <span class="kw">elif</span> nodetype == <span class="st">&quot;binop&quot;</span>:
+        left_child = tree[<span class="dv">1</span>]
+        operator = tree[<span class="dv">2</span>]
+        right_child = tree[<span class="dv">3</span>]
+        <span class="co"># QUIZ: (1) evaluate left and right child</span>
+        left_value = eval_exp(left_child)
+        right_value = eval_exp(right_child)
+        
+        <span class="co"># (2) perform &quot;operator&quot;&#39;s work</span>
+        <span class="kw">assert</span>(operator in [<span class="st">&quot;+&quot;</span>, <span class="st">&quot;-&quot;</span>])
+        <span class="kw">if</span> operator == <span class="st">&quot;+&quot;</span>:
+            <span class="kw">return</span> left_value + right_value
+        <span class="kw">elif</span> operator == <span class="st">&quot;-&quot;</span>:
+            <span class="kw">return</span> left_value - right_value</code></pre>
+<h3 id="context"><a href="#TOC">5.12: Context</a></h3>
+<ul>
+<li>Variables - need their current value.</li>
+<li>e.g. “The king of France is bald.”
+<ul>
+<li>Syntax correctly, but semantic correctness requires knowing what time we’re talking about.</li>
+<li>Right now there isn’t a king of France!</li>
+</ul></li>
+<li><strong>State</strong> of a program execution is a mapping from variable names to values.</li>
+<li>Evaluating an expression requires us to know the current state.</li>
+<li>Tempting to have one dictionary for this state, but one day we might want to make this a bit more complicated.</li>
+<li>So we’ll hide it behind an API</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> env_lookup(environment, variable_name):
+    ...</code></pre>
+<ul>
+<li>Code:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_exp(tree, environment):
+    nodetype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> nodetype == <span class="st">&quot;number&quot;</span>:
+        <span class="kw">return</span> <span class="dt">int</span>(tree[<span class="dv">1</span>])
+    <span class="kw">elif</span> nodetype == <span class="st">&quot;binop&quot;</span>:
+        <span class="co"># ...</span>
+    <span class="kw">elif</span> nodetype == <span class="st">&quot;identifier&quot;</span>:
+        <span class="co"># (&quot;binop&quot;, (&quot;identifier&quot;,&quot;x&quot;), &quot;+&quot;, (&quot;number&quot;,&quot;2&quot;))</span>
+        <span class="co"># QUIZ: (1) find the identifier name</span>
+        <span class="co"># (2) look it up in the environment and return it</span>
+        <span class="kw">return</span> env_lookup(environment, tree[<span class="dv">1</span>])</code></pre>
+<h3 id="control-flow"><a href="#TOC"> 5.15: Control Flow</a></h3>
+<ul>
+<li><code>if</code>, <code>while</code>, <code>return</code> change the flow of control.
+<ul>
+<li>These tokens are called <strong>statements</strong>.</li>
+</ul></li>
+<li>An <strong>expression</strong> is just <code>2+3</code> or <code>x+1</code>.</li>
+<li>Statements often contain expressions, but not the other way around.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_stmts(tree, environment):
+    stmttype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> stmttype == <span class="st">&quot;assign&quot;</span>:
+        <span class="co"># (&quot;assign&quot;, &quot;x&quot;, (&quot;binop&quot;, ..., &quot;+&quot;,  ...)) &lt;=== x = ... + ...</span>
+        variable_name = tree[<span class="dv">1</span>]
+        right_child = tree[<span class="dv">2</span>]
+        new_value = eval_exp(right_child, environment)
+        env_update(environment, variable_name, new_value)
+    <span class="kw">elif</span> stmttype == <span class="st">&quot;if-then-else&quot;</span>: <span class="co"># if x &lt; 5 then A;B; else C;D;</span>
+        conditional_exp = tree[<span class="dv">1</span>] <span class="co"># x &lt; 5</span>
+        then_stmts = tree[<span class="dv">2</span>] <span class="co"># A;B;</span>
+        else_stmts = tree[<span class="dv">3</span>] <span class="co"># C;D;</span>
+        <span class="co"># QUIZ: Complete this code</span>
+        <span class="co"># Assume &quot;eval_stmts(stmts, environment)&quot; exists</span>
+        <span class="kw">if</span> eval_exp(conditional_exp, environment):
+            <span class="kw">return</span> eval_stmts(then_stmts, environment)
+        <span class="kw">else</span>:
+            <span class="kw">return</span> eval_stmts(else_stmts, environment)</code></pre>
+<h3 id="creating-an-environment"><a href="#TOC">5.17: Creating an Environment</a></h3>
+<pre><code>    Python:
+        x = 0
+        print x + 1
+
+    JavaScript:
+        var x = 0
+        write(x+1)</code></pre>
+<ul>
+<li><p>Can have multiple values in different contexts.</p>
+<pre><code>x = &quot;outside&quot;
+def myfun(x):
+    print x
+myfun(&quot;inside&quot;)
+
+# get &quot;inside&quot;</code></pre></li>
+</ul>
+<h3 id="scope"><a href="#TOC">5.18: Scope</a></h3>
+<ul>
+<li>Environment cannot be a flat mapping.</li>
+<li>Variables have <strong>scope</strong>: can be bound to many values.</li>
+</ul>
+<h3 id="identifiers-and-storage"><a href="#TOC"> 5.19: Identifiers and storage</a></h3>
+<ul>
+<li>Identifier (variable) names vs. storage places.</li>
+<li>Store values for variables in explicit storage locations.</li>
+<li>And as we move into a scope we create a new <em>child</em> environment, that knows who its parent is.</li>
+<li>Child environments can recurse upwards to get variable values.</li>
+<li>Setting variables only go upwards if we don’t already have it defined.</li>
+</ul>
+<h3 id="environments."><a href="#TOC">5.20: Environments.</a></h3>
+<ul>
+<li>Special, <strong>global environment</strong> to start with.</li>
+<li>Child environments have <strong>parent</strong> pointers. The global environment does not have a parent.</li>
+</ul>
+<h3 id="chained-environments"><a href="#TOC">5.22: Chained environments</a></h3>
+<ol style="list-style-type: decimal">
+<li>Create a new environment.
+<ul>
+<li>Its <em>parent</em> is the current environment.</li>
+</ul></li>
+<li>Create storage places in the new environment for each <em>formal parameter</em>.
+<ul>
+<li>Formal parameters are e.g. arguments to a function.</li>
+</ul></li>
+<li>Fill in these places with the values of the actual arguments.</li>
+<li>Evaluate the function body in the new environment.</li>
+</ol>
+<h3 id="greetings"><a href="#TOC">5.23: Greetings</a></h3>
+<ul>
+<li>Python supports nested functions!</li>
+<li>These have nested envirnoment frames too.</li>
+</ul>
+<h3 id="environment-needs"><a href="#TOC">5.24: Environment Needs</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> env_lookup(var_name, env):
+    <span class="co"># env = (parent, dictionary)</span>
+    <span class="kw">if</span> var_name in env[<span class="dv">1</span>]:
+        <span class="co"># do we have it?</span>
+        <span class="kw">return</span> (env[<span class="dv">1</span>])[var_name]
+    <span class="kw">elif</span> env[<span class="dv">0</span>] is <span class="ot">None</span>:
+        <span class="co"># am global?</span>
+        <span class="kw">return</span> <span class="ot">None</span>
+    <span class="kw">else</span>:
+        <span class="co"># ask parents</span>
+        <span class="kw">return</span> env_lookup(var_name, env[<span class="dv">0</span>])
+
+<span class="kw">def</span> env_update(var_name, value, env):
+    <span class="kw">if</span> var_name in env[<span class="dv">1</span>]:
+        <span class="co"># do we have it?</span>
+        (env[<span class="dv">1</span>])[var_name] = value
+    <span class="kw">elif</span> not (env[<span class="dv">0</span>] is <span class="ot">None</span>):
+        <span class="co"># if not global, ask parents.</span>
+        env_update(var_name, value, env[<span class="dv">0</span>])</code></pre>
+<h3 id="declaring-and-calling-functions"><a href="#TOC">5.25: Declaring and Calling Functions</a></h3>
+<ul>
+<li>More trickiness than just environments.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> mean(x):
+    <span class="kw">return</span> x
+    <span class="kw">print</span> <span class="st">&quot;one thousand and one nights&quot;</span></code></pre>
+<ul>
+<li>This is mean! We shouldn’t print out anything.</li>
+</ul>
+<h3 id="catching-errors"><a href="#TOC">5.26: Catching Errors</a></h3>
+<ul>
+<li><code>try</code>, <code>except</code>.</li>
+<li>Want to harness exceptions.</li>
+<li>We’ll use exceptions to simulate return statements.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_stmt(true, environment):
+    stmttype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> stmttype == <span class="st">&quot;return&quot;</span>:
+        return_exp = tree[<span class="dv">1</span>] <span class="co"># return 1 + 2</span>
+        retval = eval_exp(return_exp, environment)
+        <span class="kw">raise</span> <span class="ot">Exception</span>(retval)</code></pre>
+<ul>
+<li>Function calls</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_stmt(tree,environment):
+    stmttype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> stmttype == <span class="st">&quot;call&quot;</span>: <span class="co"># (&quot;call&quot;, &quot;sqrt&quot;, [(&quot;number&quot;,&quot;2&quot;)])</span>
+        fname = tree[<span class="dv">1</span>] <span class="co"># &quot;sqrt&quot;</span>
+        args = tree[<span class="dv">2</span>] <span class="co"># [ (&quot;number&quot;, &quot;2&quot;) ]</span>
+        fvalue = env_lookup(fname, environment)
+        <span class="kw">if</span> fvalue[<span class="dv">0</span>] == <span class="st">&quot;function&quot;</span>:
+            <span class="co"># We&#39;ll make a promise to ourselves:</span>
+            <span class="co"># (&quot;function&quot;, params, body, env)</span>
+            fparams = fvalue[<span class="dv">1</span>] <span class="co"># [&quot;x&quot;]</span>
+            fbody = fvalue[<span class="dv">2</span>]
+            fenv = fvalue[<span class="dv">3</span>]
+            <span class="kw">if</span> <span class="dt">len</span>(fparams) &lt;&gt; <span class="dt">len</span>(args):
+                <span class="kw">print</span> <span class="st">&quot;ERROR: wrong number of args&quot;</span>
+            <span class="kw">else</span>:
+                <span class="co">#QUIZ: Make a new environment frame</span>
+                newfenv = (fenv, {})
+                <span class="kw">for</span> param, value in <span class="dt">zip</span>(fparams, args):
+                    newfenv[<span class="dv">1</span>][param] = <span class="ot">None</span>
+                    eval_value = eval_exp(value, environment)
+                    env_update(param, eval_value, newfenv)
+                <span class="kw">try</span>:
+                    <span class="co"># QUIZ : Evaluate the body</span>
+                    eval_stmts(fbody, newfenv)
+                    <span class="kw">return</span> <span class="ot">None</span>
+                <span class="kw">except</span> <span class="ot">Exception</span> <span class="ch">as</span> return_value:
+                    <span class="kw">return</span> return_value
+        <span class="kw">else</span>:
+            <span class="kw">print</span>  <span class="st">&quot;ERROR: call to non-function&quot;</span>
+    <span class="kw">elif</span> stmttype == <span class="st">&quot;return&quot;</span>: 
+        retval = eval_exp(tree[<span class="dv">1</span>],environment) 
+        <span class="kw">raise</span> <span class="ot">Exception</span>(retval) 
+    <span class="kw">elif</span> stmttype == <span class="st">&quot;exp&quot;</span>: 
+        eval_exp(tree[<span class="dv">1</span>],environment) </code></pre>
+<h3 id="calling-functions"><a href="#TOC">5.29: Calling functions</a></h3>
+<ul>
+<li><p>In Python and JavaScript functions can be values. Hence we must represent function values.</p>
+<pre><code>def myfun(x):
+    return x+1
+
+function myfun(x) {
+    return x+1;
+}
+
+(&quot;function&quot;, fparams, fbody, fenv)</code></pre></li>
+<li>We <em>don’t</em> need the function name.
+<ul>
+<li>We’ll be adding a mapping from the function name to this tuple in the old environment <code>fenv</code>.</li>
+</ul></li>
+<li><p>Code:</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_elt(tree, env):
+    elttype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> elttype == <span class="st">&quot;function&quot;</span>:
+        fname = tree[<span class="dv">1</span>]
+        fparams = tree[<span class="dv">2</span>]
+        fbody = tree[<span class="dv">3</span>]
+        fvalue = (<span class="st">&quot;function&quot;</span>, fparams, fbody, env)
+        add_to_env(env, fname, fvalue)</code></pre>
+<h3 id="double-edged-sword"><a href="#TOC">5.31: Double-edged sword</a></h3>
+<ul>
+<li>We can define functions, call functions, and return from functions.</li>
+<li>Function bodies are <em>statements</em> which contain <em>expressions</em>.</li>
+<li>So much power!</li>
+<li>Can use Python to simulate any JavaScript program.</li>
+<li><p>Can use JavaScript to simulate any Python program.</p></li>
+<li>Are natural languages equal?
+<ul>
+<li><strong>Sapir-Whorf hypothesis</strong>, aka <strong>linguistic relativity hypothesis</strong>, states that structure of language influences speakers’ ability to reason.</li>
+<li>Language influences thought!</li>
+</ul></li>
+</ul>
+<h3 id="comparing-languages"><a href="#TOC">5.33: Comparing Languages</a></h3>
+<ul>
+<li>Real world: language influences thought.</li>
+<li>Computing: languages are equally expressive.
+<ul>
+<li>Sometimes easier to express in one language than another.</li>
+</ul></li>
+<li>Interpreting is deep.</li>
+<li>Downside is that simulation a program requires running it.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">x = <span class="dv">0</span>
+<span class="kw">while</span> <span class="ot">True</span>:
+    x = x + <span class="dv">1</span>
+<span class="kw">print</span> x</code></pre>
+<ul>
+<li>If we interpret an infinite loop, our interpreter will also loop forever!</li>
+</ul>
+<h3 id="infinite-loop"><a href="#TOC">5.34: Infinite Loop</a></h3>
+<ul>
+<li>Want: look at program source, see if it loops forever or if it halts.</li>
+<li>Provably impossible to do this.</li>
+<li>Assume we have <code>halts()</code> which takes a procedure as an argument and returns <code>True</code> if that procedure halts and <code>False</code> if it loops forever.</li>
+<li>Consider:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> tsif():
+    <span class="kw">if</span> halts(tsif):
+        x = <span class="dv">0</span>
+        <span class="kw">while</span> <span class="ot">True</span>:
+            x = x + <span class="dv">1</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="dv">0</span></code></pre>
+<ul>
+<li>If <code>tsif</code> halts, then it loops forever.</li>
+<li>If <code>tsif</code> loops forever, then it halts.</li>
+<li><p><em>Contradiction</em>, hence <code>halts()</code> <strong>cannot exist</strong>.</p></li>
+<li>Other <strong>self-referential</strong> contradictions:
+<ul>
+<li>“This sentence is false”</li>
+<li>“The town barber only shaves those in the town that don’t shave themselves. Who shaves the baber?”</li>
+</ul></li>
+<li>Impossible to do it 100%, but there’s a market to do it very approximately correctly, 99.99%.
+<ul>
+<li>See “The Road Not Taken: Estimating Path Execution Frequency Statically”, Weimer.</li>
+</ul></li>
+</ul>
+<h2 id="office-hours-5"><a href="#TOC">Office Hours 5</a></h2>
+<ul>
+<li>Domain Specific Languages, why are they the future?
+<ul>
+<li>Turing completeness, so can use any language to express anything.</li>
+<li>But how easy is it, how is the error handling, how is the performance?</li>
+<li><em>Conciseness of representation</em>.</li>
+<li><em>Type checking</em>, <em>run-time checking</em>, i.e. <em>safety</em>.</li>
+<li><em>Compiler and/or runtime optimization</em>.</li>
+<li>e.g. MATLAB and linear algebra.
+<ul>
+<li>Could do it all in C or C#.</li>
+<li>MATLAB is initially more concise.</li>
+<li>But once you use operator overloading in C# this argument isn’t so strong.</li>
+<li>However safety and optimization arguments are still strong.</li>
+<li>Nowadays contraints are <em>programmer time</em>, not <em>execution time</em>.</li>
+<li>The higher level statements to give to a compiler, i.e. the more <em>declarative</em> you are, the more the compiler is able to optimize effectively.
+<ul>
+<li>Caches.</li>
+<li>Optimum instruction set instructions.</li>
+</ul></li>
+<li>This higher-level-argument is analogous to the historical push from assembly to C.</li>
+</ul></li>
+<li>At the end of the day maybe there is no difference between a well-crafted library and a DSL.
+<ul>
+<li>However, future development will likely include improvements to DSLs first, then libraries.</li>
+</ul></li>
+</ul></li>
+<li>Exceptional Control Flow
+<ul>
+<li>Language-level exception handling is super popular.</li>
+<li>Previous approach involved setting and getting global flags.
+<ul>
+<li>Programmers are consistently poor at safely using global flags.</li>
+</ul></li>
+<li>Even in modern exception handling programmers make mistakes.
+<ul>
+<li>Control flow is not visible, very non-local.</li>
+<li>Forget to close resources, maintain invariants.</li>
+</ul></li>
+<li>Exception handling is so popular that in average program 1-5% of code text will be catch/finally blocks.</li>
+<li>In large programs 3-46% of program is transitively reachable via catch/finally blocks.</li>
+<li>Philosophical issue: when you catch an error, you don’t have enough time or context to appropriately handle it.
+<ul>
+<li>e.g. file didn’t save properly. Do I retry immediately, fail loudly, sleep then retry? Maybe I don’t know.</li>
+<li>!!AI reminiscent of Hawkin’s “On Intelligence”.</li>
+</ul></li>
+</ul></li>
+<li>Extending the course browser
+<ul>
+<li>Right now we’re rendering it to static LaTeX.</li>
+<li>Should study “elynx” and “Mosaic”.</li>
+<li>First step, add ability for users to click on links.
+<ul>
+<li>After rendering page we should wait for events of user clicking on certain parts of the page, the links.</li>
+</ul></li>
+<li>Another problem: how to lay out text so that it wraps lines properly?
+<ul>
+<li>Formally, <strong>minimum raggedness word wrapping problem</strong>.</li>
+<li>Can solve this using dynamic programming and memoization.</li>
+</ul></li>
+</ul></li>
+<li>Global Variables
+<ul>
+<li>JavaScript can manipulate global variables. Is this a security issue?</li>
+<li>Oh my yes!</li>
+<li>Huge problem with unintended read and/or write access to variables outside of your scope.</li>
+<li>Early versions of PHP automatically copied form values into the global scope, for convenience. <em>Register global variables</em>.</li>
+<li>It is phenomenally easy to access these global variables and bypass business logic.</li>
+<li>PHP <code>explode()</code>, aka Python’s <code>string.split()</code>, assigns to local variables and trusts user to be friendly. Nope!</li>
+</ul></li>
+</ul>
+<h2 id="unit-6"><a href="#TOC">Unit 6</a></h2>
+<ul>
+<li>What we’ve done so far:
+<ul>
+<li>HTML webpage, -&gt; lexing -&gt; list of tokens</li>
+<li>List of tokens -&gt; parsing -&gt; parse tree.</li>
+<li>Parse tree -&gt; interpreting -&gt; meaning (semantics).</li>
+</ul></li>
+<li>Now we’re going to put it all together.</li>
+<li>Web browser architecture
+<ol style="list-style-type: decimal">
+<li>Web page is lexed and parsed, into an Abstract Syntax Tree (AST)</li>
+<li>HTML interpreter walks AST, calls JavaScript interpreter.</li>
+<li>JavaScript code calls <code>write()</code>.</li>
+<li>JavaScript interpeter stores text from <code>write()</code>.</li>
+<li>HTML interpreter receives normal HTML, and JavaScript <code>write()</code> output, and calls <code>graphics</code> library.</li>
+<li>Final image of webpage is created.</li>
+</ol></li>
+</ul>
+<h3 id="fitting-them-together"><a href="#TOC">Fitting Them Together</a></h3>
+<ul>
+<li>HTML interpreter calls JavaScript interpreter.</li>
+<li>We treat JavaScript as a single HTML token.
+<ul>
+<li>e.g. <code>5&lt;7</code> or <code>a&gt;b</code> is valid JavaScript, but would confuse an HTML lexer.</li>
+</ul></li>
+<li>How to grab a chunk of embedded JS:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> t_javascript(token):
+    <span class="st">r&#39;\&lt;script\ type=\&quot;text\/javascript\&quot;\&gt;&#39;</span>
+    token.lexer.code_start = token.lexer.lexpos
+    token.lexer.begin(<span class="st">&#39;javascript&#39;</span>)
+
+    <span class="co"># note that lexpos is such that we&#39;ve already</span>
+    <span class="co"># stripped off the initial text/javascript part.</span>
+
+<span class="kw">def</span> t_javascript_end(token):
+    <span class="st">r&#39;\&lt;\/script\&gt;&#39;</span> <span class="co"># &lt;/script&gt;</span>
+    token.value = token.lexer.lexdata[token.lexer.code_start:token.lexer.lexpos<span class="dv">-9</span>]
+    token.<span class="dt">type</span> = <span class="st">&#39;JAVASCRIPT&#39;</span>
+    token.lexer.lineno += token.value.count(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)
+    token.lexer.begin(<span class="st">&#39;INITIAL&#39;</span>)
+    <span class="kw">return</span> token
+
+    <span class="co"># note that lexdata is such that we need to</span>
+    <span class="co"># manually strip off &lt;/script&gt; </span></code></pre>
+<h3 id="extending-our-html-grammar"><a href="#TOC"> Extending our HTML grammar</a></h3>
+<ul>
+<li>Review:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_element_word(p):
+    <span class="st">&#39;element : WORD&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;word-element&quot;</span>, p[<span class="dv">1</span>])
+
+    <span class="co"># p[0] is the parse tree</span>
+    <span class="co"># p[1] is the child parse tree</span></code></pre>
+<ul>
+<li>Now need a JavaScript element:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> p_element_javascript(p):
+    <span class="st">&#39;element : JAVASCRIPT&#39;</span>
+    p[<span class="dv">0</span>] = (<span class="st">&quot;javascript-element&quot;</span>, p[<span class="dv">1</span>])</code></pre>
+<ul>
+<li><code>JAVASCRIPT</code> in the parser is the same as <code>token.type</code> in the lexer. This is intentional: this is the link between the lexer and the parser.</li>
+<li>Example:</li>
+</ul>
+<pre><code>HTML input:
+
+    hello my
+    &lt;script type=&quot;text/javascript&quot;&gt;document.write(99);&lt;/script&gt;
+    luftballons
+
+Parse tree:
+
+[(&quot;word-element&quot;, &quot;hello&quot;),
+ (&quot;word-element&quot;, &quot;my&quot;),
+ (&quot;javascript-element&quot;, &quot;document.write(99)&quot;),
+ (&quot;word-element&quot;, &quot;luftballons&quot;)]</code></pre>
+<h3 id="calling-the-interpreter"><a href="#TOC"> Calling the Interpreter</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> interpret(trees):
+    <span class="kw">for</span> tree in trees:
+        treetype = tree[<span class="dv">0</span>]
+        <span class="kw">if</span> treetype == <span class="st">&quot;word-element&quot;</span>:
+            graphics.word(node[<span class="dv">1</span>])
+
+        <span class="co"># covered HTML tags in another quiz...</span>
+
+        <span class="kw">elif</span> tree.<span class="dt">type</span> == <span class="st">&quot;javascript-element&quot;</span>:
+            jstext = tree[<span class="dv">1</span>] <span class="co"># &quot;document.write(55);&quot;</span>
+
+            <span class="co"># jstokens is an external module</span>
+            jslexer = lex.lex(module=jstokens)
+
+            <span class="co"># jsgrammar is another external module</span>
+            jsparser = yacc.yacc(module=jsgrammar)
+
+            <span class="co"># jstree is a parse tree for JavaScript</span>
+            jstree = jsparser.parse(jstext, lexer=jslexer)
+
+            <span class="co"># We want to call the interpreter on our AST</span>
+            result = jsinterp.interpret(jstree)
+            graphics.word(result) </code></pre>
+<h3 id="evil-problem"><a href="#TOC"> Evil problem</a></h3>
+<ul>
+<li>JavaScript may call <code>document.write()</code> more than once, but we still want to only return one string from the <code>jsinterp.interpret()</code> call.</li>
+<li>Need to store text over time…use our environments from before!</li>
+</ul>
+<h3 id="javascript-output"><a href="#TOC"> JavaScript output</a></h3>
+<ul>
+<li>Assume every call to <code>write</code> appends to the special “javascript output” variable in the global environment.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> interpret(trees):
+    <span class="co"># recall env = (parent, dictionary), and as this is the global environment the parent pointer is None</span>
+    global_env = (<span class="ot">None</span>, {<span class="st">&quot;javascript output&quot;</span>: <span class="st">&quot;&quot;</span>})
+    <span class="kw">for</span> elt in trees:
+        eval_elt(elt, global_env)
+    <span class="kw">return</span> (global_env[<span class="dv">1</span>])[<span class="st">&quot;javascript output&quot;</span>]</code></pre>
+<ul>
+<li><code>&quot;javascript output&quot;</code>, in particular the space, is important; the user is not allowed to use a space in an identifier so they can’t ever collide with this.</li>
+</ul>
+<h3 id="updating-output"><a href="#TOC">Updating output</a></h3>
+<ul>
+<li>Treating write specially</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_exp(tree, env):
+    exptype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> exptype == <span class="st">&quot;call&quot;</span>:
+        fname = tree[<span class="dv">1</span>] <span class="co"># myfun in myfun(a,3+4)</span>
+        fargs = tree[<span class="dv">2</span>] <span class="co"># [a,3+4] in myfun(a,3+4)</span>
+        fvalue = envlookup(fname,env) <span class="co"># None for &quot;write&quot;; built-in</span>
+        <span class="kw">if</span> fname == <span class="st">&quot;write&quot;</span>:
+            argval = eval_exp(fargs[<span class="dv">0</span>],env)
+            output_sofar = env_lookup(<span class="st">&quot;javascript output&quot;</span>,env)
+            env_update(<span class="st">&quot;javascript output&quot;</span>, \
+                output_sofar + <span class="dt">str</span>(argval), env)
+            <span class="kw">return</span> <span class="ot">None</span></code></pre>
+<h3 id="counting-frames"><a href="#TOC">Counting Frames</a></h3>
+<ul>
+<li>Consider the following embedded JS:</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> factorial(n) {
+    <span class="kw">if</span> (n == <span class="dv">0</span>) {
+        <span class="kw">return</span> <span class="dv">1</span>;
+    }
+    <span class="kw">return</span> n * factorial(n<span class="dv">-1</span>);
+}
+<span class="kw">document</span>.<span class="fu">write</span>(<span class="dv">1260</span> + factorial(<span class="dv">6</span>));</code></pre>
+<ul>
+<li>The above has:
+<ul>
+<li>One global environment frame, which always exists.</li>
+<li>One environment frame per call to <code>factorial</code>, so 7.</li>
+<li>A total of eight environment frames.</li>
+<li>No frame shares the same value of <code>n</code>.</li>
+<li>(see “<code>def eval_stmt(tree,environment)</code>” above).</li>
+</ul></li>
+</ul>
+<h3 id="debugging"><a href="#TOC">Debugging</a></h3>
+<ul>
+<li>“I would rather have a sandwich <em>then</em> be burned alive” (wanted <em>than</em>)</li>
+<li>A good test case gives us confidence that a program implementation adheres to its specification. In this situation, a good test case reveals a bug.</li>
+</ul>
+<h3 id="testing"><a href="#TOC">Testing</a></h3>
+<ul>
+<li>We use <strong>testing</strong> to gain confidence that an implementation (a program) adheres to its specification (the task at hand) and meets all the requirements.</li>
+<li>Not a proof! We can only gain more confidence.</li>
+<li>If a program accepts an infinite set of inputs, testing alone cannot prove that program’s correctness.</li>
+<li>Our web page lexer, parser, interpreter, as it accepts inputs based on a CFG, has infinite number of inputs.</li>
+<li><p>Software maintenance (ie.e. testing, debugging, refactoring) carries a huge cost.</p></li>
+<li><p>When comparing a function’s output to the expected output, code read and see what features of our interepeter we’re using. If you’re not using it, you’re not testing it!</p></li>
+</ul>
+<h3 id="testing-in-depth"><a href="#TOC">Testing in depth</a></h3>
+<ul>
+<li>Suppose we make an error in our environment lookup:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> env_lookup(vname,env):
+    <span class="co"># env = (parent-poiner, {&quot;x&quot;: 22, &quot;y&quot;: 33})</span>
+    <span class="kw">if</span> vname in env[<span class="dv">1</span>]:
+        <span class="kw">return</span> (env[<span class="dv">1</span>])[vname]
+    <span class="kw">else</span>: <span class="co"># BUG</span>
+        <span class="kw">return</span> <span class="ot">None</span> <span class="co"># BUG </span></code></pre>
+<ul>
+<li>Consider this valid code:</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> a = <span class="dv">1</span>;
+<span class="kw">function</span> mistletoe(baldr) {
+    baldr = baldr + <span class="dv">1</span>;
+    a = a + <span class="dv">2</span>;
+    baldr = baldr + a;
+    <span class="kw">return</span> baldr;
+}
+<span class="fu">write</span>(mistletoe(<span class="dv">5</span>));</code></pre>
+<ul>
+<li>Should be 9.</li>
+<li>But we’re not looking up parent environments properly, so will get an error!</li>
+<li>Let’s suppose we don’t know where the bug is. How do we refine this test case?</li>
+<li>Comment out lines, and see if it still happens. <strong>Fault localisation</strong>.
+<ul>
+<li>Comment out the first three lines, just <code>return baldr</code>, it works!</li>
+</ul></li>
+</ul>
+<h3 id="testing-at-mozilla"><a href="#TOC">Testing at Mozilla</a></h3>
+<ul>
+<li>Simple test cases with obvious control flow are better.</li>
+<li>Removing parts of a test case help localise faults.</li>
+<li>Complex test cases hit more issues but they’re more difficult to debug and track down the actual cause.</li>
+<li>Linear test cases, with little to no control flow, are easy to “comment out lines” to localise faults.</li>
+</ul>
+<h3 id="anonymous-functions"><a href="#TOC">Anonymous functions</a></h3>
+<ul>
+<li>In Python:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">greeting = <span class="st">&quot;hola&quot;</span>
+<span class="kw">def</span> makegreeter(greeting):
+    <span class="kw">def</span> greeter(person):
+        <span class="kw">print</span> greeting + <span class="st">&quot; &quot;</span> + person
+    <span class="kw">return</span> greeter
+sayhello = makegreeter(<span class="st">&quot;hello&quot;</span>)
+sayhello(<span class="st">&quot;gracie&quot;</span>)</code></pre>
+<ul>
+<li>In JavaScript:</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> greeting = <span class="st">&quot;hola&quot;</span>;
+<span class="kw">function</span> makegreeter(greeting) {
+    <span class="kw">var</span> greeter = <span class="kw">function</span>(person) {
+        <span class="fu">write</span>(greeting + <span class="st">&quot; &quot;</span> + person);
+    }
+    <span class="kw">return</span> greeter;
+}
+<span class="kw">var</span> sayhello = makegreeter(<span class="st">&quot;hello&quot;</span>);</code></pre>
+<ul>
+<li>Let’s add anonymous functions to our JS interpreter.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval_exp(tree,env):
+    exptype = tree[<span class="dv">0</span>]
+    <span class="co"># function(x,y) { return x+y }</span>
+    <span class="kw">if</span> exptype == <span class="st">&quot;function&quot;</span>:
+        <span class="co"># (&quot;function&quot;, [&quot;x&quot;,&quot;y&quot;], [ (&quot;return&quot;, (&quot;binop&quot;, ...) ])</span>
+        fparams = tree[<span class="dv">1</span>]
+        fbody = tree[<span class="dv">2</span>]
+        <span class="kw">return</span> (<span class="st">&quot;function&quot;</span>, fparams, fbody, env)
+        <span class="co"># &quot;env&quot; allows local functions to see local variables</span>
+        <span class="co"># can see variables that were in scope *when the function was defined*</span></code></pre>
+<h3 id="mistakes-in-anonymous-functions"><a href="#TOC">Mistakes in anonymous functions</a></h3>
+<ul>
+<li>Suppose we get the return statement wrong:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">return</span> (<span class="st">&quot;function&quot;</span>, fparams, fbody, global_env)</code></pre>
+<ul>
+<li>No test input with only one “function” can show the bug.
+<ul>
+<li>However, with one recursive function we could see the bug.</li>
+</ul></li>
+<li>Need just one variable in the global environment to see the bug.</li>
+<li>If there are two functions at the top-level won’t see the bug.</li>
+<li>Need two functions, one nested in the other, to see the bug.</li>
+</ul>
+<h3 id="optimization"><a href="#TOC">Optimization</a></h3>
+<ul>
+<li>An <strong>optimization</strong> improves performance while retaining meaning, i.e. without changing the output.</li>
+</ul>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> factorial(n) {
+    <span class="kw">if</span> (n == <span class="dv">0</span>) { <span class="kw">return</span> <span class="dv">1</span>; }
+    <span class="kw">return</span> <span class="dv">1</span> * n * factorial(n<span class="dv">-1</span>);
+}</code></pre>
+<ul>
+<li>This is correct, but we’re multiplying by <code>1</code> a lot.</li>
+<li><code>1 \* n</code> can be replaced by <code>n</code>.</li>
+<li><p>Smaller AST, faster recursive walk, fewer multiplications.</p></li>
+<li>Note that modifying a local variable in a function, then not returning it, is redundant and can be removed.
+<ul>
+<li><strong>Dead code</strong>.</li>
+</ul></li>
+</ul>
+<h3 id="implementing-optimizations"><a href="#TOC">Implementing Optimizations</a></h3>
+<ol style="list-style-type: decimal">
+<li><p>Think of optimizations</p>
+<pre><code>x \* 1 == x
+x + 0 == x</code></pre></li>
+<li><p>Transform parse tree</p></li>
+</ol>
+<ul>
+<li>Replacing an expensive multiplication with a cheaper addition is an instance of <a href="http://en.wikipedia.org/wiki/Strength_reduction"><strong>strength reduction</strong></a>.</li>
+<li><code>x/x</code> can’t be optimized to <code>1</code> because if <code>x=0</code> then raises an exception, and we want to keep the same semantics after optimization.</li>
+</ul>
+<h3 id="optimizing-timing"><a href="#TOC">Optimizing Timing</a></h3>
+<ul>
+<li>Change the parse tree before interpreting.</li>
+<li>Program text -&gt; lexing -&gt; tokens -&gt; parsing -&gt; tree -&gt; <em>optimization</em> -&gt; tree (simpler) -&gt; interpreting -&gt; result (meaning)</li>
+<li>Optimization is optional!</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> optimize(tree):
+    etype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> etype == <span class="st">&quot;binop&quot;</span>: <span class="co"># a * 1 = a</span>
+        a = tree[<span class="dv">1</span>]
+        op = tree[<span class="dv">2</span>]
+        b = tree[<span class="dv">3</span>]
+        <span class="kw">if</span> op == <span class="st">&quot;*&quot;</span> and b == (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;1&quot;</span>):
+            <span class="kw">return</span> a
+        <span class="kw">elif</span> op == <span class="st">&quot;*&quot;</span> and b == (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;0&quot;</span>):
+            <span class="kw">return</span> (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;0&quot;</span>)
+        <span class="kw">elif</span> op == <span class="st">&quot;+&quot;</span> and b == (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;0&quot;</span>):
+            <span class="kw">return</span> a
+        <span class="kw">return</span> tree
+
+i.e. this:
+
+(<span class="st">&quot;binop&quot;</span>,
+    (<span class="st">&quot;number&quot;</span>, <span class="st">&quot;5&quot;</span>),
+    (<span class="st">&quot;*&quot;</span>),
+    (<span class="st">&quot;number&quot;</span>, <span class="st">&quot;1&quot;</span>)
+)
+
+becomes:
+
+(<span class="st">&quot;number&quot;</span>, <span class="st">&quot;5&quot;</span>)</code></pre>
+<ul>
+<li>In this class we will optionally perform optimization after parsing but before interpreting. Our optimizer takes a parse tree as input and returns a (simpler) parse tree as output.
+<ul>
+<li>We could modify the tree in place but for us returning a new tree is fine.</li>
+</ul></li>
+<li>Currently the optimizer is not recursive, so can’t optimize e.g. <code>a \* 1 \* 1</code>.</li>
+</ul>
+<h3 id="rebuilding-the-parse-tree"><a href="#TOC">Rebuilding the Parse Tree</a></h3>
+<ol style="list-style-type: decimal">
+<li>Recursive calls</li>
+<li>Look for patterns.</li>
+<li>Done</li>
+</ol>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> optimize(tree): <span class="co"># Expression trees only</span>
+    etype = tree[<span class="dv">0</span>]
+    <span class="kw">if</span> etype == <span class="st">&quot;binop&quot;</span>:
+        <span class="co"># Fix this code so that it handles a + ( 5 * 0 )</span>
+        <span class="co"># recursively! QUIZ!</span>
+        a = optimize(tree[<span class="dv">1</span>])
+        op = tree[<span class="dv">2</span>]
+        b = optimize(tree[<span class="dv">3</span>])
+        <span class="kw">if</span> op == <span class="st">&quot;*&quot;</span> and b == (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;1&quot;</span>):
+            <span class="kw">return</span> a
+        <span class="kw">elif</span> op == <span class="st">&quot;*&quot;</span> and b == (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;0&quot;</span>):
+            <span class="kw">return</span> (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;0&quot;</span>)
+        <span class="kw">elif</span> op == <span class="st">&quot;+&quot;</span> and b == (<span class="st">&quot;number&quot;</span>,<span class="st">&quot;0&quot;</span>):
+            <span class="kw">return</span> a
+    <span class="kw">return</span> (<span class="st">&quot;binop&quot;</span>, a, op, b) <span class="co"># return optimized tree, not original</span></code></pre>
+<h3 id="bending-the-rules"><a href="#TOC">Bending the Rules</a></h3>
+<ul>
+<li>Optimization is improving performance without sacrificing correctness.</li>
+<li>However, in <a href="http://genprog.cs.virginia.edu/">“Evolutionary Program Repair”</a> use genetic programming to “optimize” a program and alter its semantics to <em>improve</em> its correctness, i.e. removing bugs.</li>
+<li>With creativity the same concepts of e.g. altering parse trees can be used in many contexts, like above.</li>
+</ul>
+<h3 id="wrap-up-1"><a href="#TOC">Wrap up</a></h3>
+<ul>
+<li>Lexing
+<ul>
+<li>Regular expressions</li>
+<li>Finite state machines</li>
+</ul></li>
+<li>Parsing
+<ul>
+<li>Context Free Grammars, CFG (matching parentheses).</li>
+<li>Used Dynamic Programming and memoized Parse States</li>
+</ul></li>
+<li>Optimizing
+<ul>
+<li>Must retain meaning.</li>
+</ul></li>
+<li>Interpreting.
+<ul>
+<li>Walks AST recursively.</li>
+<li>HTML interpreter calls graphics engine and JavaScript interpreter.</li>
+</ul></li>
+<li>Debugging
+<ul>
+<li>Gain confidence.</li>
+</ul></li>
+</ul>
+<h2 id="unit-7---the-final-unit"><a href="#TOC">Unit 7 - The Final unit</a></h2>
+<h3 id="the-list"><a href="#TOC">The List</a></h3>
+<ul>
+<li>A <strong>language</strong> is a set of strings</li>
+<li><strong>Regular expressions</strong>: concise notation for specifying some sets of strings (<strong>regular languages</strong>).</li>
+<li><strong>Finite State Machines</strong>: pictorial representations and way to implement regular expressions (deterministic or not).
+<ul>
+<li>epsilon-transitions or more than one edge means it is non-deterministic.</li>
+<li>not a problem: can convert NFA to DFA.</li>
+</ul></li>
+<li><strong>Context-Free Grammars</strong>: concise notation for specifying some sets of strings (context-free languages).
+<ul>
+<li>Set of re-write rules.</li>
+<li>NonTerminal -&gt; Terminal Nonterminals.</li>
+<li>Terminals are the same as tokens, trying to match.</li>
+<li>CFGs can match balanced parantheses, this is impossible in regular languages.</li>
+</ul></li>
+<li><strong>Memoization</strong>, also called <strong>Dynamic Programming</strong>: keep previous results in a chart to save computation.</li>
+<li><strong>Parsing</strong>: determine if a list of tokens is in the language of a CFG. If so, produce a <strong>parse tree</strong>.</li>
+<li><strong>Lexing</strong>: break a big string up into a list of tokens (words).
+<ul>
+<li>Specified using regular expressions.</li>
+</ul></li>
+<li><strong>Type</strong>: A type is a set of values and associated safe operations.
+<ul>
+<li>Sets of values: Number, string, list.</li>
+<li>Operations: <code>+, -, /, len()</code>.</li>
+</ul></li>
+<li><strong>Semantics</strong>, i.e. <strong>meaning</strong>: a program may have type errors (or other <strong>exceptions</strong>) or it may produce a value.</li>
+<li><strong>Optimization</strong>: replace a program with another that has the <em>same semantics</em> (but uses fewer resources).
+<ul>
+<li><code>x * 1 === x</code></li>
+<li><code>x / x !== 1</code></li>
+</ul></li>
+<li><strong>Interpretation</strong>: recursive walk over the (optimized) parse tree. The meaning of a program is computer from the meanings of its subexpressions.
+<ul>
+<li>Typically tracks *<em>state</em> in <strong>environments</strong>.</li>
+<li>Environments are often chained together, particularly when you make function calls.</li>
+</ul></li>
+<li><strong>Web browser</strong>
+<ul>
+<li>Lex and parse HTML, treating JS as a special token.</li>
+<li>HTML interpreter calls JS interpreter, which itself returns a string.
+<ul>
+<li>JS interpreter calls <code>document.write()</code>.</li>
+</ul></li>
+<li>HTML interpreter calls graphics library to display words.</li>
+</ul></li>
+</ul>
+<h3 id="regular-expressions-1"><a href="#TOC">Regular expressions</a></h3>
+<ul>
+<li>There is a regular expression for <code>a^N</code>: it’s <code>a+</code>.</li>
+<li>There isn’t a regular expression for <code>a^N b^N</code>, because this involves memory / context / counting. Same as balancing parantheses.</li>
+</ul>
+<h3 id="context-free-grammars"><a href="#TOC">Context-Free Grammars</a></h3>
+<ul>
+<li><p>A context-free grammar (CFG) can capture <code>a^N b^N</code>. It looks like this:</p>
+<pre><code>S -&gt; aSb
+S -&gt;</code></pre></li>
+</ul>
+<h3 id="security"><a href="#TOC">Security</a></h3>
+<ul>
+<li><strong>Shrinking the trusted computing base</strong>.</li>
+<li>For any software minimize the components within it that needs to be trusted.
+<ul>
+<li>Minimize the number of ways in which disaster may ensue.</li>
+</ul></li>
+<li>An instance of the <strong>halting problem</strong>: if I could look at any piece of code and determine whether it was malicious or not this is equivalent to solving the halting problem.
+<ul>
+<li>Discussed earlier how this is provably impossible to solve.</li>
+</ul></li>
+</ul>
+<h3 id="parsing-states"><a href="#TOC">Parsing states</a></h3>
+<pre><code>S -&gt; aSb
+S -&gt; \epsilon
+S -&gt; c
+
+Input: acb
+
+What parsing states are in chart[2]?</code></pre>
+<ul>
+<li><code>S -&gt; &lt;dot&gt; a S b</code> is in <code>chart[0] from 0</code>, so no.</li>
+<li><code>S -&gt; a &lt;dot&gt; S b</code> is in <code>chart[1] from 0</code>, so no.</li>
+<li><code>S -&gt; &lt;dot&gt;</code> is in <code>chart[1] from 1</code>, so no.</li>
+<li><code>S -&gt; c &lt;dot&gt;</code> is in <code>chart[2] from 1</code>, so yes.</li>
+<li><code>S -&gt; a S &lt;dot&gt; b</code> is in <code>chart[2] from 0</code>, so yes.
+<ul>
+<li>note that the <code>from</code> is not <code>1</code>. <code>from 1</code> means that there is one hidden input not shown in this rule, whereas we can see all the input here.</li>
+</ul></li>
+</ul>
+<h3 id="interpretation-and-evaluation"><a href="#TOC">Interpretation and Evaluation</a></h3>
+<ul>
+<li>Interpreting doesn’t always produce a value or an error.
+<ul>
+<li>It can loop forever!</li>
+<li>But if it does return yes it always returns either a value or an error.</li>
+</ul></li>
+</ul>
+<h3 id="optimization-1"><a href="#TOC">Optimization</a></h3>
+<ul>
+<li>Given <code>optimization_OK(f, g)</code>, which compares a function before-and-after optimization and tells you if it’s a safe optimization.</li>
+<li>We can implement <code>optimization_OK</code> so that it returns a safe answer for optimization in all cases - just never optimize!</li>
+<li>We cannot implement an <code>optimization_OK</code> that works precisely in all cases - it is undecidable like the Halting Problem.
+<ul>
+<li>If we can solve <code>optimization_OK</code> in all cases then we could compare any <code>optimization_OK</code> itself to an infinite loop <code>def loops()</code>, and hence we’d have solved the Halting Problem.</li>
+</ul></li>
+<li><code>optimization_OK</code> is commutative; <code>O(f,g) == O(g,f)</code></li>
+</ul>
+<h3 id="what-next"><a href="#TOC">What next?</a></h3>
+<ul>
+<li>Wes Weimer recommends…
+<ul>
+<li><strong>Philosophy</strong> until you’ve covered epistemology, free will, logic, the philosophy of science, and “what it is like to be a bat.”</li>
+<li><strong>Cognitive psychology</strong>, until you’ve covered perception, consciousness, and the Flynn effect.</li>
+<li><strong>Speech</strong> and <strong>Rhetoric</strong> until you’ve covered persuasion.</li>
+<li><strong>Anthropology</strong> and <strong>Gender studies</strong> until you’ve covered Mead and Freeman and have a better feel for which behaviours are socially constructed and which may be essential.</li>
+<li><strong>Statistics</strong> until you can avoid being fooled.</li>
+<li><strong>Religion</strong> and <strong>Ethics</strong> until you’ve covered the relatonshopi between unhappiness and unrealised desires.</li>
+<li><strong>Phyiscs</strong> and <strong>Engineering</strong> until you can explain how a microphone, radio and speaker all work.</li>
+<li><strong>Government</strong> until you have an opinion about legislating morality and the relative importance of freedom and equality.</li>
+<li><strong>History</strong> until you are n ot condemed to repeat the mistakes of the past.</li>
+<li><strong>Life</strong> until you are happy. They say ignorance is bliss but they are wrong all but finitely often.</li>
+</ul></li>
+<li>!!AI hahaha.</li>
+</ul>
+<h2 id="references"><a href="#TOC">References</a></h2>
+<h3 id="unit-1-1"><a href="#TOC">Unit 1</a></h3>
+<ul>
+<li><p><a href="http://code.google.com/edu/languages/google-python-class/regular-expressions.html">Regular Expressions in Python</a> (Google Code University)</p></li>
+<li>Bernoulli numbers
+<ul>
+<li>Sequence of rational numbers.</li>
+<li>Appear in Taylor series expansions of <code>tan()</code> and <code>tanh()</code>.</li>
+</ul></li>
+<li>Barbara Jane Liskov
+<ul>
+<li>Invented CLU.</li>
+<li>Won Turing Award.</li>
+</ul></li>
+<li>Mir Taqi Mir and Khwaja Mir Dard.
+<ul>
+<li>18th century Urdu poets</li>
+<li>Two of the four pillars of Urdu poetry.</li>
+</ul></li>
+<li>Rabindranath Tagore
+<ul>
+<li>Bengali poet, Nobel Prize laureate.</li>
+<li>Where the mind is without fear.</li>
+</ul></li>
+</ul>
+</body>
+</html>
