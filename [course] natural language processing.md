@@ -378,7 +378,7 @@ $= 1 \times 0.5 \times 1 \times 1 = 0.5$
 
 $l = \frac{1}{12} \{ 3 \times \textrm{log}_2(0.5) \}$
 $=\frac{1}{12}(-3) = \frac{-1}{4}$  
-$p=2^{-\frac{1}{4}} = \sqrt[4]{2} = 1.189\;\textrm{(3dp)}$
+$p=2^{\frac{1}{4}} = \sqrt[4]{2} = 1.189\;\textrm{(3dp)}$
 
 - - -
 
