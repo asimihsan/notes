@@ -2,6 +2,10 @@
 
 Columbia University, via Coursera
 
+## Student
+
+[Asim Ihsan](http://www.asimihsan.com)
+
 ## Readings policy
 
 There are excellent readings assigned to the class. They're explicitly inlined into the respective lecture, to save typing stuff out twice.

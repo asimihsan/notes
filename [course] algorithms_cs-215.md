@@ -1,5 +1,9 @@
 # Algorithms (CS-215) on Udacity
 
+## Student
+
+[Asim Ihsan](http://www.asimihsan.com)
+
 ## Unit 1: A Social Network Magic Trick
 
 ### 1.3: Eulerian Path
