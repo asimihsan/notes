@@ -2,6 +2,10 @@
 
 (via Coursera)
 
+## Student
+
+[Asim Ihsan](http://www.asimihsan.com)
+
 ## Lecture notes
 
 ### 01-01: Introduction

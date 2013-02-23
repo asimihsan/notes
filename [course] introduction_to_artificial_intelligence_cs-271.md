@@ -2,6 +2,10 @@
 
 Via Udacity (CS-271)
 
+## Student
+
+[Asim Ihsan](http://www.asimihsan.com)
+
 ## 1.3: Intelligent Agents
 
 -    **Agents** interact with **environment**.

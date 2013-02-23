@@ -2,6 +2,10 @@
 
 via Udacity
 
+## Student
+
+[Asim Ihsan](http://www.asimihsan.com)
+
 ## Lecture notes
 
 ### 1. What is Testing?
