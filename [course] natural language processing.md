@@ -1541,6 +1541,16 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   It is **linear** with respect to sentence length.
     -   Much better than brute force, which was $O(|S|^n)$.
 
+#### Summary
+
+-   HMM taggers are **very simple to train**.
+    -   Just compile counts from training corpus, calculate MLEs.
+-   Perform relatively well, over 90% on named entity recognition.
+-   Main difficulty is modelling: e(word|tag), especially if words are low-frequency.
+    -   One approach is to group low-frequency words into classes, but very clumsy and heuristic.
+    -   When words are complex even worse.
+    -   Later in the course we develop more complex methods.
+
 ### Readings
 
 #### Speech and Language Processing, Chapter 3 (Words and Transducers)
