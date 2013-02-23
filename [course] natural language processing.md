@@ -1267,6 +1267,280 @@ quarter/NA results/NA ./NA
 -   We're **closing** the vocabulary.
 -   This is a simple method, but requires human heuristics.
 
+### The Viterbi Algorithm for HMMs
+
+-   How to apply HMMs to new test sentences?
+
+#### Problem
+
+-   For a *new* test input sentence $x_1, \ldots, x_n$, map it onto the most likely set of tags, i.e. find:
+
+$$\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})$$
+
+-   where the arg max is taken over all seuqneces $y_1 \ldots y_{n+1)}$ such that $y_i \in S$ for $i = 1, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
+
+-   We assume that $p$ again takes the form:
+
+$$p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)$$
+
+-   Recall the assumptions that $y_0 = y_{-1} = \textrm{*}$ and $y_{n+1} = \textrm{STOP}$.
+
+#### Brute Force Search is Hopelessly Inefficient
+
+-   For example
+    -   $x_1 \ldots x_n = \{\textrm{the, dog, laughs}\}$.
+    -   $y_1 \ldots y_n = \{\textrm{D, N, V}\}$ (the correct answer).
+    -   $S = \{\textrm{D, N, V}\}$ (assume that the set of all possible tags is just this).
+-   So $|S| = 3$, and all possible tag sequences are all combinations (*not* permutations):
+    -   D D D STOP
+    -   D D N STOP
+    -   D D U STOP
+    -   D U D STOP
+    -   ...
+-   Only $3^3 = 27$ possible tag sequences.
+-   Use the transmission and emissions parameters of the HMM model to assign probabilities to each particular tag sequnce, then choose the most likely tag sequence.
+-   However, in the general case $|S|^n$, where $n$ is sentence length, is the number of possible sequences.
+
+-   The transmission parameters only depend on sequences of length three for trigram HMMs.
+    -   This structure allows a more efficient solution.
+
+#### The Viterbi Algorithm
+
+-   Define $n$ to be length of sentence.
+-   Define $S_k$ for $k = -1, 0, \ldots, n$, to be set of possible tags at position $k$:
+
+$$S_{-1} = S_0 = \{\textrm{*}\}$$
+$$S_k = S\;\textrm{for}\;k \in \{1, 2, \ldots n\}$$
+
+-   Define:
+
+$$r(y_{-1}, y_0, y_1, \ldots, y_k) = \prod_{i=1}^{k} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i)$$
+
+-   Note that, always, $y_{-1} = y_0 = \{\textrm{*}\}$.
+-   This is a truncated $q$, as it only goes $i=1$ to $k$.
+-   Define a dynamic programming table
+
+$$\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k$$.
+
+i.e.
+
+$$\pi(k,u,v) = max_{(y_{-1},y_0,y_{1},\ldots,y_k):y_{k-1}=u,\;y_k=v} r(y_{-1},y_0,y_1,\ldots,y_k)$$
+
+-   $k$ takes any value $\{\textrm{1,2,...,n}\}$.
+-   $u \in S_{k-1}$.
+-   $v \in S_k$.
+
+-   What do the $S$ and $k$ expressions at the begining imply:
+    -   For example, (the, dog, laughs, D, N, V) implies $k = 3$.
+    -   Each tag in $S$ could be responsible for generating a word in $x$.
+        -   If $S = \{\textrm{D, N, V, P}\}$, then $x_1$ could be one of D, N, V, P, as is $x_2$, etc.
+
+#### An Example
+
+$$\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;$$
+
+-   Assume $S = \{\textrm{D, N, V, P}\}$
+-   What does $\pi(7, \textrm{P}, \textrm{D})$ mean, intuitively?
+    -   The probability of the most likely tag sequence ending at the word in position 7 such that the last two tags are (P, D).
+    -   Fix 'with' (6) to P.
+    -   Fix 'the' (7) with D.
+    -   Each preceding word has four possible tags.
+        -   'dog' (5) could be D, N, V, P.
+        -   'the' (4) could be D, N, V, P.
+        -   'saw' (3) could be D, N, V, P.
+        -   'man' (2) could be D, N, V, P.
+        -   'The' (1) could be D, N, V, P.
+
+- - -
+
+Quiz: We have a trigram HMM model with the following transition parameters:
+
+-   $q(\textrm{D | *, *}) = 1$
+-   $q(\textrm{N | *, D}) = 1$
+-   $q(\textrm{V | D, N}) = 1$
+-   $q(\textrm{STOP | N, V}) = 1$
+
+and emission parameters:
+
+-   $e(\textrm{the | D}) = 0.8$
+-   $e(\textrm{dog | D}) = 0.2$
+-   $e(\textrm{dog | N}) = 0.8$
+-   $e(\textrm{the | N}) = 0.2$
+-   $e(\textrm{barks | V}) = 1.0$
+
+Say we have the sentence:
+
+```
+the dog barks
+```
+
+What is the value of $\pi(3, \textrm{N}, \textrm{V})$?
+
+-   Intuitively, this reads as 'what is the probability of the most likely tag sequence that ends at position 3 such that the last two tags are N and V?'
+-   First, expand and label your test sentence, omitting the STOP symbol:
+
+$$\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{the}}\;\underset{2}{\textrm{dog}}\;\underset{3}{\textrm{barks}}$$
+
+-   Draw a Markov Chain graph of your transmission parameters, covering every single possible path.
+    -   Think of every tag as a node (including the start symbols), and an edge as moving from one tag to another with a certain probability.
+    -   In our case this is very easy; there is only one path, i.e. $\textrm{* -> * -> D -> N -> V -> STOP}$, with probabilities of $1$ for each edge.
+
+-   Eliminate all paths from the Markov Chain graph that do not meet the constraints of $\pi(3,\textrm{N},\textrm{V})$. Also eliminate any paths that contain an edge with zero probability.
+-   For us, we only have one path, and this path meets the contraints of this function. 
+-   Prove this to yourself by putting one finger on the start of the test sentence, and one finger on the start of the Markon Chain graph, and counting until $k=3$.
+
+-   Your Markov Chain graph now covers every possible combination of tags that *could* match this test sentence. For each path calculate the product of probabilities from a start symbol to $k=3$. Determine which path gives you the highest probability.
+-   In our case there is only one path, so the **most likely tag sequence** is (D, N, V).
+-   This gives us the $q$ part of the $r$ expression.
+-   For this tag sequence use the emission parameters to "generate" the appropriate word in order to calculate the $e$ parameters.
+-   Mathematically:
+
+$$
+\begin{align}
+    &\begin{aligned}
+        r(y_{-1},y_0,y_1,\ldots,y_n) & = \prod_{i=1}^{k} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i) \\
+        r(\textrm{*, *, D, N, V}) & = \left\{ q(\textrm{D | *, *}) \times q(\textrm{N | *, D}) \times q(\textrm{V | D, N}) \right\} \times \\
+        & \left\{ e(\textrm{the | D}) \times e(\textrm{dog | N}) \times e(\textrm{barks | V}) \right\} \\
+        & = \left\{ 1 \times 1 \times 1\right\} \times \left\{0.8 \times 0.8 \times 1.0 \right\} \\
+        & = 0.64
+    \end{aligned}
+\end{align}
+$$
+
+- - -
+
+#### A Recursive Definition
+
+-   Base case: $\pi(0, \textrm{*}, \textrm{*}) = 1$
+    -   Every tag sequence starts with $\textrm{* *}$.
+-   **Recursive definition**: $\forall\; k \in \{1 \ldots n\},\;\forall\; u \in S_{k-1}\;\textrm{and}\;v \in S_k:$
+
+$$\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v))$$ 
+
+-   $u$ can take any tag in $S_{k-1}$, $v$ can take any tag in $S_k$.
+-   Notice how we're working backwards in the sentence back to the base case, the start.
+
+#### Justification for the Recursive Definition 
+
+(part 2)
+
+$$\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;$$
+
+What is $\pi(7, P, D)$?
+
+-   Recall this puts 'with' (6) = P, 'the' (7) = D.
+-   $u = \textrm{P}, v = \textrm{D}$
+-   Note that $S_5 = S_4 = \ldots = S = \{\textrm{D, N, V, P}\}$.
+
+$$
+\begin{align}
+    &\begin{aligned}
+        \pi(7, \textrm{P}, \textrm{D}) = & \underset{w \in \{\textrm{D,N,V,P}\}}{\textrm{max}} \left\{ \pi(6, w, \textrm{P}) \times q(\textrm{D} | w, \textrm{P}) \times e(\textrm{the} | \textrm{D}) \right\}
+    \end{aligned}
+\end{align}
+$$
+
+-   Any tag sequence ending in (P, D) must have included one previous tag in (D, N, V, P). The 'max' explicitly searches over these.
+
+- - -
+
+Quiz: assume $S = \{\textrm{D, N, V, P}\}$ and a trigram HMM with parameters:
+
+-   $q(\textrm{D | N, P}) = 0.4$
+-   $q(\textrm{D | w, P}) = 0$ for $w \neq N$.
+-   $e(\textrm{the | D}) = 0.6$
+
+We are also given the sentence:
+
+```
+Ella walks to the red house
+```
+
+Say the dynamic programming table for this sentence has the following entries:
+
+-   $\pi(\textrm{3, D, P}) = 0.1$
+-   $\pi(\textrm{3, N, P}) = 0.2$
+-   $\pi(\textrm{3, V, P}) = 0.01$
+-   $\pi(\textrm{3, P, P}) = 0.5$
+
+What is the value of $\pi(\textrm{4, P, D})$?
+
+-   $u = \textrm{P}$
+-   $v = \textrm{D}$
+
+$$
+\begin{align}
+    &\begin{aligned}
+        \pi(k,u,v) = & \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v)) \\
+        \pi(4, \textrm{P}, \textrm{D}) = & \underset{w \in \{\textrm{D, N, V, P}\}}{\textrm{max}} \left\{ \pi(3, w, \textrm{P}) \times q(\textrm{D} | w, \textrm{P}) \times e(\textrm{the | D}) \right\} \\
+        = & \textrm{max} \left\{ 0.1 \times 0 \times 0.6, 0.2 \times 0.4 \times 0.6, 0.01 \times 0 \times 0.6, 0.5 \times 0 \times 0.6 \right\} \\
+        = & 0.048
+    \end{aligned}
+\end{align}
+$$
+
+- - -
+
+### The Viterbi Algorithm
+
+-   **Inputs**:
+    -   a sentence $x_1 \ldots x_n$, a sequence of words
+    -   transmisson parameters $q(s|u,v)$, 
+    -   emission parameters $e(x|s)$.
+-   **Output**:
+    -   $\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})$
+    -   Notice this is *not argmax*; just returns max probability. A simple change later will fix this.
+-   **Initializtion**:
+    -   Set $\pi(0,\textrm{*},\textrm{*}) = 1$.
+        -   Base case of the recursion.
+-   **Definition**:
+    -   $S_{-1} = S_0 = \{\textrm{*}\}$
+        -   Can only have the star symbols at positions -1 and 0.
+    -   $S_k = S\;\forall\;k \in \{1 \ldots n\}$   
+        -   Recall e.g. {D, N, V, P}
+-   **Algorithm**
+    -   For $k = 1 \ldots n$:
+        -   For $u \in S_{k-1}$, $v \in S_k$:
+            -   $\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))$
+    -   **Return**: $\textrm{max}_{u \in S_{n-1},v \in S_n} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))$
+
+#### The Viterbi Algorithm with Backpointers
+
+We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
+
+
+-   **Inputs**:
+    -   a sentence $x_1 \ldots x_n$, a sequence of words
+    -   transmisson parameters $q(s|u,v)$, 
+    -   emission parameters $e(x|s)$.
+-   **Output**:
+    -   $\textrm{arg}\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})$
+-   **Initializtion**:
+    -   Set $\pi(0,\textrm{*},\textrm{*}) = 1$.
+-   **Definition**:
+    -   $S_{-1} = S_0 = \{\textrm{*}\}$
+    -   $S_k = S\;\forall\;k \in \{1 \ldots n\}$   
+-   **Algorithm**
+    -   For $k = 1 \ldots n$:
+        -   For $u \in S_{k-1}$, $v \in S_k$:
+            -   $\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))$
+            -   $bp(k,u,v) = arg \underset{w \in S_{k-2}}{max} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))$
+
+    -   Set $(y_{n-1},y_n) = \textrm{argmax}_{(u,v)} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))$
+    -   For $k = (n-2) \ldots 1$, $y_k = bp(k+1, y_{k+1}, y_{k+2})$
+    -   **Return** the tag sequence $y_1 \ldots y_n$.
+
+-   What is different?
+    -   Don't just record $\pi$ at each point but also a backpointer $bp$; which tag achieved this max. Which tag is most likely at $k$ given $u,v$.
+    -   We then have $\pi$ and $bp$ values.
+    -   At the end we go backwards in the sequence.
+
+-   Run-time complexity is $O(n \times |S|^3)$.
+    -   We enter the $u,v$ loop $n \times |S|^2$ times.
+    -   Each time we enter we need to search over $|S|$ possible tags.
+    -   It is **linear** with respect to sentence length.
+    -   Much better than brute force, which was $O(|S|^n)$.
+
 ### Readings
 
 #### Speech and Language Processing, Chapter 3 (Words and Transducers)
