@@ -410,6 +410,153 @@ Out[6]: array(True, dtype=bool)
 -   Like `multiprocessing` but across remote machines as well.
 -   Doesn't send the full environment, so you need to build on all machines.
 
+## When do I optimise?
+
+### Computer Organization and Design, 3rd edition, Chapter 4 - Understanding and Assessing Performance
+
+-   Amdahl's law
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & \textrm{Execution time after improvement} \\
+        & = \left( \frac{\textrm{Execution time affected by improvement}}{\textrm{Amount of improvement}} + \textrm{Execution time unaffected} \right)
+    \end{aligned}
+\end{align}
+$$
+
+-   Amdahl's law reminds us to **make the common case fast**. But it also teaches us about decreasing returns.
+-   For example, suppose I have a program that takes 100 seconds to run. I've identified a subroutine that takes 80 seconds of this time. If I half the cost of the subroutine to 40 seconds, how much faster is my program?
+
+$$
+\begin{align}
+    &\begin{aligned}
+        &\textrm{Execution time after improvement} \\
+        & = \left( \frac{\textrm{80}}{2} + (100 - 80) \right) \\
+        & = \textrm{60 seconds}
+    \end{aligned}
+\end{align}
+$$
+
+-   and if I quarter the cost to 20 seconds?
+
+$$
+\begin{align}
+    &\begin{aligned}
+        &\textrm{Execution time after improvement} \\
+        & = \left( \frac{\textrm{80}}{4} + (100 - 80) \right) \\
+        & = \textrm{40 seconds}
+    \end{aligned}
+\end{align}
+$$
+
+-   So reducing the routine's cost by 50% gives 40% returns overall, and reducing it by 75% gives 60% returns overall.
+-   Even the best case, where we focus on a routine that occupies most of the execution time, shows noticeable decreasing returns. Imagine if we didn't profile and focused on a random routine!
+
+### Make it Work, Make it Right, Make it Fast
+
+-   References:
+    -   [http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast](http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast)
+    -   [http://c2.com/cgi/wiki?PrematureOptimization](http://c2.com/cgi/wiki?PrematureOptimization)
+
+-   Get at least some use cases working and tested so you are getting feedback.
+-   Get all the use cases working and tested.
+-   Use the system end-to-end, find performance bottlenecks.
+-   Use the system under a profiler to identify the bottlenecks.
+-   Make it fast (mercilessly; everything is tested, right?)
+
+### The oft-misquoted Donald Knuth
+
+-   Knuth, Donald (December 1974). "Structured Programming with go to Statements". ACM Journal Computing Surveys 6 (4): 268. [CiteSeerX](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.103.6084)
+
+> Programmers waste enormous amounts of time thinking about, or worrying about, the speed of noncritical parts of their programs, and these attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered. *We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil*. **Yet we should not pass up our opportunities in that critical 3%**.
+
+### Essentials of Software Engineering (2009), Chapter 9 - Implementation
+
+-   Characteristics of a good implementation, in no particular order
+    -   **Readability**: can be easily read and understood.
+    -   **Maintainability**: can be easily modified, extended, and maintained.
+    -   **Performance**: minimises any one, or all of, execution time, memory usage, and power consumption.
+    -   **Correctness**: do what it is specified to do.
+    -   **Completeness**: all requirements are met.
+
+-   There is no such thing as a free lunch; what would you put these attributes in, knowing that the lower in the list the attribute the less attention it'll receive?
+-   For me, performance ends up on the bottom.
+-   Yet these attributes aren't independent; certainly readability and maintainability go hand in hand. And what if performance is a non-functional requirement, and hence part of completeness?
+-   If so then this isn't a license to ignore the empirical fact that programs are slow in a small part of themselves, and one should likewise use empirical measurements to first determine these before making assumptions.
+
+### Beautiful Code (2007), Chapter 5 - Correct, Beautiful, Fast (In That Order)
+
+> If there's a moral to this story, it is this: do not let performance considerations stop you from doing what is right. You can always make the code faster with a little cleverness. You can rarely recover so easily from a bad design...Design the program you want in the way it should be designed. Then, and only then, should you worry about performance. More often than not, you'll discover the program is fast enough on your first pass.
+
+### Computer Architecture, 4th edition, Chapter 1 - Fundamentals of Computer Design
+
+> Important fundamental observations have come from properties
+> of programs. That most important program property that we
+> regularly exploit is the **principle of locality**.
+> Programs tends to reuse data and instructions they have
+> used recently. A widely held rule of thumb is that a program
+> spends 90% of its execution time in only 10% of the code...
+> Two different types of locality have been observed.
+> **Temporal locality** states that recently accessed items are
+> likely to be accessed in the near future. **Spatial locality**
+> says that items whose addresses are near one another tend to
+> be referenced close together in time.
+
+Also, Amdahl's Law in a different form:
+
+$$
+\begin{align}
+    &\begin{aligned}
+        \textrm{Execution time}_{\textrm{old}} & = \textrm{Execution time}_{\textrm{new}} \times \left( \left( 1 - \textrm{Fraction}_{\textrm{enhanced}} \right) + \frac{ \textrm{Fraction}_{\textrm{enhanced}}}{\textrm{Speedup}_{\textrm{enhanced}}} \right) \\
+        \textrm{Speedup}_{\textrm{overall}} & = \frac{\textrm{Execution time}_{\textrm{old}}}{\textrm{Execution time}_{\textrm{new}}} \\
+        & = \frac{1}{ \left( 1 - \textrm{Fraction}_{\textrm{enhanced}} \right) + \frac{ \textrm{Fraction}_{\textrm{enhanced}}}{\textrm{Speedup}_{\textrm{enhanced}}}}
+    \end{aligned}
+\end{align}
+$$
+
+Here's an example. Suppose we have a web server and there is a routine we could optimise such that it is 10 times faster. Assuming that the web server process is busy with with this routine 40% of the time what is the overall speedup after the optimisation?
+
+$$
+\begin{align}
+    &\begin{aligned}
+        \textrm{Fraction}_{\textrm{enhanced}} & = 0.4 \\
+        \textrm{Speedup}_{\textrm{enhanced}} & = 10 \\
+        \textrm{Speedup}_{\textrm{overall}} & = \frac{1}{(1-0.4) + \frac{0.4}{10}} \\
+        & = \frac{1}{0.64} \\
+        & = \textrm{1.56 (3dp)}
+    \end{aligned}
+\end{align}
+$$ 
+
+###  Coding Complete 2nd edition (2004), Chapter 25 - Code-Tuning Strategies
+
+
+
+###   Refactoring - Improving the Design of Existing Code (2002), Chapter 2 - Principles in Refactoring
+
+> The secret to fast software, in all but hard real-time contexts, is to write tunable software first and then tune it for sufficient speed.
+
+One approach is to always pay attention to performance in every line of code you write. This approach has intuitive attraction; how can code be slow if you're always writing it to be fast? However, changes that improve performance *usually* make the program less maintainable and readable, which slows development and maintenance. This would be an acceptable cost if the benefit was that the program was indeed faster, but often it isn't. This is
+mainly because the naive effort of optimising everything as you write code is too narrow in perspective and ignore empirical evidence of how software actually behaves.
+
+Decades of experience and observation, both in the software and computer engineering spheres, have shown programs waste most their time in a small fraction of their code, around 10%. If you optimise everything equally by definition around 90% of your effort is wasted, because much of the code isn't run that often. Worse, you've wasted time that could have been focused on the real problem areas, and to boot have made your entire program less maintainable in the long run.
+
+!!AI this is not to say a thorough knowledge of algorithms and data structures is useless; having these in hand at the design stage will not only provide the most meaningful optimizations but in a way that often is more readable and maintainable.
+
+The correct way of optimizing code is, at first, to not; conduct excellent requirements analysis, then design and build your code in a well factored manner (!!AI that is informed by a thorough knowledge of algorithms and data structures). In time your non-functional requirements with respect to performance may get violated. Once they are you profile your code, find the (by definition) small part of your code that is taking up the most time. As your code is well designed and
+factored you can make small, cautious, incremental fixes, constantly re-profiling after each fix, improving performance.
+
+### Consistency
+
+-   Ralph Waldo Emerson, Self Reliance (1841)
+
+> A foolish consistency is the hobgoblin of little minds, adored by little statesman and philosophers and divines. With consistency a great soul has simply nothing to do. He may as well concern himself with his shadow on the wall. Speak what you think now in hard words, and to-morrow speak what to-morrow thinks in hard words again, though it contradict every thing you said to-day.
+
+-   Miguel de Unamuno, quoted by Douglas R. Hofstadter in Godel, Escher, Bach (1979)
+
+> If a person never contradicts himself, it must be that he says nothing.
+
 ## Debugging memory usage in Python
 
 -   References:
@@ -506,6 +653,25 @@ tr.print_diff()
 ### cProfile
 
 -   How to proflie an individual function using an undocumented feature in `cProfile`: [http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result](http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result)
+
+```python
+import cProfile
+
+def profileit(name):
+    def inner(func):
+        def wrapper(*args, **kwargs):
+            prof = cProfile.Profile()
+            retval = prof.runcall(func, *args, **kwargs)
+            # Note use of name from outer scope
+            prof.dump_stats(name)
+            return retval
+        return wrapper
+    return inner
+
+@profileit("profile_for_func1_001")
+def func1(...)
+    ...
+```
 
 ### statprof
 
