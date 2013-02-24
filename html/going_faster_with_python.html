@@ -91,7 +91,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>“CPU usage will never exceed 65%”</li>
 </ul>
 <p>In some environments, such as hard real-time operating system components or mission-critical command-and-control servers, these are reasonable requirements. In others, such as a personal blog, they would be patently ridiculous. Context matters.</p>
-<p>Another problem with the “omnipresent” approach is that there is no free lunch. There are many characteristics of a good software implementation, of which performance is only one.<span class="citation"><sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup></span> In no particular order some are:</p>
+<p>Another problem with the “omnipresent” approach is that there is no free lunch. There are many characteristics of a good software implementation, of which performance is only one,<span class="citation"><sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup></span>.<span class="citation"><sup><a href="#fn7" class="footnoteRef" id="fnref7">7</a></sup></span> In no particular order some are:</p>
 <ul>
 <li><strong>Readability</strong>: can be easily read and understood.</li>
 <li><strong>Maintainability</strong>: can be easily modified, extended, and maintained.</li>
@@ -100,9 +100,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><strong>Completeness</strong>: all the requirements are met.</li>
 </ul>
 <p>There is no such thing as a free lunch; as you prioritise some of the above properties you must sacrifice attention to others. An absolute focus on performance must necessarily come at the cost of, for example, readability and maintainability.</p>
-<p>Even if your software system places a premium on performance it is a fallacy to suggest that this may only be addressed at the code tuning level. You have many options, at many stages:<span class="citation"><sup><a href="#fn7" class="footnoteRef" id="fnref7">7</a></sup></span></p>
+<p>Even if your software system places a premium on performance it is a fallacy to suggest that this may only be addressed at the code tuning level. You have many options, at many stages:<span class="citation"><sup><a href="#fn8" class="footnoteRef" id="fnref8">8</a></sup></span></p>
 <ul>
-<li><strong>Program requirements</strong>: do your users actually require this level of performance? What do they need?</li>
+<li><strong>Program requirements</strong>:
+<ul>
+<li>Do your users actually require this level of performance? What do they need?</li>
+<li>Users typically don’t directly care about latency and throughput and instead care about time elapsed to execute use cases. Have you considered your user interface, user experience, and information architecture?</li>
+</ul></li>
 <li><strong>Program design</strong>
 <ul>
 <li>Set resource objectives for individual sub-components and interfaces, and track them proactively.</li>
@@ -110,7 +114,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><strong>Class and routine design</strong>
 <ul>
-<li>Choose appropriate algorithms and data structures<span class="citation"><sup><a href="#fn8" class="footnoteRef" id="fnref8">8</a></sup></span> at the beginning.</li>
+<li>Choose appropriate algorithms and data structures<span class="citation"><sup><a href="#fn9" class="footnoteRef" id="fnref9">9</a></sup></span> at the beginning.</li>
 </ul></li>
 <li><strong>Hardware</strong>
 <ul>
@@ -119,10 +123,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 <p>There is a third, and perhaps the most counter-intuitive, problem with constant optimization throughout coding. It is not only a standard heuristic but a repeatedly verified observation that software systems tend to spend <strong>most of their execution time in a minority of their code</strong>.</p>
 <ul>
-<li>Knuth, in a survey of FORTRAN programmes, discovered that not only are maintainability and readability more desireable properties for programmes than performance but most FORTRAN programmes spent the majority of their time in a small number of code locations.<span class="citation"><sup><a href="#fn9" class="footnoteRef" id="fnref9">9</a></sup></span></li>
-<li>Patterson and Hennsey note that software programmes, as a rule of thumb, spend 90% of their time in 10% of their code, and also exhibit <strong>temporal locality</strong>, where recently accessed memory and code tend to be accessed soon again,.<span class="citation"><sup><a href="#fn10" class="footnoteRef" id="fnref10">10</a></sup></span></li>
+<li>Knuth, in a survey of FORTRAN programmes, discovered that not only are maintainability and readability more desireable properties for programmes than performance but most FORTRAN programmes spent the majority of their time in a small number of code locations.<span class="citation"><sup><a href="#fn10" class="footnoteRef" id="fnref10">10</a></sup></span></li>
+<li>Patterson and Hennsey note that software programmes, as a rule of thumb, spend 90% of their time in 10% of their code, and also exhibit <strong>temporal locality</strong>, where recently accessed memory and code tend to be accessed soon again,.<span class="citation"><sup><a href="#fn11" class="footnoteRef" id="fnref11">11</a></sup></span></li>
 </ul>
-<p>Given that programs spend the majority of their time in a minority of their code, constantly optimizing everything, in the best case, is mostly wasted! This “execution locality”, and how it impact optimisation, is expressed in <strong>Amdahl’s Law</strong>,<span class="citation"><sup><a href="#fn11" class="footnoteRef" id="fnref11">11</a></sup></span> which captures how making a subcomponent faster makes an overall software system faster depending on what proportion of execution time the subcomponent occupies:</p>
+<p>Given that programs spend the majority of their time in a minority of their code, constantly optimizing everything, in the best case, is mostly wasted! This “execution locality”, and how it impact optimisation, is expressed in <strong>Amdahl’s Law</strong>,<span class="citation"><sup><a href="#fn12" class="footnoteRef" id="fnref12">12</a></sup></span> which captures how making a subcomponent faster makes an overall software system faster depending on what proportion of execution time the subcomponent occupies:</p>
 <p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
@@ -148,7 +152,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>In short: software optimisation is often best achieved during the requirements analysis and component design stages, but the time will come when you can’t shy away from a performance problem. At this point the next step is determining what is slow, and not just jumping into coding; this is part 2.</p>
 <p>In parting I’ll leave you with this:</p>
 <blockquote>
-<p>“If there’s a moral to this story, it is this: do not let performance considerations stop you from doing what is right. You can always make the code faster with a little cleverness. You can rarely recover so easily from a bad design…<strong>Design the program you want in the way it should be designed. Then, and only then, should you worry about performance</strong>. More often than not, you’ll discover the program is fast enough on your first pass.” –Elliotte Rusty Harold<span class="citation"><sup><a href="#fn12" class="footnoteRef" id="fnref12">12</a></sup></span></p>
+<p>“If there’s a moral to this story, it is this: do not let performance considerations stop you from doing what is right. You can always make the code faster with a little cleverness. You can rarely recover so easily from a bad design…<strong>Design the program you want in the way it should be designed. Then, and only then, should you worry about performance</strong>. More often than not, you’ll discover the program is fast enough on your first pass.” –Elliotte Rusty Harold<span class="citation"><sup><a href="#fn13" class="footnoteRef" id="fnref13">13</a></sup></span></p>
 </blockquote>
 <h2 id="part-2---how-do-i-know-where-to-optimise"><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a></h2>
 <h2 id="part-3---how-do-i-optimise"><a href="#part-3---how-do-i-optimise">Part 3 - How Do I Optimise?</a></h2>
@@ -172,6 +176,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3 id="initial-code-1"><a href="#initial-code-1">Initial Code</a></h3>
 <h3 id="initial-profiling-1"><a href="#initial-profiling-1">Initial Profiling</a></h3>
 <h2 id="references"><a href="#references">References</a></h2>
+<p>Fowler, Martin, and Kent Beck. <em>Refactoring: Improving the Design of Existing Code</em>. Addison-Wesley Professional, 1999.</p>
 <p>Knuth, Donald E. “An Empirical Study of FORTRAN Programs.” <em>Software: Practice and Experience</em> 1, no. 2: 105–133.</p>
 <p>———. “Structured Programming With Go To Statements.” <em>Computing Surveys</em> 6: 261–301.</p>
 <p>McConnell, Steve. <em>Code Complete</em>. Microsoft Press, 2009.</p>
@@ -192,12 +197,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li id="fn4"><p>Donald E. Knuth, “Structured Programming With Go To Statements,” <em>Computing Surveys</em> 6 (1974): 261–301.<a href="#fnref4">↩</a></p></li>
 <li id="fn5"><p>Lloyd G. Williams and Connie U. Smith, “Five Steps To Solving Software Performance Problems,” <em>Software Engineering Research and Performance Engineering Services</em> (2002).<a href="#fnref5">↩</a></p></li>
 <li id="fn6"><p>Frank Tsui and Orlando Karam, <em>Essentials of Software Engineering</em> (Jones &amp; Bartlett Learning, 2010).<a href="#fnref6">↩</a></p></li>
-<li id="fn7"><p>Steve McConnell, <em>Code Complete</em> (Microsoft Press, 2009).<a href="#fnref7">↩</a></p></li>
-<li id="fn8"><p>Robert Sedgewick and Kevin Wayne, <em>Algorithms</em>, 4 ed. (Addison-Wesley Professional, 2011).<a href="#fnref8">↩</a></p></li>
-<li id="fn9"><p>Donald E. Knuth, “An Empirical Study of FORTRAN Programs,” <em>Software: Practice and Experience</em> 1, no. 2 (1971): 105–133.<a href="#fnref9">↩</a></p></li>
-<li id="fn10"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009), chap. 2.<a href="#fnref10">↩</a></p></li>
-<li id="fn11"><p>Ibid.<a href="#fnref11">↩</a></p></li>
-<li id="fn12"><p>Andy Oram and Greg Wilson, <em>Beautiful Code: Leading Programmers Explain How They Think</em> (O’Reilly Media, Incorporated, 2007).<a href="#fnref12">↩</a></p></li>
+<li id="fn7"><p>Martin Fowler and Kent Beck, <em>Refactoring: Improving the Design of Existing Code</em> (Addison-Wesley Professional, 1999).<a href="#fnref7">↩</a></p></li>
+<li id="fn8"><p>Steve McConnell, <em>Code Complete</em> (Microsoft Press, 2009).<a href="#fnref8">↩</a></p></li>
+<li id="fn9"><p>Robert Sedgewick and Kevin Wayne, <em>Algorithms</em>, 4 ed. (Addison-Wesley Professional, 2011).<a href="#fnref9">↩</a></p></li>
+<li id="fn10"><p>Donald E. Knuth, “An Empirical Study of FORTRAN Programs,” <em>Software: Practice and Experience</em> 1, no. 2 (1971): 105–133.<a href="#fnref10">↩</a></p></li>
+<li id="fn11"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009), chap. 2.<a href="#fnref11">↩</a></p></li>
+<li id="fn12"><p>Ibid.<a href="#fnref12">↩</a></p></li>
+<li id="fn13"><p>Andy Oram and Greg Wilson, <em>Beautiful Code: Leading Programmers Explain How They Think</em> (O’Reilly Media, Incorporated, 2007).<a href="#fnref13">↩</a></p></li>
 </ol>
 </div>
 </body>

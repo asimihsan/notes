@@ -71,7 +71,7 @@ matters.
 
 Another problem with the "omnipresent" approach is that there
 is no free lunch. There are many characteristics of a good
- software implementation, of which performance is only one [@tsui2010essentials]. In no particular order some are:
+ software implementation, of which performance is only one [@tsui2010essentials], [@fowler1999refactoring]. In no particular order some are:
 
 -   **Readability**: can be easily read and understood.
 -   **Maintainability**: can be easily modified, extended, and
@@ -91,8 +91,13 @@ is a fallacy to suggest that this may only be addressed at the
 code tuning level. You have many options, at many stages
  [@mcconnell2009code]:
 
--   **Program requirements**: do your users actually require 
-this level of performance? What do they need?
+-   **Program requirements**:
+    -   Do your users actually require this level of
+ performance? What do they need?
+    -   Users typically don't directly care about latency
+and throughput and instead care about time elapsed to execute
+use cases. Have you considered your user interface, user
+experience, and information architecture?
 -   **Program design**
     -   Set resource objectives for individual sub-components
 and interfaces, and track them proactively.
