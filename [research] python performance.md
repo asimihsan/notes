@@ -2,6 +2,18 @@
 
 Research for the "Going Faster with Python" article and presentation.
 
+## How to render this document
+
+```
+watchmedo shell-command --patterns "*.md;*.bib*" --recursive
+--wait --command "pandoc \[research\]\ python\ performance.md
+-o html/python_performance.html --standalone 
+--table-of-contents --smart --css _pandoc.css
+--highlight-style pygments --mathjax
+--bibliography=bibliography/bibliography.bib
+--csl=bibliography/chicago_fullnote.csl" .
+```
+
 ## Python data model -> __slots__
 
 -   [http://docs.python.org/2/reference/datamodel.html#slots](http://docs.python.org/2/reference/datamodel.html#slots)
@@ -414,6 +426,8 @@ Out[6]: array(True, dtype=bool)
 
 ### Computer Organization and Design, 3rd edition, Chapter 4 - Understanding and Assessing Performance
 
+[@patterson2009computer]
+
 -   Amdahl's law
 
 $$
@@ -455,6 +469,9 @@ $$
 
 ### Make it Work, Make it Right, Make it Fast
 
+[@c2:2013:makeitworkrightfast]
+[@c2:2013:premature]
+
 -   References:
     -   [http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast](http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast)
     -   [http://c2.com/cgi/wiki?PrematureOptimization](http://c2.com/cgi/wiki?PrematureOptimization)
@@ -467,11 +484,15 @@ $$
 
 ### The oft-misquoted Donald Knuth
 
+[@Knuth74structuredprogramming]
+
 -   Knuth, Donald (December 1974). "Structured Programming with go to Statements". ACM Journal Computing Surveys 6 (4): 268. [CiteSeerX](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.103.6084)
 
 > Programmers waste enormous amounts of time thinking about, or worrying about, the speed of noncritical parts of their programs, and these attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered. *We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil*. **Yet we should not pass up our opportunities in that critical 3%**.
 
 ### Essentials of Software Engineering (2009), Chapter 9 - Implementation
+
+[@tsui2010essentials]
 
 -   Characteristics of a good implementation, in no particular order
     -   **Readability**: can be easily read and understood.
@@ -487,9 +508,13 @@ $$
 
 ### Beautiful Code (2007), Chapter 5 - Correct, Beautiful, Fast (In That Order)
 
+[@oram2007beautiful]
+
 > If there's a moral to this story, it is this: do not let performance considerations stop you from doing what is right. You can always make the code faster with a little cleverness. You can rarely recover so easily from a bad design...Design the program you want in the way it should be designed. Then, and only then, should you worry about performance. More often than not, you'll discover the program is fast enough on your first pass.
 
 ### Computer Architecture, 4th edition, Chapter 1 - Fundamentals of Computer Design
+
+[@hennessy2011computer]
 
 > Important fundamental observations have come from properties
 > of programs. That most important program property that we
@@ -529,11 +554,13 @@ $$
 \end{align}
 $$ 
 
-###  Coding Complete 2nd edition (2004), Chapter 25 - Code-Tuning Strategies
+### Code Complete 2nd edition (2004), Chapter 25 - Code-Tuning Strategies
 
-
+[@mcconnell2009code, chapter 25]
 
 ###   Refactoring - Improving the Design of Existing Code (2002), Chapter 2 - Principles in Refactoring
+
+[@fowler1999refactoring, chapter 2]
 
 > The secret to fast software, in all but hard real-time contexts, is to write tunable software first and then tune it for sufficient speed.
 
@@ -548,6 +575,9 @@ The correct way of optimizing code is, at first, to not; conduct excellent requi
 factored you can make small, cautious, incremental fixes, constantly re-profiling after each fix, improving performance.
 
 ### Consistency
+
+[@emerson1993self]
+[@hofstadter2000godel]
 
 -   Ralph Waldo Emerson, Self Reliance (1841)
 
@@ -888,4 +918,5 @@ A signing off!
 
 !!AI TOWATCH
 
+## References
 
