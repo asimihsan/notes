@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="_pandoc.css" type="text/css" />
+  <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,400italic,700,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#going-faster-with-python">Going Faster with Python</a><ul>
+<li><a href="#revision-history">Revision History</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#part-1---when-do-i-optimise">Part 1 - When Do I Optimise?</a></li>
+<li><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a></li>
+<li><a href="#part-3---how-do-i-optimise">Part 3 - How Do I Optimise?</a><ul>
+<li><a href="#introduction-1">Introduction</a></li>
+<li><a href="#cpython-and-bytecode-analysis">CPython and Bytecode Analysis</a></li>
+<li><a href="#cython">Cython</a></li>
+<li><a href="#numpy">numpy</a></li>
+<li><a href="#cython-with-numpy">Cython with numpy</a></li>
+<li><a href="#pypy">PyPy</a></li>
+</ul></li>
+<li><a href="#part-4---case-study-1---a-log-parser">Part 4 - Case Study 1 - A Log Parser</a><ul>
+<li><a href="#introduction-2">Introduction</a></li>
+<li><a href="#use-cases">Use Cases</a></li>
+<li><a href="#initial-code">Initial Code</a></li>
+<li><a href="#initial-profiling">Initial Profiling</a></li>
+</ul></li>
+<li><a href="#part-5---case-study-2---n-gram-language-models">Part 5 - Case Study 2 - N-gram Language Models</a><ul>
+<li><a href="#introduction-3">Introduction</a></li>
+<li><a href="#use-cases-1">Use Cases</a></li>
+<li><a href="#initial-code-1">Initial Code</a></li>
+<li><a href="#initial-profiling-1">Initial Profiling</a></li>
+</ul></li>
+<li><a href="#references">References</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="going-faster-with-python"><a href="#going-faster-with-python">Going Faster with Python</a></h1>
+<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Going Faster With Python</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.asimihsan.com" property="cc:attributionName" rel="cc:attributionURL">Asim Ihsan</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+<h2 id="revision-history"><a href="#revision-history">Revision History</a></h2>
+<ul>
+<li><strong>2013-02-24</strong> - first draft.</li>
+</ul>
+<h2 id="introduction"><a href="#introduction">Introduction</a></h2>
+<p>This article is about optimisation in Python. <strong>Optimisation</strong> is seeking to minimise the usage of some resource during the execution of a software system. Although commonly synonymous with minimising execution time I’ll also be covering minimising memory occupancy.</p>
+<ul>
+<li>In a break from many articles in this vein, part 1 will ask what role optimisation plays in the software development process and under what conditions optimisation is even an appropriate action.</li>
+<li>Part 2 will cover techniques for measuring both the execution time and memory occupancy of Python programmes.</li>
+<li>Part 3 details, and may serve as a reference for, a myriad of methods for optimisation in Python. All of them are illustrated with toy examples.</li>
+<li>Parts 4 and 5 are another break from most articles in that, rather than relegate ourselves to toy micro-benchmarks, I’ll be covering two real-world Python applications and their profiling and optimisation.</li>
+</ul>
+<p>This article’s target audience is intermediate-level Python and beginner-level C developers; you’ve written non-trival code in Python before and can compile and run a “Hello World!” example in C.</p>
+<p>Although the article’s primary focus is optimising to reduce the execution time of Python programmes it will restrict itself to single-process optimisations; parallelising tasks both on a multicore system using e.g. multiprocessing<span class="citation"><sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></span> and onto many systems using e.g. celery<span class="citation"><sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup></span> or ParallelPython<span class="citation"><sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup></span> is a topic worthy of its own article.</p>
+<h2 id="part-1---when-do-i-optimise"><a href="#part-1---when-do-i-optimise">Part 1 - When Do I Optimise?</a></h2>
+<blockquote>
+<p>Programmers waste enormous amounts of time thinking about, or worrying about, the speed of noncritical parts of their programs, and these attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered. <strong>We should forget about small efficiencies</strong>, say about 97% of the time: premature optimization is the root of all evil. <strong>Yet we should not pass up our opportunities in that critical 3%</strong>. –Donald Knuth<span class="citation"><sup><a href="#fn4" class="footnoteRef" id="fnref4">4</a></sup></span></p>
+</blockquote>
+<p>…</p>
+<p>It is not only a standard heuristic but a repeatedly verified observation that software systems tend to spend most of their execution time in a minority of their code.</p>
+<ul>
+<li>Knuth, in a survey of FORTRAN programmes, discovered that not only are maintainability and readability more desireable properties for programmes than performance but most FORTRAN programmes spent the majority of their time in a small number of code locations.<span class="citation"><sup><a href="#fn5" class="footnoteRef" id="fnref5">5</a></sup></span></li>
+<li>Patterson and Hennsey note that software programmes, as a rule of thumb, spend 90% of their time in 10% of their code, and also exhibit <strong>temporal locality</strong>, where recently accessed memory and code tend to be accessed soon again,.<span class="citation"><sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup></span></li>
+</ul>
+<p>…</p>
+<h2 id="part-2---how-do-i-know-where-to-optimise"><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a></h2>
+<h2 id="part-3---how-do-i-optimise"><a href="#part-3---how-do-i-optimise">Part 3 - How Do I Optimise?</a></h2>
+<h3 id="introduction-1"><a href="#introduction-1">Introduction</a></h3>
+<h3 id="cpython-and-bytecode-analysis"><a href="#cpython-and-bytecode-analysis">CPython and Bytecode Analysis</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> this
+<span class="kw">for</span> i in <span class="dt">xrange</span>(<span class="dv">5</span>):
+    <span class="kw">print</span> i</code></pre>
+<h3 id="cython"><a href="#cython">Cython</a></h3>
+<h3 id="numpy"><a href="#numpy">numpy</a></h3>
+<h3 id="cython-with-numpy"><a href="#cython-with-numpy">Cython with numpy</a></h3>
+<h3 id="pypy"><a href="#pypy">PyPy</a></h3>
+<h2 id="part-4---case-study-1---a-log-parser"><a href="#part-4---case-study-1---a-log-parser">Part 4 - Case Study 1 - A Log Parser</a></h2>
+<h3 id="introduction-2"><a href="#introduction-2">Introduction</a></h3>
+<h3 id="use-cases"><a href="#use-cases">Use Cases</a></h3>
+<h3 id="initial-code"><a href="#initial-code">Initial Code</a></h3>
+<h3 id="initial-profiling"><a href="#initial-profiling">Initial Profiling</a></h3>
+<h2 id="part-5---case-study-2---n-gram-language-models"><a href="#part-5---case-study-2---n-gram-language-models">Part 5 - Case Study 2 - N-gram Language Models</a></h2>
+<h3 id="introduction-3"><a href="#introduction-3">Introduction</a></h3>
+<h3 id="use-cases-1"><a href="#use-cases-1">Use Cases</a></h3>
+<h3 id="initial-code-1"><a href="#initial-code-1">Initial Code</a></h3>
+<h3 id="initial-profiling-1"><a href="#initial-profiling-1">Initial Profiling</a></h3>
+<h2 id="references"><a href="#references">References</a></h2>
+<p>Knuth, Donald E. “An Empirical Study of FORTRAN Programs.” <em>Software: Practice and Experience</em> 1, no. 2: 105–133.</p>
+<p>———. “Structured Programming With Go To Statements.” <em>Computing Surveys</em> 6: 261–301.</p>
+<p>Patterson, David A., and John L. Hennessy. <em>Computer Organization and Design: The Hardware/Software Interface</em>. Morgan Kaufmann, 2009.</p>
+<p>PythonDocs. “Multiprocessing.” Accessed February 24, 2013. <a href="http://docs.python.org/2/library/multiprocessing.html" title="http://docs.python.org/2/library/multiprocessing.html">http://docs.python.org/2/library/multiprocessing.html</a>.</p>
+<p>Solem, Ask. “Celery.” Accessed February 24, 2013. <a href="http://www.celeryproject.org/" title="http://www.celeryproject.org/">http://www.celeryproject.org/</a>.</p>
+<p>Vanovschi, Vitalii. “ParallelPython.” Accessed February 24, 2013. <a href="http://www.parallelpython.com/" title="http://www.parallelpython.com/">http://www.parallelpython.com/</a>.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>PythonDocs, “Multiprocessing,” accessed February 24, 2013, <a href="http://docs.python.org/2/library/multiprocessing.html" title="http://docs.python.org/2/library/multiprocessing.html">http://docs.python.org/2/library/multiprocessing.html</a>.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>Ask Solem, “Celery,” accessed February 24, 2013, <a href="http://www.celeryproject.org/" title="http://www.celeryproject.org/">http://www.celeryproject.org/</a>.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>Vitalii Vanovschi, “ParallelPython,” accessed February 24, 2013, <a href="http://www.parallelpython.com/" title="http://www.parallelpython.com/">http://www.parallelpython.com/</a>.<a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>Donald E. Knuth, “Structured Programming With Go To Statements,” <em>Computing Surveys</em> 6 (1974): 261–301.<a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>Donald E. Knuth, “An Empirical Study of FORTRAN Programs,” <em>Software: Practice and Experience</em> 1, no. 2 (1971): 105–133.<a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009), chap. 2.<a href="#fnref6">↩</a></p></li>
+</ol>
+</div>
+</body>
+</html>

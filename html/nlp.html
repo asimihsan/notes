@@ -13,6 +13,7 @@
 <div id="TOC">
 <ul>
 <li><a href="#natural-language-processing">Natural Language Processing</a><ul>
+<li><a href="#student"> Student</a></li>
 <li><a href="#readings-policy">Readings policy</a></li>
 <li><a href="#rendering">Rendering</a></li>
 <li><a href="#week-1---introduction-to-natural-language-processing">Week 1 - Introduction to Natural Language Processing</a><ul>
@@ -73,6 +74,18 @@
 <li><a href="#smoothed-estimation">Smoothed Estimation</a></li>
 <li><a href="#dealing-with-low-frequency-words-an-example">Dealing with Low-Frequency Words: An Example</a></li>
 </ul></li>
+<li><a href="#the-viterbi-algorithm-for-hmms">The Viterbi Algorithm for HMMs</a><ul>
+<li><a href="#problem">Problem</a></li>
+<li><a href="#brute-force-search-is-hopelessly-inefficient">Brute Force Search is Hopelessly Inefficient</a></li>
+<li><a href="#the-viterbi-algorithm">The Viterbi Algorithm</a></li>
+<li><a href="#an-example-1">An Example</a></li>
+<li><a href="#a-recursive-definition">A Recursive Definition</a></li>
+<li><a href="#justification-for-the-recursive-definition">Justification for the Recursive Definition</a></li>
+</ul></li>
+<li><a href="#the-viterbi-algorithm-1">The Viterbi Algorithm</a><ul>
+<li><a href="#the-viterbi-algorithm-with-backpointers">The Viterbi Algorithm with Backpointers</a></li>
+<li><a href="#summary-1">Summary</a></li>
+</ul></li>
 <li><a href="#readings">Readings</a><ul>
 <li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a><ul>
 <li><a href="#word-and-sentence-tokenization">3.9: Word and Sentence Tokenization</a></li>
@@ -85,6 +98,8 @@
 </div>
 <h1 id="natural-language-processing"><a href="#TOC">Natural Language Processing</a></h1>
 <p>Columbia University, via Coursera</p>
+<h2 id="student"><a href="#TOC"> Student</a></h2>
+<p><a href="http://www.asimihsan.com">Asim Ihsan</a></p>
 <h2 id="readings-policy"><a href="#TOC">Readings policy</a></h2>
 <p>There are excellent readings assigned to the class. They’re explicitly inlined into the respective lecture, to save typing stuff out twice.</p>
 <p>Other readings (papers, textbooks, other courses) are explicitly inlined as well.</p>
@@ -448,7 +463,7 @@
 <p>\[P = 2^{-l}\] \[l = \frac{1}{M} \sum \textrm{log}_2\{p(s_i)\}\]</p>
 <p>\(p(\textrm{the dog runs STOP}) = q(\textrm{the | *, *}) \times q(\textrm{dog | *, the}) \times q(\textrm{runs | the, dog}) \times q(\textrm{STOP | dog, runs})\)<br />\(= 1 \times 0.5 \times 1 \times 1 = 0.5\)</p>
 <p>\(p(\textrm{the cat walks STOP}) = q(\textrm{the | *, *}) \times q(\textrm{cat | *, the}) \times q(\textrm{walks | the, cat}) \times q(\textrm{STOP | cat walks})\)<br />\(= 1 \times 0.5 \times 1 \times 1 = 0.5\)</p>
-<p>\(l = \frac{1}{12} \{ 3 \times \textrm{log}_2(0.5) \}\) \(=\frac{1}{12}(-3) = \frac{-1}{4}\)<br />\(p=2^{-\frac{1}{4}} = \sqrt[4]{2} = 1.189\;\textrm{(3dp)}\)</p>
+<p>\(l = \frac{1}{12} \{ 3 \times \textrm{log}_2(0.5) \}\) \(=\frac{1}{12}(-3) = \frac{-1}{4}\)<br />\(p=2^{\frac{1}{4}} = \sqrt[4]{2} = 1.189\;\textrm{(3dp)}\)</p>
 <hr />
 <h4 id="typical-values-of-perplexity-goodman"><a href="#TOC"> Typical values of perplexity (Goodman)</a></h4>
 <ul>
@@ -1476,6 +1491,319 @@ quarter/NA results/NA ./NA</code></pre>
 </ul></li>
 <li>We’re <strong>closing</strong> the vocabulary.</li>
 <li>This is a simple method, but requires human heuristics.</li>
+</ul>
+<h3 id="the-viterbi-algorithm-for-hmms"><a href="#TOC">The Viterbi Algorithm for HMMs</a></h3>
+<ul>
+<li>How to apply HMMs to new test sentences?</li>
+</ul>
+<h4 id="problem"><a href="#TOC">Problem</a></h4>
+<ul>
+<li>For a <em>new</em> test input sentence \(x_1, \ldots, x_n\), map it onto the most likely set of tags, i.e. find:</li>
+</ul>
+<p>\[\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\]</p>
+<ul>
+<li><p>where the arg max is taken over all seuqneces \(y_1 \ldots y_{n+1)}\) such that \(y_i \in S\) for \(i = 1, \ldots, n\) and \(y_{n+1} = \textrm{STOP}\).</p></li>
+<li><p>We assume that \(p\) again takes the form:</p></li>
+</ul>
+<p>\[p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)\]</p>
+<ul>
+<li>Recall the assumptions that \(y_0 = y_{-1} = \textrm{*}\) and \(y_{n+1} = \textrm{STOP}\).</li>
+</ul>
+<h4 id="brute-force-search-is-hopelessly-inefficient"><a href="#TOC">Brute Force Search is Hopelessly Inefficient</a></h4>
+<ul>
+<li>For example
+<ul>
+<li>\(x_1 \ldots x_n = \{\textrm{the, dog, laughs}\}\).</li>
+<li>\(y_1 \ldots y_n = \{\textrm{D, N, V}\}\) (the correct answer).</li>
+<li>\(S = \{\textrm{D, N, V}\}\) (assume that the set of all possible tags is just this).</li>
+</ul></li>
+<li>So \(|S| = 3\), and all possible tag sequences are all combinations (<em>not</em> permutations):
+<ul>
+<li>D D D STOP</li>
+<li>D D N STOP</li>
+<li>D D U STOP</li>
+<li>D U D STOP</li>
+<li>…</li>
+</ul></li>
+<li>Only \(3^3 = 27\) possible tag sequences.</li>
+<li>Use the transmission and emissions parameters of the HMM model to assign probabilities to each particular tag sequnce, then choose the most likely tag sequence.</li>
+<li><p>However, in the general case \(|S|^n\), where \(n\) is sentence length, is the number of possible sequences.</p></li>
+<li>The transmission parameters only depend on sequences of length three for trigram HMMs.
+<ul>
+<li>This structure allows a more efficient solution.</li>
+</ul></li>
+</ul>
+<h4 id="the-viterbi-algorithm"><a href="#TOC">The Viterbi Algorithm</a></h4>
+<ul>
+<li>Define \(n\) to be length of sentence.</li>
+<li>Define \(S_k\) for \(k = -1, 0, \ldots, n\), to be set of possible tags at position \(k\):</li>
+</ul>
+<p>\[S_{-1} = S_0 = \{\textrm{*}\}\] \[S_k = S\;\textrm{for}\;k \in \{1, 2, \ldots n\}\]</p>
+<ul>
+<li>Define:</li>
+</ul>
+<p>\[r(y_{-1}, y_0, y_1, \ldots, y_k) = \prod_{i=1}^{k} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i)\]</p>
+<ul>
+<li>Note that, always, \(y_{-1} = y_0 = \{\textrm{*}\}\).</li>
+<li>This is a truncated \(q\), as it only goes \(i=1\) to \(k\).</li>
+<li>Define a dynamic programming table</li>
+</ul>
+<p>\[\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k\].</p>
+<p>i.e.</p>
+<p>\[\pi(k,u,v) = max_{(y_{-1},y_0,y_{1},\ldots,y_k):y_{k-1}=u,\;y_k=v} r(y_{-1},y_0,y_1,\ldots,y_k)\]</p>
+<ul>
+<li>\(k\) takes any value \(\{\textrm{1,2,...,n}\}\).</li>
+<li>\(u \in S_{k-1}\).</li>
+<li><p>\(v \in S_k\).</p></li>
+<li>What do the \(S\) and \(k\) expressions at the begining imply:
+<ul>
+<li>For example, (the, dog, laughs, D, N, V) implies \(k = 3\).</li>
+<li>Each tag in \(S\) could be responsible for generating a word in \(x\).
+<ul>
+<li>If \(S = \{\textrm{D, N, V, P}\}\), then \(x_1\) could be one of D, N, V, P, as is \(x_2\), etc.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="an-example-1"><a href="#TOC">An Example</a></h4>
+<p>\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;\]</p>
+<ul>
+<li>Assume \(S = \{\textrm{D, N, V, P}\}\)</li>
+<li>What does \(\pi(7, \textrm{P}, \textrm{D})\) mean, intuitively?
+<ul>
+<li>The probability of the most likely tag sequence ending at the word in position 7 such that the last two tags are (P, D).</li>
+<li>Fix ‘with’ (6) to P.</li>
+<li>Fix ‘the’ (7) with D.</li>
+<li>Each preceding word has four possible tags.
+<ul>
+<li>‘dog’ (5) could be D, N, V, P.</li>
+<li>‘the’ (4) could be D, N, V, P.</li>
+<li>‘saw’ (3) could be D, N, V, P.</li>
+<li>‘man’ (2) could be D, N, V, P.</li>
+<li>‘The’ (1) could be D, N, V, P.</li>
+</ul></li>
+</ul></li>
+</ul>
+<hr />
+<p>Quiz: We have a trigram HMM model with the following transition parameters:</p>
+<ul>
+<li>\(q(\textrm{D | *, *}) = 1\)</li>
+<li>\(q(\textrm{N | *, D}) = 1\)</li>
+<li>\(q(\textrm{V | D, N}) = 1\)</li>
+<li>\(q(\textrm{STOP | N, V}) = 1\)</li>
+</ul>
+<p>and emission parameters:</p>
+<ul>
+<li>\(e(\textrm{the | D}) = 0.8\)</li>
+<li>\(e(\textrm{dog | D}) = 0.2\)</li>
+<li>\(e(\textrm{dog | N}) = 0.8\)</li>
+<li>\(e(\textrm{the | N}) = 0.2\)</li>
+<li>\(e(\textrm{barks | V}) = 1.0\)</li>
+</ul>
+<p>Say we have the sentence:</p>
+<pre><code>the dog barks</code></pre>
+<p>What is the value of \(\pi(3, \textrm{N}, \textrm{V})\)?</p>
+<ul>
+<li>Intuitively, this reads as ‘what is the probability of the most likely tag sequence that ends at position 3 such that the last two tags are N and V?’</li>
+<li>First, expand and label your test sentence, omitting the STOP symbol:</li>
+</ul>
+<p>\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{the}}\;\underset{2}{\textrm{dog}}\;\underset{3}{\textrm{barks}}\]</p>
+<ul>
+<li>Draw a Markov Chain graph of your transmission parameters, covering every single possible path.
+<ul>
+<li>Think of every tag as a node (including the start symbols), and an edge as moving from one tag to another with a certain probability.</li>
+<li>In our case this is very easy; there is only one path, i.e. \(\textrm{* -&gt; * -&gt; D -&gt; N -&gt; V -&gt; STOP}\), with probabilities of \(1\) for each edge.</li>
+</ul></li>
+<li>Eliminate all paths from the Markov Chain graph that do not meet the constraints of \(\pi(3,\textrm{N},\textrm{V})\). Also eliminate any paths that contain an edge with zero probability.</li>
+<li>For us, we only have one path, and this path meets the contraints of this function.</li>
+<li><p>Prove this to yourself by putting one finger on the start of the test sentence, and one finger on the start of the Markon Chain graph, and counting until \(k=3\).</p></li>
+<li>Your Markov Chain graph now covers every possible combination of tags that <em>could</em> match this test sentence. For each path calculate the product of probabilities from a start symbol to \(k=3\). Determine which path gives you the highest probability.</li>
+<li>In our case there is only one path, so the <strong>most likely tag sequence</strong> is (D, N, V).</li>
+<li>This gives us the \(q\) part of the \(r\) expression.</li>
+<li>For this tag sequence use the emission parameters to “generate” the appropriate word in order to calculate the \(e\) parameters.</li>
+<li><p>Mathematically:</p></li>
+</ul>
+<p>\[
+\begin{align}
+    &amp;\begin{aligned}
+        r(y_{-1},y_0,y_1,\ldots,y_n) &amp; = \prod_{i=1}^{k} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i) \\
+        r(\textrm{*, *, D, N, V}) &amp; = \left\{ q(\textrm{D | *, *}) \times q(\textrm{N | *, D}) \times q(\textrm{V | D, N}) \right\} \times \\
+        &amp; \left\{ e(\textrm{the | D}) \times e(\textrm{dog | N}) \times e(\textrm{barks | V}) \right\} \\
+        &amp; = \left\{ 1 \times 1 \times 1\right\} \times \left\{0.8 \times 0.8 \times 1.0 \right\} \\
+        &amp; = 0.64
+    \end{aligned}
+\end{align}
+\]</p>
+<hr />
+<h4 id="a-recursive-definition"><a href="#TOC">A Recursive Definition</a></h4>
+<ul>
+<li>Base case: \(\pi(0, \textrm{*}, \textrm{*}) = 1\)
+<ul>
+<li>Every tag sequence starts with \(\textrm{* *}\).</li>
+</ul></li>
+<li><strong>Recursive definition</strong>: \(\forall\; k \in \{1 \ldots n\},\;\forall\; u \in S_{k-1}\;\textrm{and}\;v \in S_k:\)</li>
+</ul>
+<p>\[\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v))\]</p>
+<ul>
+<li>\(u\) can take any tag in \(S_{k-1}\), \(v\) can take any tag in \(S_k\).</li>
+<li>Notice how we’re working backwards in the sentence back to the base case, the start.</li>
+</ul>
+<h4 id="justification-for-the-recursive-definition"><a href="#TOC">Justification for the Recursive Definition</a></h4>
+<p>(part 2)</p>
+<p>\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;\]</p>
+<p>What is \(\pi(7, P, D)\)?</p>
+<ul>
+<li>Recall this puts ‘with’ (6) = P, ‘the’ (7) = D.</li>
+<li>\(u = \textrm{P}, v = \textrm{D}\)</li>
+<li>Note that \(S_5 = S_4 = \ldots = S = \{\textrm{D, N, V, P}\}\).</li>
+</ul>
+<p>\[
+\begin{align}
+    &amp;\begin{aligned}
+        \pi(7, \textrm{P}, \textrm{D}) = &amp; \underset{w \in \{\textrm{D,N,V,P}\}}{\textrm{max}} \left\{ \pi(6, w, \textrm{P}) \times q(\textrm{D} | w, \textrm{P}) \times e(\textrm{the} | \textrm{D}) \right\}
+    \end{aligned}
+\end{align}
+\]</p>
+<ul>
+<li>Any tag sequence ending in (P, D) must have included one previous tag in (D, N, V, P). The ‘max’ explicitly searches over these.</li>
+</ul>
+<hr />
+<p>Quiz: assume \(S = \{\textrm{D, N, V, P}\}\) and a trigram HMM with parameters:</p>
+<ul>
+<li>\(q(\textrm{D | N, P}) = 0.4\)</li>
+<li>\(q(\textrm{D | w, P}) = 0\) for \(w \neq N\).</li>
+<li>\(e(\textrm{the | D}) = 0.6\)</li>
+</ul>
+<p>We are also given the sentence:</p>
+<pre><code>Ella walks to the red house</code></pre>
+<p>Say the dynamic programming table for this sentence has the following entries:</p>
+<ul>
+<li>\(\pi(\textrm{3, D, P}) = 0.1\)</li>
+<li>\(\pi(\textrm{3, N, P}) = 0.2\)</li>
+<li>\(\pi(\textrm{3, V, P}) = 0.01\)</li>
+<li>\(\pi(\textrm{3, P, P}) = 0.5\)</li>
+</ul>
+<p>What is the value of \(\pi(\textrm{4, P, D})\)?</p>
+<ul>
+<li>\(u = \textrm{P}\)</li>
+<li>\(v = \textrm{D}\)</li>
+</ul>
+<p>\[
+\begin{align}
+    &amp;\begin{aligned}
+        \pi(k,u,v) = &amp; \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v)) \\
+        \pi(4, \textrm{P}, \textrm{D}) = &amp; \underset{w \in \{\textrm{D, N, V, P}\}}{\textrm{max}} \left\{ \pi(3, w, \textrm{P}) \times q(\textrm{D} | w, \textrm{P}) \times e(\textrm{the | D}) \right\} \\
+        = &amp; \textrm{max} \left\{ 0.1 \times 0 \times 0.6, 0.2 \times 0.4 \times 0.6, 0.01 \times 0 \times 0.6, 0.5 \times 0 \times 0.6 \right\} \\
+        = &amp; 0.048
+    \end{aligned}
+\end{align}
+\]</p>
+<hr />
+<h3 id="the-viterbi-algorithm-1"><a href="#TOC">The Viterbi Algorithm</a></h3>
+<ul>
+<li><strong>Inputs</strong>:
+<ul>
+<li>a sentence \(x_1 \ldots x_n\), a sequence of words</li>
+<li>transmisson parameters \(q(s|u,v)\),</li>
+<li>emission parameters \(e(x|s)\).</li>
+</ul></li>
+<li><strong>Output</strong>:
+<ul>
+<li>\(\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</li>
+<li>Notice this is <em>not argmax</em>; just returns max probability. A simple change later will fix this.</li>
+</ul></li>
+<li><strong>Initializtion</strong>:
+<ul>
+<li>Set \(\pi(0,\textrm{*},\textrm{*}) = 1\).
+<ul>
+<li>Base case of the recursion.</li>
+</ul></li>
+</ul></li>
+<li><strong>Definition</strong>:
+<ul>
+<li>\(S_{-1} = S_0 = \{\textrm{*}\}\)
+<ul>
+<li>Can only have the star symbols at positions -1 and 0.</li>
+</ul></li>
+<li>\(S_k = S\;\forall\;k \in \{1 \ldots n\}\)
+<ul>
+<li>Recall e.g. {D, N, V, P}</li>
+</ul></li>
+</ul></li>
+<li><strong>Algorithm</strong>
+<ul>
+<li>For \(k = 1 \ldots n\):
+<ul>
+<li>For \(u \in S_{k-1}\), \(v \in S_k\):
+<ul>
+<li>\(\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</li>
+</ul></li>
+</ul></li>
+<li><strong>Return</strong>: \(\textrm{max}_{u \in S_{n-1},v \in S_n} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))\)</li>
+</ul></li>
+</ul>
+<h4 id="the-viterbi-algorithm-with-backpointers"><a href="#TOC">The Viterbi Algorithm with Backpointers</a></h4>
+<p>We want ‘argmax’, not ‘max’, i.e. the actual most-likely tag seuqence.</p>
+<ul>
+<li><strong>Inputs</strong>:
+<ul>
+<li>a sentence \(x_1 \ldots x_n\), a sequence of words</li>
+<li>transmisson parameters \(q(s|u,v)\),</li>
+<li>emission parameters \(e(x|s)\).</li>
+</ul></li>
+<li><strong>Output</strong>:
+<ul>
+<li>\(\textrm{arg}\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</li>
+</ul></li>
+<li><strong>Initializtion</strong>:
+<ul>
+<li>Set \(\pi(0,\textrm{*},\textrm{*}) = 1\).</li>
+</ul></li>
+<li><strong>Definition</strong>:
+<ul>
+<li>\(S_{-1} = S_0 = \{\textrm{*}\}\)</li>
+<li>\(S_k = S\;\forall\;k \in \{1 \ldots n\}\)<br /></li>
+</ul></li>
+<li><strong>Algorithm</strong>
+<ul>
+<li>For \(k = 1 \ldots n\):
+<ul>
+<li>For \(u \in S_{k-1}\), \(v \in S_k\):
+<ul>
+<li>\(\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</li>
+<li>\(bp(k,u,v) = arg \underset{w \in S_{k-2}}{max} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</li>
+</ul></li>
+</ul></li>
+<li>Set \((y_{n-1},y_n) = \textrm{argmax}_{(u,v)} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))\)</li>
+<li>For \(k = (n-2) \ldots 1\), \(y_k = bp(k+1, y_{k+1}, y_{k+2})\)</li>
+<li><strong>Return</strong> the tag sequence \(y_1 \ldots y_n\).</li>
+</ul></li>
+<li>What is different?
+<ul>
+<li>Don’t just record \(\pi\) at each point but also a backpointer \(bp\); which tag achieved this max. Which tag is most likely at \(k\) given \(u,v\).</li>
+<li>We then have \(\pi\) and \(bp\) values.</li>
+<li>At the end we go backwards in the sequence.</li>
+</ul></li>
+<li>Run-time complexity is \(O(n \times |S|^3)\).
+<ul>
+<li>We enter the \(u,v\) loop \(n \times |S|^2\) times.</li>
+<li>Each time we enter we need to search over \(|S|\) possible tags.</li>
+<li>It is <strong>linear</strong> with respect to sentence length.</li>
+<li>Much better than brute force, which was \(O(|S|^n)\).</li>
+</ul></li>
+</ul>
+<h4 id="summary-1"><a href="#TOC">Summary</a></h4>
+<ul>
+<li>HMM taggers are <strong>very simple to train</strong>.
+<ul>
+<li>Just compile counts from training corpus, calculate MLEs.</li>
+</ul></li>
+<li>Perform relatively well, over 90% on named entity recognition.</li>
+<li>Main difficulty is modelling: e(word|tag), especially if words are low-frequency.
+<ul>
+<li>One approach is to group low-frequency words into classes, but very clumsy and heuristic.</li>
+<li>When words are complex even worse.</li>
+<li>Later in the course we develop more complex methods.</li>
+</ul></li>
 </ul>
 <h3 id="readings"><a href="#TOC">Readings</a></h3>
 <h4 id="speech-and-language-processing-chapter-3-words-and-transducers"><a href="#TOC">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></h4>

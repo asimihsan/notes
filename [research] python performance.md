@@ -558,6 +558,64 @@ $$
 
 [@mcconnell2009code, chapter 25]
 
+-   Optimization has a controversial history.
+-   Was vital in the 70s, became less-so in the 80's and 90's, and in the 2000s with the advent of embedded software ha sbecome important again.
+-   Users care about program throughput and latency.
+-   But they implicitly care more about getting software delivered on time, a clean UI, and avoiding downtime.
+-   Performance, from a user's perspective, is time taken to execute use cases.
+-   How related is this to code throughput and latency, as opposed to a sane user interface, user experience, and information architecture?
+-   There is no free lunch; as you focus on some attributes, you will necessarily spend less time on others.
+-   Even after deciding efficiency, of speed or size, is important, you have options.
+    -   Program requirements.
+        -   Do your users actual require this level of performance?
+    -   Program design.
+        -   Are the methods you've used to achieve your requirements necessary?
+        -   e.g. for high-performance simulations can you sacrifice precision for speed?
+        -   If you know that size and speed are important, design the architecture to accomodate this.
+            -   Set resource goals for subsystems, features, and classes.
+            -   Set your objectvies explicitly, so programmers know to work on them.
+            -   Set goals that may achieve efficiency indirectly in the future. With very modular and modifiable code, for example with a plugin architecture, you can identify hot components later and re-write them. Great examples of this are Apache Thrift and Audacity's plugin architecture.
+    -   Class and routine design   
+        -   Choosing appropriate algorithms and data structures early on is often better than optimising later, but requires a sound and thorough knowledge of them.
+    -   Hardware
+        -   Can you just purchase faster or bigger machines? Time is money!
+-   Changing requirements, proper architecture and class design, and appropriate data structures and algorithms are more effective ways of improving performance than code-level optimization.
+-   Buying new hardware is easier and could be cheaper.
+-   Code optimization comes at the cost of maintainability and readability.
+-   You can't identify performance bottlenecks before a program is working.
+-   Focusing on optimization prevents you from achiveing other software objectives.
+-   Summary of approach to code tuning
+    -   Develop well-designed software that's easy to understand and modify.
+    -   Measure performance.
+    -   If performance is poor:
+        -   Save a working version of the software.
+        -   Profile the system.
+        -   Determine the reason for the poor performance.
+        -   Tune.
+        -   Measure each improvment one at a time.
+    -   Repeat.
+
+### Five Steps to Solving Software Performance Problems
+
+[@williams2002five]
+
+1.   Figure out where you need to be.
+    -   Define precise, quantitative, and measureable performance objectives, in terms of either or both of throughput and latency.
+    -   e.g. The time to first byte (TTFB) for the software system will be 50ms for 95% of all requests at all times.
+    -   e.g. CPU usage will never exceed 65%.
+2.  Determine where you are now
+    -   What use cases are causing problems?
+    -   What is the context of these use cases?
+    -   If not already done, take a look at the software architecture from a performance perspective. Given the architecture, is software tuning even a cost-effective option?
+    -   Profile the system.   
+3.  Can you achieve your performance objectives?
+    -   Use Amdahl's Law.
+    -   Is the required throughput or response time, given the hardware and architecture context, even feasible?
+4.  Develop a plan.
+    -   Prototypes with measurements.
+
+Tuning software code will rarely achieve the same results as a system designed with performance in mind from the beginning. With performance in mind from the beginning, by definition, one would need to add low-level measurements and instrumentation, with a proactive mindset, to identify problems as they arise. 
+
 ###   Refactoring - Improving the Design of Existing Code (2002), Chapter 2 - Principles in Refactoring
 
 [@fowler1999refactoring, chapter 2]

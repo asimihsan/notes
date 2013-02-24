@@ -1,0 +1,1111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="_pandoc.css" type="text/css" />
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,400italic,700,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#python-performance">Python Performance</a><ul>
+<li><a href="#how-to-render-this-document"> How to render this document</a></li>
+<li><a href="#python-data-model---slots">Python data model -&gt; <strong>slots</strong></a></li>
+<li><a href="#python-is-only-slow-if-you-use-it-wrong">Python is only slow if you use it wrong</a><ul>
+<li><a href="#the-easiest-way-to-use-python-wrong">The Easiest Way to Use Python Wrong</a></li>
+<li><a href="#the-easiest-way-to-use-python-right">The Easiest Way to use Python Right</a></li>
+<li><a href="#the-other-way-to-use-python-wrong">The Other Way to Use Python Wrong</a></li>
+<li><a href="#garbage-collection-refcounting-and-threads">Garbage collection, refcounting and threads</a></li>
+<li><a href="#comparing-languages">Comparing languages</a></li>
+<li><a href="#python-is-sometimes-a-gc-language">Python is sometimes a GC language</a></li>
+<li><a href="#getting-the-most-out-of-pythons-gc">Getting the most out of Python’s GC</a></li>
+<li><a href="#deterministic-destructors">Deterministic destructors</a></li>
+<li><a href="#hello-world-benchmark">Hello World Benchmark</a></li>
+</ul></li>
+<li><a href="#guido-van-rossum-on-fast-python-patterns">Guido van Rossum on fast Python patterns</a></li>
+<li><a href="#high-performance-python-europython-2011-workshop">High Performance Python (EuroPython 2011 workshop)</a><ul>
+<li><a href="#goal">Goal</a></li>
+<li><a href="#code">Code</a></li>
+<li><a href="#profiling-with-cprofile-and-line_profiler">Profiling with cProfile and line_profiler</a></li>
+<li><a href="#bytecode-analysis">Bytecode Analysis</a></li>
+<li><a href="#slighty-faster-cpython-implementation">Slighty faster CPython implementation</a></li>
+<li><a href="#pypy">PyPy</a></li>
+<li><a href="#psyco">Psyco</a></li>
+<li><a href="#cython">Cython</a></li>
+<li><a href="#cython-with-numpy-arrays">Cython with numpy arrays</a></li>
+<li><a href="#shedskin">Shedskin</a></li>
+<li><a href="#numpy-vectors"> Numpy vectors</a></li>
+<li><a href="#numexpr-on-numpy-vectors"> numexpr on numpy vectors</a></li>
+<li><a href="#pycuda">pyCUDA</a></li>
+<li><a href="#paralellpython"> ParalellPython</a></li>
+</ul></li>
+<li><a href="#when-do-i-optimise">When do I optimise?</a><ul>
+<li><a href="#computer-organization-and-design-3rd-edition-chapter-4---understanding-and-assessing-performance">Computer Organization and Design, 3rd edition, Chapter 4 - Understanding and Assessing Performance</a></li>
+<li><a href="#make-it-work-make-it-right-make-it-fast">Make it Work, Make it Right, Make it Fast</a></li>
+<li><a href="#the-oft-misquoted-donald-knuth">The oft-misquoted Donald Knuth</a></li>
+<li><a href="#essentials-of-software-engineering-2009-chapter-9---implementation">Essentials of Software Engineering (2009), Chapter 9 - Implementation</a></li>
+<li><a href="#beautiful-code-2007-chapter-5---correct-beautiful-fast-in-that-order"> Beautiful Code (2007), Chapter 5 - Correct, Beautiful, Fast (In That Order)</a></li>
+<li><a href="#computer-architecture-4th-edition-chapter-1---fundamentals-of-computer-design">Computer Architecture, 4th edition, Chapter 1 - Fundamentals of Computer Design</a></li>
+<li><a href="#code-complete-2nd-edition-2004-chapter-25---code-tuning-strategies">Code Complete 2nd edition (2004), Chapter 25 - Code-Tuning Strategies</a></li>
+<li><a href="#five-steps-to-solving-software-performance-problems"> Five Steps to Solving Software Performance Problems</a></li>
+<li><a href="#refactoring---improving-the-design-of-existing-code-2002-chapter-2---principles-in-refactoring">Refactoring - Improving the Design of Existing Code (2002), Chapter 2 - Principles in Refactoring</a></li>
+<li><a href="#consistency">Consistency</a></li>
+</ul></li>
+<li><a href="#debugging-memory-usage-in-python">Debugging memory usage in Python</a><ul>
+<li><a href="#maliae">Maliae</a></li>
+<li><a href="#objgraph">objgraph</a></li>
+<li><a href="#muppy">muppy</a></li>
+</ul></li>
+<li><a href="#profiling-in-python">Profiling in Python</a><ul>
+<li><a href="#ai-ideas">!!AI ideas</a></li>
+<li><a href="#cprofile">cProfile</a></li>
+<li><a href="#statprof">statprof</a></li>
+<li><a href="#line_profiler">line_profiler</a></li>
+<li><a href="#callgrind">callgrind</a></li>
+<li><a href="#profilestats">profilestats</a></li>
+<li><a href="#pycounter">PyCounter</a></li>
+<li><a href="#plop">plop</a></li>
+</ul></li>
+<li><a href="#cython-1">Cython</a></li>
+<li><a href="#cffi">CFFI</a></li>
+<li><a href="#scipy-weave">SciPy Weave</a></li>
+<li><a href="#pypy-1">PyPy</a></li>
+<li><a href="#profile-official-docs">Profile official docs</a></li>
+<li><a href="#official-python-performance-tips">Official Python Performance Tips</a></li>
+<li><a href="#how-to-get-the-most-out-of-your-pypy">How to get the most out of your PyPy</a></li>
+<li><a href="#faster-python-programs-through-optimization">Faster Python Programs through Optimization</a></li>
+<li><a href="#details-of-python-performance">Details of Python performance</a></li>
+<li><a href="#references">References</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="python-performance"><a href="#python-performance">Python Performance</a></h1>
+<p>Research for the “Going Faster with Python” article and presentation.</p>
+<h2 id="how-to-render-this-document"><a href="#how-to-render-this-document"> How to render this document</a></h2>
+<pre><code>watchmedo shell-command --patterns &quot;*.md;*.bib*&quot; --recursive
+--wait --command &quot;pandoc \[research\]\ python\ performance.md
+-o html/python_performance.html --standalone 
+--table-of-contents --smart --css _pandoc.css
+--highlight-style pygments --mathjax
+--bibliography=bibliography/bibliography.bib
+--csl=bibliography/chicago_fullnote.csl&quot; .</code></pre>
+<h2 id="python-data-model---slots"><a href="#python-data-model---slots">Python data model -&gt; <strong>slots</strong></a></h2>
+<ul>
+<li><a href="http://docs.python.org/2/reference/datamodel.html#slots">http://docs.python.org/2/reference/datamodel.html#slots</a></li>
+<li>Each class instance gets a dictionary of size eight. If you instantiate many class instances this is a waste.</li>
+<li>By overriding <code>__slots__</code> with a string, iterable, or sequence of strings, you can reserve enough space to hold that iterable of strings as variable names.</li>
+<li>By doing so you can’t have new variables.</li>
+<li>Allocate many objects, microbenchmark, CPython and PyPy.</li>
+</ul>
+<h2 id="python-is-only-slow-if-you-use-it-wrong"><a href="#python-is-only-slow-if-you-use-it-wrong">Python is only slow if you use it wrong</a></h2>
+<ul>
+<li>Presentation slides: <a href="http://apenwarr.ca/diary/2011-10-pycodeconf-apenwarr.pdf">http://apenwarr.ca/diary/2011-10-pycodeconf-apenwarr.pdf</a></li>
+<li><p>Audio: <a href="http://codeconf.s3.amazonaws.com/2011/pycodeconf/talks/PyCodeConf2011%20-%20Avery%20Pennarun.m4a">http://codeconf.s3.amazonaws.com/2011/pycodeconf/talks/PyCodeConf2011%20-%20Avery%20Pennarun.m4a</a></p></li>
+<li><a href="http://github.com/apenwarr/bup">bup</a>: 80 MB/sec throughput for backup software without PyPy.</li>
+<li><a href="http://github.com/apenwarr/sshuttle">sshuttle</a>: VPN software that easily handles 802.11g/n speed in pure Python.</li>
+<li><p>So: Python can easily do performance.</p></li>
+</ul>
+<h3 id="the-easiest-way-to-use-python-wrong"><a href="#the-easiest-way-to-use-python-wrong">The Easiest Way to Use Python Wrong</a></h3>
+<ul>
+<li>In compiled langauges, to do parsing we read a string into memory and then parse it character by chracter:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">s = <span class="dt">open</span>(<span class="st">&#39;file&#39;</span>).read()
+<span class="kw">for</span> char in s:
+    ...</code></pre>
+<ul>
+<li><strong>Don’t</strong>! Do not proces character-by-character in an interpreted language if you care about performance.
+<ul>
+<li>Avoid <strong>tight inner loops</strong>.</li>
+</ul></li>
+<li>In Python a line of code os <strong>80-100x</strong> slower than a line of C code.</li>
+</ul>
+<h3 id="the-easiest-way-to-use-python-right"><a href="#the-easiest-way-to-use-python-right">The Easiest Way to use Python Right</a></h3>
+<ul>
+<li>Use higher-level built-ins and C-modules.
+<ul>
+<li><code>re</code></li>
+</ul></li>
+<li>No such thing as 100% Python; why’re you limiting yourself?</li>
+<li>Java’s 100% pure approach is very foreign to Python’s pragmatic approach.</li>
+<li>C is simple. Python is simple. PyPy can be hard (to understand).
+<ul>
+<li>And why’re you using SWIG? Stop.</li>
+</ul></li>
+<li><code>bup</code>’s inner byte-by-byte processing is in C.
+<ul>
+<li>It just loops and parses, just 50 lines of C.</li>
+</ul></li>
+<li>Python has the easiest native C-API.</li>
+<li>And if you just port tight inner loop processing to C it’ll be cross-platform, because not using system calls.</li>
+</ul>
+<h3 id="the-other-way-to-use-python-wrong"><a href="#the-other-way-to-use-python-wrong">The Other Way to Use Python Wrong</a></h3>
+<ul>
+<li>CPU-bound threads are useless because of the GIL.
+<ul>
+<li>Recall, each Python is 80-100x slower than C.</li>
+<li>And every line in Python is wrapped in a GIL lock!</li>
+<li>So multithreading, particularly for CPU-bound Python programs, doesn’t exist.</li>
+</ul></li>
+<li>I/O bound threads are OK, because we’re waiting, not doing processing.
+<ul>
+<li>And Python will release the GIL lock during this period.</li>
+</ul></li>
+<li><code>fork()</code> is pretty good too (<code>multiprocessing</code> does this for you).</li>
+<li>You can acquire and release the GIL in C code. Process is:
+<ul>
+<li>Grab all the data you need, might take a while.</li>
+<li>Release the GIL.</li>
+<li><em>Now</em> start your (short-lived) threads.</li>
+<li>Do your processing.</li>
+<li>Finish processing, spin down your threads.</li>
+<li>Acquire the GIL.</li>
+<li>Return the result.</li>
+<li>(Learned this trick from Linus Torvald’s <code>git</code> code).</li>
+</ul></li>
+<li>Can use <code>CFFI</code> as a type of “inline JIT” for C code. Write it once, use it many times.
+<ul>
+<li><code>SciPy</code> and <code>NumPy</code> can do this too.</li>
+</ul></li>
+</ul>
+<h3 id="garbage-collection-refcounting-and-threads"><a href="#garbage-collection-refcounting-and-threads">Garbage collection, refcounting and threads</a></h3>
+<ul>
+<li>Garbage collection is not refcounting.</li>
+<li>And Python uses both!</li>
+<li>Refcounting
+<ul>
+<li>Every time I use a variable, I increase its reference count by one.</li>
+<li>Every time I stop using a variable, I decrease its reference count by one.</li>
+<li>If the refcount is zero then release.</li>
+</ul></li>
+<li>Garbage collection
+<ul>
+<li>No reference counting is necessarily, we just keep track of who is using what.</li>
+<li>In the background a garbage person comes along to clean up unused stuff.</li>
+</ul></li>
+<li>Python is mostly refcounting, a little bit of GC.</li>
+<li>The world is moving towards GC.
+<ul>
+<li>refcounting is terrible for multithreaded performance.</li>
+<li>variables shared between threads need to have a synchronized refcount for that variable.</li>
+<li>Python “solves” this by having a GIL for everything, everywhere.</li>
+</ul></li>
+<li>Python can do refcounting very fast because it totally sucks at threads, this is the tradeoff.</li>
+<li><p>Java and C# and Ruby don’t make this tradeoff, and do true GC.</p></li>
+<li>Think of it this way: do you want fast Python with no threads or slow Python with real threading?
+<ul>
+<li>No-one wants slow Python with real threading, so the GIL is here to stay.</li>
+<li>This is because we know how to use C to get fast threads, so why make this terrible tradeoff?</li>
+</ul></li>
+</ul>
+<h3 id="comparing-languages"><a href="#comparing-languages">Comparing languages</a></h3>
+<ul>
+<li>Sleep 1 second, then allocate 10KB in a tight loop 1 million times.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">for</span> i in <span class="dt">xrange</span>(<span class="dv">1000000</span>):
+    a = <span class="st">&#39;\0&#39;</span> * <span class="dv">10000</span></code></pre>
+<ul>
+<li>PyPy JITs, so it’s memory usage doubles during startup, but then allocates memory extremely fast.</li>
+<li>CPython’s memory usage is 1/3 of PyPy, takes longer.
+<ul>
+<li>But key is that: memory usage <strong>isn’t climbing</strong>.</li>
+<li>CPython is carefully noting down the refcounts, and as it always drops to 0 is always frees <code>a</code>.</li>
+</ul></li>
+<li>Java is atrocious; more memory and more time than CPython.</li>
+<li>C is fast and efficient.</li>
+<li>Go is the slowest and efficient.</li>
+<li>The next slide shows just how atrocious Java is, pretty bad.</li>
+<li>Just remember, and measure, that JIT causes slow startup.
+<ul>
+<li>So can print “Hello world”, run 20 times, and measure total exec time.</li>
+<li>CPython will beat PyPy.</li>
+<li>Latency vs. throughput, long-running vs. short-running processes.</li>
+</ul></li>
+</ul>
+<h3 id="python-is-sometimes-a-gc-language"><a href="#python-is-sometimes-a-gc-language">Python is sometimes a GC language</a></h3>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">for</span> i in <span class="dt">xrange</span>(<span class="dv">1000000</span>):
+    a = [<span class="st">&#39;\0&#39;</span> * <span class="dv">10000</span>, <span class="ot">None</span>]
+    b = [<span class="st">&#39;\0&#39;</span> * <span class="dv">10000</span>, a]
+    a[<span class="dv">1</span>] = b
+
+    <span class="co"># without this the CPython GC is clever enough to clean</span>
+    <span class="co"># up a and b.</span>
+    aa[i % <span class="dv">1000</span>] = a</code></pre>
+<ul>
+<li>Due to circular references if CPython just relied on refcounts it’d never free anything.</li>
+<li>In these cases CPython’s garbage person will eventually come along and clean up.</li>
+<li>The CPython GC is a backup for the primary refcounts method.</li>
+<li>CPython, in this pathological case, has the same stupid behaviour as Java: allocate up to a maximum then desperately start GC’ing.</li>
+</ul>
+<h3 id="getting-the-most-out-of-pythons-gc"><a href="#getting-the-most-out-of-pythons-gc">Getting the most out of Python’s GC</a></h3>
+<ul>
+<li><strong>Just avoid it at all costs</strong></li>
+<li>Break circular references by hand when you’re done.</li>
+<li>Better still: use the <code>weakref</code> module.</li>
+<li>Common example of accidentally requiring GC is trees.
+<ul>
+<li>Parents have <code>list[]</code> children, child has a pointer back to parent.</li>
+<li>Great for traversal, disaster for refcounting.</li>
+<li>Either:
+<ul>
+<li>use <code>weakref</code> to make pointers without refcounts. Just keep in mind that objects might suddenly disappear.</li>
+<li>deliberately dismantle the tree when you’re done by setting <code>parent = None</code> on all children.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="deterministic-destructors"><a href="#deterministic-destructors">Deterministic destructors</a></h3>
+<ul>
+<li>Does this program work on win32?</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="dt">open</span>(<span class="st">&#39;file&#39;</span>, <span class="st">&#39;w&#39;</span>).write(<span class="st">&#39;hello&#39;</span>)
+<span class="dt">open</span>(<span class="st">&#39;file&#39;</span>, <span class="st">&#39;w&#39;</span>).write(<span class="st">&#39;world&#39;</span>)</code></pre>
+<ul>
+<li>Reason through it.
+<ul>
+<li><code>open</code> creates an object with a refcount of 1.</li>
+<li>calling <code>write</code> on the object increases its refcount to 2.</li>
+<li>when <code>write</code> finishes its refcount is 1.</li>
+<li>when we advance to the next line nothing else is referring to the file object so its refcount drops to 0.</li>
+<li>at this point CPython frees the file object.</li>
+</ul></li>
+<li>Double-trick question.
+<ul>
+<li>On win32 you can’t open the same file twice for writing unless you’ve enabled special sharing options.</li>
+<li>So the second command could fail randomly if the first file pointer hasn’t been GC’d.</li>
+<li>Except we now know Python is refcount’d, with GC as a backup.</li>
+<li>So this program doesn’t “randomly fail”, - it always works in CPython, because the refcount of the first file pointer drops to zero.</li>
+<li>Ironically enough this program <em>does</em> fail randomly on IronPython.</li>
+</ul></li>
+<li>If you had “real” GC, which CPython does not have, you would have to manually manage resources:
+<ul>
+<li>files</li>
+<li>database handles</li>
+<li>sockets</li>
+<li>locks</li>
+</ul></li>
+<li>In a way this is super-awesome; CPython just works. This would be non-deterministic in C#, Java, Ruby.</li>
+<li>Context managers, the <code>with</code> statement, is more complicated and deterministic destructors are cool as-is.</li>
+</ul>
+<h3 id="hello-world-benchmark"><a href="#hello-world-benchmark">Hello World Benchmark</a></h3>
+<ul>
+<li><code>git log</code> is twice as slow as CPython printing “hello world”.</li>
+<li>C is awesome for command-line tools.</li>
+<li>CPython compiles down to PYC, and reloads fast, unlike Ruby.</li>
+<li><p>Command-line tools in PyPy are 7 times slower than CPython.</p></li>
+<li>The presenter is largely focused on systems-level command-line tools.
+<ul>
+<li>Doesn’t want to rely on JIT, want C code.</li>
+</ul></li>
+</ul>
+<h2 id="guido-van-rossum-on-fast-python-patterns"><a href="#guido-van-rossum-on-fast-python-patterns">Guido van Rossum on fast Python patterns</a></h2>
+<p><a href="https://plus.google.com/u/0/115212051037621986145/posts/HajXHPGN752">https://plus.google.com/u/0/115212051037621986145/posts/HajXHPGN752</a></p>
+<ul>
+<li>Avoid overengineering datastructures. Tuples are better than objects (try namedtuple too though). Prefer simple fields over getter/setter functions.</li>
+<li>Built-in datatypes are your friends. Use more numbers, strings, tuples, lists, sets, dicts. Also check out the collections library, esp. deque.</li>
+<li>Be suspicious of function/method calls; creating a stack frame is expensive.</li>
+<li>Don’t write Java (or C++, or Javascript, …) in Python.</li>
+<li>Are you sure it’s too slow? Profile before optimizing!</li>
+<li>The universal speed-up is rewriting small bits of code in C. Do this only when all else fails.</li>
+</ul>
+<h2 id="high-performance-python-europython-2011-workshop"><a href="#high-performance-python-europython-2011-workshop">High Performance Python (EuroPython 2011 workshop)</a></h2>
+<p><a href="http://ianozsvald.com/HighPerformancePythonfromTrainingatEuroPython2011_v0.2.pdf">http://ianozsvald.com/HighPerformancePythonfromTrainingatEuroPython2011_v0.2.pdf</a></p>
+<h3 id="goal"><a href="#goal">Goal</a></h3>
+<ul>
+<li>Making parallelizable, CPU-bound tasks in Python faster.</li>
+<li>Tutorial uses Mandelbrot fractal generation.</li>
+</ul>
+<h3 id="code"><a href="#code">Code</a></h3>
+<ul>
+<li>p19: code that we’re using.
+<ul>
+<li>Mandlebrot set generation, tight numerical calculation.</li>
+<li>Uses lists, then generates an image.</li>
+<li>Takes a while, generates a pretty picture.</li>
+</ul></li>
+</ul>
+<pre><code>python pure_python.py 1000 1000</code></pre>
+<ul>
+<li>There’s one function, <code>calc_z_serial_purepython</code>, called once and takes up the most time.</li>
+<li>Also notice the massive number of calls to <code>abs</code> and <code>range</code>, which <code>percall</code> are cheap but <code>cumtime</code> is expensive.</li>
+</ul>
+<h3 id="profiling-with-cprofile-and-line_profiler"><a href="#profiling-with-cprofile-and-line_profiler">Profiling with cProfile and line_profiler</a></h3>
+<ul>
+<li>So, why is this running slow?</li>
+</ul>
+<pre><code>python -m cProfile -o rep.profile pure_python.py 1000 1000
+python -c &quot;import pstats; p = pstats.Stats(&#39;rep.profile&#39;);
+p.sort_stats(&#39;cumulative&#39;).print_stats(10)&quot;
+
+# can also figure out who is calling these hot functions
+p.sort_stats(&#39;cumulative&#39;).print_callers(10)
+
+# or who these hot functions call
+p.sort_stats(&#39;cumulative&#39;).print_callees(10)</code></pre>
+<ul>
+<li>p21: cProfile output, sorted by cumulative.</li>
+<li>can also use <code>runsnake</code> command for a pretty GUI.
+<ul>
+<li>need <code>pip install SquareMap RunSnakeRun</code>, and <code>wxpython</code>.</li>
+<li><code>wxpython</code> difficult to install in a virtualenv, skipping.</li>
+</ul></li>
+<li>p22: which lines are causing the slowdown?
+<ul>
+<li><code>pip install line_profiler</code></li>
+<li>decorate the functions you’re interested in with <code>@profile</code></li>
+<li>run: <code>kernprof.py -l -v pure_python.py 300 100</code></li>
+</ul></li>
+<li>With the line profile we can see which particular loop is causing the slowdown.</li>
+<li>Remember to remove the <code>@profile</code> decorator when you’re done, as only <code>kernprof.py</code> understands it.</li>
+<li>As the line-based profile, just like <code>cProfile</code>, measures time, this is good for debugging I/O bound functions as well.
+<ul>
+<li>!!AI Could show off a line-profile of an HTTP server, maybe</li>
+</ul></li>
+</ul>
+<h3 id="bytecode-analysis"><a href="#bytecode-analysis">Bytecode Analysis</a></h3>
+<ul>
+<li>We’ve just profiled our code to determine what parts are slow.</li>
+<li>In order to make the code faster it’s helpful to have an understanding of what Python is trying to do.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> pure_python
+<span class="ch">import</span> dis
+dis.dis(pure_python.calculate_z_serial_purepython)</code></pre>
+<ul>
+<li>For this code:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">for</span> iteration in <span class="dt">range</span>(maxiter):
+    z[i] = z[i]*z[i] + q[i]
+    <span class="kw">if</span> <span class="dt">abs</span>(z[i]) &gt; <span class="fl">2.0</span>:
+        output[i] = iteration
+        <span class="kw">break</span></code></pre>
+<ul>
+<li>Notice how <code>z[i]</code> gets loaded as <code>load z</code> then <code>load z[i]</code> over and over again, even though this could be optimized out.</li>
+<li>Notice how <code>abs</code> is loaded from the global namespace, even though it’s never changed.</li>
+</ul>
+<h3 id="slighty-faster-cpython-implementation"><a href="#slighty-faster-cpython-implementation">Slighty faster CPython implementation</a></h3>
+<ul>
+<li>Knowing CPython is doing this unnecessary loading, we can do this:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">for</span> iteration in <span class="dt">range</span>(maxiter):
+    zi = z[i]
+    qi = q[i]
+    _abs = <span class="dt">abs</span>
+    zi = zi*zi + qi
+    <span class="kw">if</span> _abs(zi) &gt; <span class="fl">2.0</span>:
+        output[i] = iteration
+        <span class="kw">break</span></code></pre>
+<h3 id="pypy"><a href="#pypy">PyPy</a></h3>
+<ul>
+<li>Can speed up pure-Python code.</li>
+<li>So far no <code>numpy</code> support.</li>
+</ul>
+<h3 id="psyco"><a href="#psyco">Psyco</a></h3>
+<ul>
+<li>It exists, but doesn’t support CPython 2.7 or 64-bit systems.</li>
+<li>Depreciated in favour or PyPy.</li>
+</ul>
+<h3 id="cython"><a href="#cython">Cython</a></h3>
+<ul>
+<li>Move out the hot function to it’s own file, with extension PY.</li>
+<li>Don’t change any of the pure-Python code (yet).</li>
+<li>Check it runs fine with CPython</li>
+<li>Now rename your hot-function file to have an extension PYX.</li>
+<li>We’ll need a <code>setup.py</code> file to build this:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> distutils.core <span class="ch">import</span> setup
+<span class="ch">from</span> distutils.extension <span class="ch">import</span> Extension
+<span class="ch">from</span> Cython.Distutils <span class="ch">import</span> build_ext
+
+setup(
+    cmdclass = {<span class="st">&#39;build_ext&#39;</span>: build_ext},
+    ext_modules = [Extension(<span class="st">&quot;calculate_z&quot;</span>, [<span class="st">&quot;calculate_z.pyx&quot;</span>])],
+)</code></pre>
+<ul>
+<li>Now build it:</li>
+</ul>
+<pre><code>python setup.py build_ext --inplace</code></pre>
+<ul>
+<li>At this stage there is an improvement in performance, but quite minor!</li>
+<li>This is because we haven’t given Cython any hints about what are code looks like.</li>
+<li>We can actually ask Cython what its guesses have been so far:</li>
+</ul>
+<pre><code>cython -a calculate_z.pyx</code></pre>
+<ul>
+<li>This produces an HTML file in the same directory, which tells you what each line of Python got converted to in C.</li>
+<li>The more yellow the line the more calls a given line involves, and hence the more “Python-like” the code is; you want the lines to be white, implying Cython is happily converting it to fewer lines and hence it’s more C-like.</li>
+<li>!!AI Compare the HTML output after adding a few annotations to emphasise this.</li>
+<li><p>Now on rebuild it’s much faster!</p></li>
+<li>p33: Cython supports <a href="http://wiki.cython.org/enhancements/compilerdirectives">compiler directives</a> in the <code>setup.py</code> file to apply globally, or in a given PYX file.
+<ul>
+<li>Disable bounds checking, or negative list indexing, etc.</li>
+<li>Can use <code>profile</code> to add hooks that allow <code>cProfiler</code> to profile the compiled C code.</li>
+<li>Set on the top of a PYX file like this:</li>
+</ul></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="co">#cython: boundscheck=False</span></code></pre>
+<ul>
+<li>Can also apply compiler directives to local blocks after <code>cimport cython</code> with a decorator:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ot">@cython.boundscheck</span>(<span class="ot">False</span>)
+<span class="kw">def</span> f():
+    ...
+    <span class="kw">with</span> cython.boundscheck(<span class="ot">True</span>):
+        ...</code></pre>
+<ul>
+<li>Can also compile Cython at run-time or inline.
+<ul>
+<li>Reference: <a href="http://docs.cython.org/src/reference/compilation.html">http://docs.cython.org/src/reference/compilation.html</a></li>
+</ul></li>
+<li>You can follow these instructions with PyPy but note that it may be very slow because of having to use <code>cpyext</code> for all interations; PyPy can’t hand-off to Cython.</li>
+</ul>
+<h3 id="cython-with-numpy-arrays"><a href="#cython-with-numpy-arrays">Cython with numpy arrays</a></h3>
+<ul>
+<li>p35: Cython with numpy arrays</li>
+<li>!!AI haven’t tried this.</li>
+</ul>
+<h3 id="shedskin"><a href="#shedskin">Shedskin</a></h3>
+<ul>
+<li>p36: Shedskin.</li>
+<li>!!AI exists, but haven’t tried it.</li>
+</ul>
+<h3 id="numpy-vectors"><a href="#numpy-vectors"> Numpy vectors</a></h3>
+<ul>
+<li>p38: numpy vectors</li>
+<li>Rather than use for loops use matrix operations.</li>
+<li>!!AI haven’t tried it.</li>
+</ul>
+<h3 id="numexpr-on-numpy-vectors"><a href="#numexpr-on-numpy-vectors"> numexpr on numpy vectors</a></h3>
+<ul>
+<li>p42</li>
+<li>Takes any numpy code and turns them into chunked vector operations, spreads them across math units in the CPU.</li>
+<li>Often will just make numpy code magically faster.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python">In [<span class="dv">1</span>]: <span class="ch">import</span> numpy
+
+In [<span class="dv">2</span>]: <span class="ch">import</span> numexpr
+
+In [<span class="dv">3</span>]: expr = numexpr.NumExpr(<span class="st">&#39;a &gt; 5.0&#39;</span>)
+
+In [<span class="dv">4</span>]: numexpr.disassemble(expr)
+Out[<span class="dv">4</span>]: [(<span class="st">&#39;gt_bdd&#39;</span>, <span class="st">&#39;r0&#39;</span>, <span class="st">&#39;r1[a]&#39;</span>, <span class="st">&#39;c2[5.0]&#39;</span>)]
+
+In [<span class="dv">5</span>]: expr.run(<span class="dv">4</span>)
+Out[<span class="dv">5</span>]: array(<span class="ot">False</span>, dtype=<span class="dt">bool</span>)
+
+In [<span class="dv">6</span>]: expr.run(<span class="dv">6</span>)
+Out[<span class="dv">6</span>]: array(<span class="ot">True</span>, dtype=<span class="dt">bool</span>)</code></pre>
+<ul>
+<li>Pre-compile expressions in a tight loop to avoid the overhead of re-compiling expressions.</li>
+</ul>
+<h3 id="pycuda"><a href="#pycuda">pyCUDA</a></h3>
+<ul>
+<li>p44</li>
+<li>!!AI haven’t tried it.</li>
+</ul>
+<h3 id="paralellpython"><a href="#paralellpython"> ParalellPython</a></h3>
+<ul>
+<li>p51.</li>
+<li>Like <code>multiprocessing</code> but across remote machines as well.</li>
+<li>Doesn’t send the full environment, so you need to build on all machines.</li>
+</ul>
+<h2 id="when-do-i-optimise"><a href="#when-do-i-optimise">When do I optimise?</a></h2>
+<h3 id="computer-organization-and-design-3rd-edition-chapter-4---understanding-and-assessing-performance"><a href="#computer-organization-and-design-3rd-edition-chapter-4---understanding-and-assessing-performance">Computer Organization and Design, 3rd edition, Chapter 4 - Understanding and Assessing Performance</a></h3>
+<p><span class="citation"><sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></span></p>
+<ul>
+<li>Amdahl’s law</li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        &amp; \textrm{Execution time after improvement} \\
+        &amp; = \left( \frac{\textrm{Execution time affected by improvement}}{\textrm{Amount of improvement}} + \textrm{Execution time unaffected} \right)
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>Amdahl’s law reminds us to <strong>make the common case fast</strong>. But it also teaches us about decreasing returns.</li>
+<li>For example, suppose I have a program that takes 100 seconds to run. I’ve identified a subroutine that takes 80 seconds of this time. If I half the cost of the subroutine to 40 seconds, how much faster is my program?</li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        &amp;\textrm{Execution time after improvement} \\
+        &amp; = \left( \frac{\textrm{80}}{2} + (100 - 80) \right) \\
+        &amp; = \textrm{60 seconds}
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>and if I quarter the cost to 20 seconds?</li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        &amp;\textrm{Execution time after improvement} \\
+        &amp; = \left( \frac{\textrm{80}}{4} + (100 - 80) \right) \\
+        &amp; = \textrm{40 seconds}
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>So reducing the routine’s cost by 50% gives 40% returns overall, and reducing it by 75% gives 60% returns overall.</li>
+<li>Even the best case, where we focus on a routine that occupies most of the execution time, shows noticeable decreasing returns. Imagine if we didn’t profile and focused on a random routine!</li>
+</ul>
+<h3 id="make-it-work-make-it-right-make-it-fast"><a href="#make-it-work-make-it-right-make-it-fast">Make it Work, Make it Right, Make it Fast</a></h3>
+<p><span class="citation"><sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup></span><span class="citation"><sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup></span></p>
+<ul>
+<li>References:
+<ul>
+<li><a href="http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast">http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast</a></li>
+<li><a href="http://c2.com/cgi/wiki?PrematureOptimization">http://c2.com/cgi/wiki?PrematureOptimization</a></li>
+</ul></li>
+<li>Get at least some use cases working and tested so you are getting feedback.</li>
+<li>Get all the use cases working and tested.</li>
+<li>Use the system end-to-end, find performance bottlenecks.</li>
+<li>Use the system under a profiler to identify the bottlenecks.</li>
+<li>Make it fast (mercilessly; everything is tested, right?)</li>
+</ul>
+<h3 id="the-oft-misquoted-donald-knuth"><a href="#the-oft-misquoted-donald-knuth">The oft-misquoted Donald Knuth</a></h3>
+<p><span class="citation"><sup><a href="#fn4" class="footnoteRef" id="fnref4">4</a></sup></span></p>
+<ul>
+<li>Knuth, Donald (December 1974). “Structured Programming with go to Statements”. ACM Journal Computing Surveys 6 (4): 268. <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.103.6084">CiteSeerX</a></li>
+</ul>
+<blockquote>
+<p>Programmers waste enormous amounts of time thinking about, or worrying about, the speed of noncritical parts of their programs, and these attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered. <em>We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil</em>. <strong>Yet we should not pass up our opportunities in that critical 3%</strong>.</p>
+</blockquote>
+<h3 id="essentials-of-software-engineering-2009-chapter-9---implementation"><a href="#essentials-of-software-engineering-2009-chapter-9---implementation">Essentials of Software Engineering (2009), Chapter 9 - Implementation</a></h3>
+<p><span class="citation"><sup><a href="#fn5" class="footnoteRef" id="fnref5">5</a></sup></span></p>
+<ul>
+<li>Characteristics of a good implementation, in no particular order
+<ul>
+<li><strong>Readability</strong>: can be easily read and understood.</li>
+<li><strong>Maintainability</strong>: can be easily modified, extended, and maintained.</li>
+<li><strong>Performance</strong>: minimises any one, or all of, execution time, memory usage, and power consumption.</li>
+<li><strong>Correctness</strong>: do what it is specified to do.</li>
+<li><strong>Completeness</strong>: all requirements are met.</li>
+</ul></li>
+<li>There is no such thing as a free lunch; what would you put these attributes in, knowing that the lower in the list the attribute the less attention it’ll receive?</li>
+<li>For me, performance ends up on the bottom.</li>
+<li>Yet these attributes aren’t independent; certainly readability and maintainability go hand in hand. And what if performance is a non-functional requirement, and hence part of completeness?</li>
+<li>If so then this isn’t a license to ignore the empirical fact that programs are slow in a small part of themselves, and one should likewise use empirical measurements to first determine these before making assumptions.</li>
+</ul>
+<h3 id="beautiful-code-2007-chapter-5---correct-beautiful-fast-in-that-order"><a href="#beautiful-code-2007-chapter-5---correct-beautiful-fast-in-that-order"> Beautiful Code (2007), Chapter 5 - Correct, Beautiful, Fast (In That Order)</a></h3>
+<p><span class="citation"><sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup></span></p>
+<blockquote>
+<p>If there’s a moral to this story, it is this: do not let performance considerations stop you from doing what is right. You can always make the code faster with a little cleverness. You can rarely recover so easily from a bad design…Design the program you want in the way it should be designed. Then, and only then, should you worry about performance. More often than not, you’ll discover the program is fast enough on your first pass.</p>
+</blockquote>
+<h3 id="computer-architecture-4th-edition-chapter-1---fundamentals-of-computer-design"><a href="#computer-architecture-4th-edition-chapter-1---fundamentals-of-computer-design">Computer Architecture, 4th edition, Chapter 1 - Fundamentals of Computer Design</a></h3>
+<p><span class="citation"><sup><a href="#fn7" class="footnoteRef" id="fnref7">7</a></sup></span></p>
+<blockquote>
+<p>Important fundamental observations have come from properties of programs. That most important program property that we regularly exploit is the <strong>principle of locality</strong>. Programs tends to reuse data and instructions they have used recently. A widely held rule of thumb is that a program spends 90% of its execution time in only 10% of the code… Two different types of locality have been observed. <strong>Temporal locality</strong> states that recently accessed items are likely to be accessed in the near future. <strong>Spatial locality</strong> says that items whose addresses are near one another tend to be referenced close together in time.</p>
+</blockquote>
+<p>Also, Amdahl’s Law in a different form:</p>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        \textrm{Execution time}_{\textrm{old}} &amp; = \textrm{Execution time}_{\textrm{new}} \times \left( \left( 1 - \textrm{Fraction}_{\textrm{enhanced}} \right) + \frac{ \textrm{Fraction}_{\textrm{enhanced}}}{\textrm{Speedup}_{\textrm{enhanced}}} \right) \\
+        \textrm{Speedup}_{\textrm{overall}} &amp; = \frac{\textrm{Execution time}_{\textrm{old}}}{\textrm{Execution time}_{\textrm{new}}} \\
+        &amp; = \frac{1}{ \left( 1 - \textrm{Fraction}_{\textrm{enhanced}} \right) + \frac{ \textrm{Fraction}_{\textrm{enhanced}}}{\textrm{Speedup}_{\textrm{enhanced}}}}
+    \end{aligned}
+\end{align}
+\]</span></p>
+<p>Here’s an example. Suppose we have a web server and there is a routine we could optimise such that it is 10 times faster. Assuming that the web server process is busy with with this routine 40% of the time what is the overall speedup after the optimisation?</p>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        \textrm{Fraction}_{\textrm{enhanced}} &amp; = 0.4 \\
+        \textrm{Speedup}_{\textrm{enhanced}} &amp; = 10 \\
+        \textrm{Speedup}_{\textrm{overall}} &amp; = \frac{1}{(1-0.4) + \frac{0.4}{10}} \\
+        &amp; = \frac{1}{0.64} \\
+        &amp; = \textrm{1.56 (3dp)}
+    \end{aligned}
+\end{align}
+\]</span></p>
+<h3 id="code-complete-2nd-edition-2004-chapter-25---code-tuning-strategies"><a href="#code-complete-2nd-edition-2004-chapter-25---code-tuning-strategies">Code Complete 2nd edition (2004), Chapter 25 - Code-Tuning Strategies</a></h3>
+<p><span class="citation"><sup><a href="#fn8" class="footnoteRef" id="fnref8">8</a></sup></span></p>
+<ul>
+<li>Optimization has a controversial history.</li>
+<li>Was vital in the 70s, became less-so in the 80’s and 90’s, and in the 2000s with the advent of embedded software ha sbecome important again.</li>
+<li>Users care about program throughput and latency.</li>
+<li>But they implicitly care more about getting software delivered on time, a clean UI, and avoiding downtime.</li>
+<li>Performance, from a user’s perspective, is time taken to execute use cases.</li>
+<li>How related is this to code throughput and latency, as opposed to a sane user interface, user experience, and information architecture?</li>
+<li>There is no free lunch; as you focus on some attributes, you will necessarily spend less time on others.</li>
+<li>Even after deciding efficiency, of speed or size, is important, you have options.
+<ul>
+<li>Program requirements.
+<ul>
+<li>Do your users actual require this level of performance?</li>
+</ul></li>
+<li>Program design.
+<ul>
+<li>Are the methods you’ve used to achieve your requirements necessary?</li>
+<li>e.g. for high-performance simulations can you sacrifice precision for speed?</li>
+<li>If you know that size and speed are important, design the architecture to accomodate this.
+<ul>
+<li>Set resource goals for subsystems, features, and classes.</li>
+<li>Set your objectvies explicitly, so programmers know to work on them.</li>
+<li>Set goals that may achieve efficiency indirectly in the future. With very modular and modifiable code, for example with a plugin architecture, you can identify hot components later and re-write them. Great examples of this are Apache Thrift and Audacity’s plugin architecture.</li>
+</ul></li>
+</ul></li>
+<li>Class and routine design
+<ul>
+<li>Choosing appropriate algorithms and data structures early on is often better than optimising later, but requires a sound and thorough knowledge of them.</li>
+</ul></li>
+<li>Hardware
+<ul>
+<li>Can you just purchase faster or bigger machines? Time is money!</li>
+</ul></li>
+</ul></li>
+<li>Changing requirements, proper architecture and class design, and appropriate data structures and algorithms are more effective ways of improving performance than code-level optimization.</li>
+<li>Buying new hardware is easier and could be cheaper.</li>
+<li>Code optimization comes at the cost of maintainability and readability.</li>
+<li>You can’t identify performance bottlenecks before a program is working.</li>
+<li>Focusing on optimization prevents you from achiveing other software objectives.</li>
+<li>Summary of approach to code tuning
+<ul>
+<li>Develop well-designed software that’s easy to understand and modify.</li>
+<li>Measure performance.</li>
+<li>If performance is poor:
+<ul>
+<li>Save a working version of the software.</li>
+<li>Profile the system.</li>
+<li>Determine the reason for the poor performance.</li>
+<li>Tune.</li>
+<li>Measure each improvment one at a time.</li>
+</ul></li>
+<li>Repeat.</li>
+</ul></li>
+</ul>
+<h3 id="five-steps-to-solving-software-performance-problems"><a href="#five-steps-to-solving-software-performance-problems"> Five Steps to Solving Software Performance Problems</a></h3>
+<p><span class="citation"><sup><a href="#fn9" class="footnoteRef" id="fnref9">9</a></sup></span></p>
+<ol style="list-style-type: decimal">
+<li>Figure out where you need to be.
+<ul>
+<li>Define precise, quantitative, and measureable performance objectives, in terms of either or both of throughput and latency.</li>
+<li>e.g. The time to first byte (TTFB) for the software system will be 50ms for 95% of all requests at all times.</li>
+<li>e.g. CPU usage will never exceed 65%.</li>
+</ul></li>
+<li>Determine where you are now
+<ul>
+<li>What use cases are causing problems?</li>
+<li>What is the context of these use cases?</li>
+<li>If not already done, take a look at the software architecture from a performance perspective. Given the architecture, is software tuning even a cost-effective option?</li>
+<li>Profile the system.<br /></li>
+</ul></li>
+<li>Can you achieve your performance objectives?
+<ul>
+<li>Use Amdahl’s Law.</li>
+<li>Is the required throughput or response time, given the hardware and architecture context, even feasible?</li>
+</ul></li>
+<li>Develop a plan.
+<ul>
+<li>Prototypes with measurements.</li>
+</ul></li>
+</ol>
+<p>Tuning software code will rarely achieve the same results as a system designed with performance in mind from the beginning. With performance in mind from the beginning, by definition, one would need to add low-level measurements and instrumentation, with a proactive mindset, to identify problems as they arise.</p>
+<h3 id="refactoring---improving-the-design-of-existing-code-2002-chapter-2---principles-in-refactoring"><a href="#refactoring---improving-the-design-of-existing-code-2002-chapter-2---principles-in-refactoring">Refactoring - Improving the Design of Existing Code (2002), Chapter 2 - Principles in Refactoring</a></h3>
+<p><span class="citation"><sup><a href="#fn10" class="footnoteRef" id="fnref10">10</a></sup></span></p>
+<blockquote>
+<p>The secret to fast software, in all but hard real-time contexts, is to write tunable software first and then tune it for sufficient speed.</p>
+</blockquote>
+<p>One approach is to always pay attention to performance in every line of code you write. This approach has intuitive attraction; how can code be slow if you’re always writing it to be fast? However, changes that improve performance <em>usually</em> make the program less maintainable and readable, which slows development and maintenance. This would be an acceptable cost if the benefit was that the program was indeed faster, but often it isn’t. This is mainly because the naive effort of optimising everything as you write code is too narrow in perspective and ignore empirical evidence of how software actually behaves.</p>
+<p>Decades of experience and observation, both in the software and computer engineering spheres, have shown programs waste most their time in a small fraction of their code, around 10%. If you optimise everything equally by definition around 90% of your effort is wasted, because much of the code isn’t run that often. Worse, you’ve wasted time that could have been focused on the real problem areas, and to boot have made your entire program less maintainable in the long run.</p>
+<p>!!AI this is not to say a thorough knowledge of algorithms and data structures is useless; having these in hand at the design stage will not only provide the most meaningful optimizations but in a way that often is more readable and maintainable.</p>
+<p>The correct way of optimizing code is, at first, to not; conduct excellent requirements analysis, then design and build your code in a well factored manner (!!AI that is informed by a thorough knowledge of algorithms and data structures). In time your non-functional requirements with respect to performance may get violated. Once they are you profile your code, find the (by definition) small part of your code that is taking up the most time. As your code is well designed and factored you can make small, cautious, incremental fixes, constantly re-profiling after each fix, improving performance.</p>
+<h3 id="consistency"><a href="#consistency">Consistency</a></h3>
+<p><span class="citation"><sup><a href="#fn11" class="footnoteRef" id="fnref11">11</a></sup></span><span class="citation"><sup><a href="#fn12" class="footnoteRef" id="fnref12">12</a></sup></span></p>
+<ul>
+<li>Ralph Waldo Emerson, Self Reliance (1841)</li>
+</ul>
+<blockquote>
+<p>A foolish consistency is the hobgoblin of little minds, adored by little statesman and philosophers and divines. With consistency a great soul has simply nothing to do. He may as well concern himself with his shadow on the wall. Speak what you think now in hard words, and to-morrow speak what to-morrow thinks in hard words again, though it contradict every thing you said to-day.</p>
+</blockquote>
+<ul>
+<li>Miguel de Unamuno, quoted by Douglas R. Hofstadter in Godel, Escher, Bach (1979)</li>
+</ul>
+<blockquote>
+<p>If a person never contradicts himself, it must be that he says nothing.</p>
+</blockquote>
+<h2 id="debugging-memory-usage-in-python"><a href="#debugging-memory-usage-in-python">Debugging memory usage in Python</a></h2>
+<ul>
+<li>References:
+<ul>
+<li><a href="http://neverfear.org/blog/view/155/Investigating_memory_leaks_in_Python">http://neverfear.org/blog/view/155/Investigating_memory_leaks_in_Python</a></li>
+</ul></li>
+<li><code>pip install Cython ipython ipdb objgraph pympler</code></li>
+<li><code>pip install</code> for <code>meliae</code> doesn’t work, so just install from source here: <code>https://launchpad.net/meliae</code></li>
+<li>In your application trap a signal to drop to <code>ipdb</code>:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> start_ipdb(signal, trace):
+    <span class="ch">import</span> ipdb
+    ipdb.set_trace()
+<span class="ch">import</span> signal
+signal.signal(signal.SIGQUIT, start_ipdb)</code></pre>
+<h3 id="maliae"><a href="#maliae">Maliae</a></h3>
+<ul>
+<li>Whilst running press <code>CTRL-\</code>, then run:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> meliae <span class="ch">import</span> scanner
+scanner.dump_all_objects(<span class="st">&#39;meliae.json&#39;</span>)</code></pre>
+<ul>
+<li>Then analyze it</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> meliae <span class="ch">import</span> loader
+om = loader.load(<span class="st">&#39;dump.meliae&#39;</span>)
+s = om.summarize();
+s</code></pre>
+<h3 id="objgraph"><a href="#objgraph">objgraph</a></h3>
+<ul>
+<li>Whilst running press <code>CTRL-\</code>, then run:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> objgraph
+
+<span class="co"># Show most frequent objects.</span>
+objgraph.show_most_common_types()
+
+<span class="co"># Count a particular type of object.</span>
+objgraph.count(<span class="st">&quot;dict&quot;</span>)
+
+<span class="co"># Draw a pretty reference graph for all instances of an object.</span>
+objgraph.show_backrefs(objgraph.by_type(<span class="st">&quot;dict&quot;</span>)[<span class="dv">0</span>:<span class="dv">50</span>])</code></pre>
+<h3 id="muppy"><a href="#muppy">muppy</a></h3>
+<ul>
+<li>Reference: <a href="http://pythonhosted.org/Pympler/muppy.html">http://pythonhosted.org/Pympler/muppy.html</a></li>
+<li>Whilst running press <code>CTRL-\</code>, then run:</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">from</span> pympler <span class="ch">import</span> muppy
+
+<span class="co"># get all objects</span>
+all_objects = muppy.get_objects()
+<span class="dt">len</span>(all_objects)
+
+<span class="co"># summarize all objects</span>
+<span class="ch">from</span> pympler <span class="ch">import</span> summary
+summ1 = summary.summarize(all_objects)
+summary.print_(summ1)
+
+<span class="co"># we can compare two different summaries to compare</span>
+<span class="co"># changes over time</span>
+summ2 = summary.summarize(muppy.get_objects())
+diff = summary.get_diff(summ1, summ2)
+summary.print_(diff)
+
+<span class="co"># to do the above automatically, use tracker</span>
+<span class="ch">from</span> pympler <span class="ch">import</span> tracker
+tr = tracker.SummaryTracker()
+tr.print_diff()
+
+<span class="co"># time passes</span>
+tr.print_diff()
+
+<span class="co"># use the refbrowser module to see tree of object</span>
+<span class="co"># references.</span></code></pre>
+<h2 id="profiling-in-python"><a href="#profiling-in-python">Profiling in Python</a></h2>
+<h3 id="ai-ideas"><a href="#ai-ideas">!!AI ideas</a></h3>
+<ul>
+<li>Run CPU and I/O bound scripts with all profiling types, give hand-waving estimates of occupancy, show what deterministic vs. statistical profiling means.</li>
+</ul>
+<h3 id="cprofile"><a href="#cprofile">cProfile</a></h3>
+<ul>
+<li>How to proflie an individual function using an undocumented feature in <code>cProfile</code>: <a href="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result">http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result</a></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> cProfile
+
+<span class="kw">def</span> profileit(name):
+    <span class="kw">def</span> inner(func):
+        <span class="kw">def</span> wrapper(*args, **kwargs):
+            prof = cProfile.Profile()
+            retval = prof.runcall(func, *args, **kwargs)
+            <span class="co"># Note use of name from outer scope</span>
+            prof.dump_stats(name)
+            <span class="kw">return</span> retval
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> inner
+
+<span class="ot">@profileit</span>(<span class="st">&quot;profile_for_func1_001&quot;</span>)
+<span class="kw">def</span> func1(...)
+    ...</code></pre>
+<h3 id="statprof"><a href="#statprof">statprof</a></h3>
+<ul>
+<li>References:
+<ul>
+<li><a href="https://github.com/bos/statprof.py">https://github.com/bos/statprof.py</a></li>
+</ul></li>
+<li><code>statprof</code> is a statistical profiler.</li>
+<li>It is intended to have a lighter impact than <code>cProfiler</code>.</li>
+<li>It also regularly gathers a stack, and so is able to identify hot-spots within functions.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> statprof
+
+statprof.start()
+    <span class="kw">try</span>:
+        my_questionable_function()
+    <span class="kw">finally</span>:
+        statprof.stop()
+        statprof.display()</code></pre>
+<h3 id="line_profiler"><a href="#line_profiler">line_profiler</a></h3>
+<ul>
+<li>References
+<ul>
+<li>The EuroPython 2011 High Performance Computing tutorial, detailed above.</li>
+<li><a href="http://pythonhosted.org/line_profiler/">http://pythonhosted.org/line_profiler/</a></li>
+</ul></li>
+<li><code>pip install line_profiler</code></li>
+<li>See the EuroPython talk notes.</li>
+</ul>
+<h3 id="callgrind"><a href="#callgrind">callgrind</a></h3>
+<ul>
+<li>References:
+<ul>
+<li><a href="http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/">http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/</a></li>
+</ul></li>
+<li>Installation
+<ul>
+<li>You’ll need XCode Developer Tools.</li>
+<li><code>brew install qt graphviz</code></li>
+<li>Download the <a href="http://kcachegrind.sourceforge.net/html/Download.html">KCachegrind source</a>.</li>
+<li><code>cd kcachegrind/qcachegrind</code></li>
+<li><code>qmake; make</code></li>
+<li>You’ll have a <code>qcachegrind.app</code>, move it to Applications.</li>
+<li>It wants the Graphviz executable <code>dot</code> to be accessible without a <code>~/.bash_profile</code>, so you need <code>sudo ln -s /usr/local/bin/dot /usr/bin/dot</code></li>
+<li><code>pip install pyprof2calltree</code></li>
+</ul></li>
+<li>This is far superior to RunSnakeRun</li>
+<li>To use:
+<ul>
+<li>Generate a regular <code>cProfile</code> profile file.</li>
+<li><code>pyprof2calltree -i cprofile.output -o callgrind.output</code></li>
+<li>Open it in QCachegrind.</li>
+<li>Pretty pictures!</li>
+</ul></li>
+</ul>
+<h3 id="profilestats"><a href="#profilestats">profilestats</a></h3>
+<ul>
+<li>References:
+<ul>
+<li><a href="https://pypi.python.org/pypi/profilestats">https://pypi.python.org/pypi/profilestats</a></li>
+</ul></li>
+<li>Decorator for profiling individual functions and then converting the profiling data to kcachegrind format.</li>
+<li>Installation
+<ul>
+<li><code>pip install profilestats</code></li>
+</ul></li>
+<li>Usage
+<ul>
+<li><code>from profilestats import profile</code></li>
+<li><code>@profile</code> on function</li>
+</ul></li>
+</ul>
+<h3 id="pycounter"><a href="#pycounter">PyCounter</a></h3>
+<ul>
+<li>References:
+<ul>
+<li><a href="http://pycounters.readthedocs.org/en/latest/">http://pycounters.readthedocs.org/en/latest/</a></li>
+</ul></li>
+<li>Installation
+<ul>
+<li><code>pip install pycounters</code></li>
+</ul></li>
+<li>Usage
+<ul>
+<li><code>from pycounters.shortcuts import frequency, time</code></li>
+<li>Set up a log reporter:</li>
+</ul></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="ch">import</span> pycounters
+<span class="ch">import</span> logging
+
+reporter=pycounters.reporters.LogReporter(logging.getLogger(<span class="st">&quot;counters&quot;</span>))
+pycounters.register_reporter(reporter)
+pycounters.start_auto_reporting(seconds=<span class="dv">300</span>)</code></pre>
+<pre><code>-   Decorate functions with `@frequency()` and `@time()`.</code></pre>
+<h3 id="plop"><a href="#plop">plop</a></h3>
+<ul>
+<li>References:
+<ul>
+<li><a href="https://github.com/bdarnell/plop">https://github.com/bdarnell/plop</a></li>
+<li><a href="https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/">https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/</a></li>
+</ul></li>
+<li>Statistical profiler, low CPU overhead.</li>
+<li>Installation:
+<ul>
+<li><code>pip install plop tornado</code></li>
+</ul></li>
+<li>Usage:
+<ul>
+<li><code>python -m plop.collector myscript.py</code></li>
+<li>Writes output to <code>/tmp/plop.out</code></li>
+<li><code>python -m plop.viewer --datadir=/tmp</code></li>
+<li>Browse to <a href="http://localhost:8888">http://localhost:8888</a></li>
+</ul></li>
+<li>Pretty pictures!
+<ul>
+<li>D3 force-directed call graph.</li>
+<li>Radius of node is percentage time it takes.</li>
+</ul></li>
+</ul>
+<h2 id="cython-1"><a href="#cython-1">Cython</a></h2>
+<ul>
+<li>References:
+<ul>
+<li><a href="http://docs.cython.org/">http://docs.cython.org/</a></li>
+</ul></li>
+<li>I wanted to use GCC 4.7 from <a href="http://hpc.sourceforge.net">http://hpc.sourceforge.net</a>, but a lot of Python packages use <code>-Qunused-arguments</code>.
+<ul>
+<li>Rather than use pip, download the module, decompress.</li>
+<li>Run: <code>CFLAGS=&quot;&quot; python setup.py install</code>.</li>
+</ul></li>
+<li>Follow PyPy instructions later to install <code>easy_install</code>, <code>pip</code>, then <code>Cython</code>.</li>
+</ul>
+<h2 id="cffi"><a href="#cffi">CFFI</a></h2>
+<p>!!AI Placeholder for diving into CFFI here. Want to write an article and give a presentation, so make detailed notes.</p>
+<ul>
+<li>References:
+<ul>
+<li>Main docs: <a href="http://cffi.readthedocs.org/en/release-0.5/">http://cffi.readthedocs.org/en/release-0.5/</a></li>
+<li>A fast CSV reader demo: <a href="https://bitbucket.org/cffi/cffi/src/default/demo/fastcsv.py?at=default">https://bitbucket.org/cffi/cffi/src/default/demo/fastcsv.py?at=default</a></li>
+</ul></li>
+<li>I wanted to use GCC 4.7 from <a href="http://hpc.sourceforge.net">http://hpc.sourceforge.net</a>, but a lot of Python packages use <code>-Qunused-arguments</code>.
+<ul>
+<li>Rather than use pip, download the module, decompress.</li>
+<li>Run: <code>CFLAGS=&quot;&quot; python setup.py install</code>.</li>
+</ul></li>
+<li>This project is <strong>not</strong> intended for embedding C code, but rather to re-use existing C code.
+<ul>
+<li>!!AI however it does seem rather easy to in-line C code…</li>
+</ul></li>
+</ul>
+<h2 id="scipy-weave"><a href="#scipy-weave">SciPy Weave</a></h2>
+<ul>
+<li>References:
+<ul>
+<li><a href="http://www.scipy.org/Weave">http://www.scipy.org/Weave</a></li>
+</ul></li>
+<li>Intended for in-lining C code in Python.</li>
+</ul>
+<h2 id="pypy-1"><a href="#pypy-1">PyPy</a></h2>
+<ul>
+<li>Download from here: <a href="http://pypy.org/download.html">http://pypy.org/download.html</a></li>
+<li>(Or on Mac use homebrew).</li>
+</ul>
+<pre><code>curl http://python-distribute.org/distribute_setup.py | pypy
+curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | pypy</code></pre>
+<ul>
+<li>PyPy is garbage collected, CPython is reference counting with a backup garbage collector. References:
+<ul>
+<li><a href="http://pypy.readthedocs.org/en/latest/cpython_differences.html#differences-related-to-garbage-collection-strategies">http://pypy.readthedocs.org/en/latest/cpython_differences.html#differences-related-to-garbage-collection-strategies</a></li>
+<li><a href="http://docs.python.org/2/reference/datamodel.html">http://docs.python.org/2/reference/datamodel.html</a></li>
+</ul></li>
+<li>In CPython:</li>
+</ul>
+<pre><code>In [1]: class A(object):
+   ...:     def __del__(self):
+   ...:         print &quot;A signing off!&quot;
+   ...:         
+
+In [2]: def f():
+   ...:     a = A()
+   ...:     
+
+In [3]: f()
+A signing off!
+
+In [4]: f()
+A signing off!
+
+In [5]: f()
+A signing off!</code></pre>
+<ul>
+<li>In PyPy:</li>
+</ul>
+<pre><code>&gt;&gt;&gt;&gt; class A(object):
+....     def __del__(self):
+....         print &#39;A signing off!&#39;
+.... 
+&gt;&gt;&gt;&gt; def f():
+....     a = A()
+.... 
+&gt;&gt;&gt;&gt; f()
+&gt;&gt;&gt;&gt; f()
+&gt;&gt;&gt;&gt; f()</code></pre>
+<h2 id="profile-official-docs"><a href="#profile-official-docs">Profile official docs</a></h2>
+<p><a href="http://docs.python.org/2/library/profile.html">http://docs.python.org/2/library/profile.html</a></p>
+<ul>
+<li><code>cProfile</code> is an example of <strong>deterministic profiling</strong>.
+<ul>
+<li>Every single function call, return, and exception event is monitored.</li>
+<li>CPython offers an optional callback into each event.</li>
+<li>So the overhead is not that severe and yet provides extensive statistics.</li>
+</ul></li>
+<li>This is in contrast to <strong>statistical profiling</strong>, where you dip in and out.</li>
+</ul>
+<h2 id="official-python-performance-tips"><a href="#official-python-performance-tips">Official Python Performance Tips</a></h2>
+<p><a href="http://wiki.python.org/moin/PythonSpeed/PerformanceTips">http://wiki.python.org/moin/PythonSpeed/PerformanceTips</a></p>
+<p>!!AI TOREAD</p>
+<h2 id="how-to-get-the-most-out-of-your-pypy"><a href="#how-to-get-the-most-out-of-your-pypy">How to get the most out of your PyPy</a></h2>
+<p><a href="http://pyvideo.org/video/612/how-to-get-the-most-out-of-your-pypy">http://pyvideo.org/video/612/how-to-get-the-most-out-of-your-pypy</a></p>
+<p>!!AI TOWATCH</p>
+<h2 id="faster-python-programs-through-optimization"><a href="#faster-python-programs-through-optimization">Faster Python Programs through Optimization</a></h2>
+<p><a href="http://pyvideo.org/video/607/faster-python-programs-through-optimization">http://pyvideo.org/video/607/faster-python-programs-through-optimization</a></p>
+<p>!!AI TOWATCH</p>
+<h2 id="details-of-python-performance"><a href="#details-of-python-performance">Details of Python performance</a></h2>
+<p><a href="http://lanyrd.com/2012/pycon-za/syyft/">http://lanyrd.com/2012/pycon-za/syyft/</a></p>
+<p>!!AI TOWATCH</p>
+<h2 id="references"><a href="#references">References</a></h2>
+<p>C2. “Make It Work, Make It Right, Make It Fast.” Accessed February 24, 2013. <a href="http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast" title="http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast">http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast</a>.</p>
+<p>———. “Premature Optimization.” Accessed February 24, 2013. <a href="http://c2.com/cgi/wiki?PrematureOptimization" title="http://c2.com/cgi/wiki?PrematureOptimization">http://c2.com/cgi/wiki?PrematureOptimization</a>.</p>
+<p>Emerson, Ralph Waldo. <em>Self-Reliance and Other Essays</em>. Dover Publications, 1993.</p>
+<p>Fowler, Martin, and Kent Beck. <em>Refactoring: Improving the Design of Existing Code</em>. Addison-Wesley Professional, 1999.</p>
+<p>Hennessy, John L., and David A. Patterson. <em>Computer Architecture: A Quantitative Approach</em>. Morgan Kaufmann, 2011.</p>
+<p>Hofstadter, Douglas R. <em>Gödel, Escher, Bach</em>. Basic books, 2000.</p>
+<p>Knuth, Donald E. “Structured Programming With Go To Statements.” <em>Computing Surveys</em> 6: 261–301.</p>
+<p>McConnell, Steve. <em>Code Complete</em>. Microsoft Press, 2009.</p>
+<p>Oram, Andy, and Greg Wilson. <em>Beautiful Code: Leading Programmers Explain How They Think</em>. O’Reilly Media, Incorporated, 2007.</p>
+<p>Patterson, David A., and John L. Hennessy. <em>Computer Organization and Design: The Hardware/Software Interface</em>. Morgan Kaufmann, 2009.</p>
+<p>Tsui, Frank, and Orlando Karam. <em>Essentials of Software Engineering</em>. Jones &amp; Bartlett Learning, 2010.</p>
+<p>Williams, Lloyd G., and Connie U. Smith. “Five Steps To Solving Software Performance Problems.” <em>Software Engineering Research and Performance Engineering Services</em>.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009).<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>C2, “Make It Work, Make It Right, Make It Fast,” accessed February 24, 2013, <a href="http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast" title="http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast">http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast</a>.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>C2, “Premature Optimization,” accessed February 24, 2013, <a href="http://c2.com/cgi/wiki?PrematureOptimization" title="http://c2.com/cgi/wiki?PrematureOptimization">http://c2.com/cgi/wiki?PrematureOptimization</a>.<a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>Donald E. Knuth, “Structured Programming With Go To Statements,” <em>Computing Surveys</em> 6 (1974): 261–301.<a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>Frank Tsui and Orlando Karam, <em>Essentials of Software Engineering</em> (Jones &amp; Bartlett Learning, 2010).<a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p>Andy Oram and Greg Wilson, <em>Beautiful Code: Leading Programmers Explain How They Think</em> (O’Reilly Media, Incorporated, 2007).<a href="#fnref6">↩</a></p></li>
+<li id="fn7"><p>John L. Hennessy and David A. Patterson, <em>Computer Architecture: A Quantitative Approach</em> (Morgan Kaufmann, 2011).<a href="#fnref7">↩</a></p></li>
+<li id="fn8"><p>Steve McConnell, <em>Code Complete</em> (Microsoft Press, 2009), chap. 25.<a href="#fnref8">↩</a></p></li>
+<li id="fn9"><p>Lloyd G. Williams and Connie U. Smith, “Five Steps To Solving Software Performance Problems,” <em>Software Engineering Research and Performance Engineering Services</em> (2002).<a href="#fnref9">↩</a></p></li>
+<li id="fn10"><p>Martin Fowler and Kent Beck, <em>Refactoring: Improving the Design of Existing Code</em> (Addison-Wesley Professional, 1999), chap. 2.<a href="#fnref10">↩</a></p></li>
+<li id="fn11"><p>Ralph Waldo Emerson, <em>Self-Reliance and Other Essays</em> (Dover Publications, 1993).<a href="#fnref11">↩</a></p></li>
+<li id="fn12"><p>Douglas R. Hofstadter, <em>Gödel, Escher, Bach</em> (Basic books, 2000).<a href="#fnref12">↩</a></p></li>
+</ol>
+</div>
+</body>
+</html>

@@ -6,11 +6,15 @@ body {
     border-left: 1px solid black;
     border-right: 1px solid black;
     color: black;
-    font-family: 'Lato', Verdana, sans-serif;
+    font-family: 'Noticia Text', Verdana, sans-serif;
     font-size: 100%;
-    line-height: 1.5em;
+    line-height: 1.8em;
     color: #333; 
 }
+sup {
+    line-height: 0;
+}
+
 pre {
     border: 1px dotted gray;
     background-color: #ececec;
@@ -18,40 +22,40 @@ pre {
     padding: 0.5em;
 }
 code {
-    font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+    font-family: 'Inconsolata',Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
 }
 h1 a, h2 a, h3 a, h4 a, h5 a { 
     text-decoration: none;
     color: #7a5ada; 
 }
-h1, h2, h3, h4, h5 { font-family: 'Lato', Verdana, sans-serif;
+h1, h2, h3, h4, h5 { font-family: 'Source Sans Pro', Verdana, sans-serif;
                      font-weight: bold;
                      border-bottom: 1px dotted black;
                      color: #7a5ada; }
 h1 {
-        font-size: 130%;
+        font-size: 150%;
 }
 
 h2 {
-        font-size: 110%;
+        font-size: 130%;
 }
 
 h3 {
-        font-size: 95%;
+        font-size: 115%;
 }
 
 h4 {
-        font-size: 90%;
+        font-size: 110%;
         font-style: italic;
 }
 
 h5 {
-        font-size: 90%;
+        font-size: 110%;
         font-style: italic;
 }
 
 h1.title {
-        font-size: 200%;
+        font-size: 220%;
         font-weight: bold;
         padding-top: 0.2em;
         padding-bottom: 0.2em;
@@ -72,3 +76,12 @@ dd p {
         color: gray;
         text-align: center;
         }
+
+blockquote {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+    padding-left: 15px;
+    border-left: 3px solid #ccc;
+    font-style: italic;
+}
