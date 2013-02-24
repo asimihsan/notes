@@ -132,7 +132,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
     \end{aligned}
 \end{align}
 \]</span></p>
-<p>Here’s an example. Suppose we have a web server and there is a routine we could optimise such that it is 10 times faster. Assuming that the web server process is busy with with this routine 40% of the time what is the overall speedup after the optimisation?</p>
+<p>Here’s an example. Suppose we have a web server and there is a routine we could optimise such that it becomes 10 times faster. Assuming that the web server process is busy with with this routine 40% of the time what is the overall speedup after the optimisation?</p>
 <p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
@@ -144,6 +144,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
     \end{aligned}
 \end{align}
 \]</span></p>
+<p>Indeed, by Amdahl’s Law, the maximum possible speedup of the software system is <span class="math">\(\frac{1}{0.6} = \textrm{1.67 (3dp)}\)</span>.</p>
 <p>In short: software optimisation is often best achieved during the requirements analysis and component design stages, but the time will come when you can’t shy away from a performance problem. At this point the next step is determining what is slow, and not just jumping into coding; this is part 2.</p>
 <p>In parting I’ll leave you with this:</p>
 <blockquote>

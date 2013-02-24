@@ -102,12 +102,14 @@ modifiable code then, as your system enters end-to-end use,
 you can easily swap out slow components for better
 implementations.
 -   **Class and routine design**
-    -   Choose appropriate algorithms and data structures [@sedgewick2011algorithms] at the beginning.
+    -   Choose appropriate algorithms and data structures
+[@sedgewick2011algorithms] at the beginning.
 -   **Hardware**
     -   Is buying more or faster hardware more cost-effective
 than employee time?
 
-There is a third, and perhaps the most counter-intuitive, problem with constant optimization throughout coding. It is 
+There is a third, and perhaps the most counter-intuitive,
+ problem with constant optimization throughout coding. It is 
 not only a standard heuristic but a repeatedly verified 
 observation that software systems tend to spend **most of 
 their execution time in a minority of their code**.
@@ -127,9 +129,10 @@ Given that programs spend the majority of their time in a
 minority of their code, constantly optimizing everything, in
 the best case, is mostly wasted! This "execution locality",
 and how it impact optimisation, is expressed in **Amdahl's
-Law** [@patterson2009computer], which captures how making a subcomponent faster makes
-an overall software system faster depending on what proportion
-of execution time the subcomponent occupies:
+Law** [@patterson2009computer], which captures how making a
+ subcomponent faster makes an overall software system faster
+ depending on what proportion of execution time the
+ subcomponent occupies:
 
 $$
 \begin{align}
@@ -141,7 +144,11 @@ $$
 \end{align}
 $$
 
-Here's an example. Suppose we have a web server and there is a routine we could optimise such that it is 10 times faster. Assuming that the web server process is busy with with this routine 40% of the time what is the overall speedup after the optimisation?
+Here's an example. Suppose we have a web server and there is a
+ routine we could optimise such that it becomes 10 times faster.
+ Assuming that the web server process is busy with with this
+ routine 40% of the time what is the overall speedup after the
+ optimisation?
 
 $$
 \begin{align}
@@ -154,6 +161,9 @@ $$
     \end{aligned}
 \end{align}
 $$ 
+
+Indeed, by Amdahl's Law, the maximum possible speedup of the
+software system is $\frac{1}{0.6} = \textrm{1.67 (3dp)}$.
 
 In short: software optimisation is often best achieved during
 the requirements analysis and component design stages, but
