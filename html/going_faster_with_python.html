@@ -39,7 +39,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#revision-history">Revision History</a></li>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#part-1---when-do-i-optimise">Part 1 - When Do I Optimise?</a></li>
-<li><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a></li>
+<li><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a><ul>
+<li><a href="#logging">Logging</a></li>
+<li><a href="#cpu-profiling">CPU profiling</a></li>
+<li><a href="#memory-profiling">Memory profiling</a></li>
+</ul></li>
 <li><a href="#part-3---how-do-i-optimise">Part 3 - How Do I Optimise?</a><ul>
 <li><a href="#introduction-1">Introduction</a></li>
 <li><a href="#cpython-and-bytecode-analysis">CPython and Bytecode Analysis</a></li>
@@ -66,6 +70,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <h1 id="going-faster-with-python"><a href="#going-faster-with-python">Going Faster with Python</a></h1>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Going Faster With Python</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.asimihsan.com" property="cc:attributionName" rel="cc:attributionURL">Asim Ihsan</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+<iframe src="http://tools.flattr.net/widgets/thing.html?thing=1150097" width="292" height="420"></iframe>
+
 <h2 id="revision-history"><a href="#revision-history">Revision History</a></h2>
 <ul>
 <li><strong>2013-02-24</strong> - first draft.</li>
@@ -99,7 +105,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><strong>Correctness</strong>: does what it is specified to do.</li>
 <li><strong>Completeness</strong>: all the requirements are met.</li>
 </ul>
-<p>There is no such thing as a free lunch; as you prioritise some of the above properties you must sacrifice attention to others. An absolute focus on performance must necessarily come at the cost of, for example, readability and maintainability.</p>
+<p>As you prioritise some of the above properties you must sacrifice attention to others. An absolute focus on performance must necessarily come at the cost of, for example, readability and maintainability.</p>
 <p>Even if your software system places a premium on performance it is a fallacy to suggest that this may only be addressed at the code tuning level. You have many options, at many stages:<span class="citation"><sup><a href="#fn8" class="footnoteRef" id="fnref8">8</a></sup></span></p>
 <ul>
 <li><strong>Program requirements</strong>:
@@ -118,7 +124,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><strong>Hardware</strong>
 <ul>
-<li>Is buying more or faster hardware more cost-effective than employee time?</li>
+<li>Is buying more or faster hardware more cost-effective than the employee time required to tune the code?</li>
 </ul></li>
 </ul>
 <p>There is a third, and perhaps the most counter-intuitive, problem with constant optimization throughout coding. It is not only a standard heuristic but a repeatedly verified observation that software systems tend to spend <strong>most of their execution time in a minority of their code</strong>.</p>
@@ -126,7 +132,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Knuth, in a survey of FORTRAN programmes, discovered that not only are maintainability and readability more desireable properties for programmes than performance but most FORTRAN programmes spent the majority of their time in a small number of code locations.<span class="citation"><sup><a href="#fn10" class="footnoteRef" id="fnref10">10</a></sup></span></li>
 <li>Patterson and Hennsey note that software programmes, as a rule of thumb, spend 90% of their time in 10% of their code, and also exhibit <strong>temporal locality</strong>, where recently accessed memory and code tend to be accessed soon again,.<span class="citation"><sup><a href="#fn11" class="footnoteRef" id="fnref11">11</a></sup></span></li>
 </ul>
-<p>Given that programs spend the majority of their time in a minority of their code, constantly optimizing everything, in the best case, is mostly wasted! This “execution locality”, and how it impact optimisation, is expressed in <strong>Amdahl’s Law</strong>,<span class="citation"><sup><a href="#fn12" class="footnoteRef" id="fnref12">12</a></sup></span> which captures how making a subcomponent faster makes an overall software system faster depending on what proportion of execution time the subcomponent occupies:</p>
+<p>Given that programs spend the majority of their time in a minority of their code, constantly optimizing everything, in the best case, is mostly wasted! This “execution locality”, and how it impacts optimisation, is expressed in <strong>Amdahl’s Law</strong>,<span class="citation"><sup><a href="#fn12" class="footnoteRef" id="fnref12">12</a></sup></span> which describes how the total speedup of a software system after speeding up a constituent subcomponent depends on what fraction of the total time the subcomponent takes up:</p>
 <p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
@@ -155,6 +161,57 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>“If there’s a moral to this story, it is this: do not let performance considerations stop you from doing what is right. You can always make the code faster with a little cleverness. You can rarely recover so easily from a bad design…<strong>Design the program you want in the way it should be designed. Then, and only then, should you worry about performance</strong>. More often than not, you’ll discover the program is fast enough on your first pass.” –Elliotte Rusty Harold<span class="citation"><sup><a href="#fn13" class="footnoteRef" id="fnref13">13</a></sup></span></p>
 </blockquote>
 <h2 id="part-2---how-do-i-know-where-to-optimise"><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a></h2>
+<p>If Part 1 is “how fast?”, part 2, in an extraordinary leap of atrocious grammar, is “where slow?”. Your software architecture is modular with well-defined interfaces, you’ve defined precise, quantifiable, and measureable performance metrics, and lo and behold you’re not meeting them after implementing a significant portion of tested functionality. Now what?</p>
+<h3 id="logging"><a href="#logging">Logging</a></h3>
+<p>The humblest yet most important of approaches, <strong>logging</strong> is an old friend to most of us. In fact some of you may be thinking “Why am I even bothering with this article? Everyone knows that configurable tracing is critical in any production system.”. Although logging isn’t the focus of this article I wanted to cover some quick points regarding it.</p>
+<ul>
+<li>Use <strong>discipline</strong> when applying logging calls to you code. As a rule of thumb:
+<ul>
+<li>All <em>function entries and exits</em> should be traced by a log of the lowest severity type. Function entries also within reason trace their <em>arguments</em>.</li>
+<li>All <em>branches</em>, for example following an if statement, an else statement, a try statement, a finally statement, etc., should be traced by a log of at least the lowest severity type.</li>
+<li>All <em>exceptions</em> are logged either with e.g. <code>logging.exception</code><span class="citation"><sup><a href="#fn14" class="footnoteRef" id="fnref14">14</a></sup></span> to log the stack of the failure, or using a package like <code>sentry</code>.<span class="citation"><sup><a href="#fn15" class="footnoteRef" id="fnref15">15</a></sup></span></li>
+<li>All potentially <em>long-running tasks</em> are wrapped in logging statements immediately preceding and following them. This is especially true for tasks involving external interfaces or tasks with tightly defined performance requirements (you have those, right?).</li>
+</ul></li>
+<li>Logs are far more valuable when they’re <strong>collected</strong>, <strong>parsed</strong>, and <strong>analysed</strong>.
+<ul>
+<li>With end-to-end solutions like <code>logstash</code><span class="citation"><sup><a href="#fn16" class="footnoteRef" id="fnref16">16</a></sup></span> becoming more common there’s little excuse leaving your poor logs sitting alone in the corner.</li>
+</ul></li>
+</ul>
+<p>With such discipline, in time forming habit, you can react quite effectively to a wide variety of inquiries, such as:</p>
+<ul>
+<li>“Well, most of the time this page is fine, but when a new user searches for”foo bar’s excellent bizz&quot; from their empty profile page everything grinds to a halt!&quot;</li>
+<li>“When I search for ‘2013/01/43 19:00’ as a start datetime the server reaches 100% CPU usage, runs out of memory, then kernel panics.” (This happened to me in a legacy system I inherited, true story).</li>
+</ul>
+<p>For Django fans <code>django-debug-toolbar</code><span class="citation"><sup><a href="#fn17" class="footnoteRef" id="fnref17">17</a></sup></span> helps tie together the behaviour of Django components throughout the request cycle, including SQL queries and time taken to execute them.</p>
+<h4 id="pycounter"><a href="#pycounter">PyCounter</a></h4>
+<p>TODO</p>
+<h3 id="cpu-profiling"><a href="#cpu-profiling">CPU profiling</a></h3>
+<p>Detailed logging, and coming up with efficient and useful toolchains for analysing them, can be a chore sometimes. Fortunately, particularly if you’re dealing with smaller command-line-based tools or scientific computing, <strong>CPU profiling</strong> is another option.</p>
+<p>In CPU profiling you gather information about function call chains (who calls whom) and how long functions take to return. There are two types of CPU profiling methods:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Deterministic profiling</strong>. Your measurements are comprehensive, in that you record every single function call at the greatest possible precision. If the effort of such measurement <em>does not impede the actual functionality</em> of the softare system this method is fine, but this is a big assumption.</li>
+<li><strong>Statistical profiling</strong>. Your measurements are sporadic but regular, with a configurable interval. By being sporadic the hope is that you have less, and hopefully negligible, impact on the actual functionality of the software system, at the cost of less precise measurements.</li>
+</ol>
+<p>Let’s run through a variety of CPU profilers with toy examples.</p>
+<h4 id="cprofile"><a href="#cprofile">cProfile</a></h4>
+<p><code>cProfile</code><span class="citation"><sup><a href="#fn18" class="footnoteRef" id="fnref18">18</a></sup></span> is a deterministic profiler that’s part of the Python standard library. It’s easy to use, efficient enough that it has neglible impact on many programmes, and with a little trickery can be used with a decorator to profile individual functions.</p>
+<p>Let’s suppose we have the following code:</p>
+<h4 id="callgrind"><a href="#callgrind">callgrind</a></h4>
+<p>TODO</p>
+<h4 id="line_profiler"><a href="#line_profiler">line_profiler</a></h4>
+<p>TODO</p>
+<h4 id="profilestats"><a href="#profilestats">profilestats</a></h4>
+<p>TODO</p>
+<h4 id="statprof"><a href="#statprof">statprof</a></h4>
+<p>TODO</p>
+<h4 id="plop"><a href="#plop">plop</a></h4>
+<p>TODO</p>
+<h3 id="memory-profiling"><a href="#memory-profiling">Memory profiling</a></h3>
+<p>TODO</p>
+<h4 id="muppy"><a href="#muppy">muppy</a></h4>
+<p>TODO</p>
+<h4 id="maliae"><a href="#maliae">maliae</a></h4>
+<p>TODO</p>
 <h2 id="part-3---how-do-i-optimise"><a href="#part-3---how-do-i-optimise">Part 3 - How Do I Optimise?</a></h2>
 <h3 id="introduction-1"><a href="#introduction-1">Introduction</a></h3>
 <h3 id="cpython-and-bytecode-analysis"><a href="#cpython-and-bytecode-analysis">CPython and Bytecode Analysis</a></h3>
@@ -176,14 +233,19 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3 id="initial-code-1"><a href="#initial-code-1">Initial Code</a></h3>
 <h3 id="initial-profiling-1"><a href="#initial-profiling-1">Initial Profiling</a></h3>
 <h2 id="references"><a href="#references">References</a></h2>
+<p>Cramer, David. “Django-debug-toolbar.” Accessed February 26, 2013. <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.</p>
 <p>Fowler, Martin, and Kent Beck. <em>Refactoring: Improving the Design of Existing Code</em>. Addison-Wesley Professional, 1999.</p>
+<p>Hellman, Doug. “CProfile.” Accessed February 26, 2013. <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.</p>
 <p>Knuth, Donald E. “An Empirical Study of FORTRAN Programs.” <em>Software: Practice and Experience</em> 1, no. 2: 105–133.</p>
 <p>———. “Structured Programming With Go To Statements.” <em>Computing Surveys</em> 6: 261–301.</p>
 <p>McConnell, Steve. <em>Code Complete</em>. Microsoft Press, 2009.</p>
 <p>Oram, Andy, and Greg Wilson. <em>Beautiful Code: Leading Programmers Explain How They Think</em>. O’Reilly Media, Incorporated, 2007.</p>
 <p>Patterson, David A., and John L. Hennessy. <em>Computer Organization and Design: The Hardware/Software Interface</em>. Morgan Kaufmann, 2009.</p>
-<p>PythonDocs. “Multiprocessing.” Accessed February 24, 2013. <a href="http://docs.python.org/2/library/multiprocessing.html" title="http://docs.python.org/2/library/multiprocessing.html">http://docs.python.org/2/library/multiprocessing.html</a>.</p>
+<p>PythonDocs. “Logger.exception.” Accessed February 26, 2013. <a href="http://docs.python.org/2/library/logging.html logging.Logger.exception" title="http://docs.python.org/2/library/logging.html logging.Logger.exception">http://docs.python.org/2/library/logging.html logging.Logger.exception</a>.</p>
+<p>———. “Multiprocessing.” Accessed February 24, 2013. <a href="http://docs.python.org/2/library/multiprocessing.html" title="http://docs.python.org/2/library/multiprocessing.html">http://docs.python.org/2/library/multiprocessing.html</a>.</p>
 <p>Sedgewick, Robert, and Kevin Wayne. <em>Algorithms</em>. 4 ed. Addison-Wesley Professional, 2011.</p>
+<p>Sentry. “Sentry.” Accessed February 26, 2013. <a href="https://www.getsentry.com/" title="https://www.getsentry.com/">https://www.getsentry.com/</a>.</p>
+<p>Sissel, Jordan. “Logstash.” Accessed February 26, 2013. <a href="http://www.logstash.net/" title="http://www.logstash.net/">http://www.logstash.net/</a>.</p>
 <p>Solem, Ask. “Celery.” Accessed February 24, 2013. <a href="http://www.celeryproject.org/" title="http://www.celeryproject.org/">http://www.celeryproject.org/</a>.</p>
 <p>Tsui, Frank, and Orlando Karam. <em>Essentials of Software Engineering</em>. Jones &amp; Bartlett Learning, 2010.</p>
 <p>Vanovschi, Vitalii. “ParallelPython.” Accessed February 24, 2013. <a href="http://www.parallelpython.com/" title="http://www.parallelpython.com/">http://www.parallelpython.com/</a>.</p>
@@ -195,15 +257,20 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li id="fn2"><p>Ask Solem, “Celery,” accessed February 24, 2013, <a href="http://www.celeryproject.org/" title="http://www.celeryproject.org/">http://www.celeryproject.org/</a>.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>Vitalii Vanovschi, “ParallelPython,” accessed February 24, 2013, <a href="http://www.parallelpython.com/" title="http://www.parallelpython.com/">http://www.parallelpython.com/</a>.<a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>Donald E. Knuth, “Structured Programming With Go To Statements,” <em>Computing Surveys</em> 6 (1974): 261–301.<a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p>Lloyd G. Williams and Connie U. Smith, “Five Steps To Solving Software Performance Problems,” <em>Software Engineering Research and Performance Engineering Services</em> (2002).<a href="#fnref5">↩</a></p></li>
-<li id="fn6"><p>Frank Tsui and Orlando Karam, <em>Essentials of Software Engineering</em> (Jones &amp; Bartlett Learning, 2010).<a href="#fnref6">↩</a></p></li>
-<li id="fn7"><p>Martin Fowler and Kent Beck, <em>Refactoring: Improving the Design of Existing Code</em> (Addison-Wesley Professional, 1999).<a href="#fnref7">↩</a></p></li>
-<li id="fn8"><p>Steve McConnell, <em>Code Complete</em> (Microsoft Press, 2009).<a href="#fnref8">↩</a></p></li>
+<li id="fn5"><p>Lloyd G. Williams and Connie U. Smith, “Five Steps To Solving Software Performance Problems,” <em>Software Engineering Research and Performance Engineering Services</em> (2002): 2.<a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p>Frank Tsui and Orlando Karam, <em>Essentials of Software Engineering</em> (Jones &amp; Bartlett Learning, 2010), chap. 9 ‘Implementation.’<a href="#fnref6">↩</a></p></li>
+<li id="fn7"><p>Martin Fowler and Kent Beck, <em>Refactoring: Improving the Design of Existing Code</em> (Addison-Wesley Professional, 1999), chap. 2 ‘Principles in Refactoring.’<a href="#fnref7">↩</a></p></li>
+<li id="fn8"><p>Steve McConnell, <em>Code Complete</em> (Microsoft Press, 2009), chap. 25 ‘Code-Tuning Strategies.’<a href="#fnref8">↩</a></p></li>
 <li id="fn9"><p>Robert Sedgewick and Kevin Wayne, <em>Algorithms</em>, 4 ed. (Addison-Wesley Professional, 2011).<a href="#fnref9">↩</a></p></li>
 <li id="fn10"><p>Donald E. Knuth, “An Empirical Study of FORTRAN Programs,” <em>Software: Practice and Experience</em> 1, no. 2 (1971): 105–133.<a href="#fnref10">↩</a></p></li>
-<li id="fn11"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009), chap. 2.<a href="#fnref11">↩</a></p></li>
-<li id="fn12"><p>Ibid.<a href="#fnref12">↩</a></p></li>
-<li id="fn13"><p>Andy Oram and Greg Wilson, <em>Beautiful Code: Leading Programmers Explain How They Think</em> (O’Reilly Media, Incorporated, 2007).<a href="#fnref13">↩</a></p></li>
+<li id="fn11"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009), chap. 1 ‘Fundamentals of Computer Design.’<a href="#fnref11">↩</a></p></li>
+<li id="fn12"><p>Ibid., chap. 1 ‘Fundamentals of Computer Design.’<a href="#fnref12">↩</a></p></li>
+<li id="fn13"><p>Andy Oram and Greg Wilson, <em>Beautiful Code: Leading Programmers Explain How They Think</em> (O’Reilly Media, Incorporated, 2007), chap. 5 ‘Correct, Beautiful, Fast.’<a href="#fnref13">↩</a></p></li>
+<li id="fn14"><p>PythonDocs, “Logger.exception,” accessed February 26, 2013, <a href="http://docs.python.org/2/library/logging.html logging.Logger.exception" title="http://docs.python.org/2/library/logging.html logging.Logger.exception">http://docs.python.org/2/library/logging.html logging.Logger.exception</a>.<a href="#fnref14">↩</a></p></li>
+<li id="fn15"><p>Sentry, “Sentry,” accessed February 26, 2013, <a href="https://www.getsentry.com/" title="https://www.getsentry.com/">https://www.getsentry.com/</a>.<a href="#fnref15">↩</a></p></li>
+<li id="fn16"><p>Jordan Sissel, “Logstash,” accessed February 26, 2013, <a href="http://www.logstash.net/" title="http://www.logstash.net/">http://www.logstash.net/</a>.<a href="#fnref16">↩</a></p></li>
+<li id="fn17"><p>David Cramer, “Django-debug-toolbar,” accessed February 26, 2013, <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.<a href="#fnref17">↩</a></p></li>
+<li id="fn18"><p>Doug Hellman, “CProfile,” accessed February 26, 2013, <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.<a href="#fnref18">↩</a></p></li>
 </ol>
 </div>
 </body>

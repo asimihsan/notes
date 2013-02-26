@@ -60,7 +60,7 @@ If we know software needs to be fast then why can't we code
 There are many problems with statement, the first being: how
  fast? The best way to achieve performance requirements is to
  associate it with precise, quantifiable, and measureable
- metrics [@williams2002five]. In this case examples would be:
+ metrics [@williams2002five, page 2]. In this case examples would be:
 
 -   "the time to first byte (TTFB) for the software service will be 200ms for 95% of all requests", or
 -   "CPU usage will never exceed 65%"
@@ -73,7 +73,7 @@ matters.
 
 Another problem with the "omnipresent" approach is that there
 is no free lunch. There are many characteristics of a good
- software implementation, of which performance is only one [@tsui2010essentials], [@fowler1999refactoring]. In no particular order some are:
+ software implementation, of which performance is only one [@tsui2010essentials, chapter 9 'Implementation'], [@fowler1999refactoring, chapter 2 'Principles in Refactoring']. In no particular order some are:
 
 -   **Readability**: can be easily read and understood.
 -   **Maintainability**: can be easily modified, extended, and
@@ -83,15 +83,15 @@ time, memory usage, and power consumption.
 -   **Correctness**: does what it is specified to do.
 -   **Completeness**: all the requirements are met.
 
-There is no such thing as a free lunch; as you prioritise some
-of the above properties you must sacrifice attention to others.
-An absolute focus on performance must necessarily come at the
-cost of, for example, readability and maintainability.
+As you prioritise some of the above properties you must 
+sacrifice attention to others. An absolute focus on 
+performance must necessarily come at the cost of, for
+ example, readability and maintainability.
 
 Even if your software system places a premium on performance it
 is a fallacy to suggest that this may only be addressed at the
 code tuning level. You have many options, at many stages
- [@mcconnell2009code]:
+ [@mcconnell2009code, chapter 25 'Code-Tuning Strategies']:
 
 -   **Program requirements**:
     -   Do your users actually require this level of
@@ -113,7 +113,7 @@ implementations.
 [@sedgewick2011algorithms] at the beginning.
 -   **Hardware**
     -   Is buying more or faster hardware more cost-effective
-than employee time?
+than the employee time required to tune the code?
 
 There is a third, and perhaps the most counter-intuitive,
  problem with constant optimization throughout coding. It is 
@@ -130,16 +130,18 @@ number of code locations [@knuth1971empirical].
 programmes, as a rule of thumb, spend 90% of their time in 10%
  of their code, and also exhibit **temporal locality**, where
  recently accessed memory and code tend to be accessed soon
- again, [@patterson2009computer, chapter 2].
+ again, [@patterson2009computer, chapter 1 'Fundamentals of 
+Computer Design'].
 
 Given that programs spend the majority of their time in a
 minority of their code, constantly optimizing everything, in
 the best case, is mostly wasted! This "execution locality",
-and how it impact optimisation, is expressed in **Amdahl's
-Law** [@patterson2009computer], which captures how making a
- subcomponent faster makes an overall software system faster
- depending on what proportion of execution time the
- subcomponent occupies:
+and how it impacts optimisation, is expressed in **Amdahl's
+Law** [@patterson2009computer, chapter 1 'Fundamentals of 
+Computer Design'], which describes how the total speedup of a
+ software system after speeding up a constituent subcomponent
+depends on what fraction of the total time the subcomponent
+takes up:
 
 $$
 \begin{align}
@@ -187,9 +189,134 @@ In parting I'll leave you with this:
  the program you want in the way it should be designed. Then,
  and only then, should you worry about performance**. More often
  than not, you'll discover the program is fast enough on your
- first pass." --Elliotte Rusty Harold [@oram2007beautiful]
+ first pass." --Elliotte Rusty Harold [@oram2007beautiful, chapter 5 'Correct, Beautiful, Fast']
 
 ## Part 2 - How Do I Know Where To Optimise?
+
+If Part 1 is "how fast?", part 2, in an extraordinary leap of 
+atrocious grammar, is "where slow?". Your software architecture
+is modular with well-defined interfaces, you've defined precise,
+quantifiable, and measureable performance metrics, and lo and 
+behold you're not meeting them after implementing a significant
+portion of tested functionality. Now what?
+
+### Logging
+
+The humblest yet most important of approaches, **logging** is an
+old friend to most of us. In fact some of you may be thinking
+"Why am I even bothering with this article? Everyone knows
+that configurable tracing is critical in any production system.".
+ Although logging isn't the focus of this article I wanted to
+cover some quick points regarding it.
+
+-   Use **discipline** when applying logging calls to you code.
+As a rule of thumb:
+    -   All *function entries and exits* should be traced by a log
+of the lowest severity type. Function entries also within reason
+trace their *arguments*.
+    -   All *branches*, for example following an if statement,
+an else statement, a try statement, a finally statement, etc.,
+should be traced by a log of at least the lowest severity type.
+    -   All *exceptions* are logged either with e.g.
+`logging.exception` [@pydocs:logging:exception] to log the stack of the failure, or using a package like `sentry` [@sentry].
+    -   All potentially *long-running tasks* are wrapped in
+logging statements immediately preceding and following them. This
+ is especially true for tasks involving external interfaces or
+tasks with tightly defined performance requirements (you have
+ those, right?).
+-   Logs are far more valuable when they're **collected**, 
+**parsed**, and **analysed**. 
+    -   With end-to-end solutions like `logstash` [@logstash]
+becoming more common there's little excuse leaving your poor logs
+sitting alone in the corner.
+
+With such discipline, in time forming habit, you can react quite
+effectively to a wide variety of inquiries, such as:
+
+-   "Well, most of the time this page is fine, but when a new
+user searches for "foo bar's excellent bizz" from their empty
+profile page everything grinds to a halt!"
+-   "When I search for '2013/01/43 19:00' as a start datetime
+the server reaches 100% CPU usage, runs out of memory, then
+kernel panics." (This happened to me in a legacy system I
+inherited, true story).
+
+For Django fans `django-debug-toolbar` [@django-debug-toolbar] 
+helps tie together the behaviour of Django components throughout
+the request cycle, including SQL queries and time taken to
+execute them.
+
+#### PyCounter
+
+TODO
+
+### CPU profiling
+
+Detailed logging, and coming up with efficient and useful
+toolchains for analysing them, can be a chore sometimes.
+Fortunately, particularly if you're dealing with smaller 
+command-line-based tools or scientific computing, **CPU
+profiling** is another option.
+
+In CPU profiling you gather information about function call
+chains (who calls whom) and how long functions take to return.
+There are two types of CPU profiling methods:
+
+1.  **Deterministic profiling**. Your measurements are 
+comprehensive, in that you record every single function call at
+the greatest possible precision. If the effort of such measurement
+*does not impede the actual functionality* of the softare system
+ this method is fine, but this is a big assumption.
+2.  **Statistical profiling**. Your measurements are sporadic but
+ regular, with a configurable interval. By being sporadic the
+ hope is that you have less, and hopefully negligible, impact on
+ the actual functionality of the software system, at the cost of
+ less precise measurements.
+
+Let's run through a variety of CPU profilers with toy examples.
+
+#### cProfile
+
+`cProfile` [@pymotw:cprofile] is a deterministic profiler that's
+part of the Python standard library. It's easy to use, efficient
+enough that it has neglible impact on many programmes, and with
+a little trickery can be used with a decorator to profile 
+individual functions.
+
+Let's suppose we have the following code:
+
+
+#### callgrind
+
+TODO
+
+#### line_profiler
+
+TODO
+
+#### profilestats
+
+TODO
+
+#### statprof
+
+TODO
+
+#### plop
+
+TODO
+
+### Memory profiling
+
+TODO
+
+#### muppy
+
+TODO
+
+#### maliae
+
+TODO
 
 ## Part 3 - How Do I Optimise?
 
