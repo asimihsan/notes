@@ -42,3 +42,75 @@
 
         httrack http://www.cs.columbia.edu/~smaskey/CS6998/ -W -O "/Users/ai/websites/smaskey" --extended-parsing --mirrorlinks --structure=4 +*.pdf
     
+-	Setting up SAMBA on RedHat
+	-	`yum install samba samba-client`
+	-	Replace `/etc/samba/smb.conf` contents with the following, replacing `${ip_address}` with local IP address:
+
+			[global]
+			
+			workgroup = DCL
+			local master = no
+			preferred master = no
+			server string = %L Samba %v
+			interfaces = 127.0.0.1 ${ip_address}
+			socket address = ${ip_address}
+			log file = /var/log/samba/log.%m
+			max log size = 50
+			security = share
+			passdb backend = tdbsam
+			load printers = no
+			cups options = raw
+			
+			[root]
+			
+			comment = Root Directory
+			path = /
+			read only = no
+			writable = yes
+			printable = no
+			public = yes
+			force user = root
+
+	-	Add a root user to SAMBA by executing
+
+			smbpasswd -a root
+
+	-	Set SAMBA to load on startup by executing:
+
+			chkconfig smb on && chkconfig nmb on
+
+	-	Enable SAMBA by executing:
+
+			service smb start && service nmb start
+
+	-	Browse to `\\${hostname}`
+
+-	Setting up IP connectivity on a fresh RedHat install
+	-	Edit `/etc/sysconfig/network-scripts/ifcfg-eth0` and make sure at least the following lines are present (adjust values as appropriate):
+
+			DEVICE=eth0
+			BOOTPROTO=none
+			DNS1=172.19.1.83
+			DNS2=172.18.10.55
+			DOMAIN=datcon.co.uk
+			GATEWAY=10.224.0.1
+			IPADDR=10.224.104.2
+			NETMASK=255.255.0.0
+			ONBOOT=yes
+			DEFROUTE=yes
+
+	-	Assign the IP address to the Ethernet interface:
+
+			ip addr add 10.224.104.2/16 broadcast 10.224.255.255 gateway 10.224.0.1 dev eth0
+
+	-	Add a default IP route to the default gateway:
+
+			route add default gw 10.224.0.1 eth0
+
+	-	Turn up the Ethernet interface:
+
+			ifconfig eth0 up
+
+	-	Set IP connectivity to enable in startup:
+
+			chkconfig network on
