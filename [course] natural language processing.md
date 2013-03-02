@@ -272,7 +272,7 @@ $$q(w_i\;|\;w_{i-2},w_{i-1}) = \frac{\textrm{Count}(w_{i-2},w_{i-1},w_{i})}{\tex
 
 -   For example:
 
-$$q(\textrm{laughs | the, dog}) = \frac{\textrm{Count(the, dog laughs)}}{\textrm{Count(the, dog)}}$$
+$$q(\textrm{laughs | the, dog}) = \frac{\textrm{Count(the, dog, laughs)}}{\textrm{Count(the, dog)}}$$
 
 -   This is intuitive. For instances of a particular bigram how often are they followed by the particular third word of our trigram?
 
@@ -616,7 +616,7 @@ $$\alpha(w_{i-1}) = 1 - \sum_{w} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Co
 
 - - -
 
-Quiz: assume that we are given a corpus with the folloiwng properties:
+Quiz: assume that we are given a corpus with the following properties:
 
 -   Count(the) = 70
 -   |{w: c(the, w) > 0}| = 15, i.e. there are 15 different words that follow "the".
@@ -658,7 +658,7 @@ $$\alpha(w_{i-1}) = 1 - \sum_{w \in A(w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-1}
 
 -   And $\textrm{Count}^{*}$ is such that:
 
-$$\textrm{Count}^{*}(w_{i-1},w_i) = \textrm{Count}(w_{i-1},w_i) - \gamma\\ \textrm{where $\gamma$ is a constant}$$. 
+$$\textrm{Count}^{*}(w_{i-1},w_i) = \textrm{Count}(w_{i-1},w_i) - \gamma\\ \textrm{where $\gamma$ is a constant}$$
 
 -   A bigram model
 
@@ -1007,9 +1007,9 @@ $$\textrm{arg}\underset{y_1 \ldots y_n}{\textrm{max}} p(x_1, x_2, \ldots, x_n, y
 -   For any tag sequence $y_1, y_2, \ldots, y_{n+1}$, where $y_i \in S$ for $i = 1, 2, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
 -   The joint probability of the sentence and tag sequence is:
 
-$$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-2}) \prod_{i=1}^{n} e(x_i|y_i)$$
+$$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)$$
 
--   An example of the joint probability could be $p(\textrm{the, dog barks, DT, NN, VB, STOP})$.
+-   An example of the joint probability could be $p(\textrm{the, dog barks, STOP, DT, NN, VB})$.
 -   The first product is a trigram model applied to tag sequences! Very similar to before.
     -   One $q$ term for each tag *including the STOP symbol*.
 -   The second product could have e.g. $e(\textrm{the | DT})$ is the probability of a tag emitting or generating a word.
@@ -1097,8 +1097,8 @@ $$p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP})$$
 $$
 \begin{align}
     &\begin{aligned}
-        & p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP}) \\
-      = & \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-2}) \prod_{i=1}^{n} e(x_i|y_i) \\
+        & p(\textrm{the, cat, drinks, milk, STOP, D, N, V, N}) \\
+      = & \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i) \\
       = & \{ p(\textrm{the | *, *}) \times p(\textrm{cat | *, the}) \times p(\textrm{drinks | the, cat}) \times p(\textrm{milk | cat, drinks}) \times p(\textrm{STOP | drinks, milk}) \} \times \\
         & e(\textrm{the | D}) \times e(\textrm{cat | N}) \times e(\textrm{drinks | V}) \times e(\textrm{milk | N}) \\
       = & \left(\frac{1}{4}\right)^5 \times \left(\frac{1}{5}\right)^4
@@ -1600,7 +1600,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
 #### Speech and Language Processing, Chapter 4 (n-gram models)
 
 -   p96: a **word** is the full inflected or derived form of a word.
-    -   In English n-gram models are based on wordforms, not the **lemmas*, i.e. root.
+    -   In English n-gram models are based on wordforms, not the **lemmas**, i.e. root.
     -   e.g. cat is the lemma, cats is the inflected wordform.
 -   p96: n-gram models, and counting words in general, requires tokenization or text normalization; separating out punctuation, dealing with abbreviations, normalizing spelling, etc.
     -   Covered in Chapter 3.
@@ -1614,7 +1614,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   This can't possible be exactly true.
     -   There will be **out of vocabulary (OOV)** words.
     -   The percentive of OOV words in the test set is called the **OOV rate**.
-    -   An **open voabulary** is one where we model OOV words by adding a pseudo-word called `<UNK>`. We train these probabilities as follows:
+    -   An **open vocabulary** is one where we model OOV words by adding a pseudo-word called `<UNK>`. We train these probabilities as follows:
         1.  *Choose a fixed vocabulary* in advance.
         2.  *Convert* in the training set any OOV word to the unknown word token `<UNK>` in a text normalization step.
         3.  *Estimate* the probabilities for `<UNK>` from its counts just like any other regular word in the training set.
