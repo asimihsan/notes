@@ -5,105 +5,66 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="_pandoc.css" type="text/css" />
-  <script src="https://d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <link href='http://fonts.googleapis.com/css?family=Lato:300,700,300italic' rel='stylesheet' type='text/css'>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link href='http://fonts.googleapis.com/css?family=Noticia+Text:400,400italic,700,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic,700italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
 </head>
 <body>
 <div id="TOC">
 <ul>
 <li><a href="#natural-language-processing">Natural Language Processing</a><ul>
-<li><a href="#student"> Student</a></li>
 <li><a href="#readings-policy">Readings policy</a></li>
 <li><a href="#rendering">Rendering</a></li>
 <li><a href="#week-1---introduction-to-natural-language-processing">Week 1 - Introduction to Natural Language Processing</a><ul>
 <li><a href="#introduction-part-1">Introduction (Part 1)</a></li>
-<li><a href="#introduction-part-2">Introduction (Part 2)</a><ul>
-<li><a href="#syllabus">Syllabus</a></li>
-</ul></li>
+<li><a href="#introduction-part-2">Introduction (Part 2)</a></li>
 </ul></li>
 <li><a href="#week-1---the-language-modeling-problem">Week 1 - The Language Modeling Problem</a><ul>
 <li><a href="#introduction-to-the-language-modeling-problem-part-1">Introduction to the Language Modeling Problem (Part 1)</a></li>
 <li><a href="#introduction-to-the-language-modeling-problem-part-2">Introduction to the Language Modeling Problem (Part 2)</a></li>
 <li><a href="#markov-processes-part-1">Markov Processes (Part 1)</a></li>
-<li><a href="#markov-processes-part-2"> Markov Processes (Part 2)</a><ul>
-<li><a href="#modelling-variable-length-sequences">Modelling Variable Length Sequences</a></li>
-</ul></li>
-<li><a href="#trigram-language-models">Trigram Language Models</a><ul>
-<li><a href="#the-trigram-estimation-problem">The Trigram Estimation Problem</a></li>
-</ul></li>
-<li><a href="#evaluating-language-models-perplexity">Evaluating Language Models: Perplexity</a><ul>
-<li><a href="#typical-values-of-perplexity-goodman"> Typical values of perplexity (Goodman)</a></li>
-<li><a href="#some-history">Some history</a></li>
-</ul></li>
+<li><a href="#markov-processes-part-2"> Markov Processes (Part 2)</a></li>
+<li><a href="#trigram-language-models">Trigram Language Models</a></li>
+<li><a href="#evaluating-language-models-perplexity">Evaluating Language Models: Perplexity</a></li>
 </ul></li>
 <li><a href="#week-1---parameter-estimation-in-language-models">Week 1 - Parameter Estimation in Language Models</a><ul>
-<li><a href="#linear-interpolation-part-1">Linear Interpolation (Part 1)</a><ul>
-<li><a href="#the-bias-variance-trade-off">The Bias-Variance Trade-Off</a></li>
-</ul></li>
-<li><a href="#linear-interpolation-part-2"> Linear Interpolation (Part 2)</a><ul>
-<li><a href="#linear-interpolation"> Linear Interpolation</a></li>
-<li><a href="#how-to-estimate-the-lambda-values">How to estimate the \(\lambda\) values?</a></li>
-<li><a href="#allowing-the-lambdas-to-vary">Allowing the \(\lambda\)’s to vary</a></li>
-</ul></li>
-<li><a href="#discounting-methods-part-1">Discounting Methods (Part 1)</a><ul>
-<li><a href="#katz-back-off-models-bigrams">Katz Back-Off Models (Bigrams)</a></li>
-</ul></li>
-<li><a href="#discounting-methods-part-2">Discounting Methods (Part 2)</a><ul>
-<li><a href="#katz-back-off-models-trigrams">Katz Back-Off Models (Trigrams)</a></li>
-</ul></li>
+<li><a href="#linear-interpolation-part-1">Linear Interpolation (Part 1)</a></li>
+<li><a href="#linear-interpolation-part-2"> Linear Interpolation (Part 2)</a></li>
+<li><a href="#discounting-methods-part-1">Discounting Methods (Part 1)</a></li>
+<li><a href="#discounting-methods-part-2">Discounting Methods (Part 2)</a></li>
 <li><a href="#summary"> Summary</a></li>
 </ul></li>
 <li><a href="#week-2---tagging-problems-and-hidden-markov-models"> Week 2 - Tagging Problems and Hidden Markov Models</a><ul>
-<li><a href="#the-tagging-problem">The Tagging Problem</a><ul>
-<li><a href="#part-of-speech-tagging"> Part-of-Speech Tagging</a></li>
-<li><a href="#named-entity-recognition"> Named Entity Recognition</a></li>
-<li><a href="#named-entity-extraction-as-tagging"> Named Entity Extraction as Tagging</a></li>
-<li><a href="#two-types-of-contraints">Two Types of Contraints</a></li>
-</ul></li>
-<li><a href="#generative-models-for-supervised-learning">Generative Models for Supervised Learning</a><ul>
-<li><a href="#supervised-learning-problems">Supervised Learning Problems</a></li>
-<li><a href="#generative-models"> Generative Models</a></li>
-</ul></li>
-<li><a href="#hidden-markov-models">Hidden Markov Models</a><ul>
-<li><a href="#trigram-hidden-markov-models-triagram-hmms">Trigram Hidden Markov Models (Triagram HMMs)</a></li>
-<li><a href="#an-example">An example</a></li>
-<li><a href="#why-the-name">Why the Name?</a></li>
-</ul></li>
-<li><a href="#parameter-estimation-in-hmms">Parameter Estimation in HMMs</a><ul>
-<li><a href="#smoothed-estimation">Smoothed Estimation</a></li>
-<li><a href="#dealing-with-low-frequency-words-an-example">Dealing with Low-Frequency Words: An Example</a></li>
-</ul></li>
-<li><a href="#the-viterbi-algorithm-for-hmms">The Viterbi Algorithm for HMMs</a><ul>
-<li><a href="#problem">Problem</a></li>
-<li><a href="#brute-force-search-is-hopelessly-inefficient">Brute Force Search is Hopelessly Inefficient</a></li>
+<li><a href="#the-tagging-problem">The Tagging Problem</a></li>
+<li><a href="#generative-models-for-supervised-learning">Generative Models for Supervised Learning</a></li>
+<li><a href="#hidden-markov-models">Hidden Markov Models</a></li>
+<li><a href="#parameter-estimation-in-hmms">Parameter Estimation in HMMs</a></li>
+<li><a href="#the-viterbi-algorithm-for-hmms">The Viterbi Algorithm for HMMs</a></li>
 <li><a href="#the-viterbi-algorithm">The Viterbi Algorithm</a></li>
-<li><a href="#an-example-1">An Example</a></li>
-<li><a href="#a-recursive-definition">A Recursive Definition</a></li>
-<li><a href="#justification-for-the-recursive-definition">Justification for the Recursive Definition</a></li>
-</ul></li>
-<li><a href="#the-viterbi-algorithm-1">The Viterbi Algorithm</a><ul>
-<li><a href="#the-viterbi-algorithm-with-backpointers">The Viterbi Algorithm with Backpointers</a></li>
+<li><a href="#the-viterbi-algorithm-1">The Viterbi Algorithm</a></li>
 <li><a href="#summary-1">Summary</a></li>
 </ul></li>
 <li><a href="#readings">Readings</a><ul>
-<li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a><ul>
-<li><a href="#word-and-sentence-tokenization">3.9: Word and Sentence Tokenization</a></li>
-</ul></li>
+<li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></li>
 <li><a href="#speech-and-language-processing-chapter-4-n-gram-models">Speech and Language Processing, Chapter 4 (n-gram models)</a></li>
-</ul></li>
+<li><a href="#arpa-language-model-lm-file-format">ARPA language model (LM) file format</a></li>
 </ul></li>
 </ul></li>
 </ul>
 </div>
-<h1 id="natural-language-processing"><a href="#TOC">Natural Language Processing</a></h1>
+<h1 id="natural-language-processing"><a href="#natural-language-processing">Natural Language Processing</a></h1>
 <p>Columbia University, via Coursera</p>
-<h2 id="student"><a href="#TOC"> Student</a></h2>
-<p><a href="http://www.asimihsan.com">Asim Ihsan</a></p>
-<h2 id="readings-policy"><a href="#TOC">Readings policy</a></h2>
+<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Natural Language Processing notes</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.asimihsan.com" property="cc:attributionName" rel="cc:attributionURL">Asim Ihsan</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+<iframe width="292" height="420" src="http://tools.flattr.net/widgets/thing.html?thing=1150095"></iframe>
+
+<h2 id="readings-policy"><a href="#readings-policy">Readings policy</a></h2>
 <p>There are excellent readings assigned to the class. They’re explicitly inlined into the respective lecture, to save typing stuff out twice.</p>
 <p>Other readings (papers, textbooks, other courses) are explicitly inlined as well.</p>
-<h2 id="rendering"><a href="#TOC">Rendering</a></h2>
+<h2 id="rendering"><a href="#rendering">Rendering</a></h2>
 <p>In order to use pandoc run (need to include custom LaTeX packages for some symbols):</p>
 <pre><code>    pandoc \[course\]\ natural\ language\ processing.md
     -o pdf/nlp.pdf --include-in-header=latex.template</code></pre>
@@ -116,8 +77,8 @@
 <pre><code>    watchmedo shell-command --patterns=&quot;*.md&quot;
     --ignore-directories --recursive
     --command=&#39;&lt;command above&gt;&#39; .</code></pre>
-<h2 id="week-1---introduction-to-natural-language-processing"><a href="#TOC">Week 1 - Introduction to Natural Language Processing</a></h2>
-<h3 id="introduction-part-1"><a href="#TOC">Introduction (Part 1)</a></h3>
+<h2 id="week-1---introduction-to-natural-language-processing"><a href="#week-1---introduction-to-natural-language-processing">Week 1 - Introduction to Natural Language Processing</a></h2>
+<h3 id="introduction-part-1"><a href="#introduction-part-1">Introduction (Part 1)</a></h3>
 <ul>
 <li>What is NLP?
 <ul>
@@ -165,7 +126,7 @@
 <li>e.g. “Boeing is located in Seattle” into a parse tree.</li>
 </ul></li>
 </ul>
-<h3 id="introduction-part-2"><a href="#TOC">Introduction (Part 2)</a></h3>
+<h3 id="introduction-part-2"><a href="#introduction-part-2">Introduction (Part 2)</a></h3>
 <p>Why is NLP hard?</p>
 <ul>
 <li><strong>Ambiguity</strong>
@@ -192,7 +153,7 @@
 <li><strong>Machine learning techniques</strong>: probabilistic CFGs, HMMs, EM algorithm, log-linear models.</li>
 <li><strong>Applications</strong>: information extraction, machine translation, natural language interfaces.</li>
 </ul>
-<h4 id="syllabus"><a href="#TOC">Syllabus</a></h4>
+<h4 id="syllabus"><a href="#syllabus">Syllabus</a></h4>
 <ul>
 <li>Language modelling, smoothed estimation</li>
 <li>Tagging, hidden Markov models</li>
@@ -201,16 +162,16 @@
 <li>Log-linear models, discriminative methods</li>
 <li>Semi-supervised and unsupervised learning for NLP</li>
 </ul>
-<h2 id="week-1---the-language-modeling-problem"><a href="#TOC">Week 1 - The Language Modeling Problem</a></h2>
-<h3 id="introduction-to-the-language-modeling-problem-part-1"><a href="#TOC">Introduction to the Language Modeling Problem (Part 1)</a></h3>
+<h2 id="week-1---the-language-modeling-problem"><a href="#week-1---the-language-modeling-problem">Week 1 - The Language Modeling Problem</a></h2>
+<h3 id="introduction-to-the-language-modeling-problem-part-1"><a href="#introduction-to-the-language-modeling-problem-part-1">Introduction to the Language Modeling Problem (Part 1)</a></h3>
 <ul>
 <li>We have some finite vocabulary, i.e.</li>
 </ul>
-<p>\[V = \{the, a, man telescope, Beckham, two, ...\}\]</p>
+<p><span class="math">\[V = \{the, a, man telescope, Beckham, two, ...\}\]</span></p>
 <ul>
 <li>We have countably infinite set of strings, which are the set of possible sentences in the language:</li>
 </ul>
-<p>\[V^+ = \{&quot;the\:STOP&quot;, &quot;a\:STOP&quot;, &quot;the\:fan\:STOP&quot;, ...\}\]</p>
+<p><span class="math">\[V^+ = \{&quot;the\:STOP&quot;, &quot;a\:STOP&quot;, &quot;the\:fan\:STOP&quot;, ...\}\]</span></p>
 <ul>
 <li>STOP is a stop symbol at the end of a sentence. Convenient later on.</li>
 <li>Sentences don’t have to make sense, just every sequence of words.</li>
@@ -224,13 +185,13 @@
 </ul></li>
 <li><p>With this training sample we want to “learn” a probabiliy distribution p, i.e. p is a function that satisfies:</p></li>
 </ul>
-<p>\[\sum_{x \in V^+} p(x) = 1, \quad p(x) \ge 0 \; \forall \; x \in V^+\]</p>
+<p><span class="math">\[\sum_{x \in V^+} p(x) = 1, \quad p(x) \ge 0 \; \forall \; x \in V^+\]</span></p>
 <ul>
 <li>For any sentence x in language, p(x) &gt;= 0.</li>
 <li>If we sum over all sentences x in language, p(x) sums to 1.</li>
 <li>A good language model assigns high probabilities to likely sentences in English (the fan saw Beckham STOP), low probabilities to unlikely sentences in English (Beckham fan saw the STOP)</li>
 </ul>
-<h3 id="introduction-to-the-language-modeling-problem-part-2"><a href="#TOC">Introduction to the Language Modeling Problem (Part 2)</a></h3>
+<h3 id="introduction-to-the-language-modeling-problem-part-2"><a href="#introduction-to-the-language-modeling-problem-part-2">Introduction to the Language Modeling Problem (Part 2)</a></h3>
 <ul>
 <li>But…why do we want to do this?!
 <ul>
@@ -248,100 +209,100 @@
 <li>Naive method of language modelling
 <ul>
 <li>We have N training sentences.</li>
-<li>For any sentence \(x_1, ..., x_n\), define \(c(x_1, ..., x_n)\) as the number of times the sentences is seen in our training data.</li>
+<li>For any sentence <span class="math">\(x_1, ..., x_n\)</span>, define <span class="math">\(c(x_1, ..., x_n)\)</span> as the number of times the sentences is seen in our training data.</li>
 <li>Naive estimate:</li>
 </ul></li>
 </ul>
-<p>\[p(x_1, \ldots, x_n) = \frac{c(x_1, \ldots, x_n)}{N}\]</p>
+<p><span class="math">\[p(x_1, \ldots, x_n) = \frac{c(x_1, \ldots, x_n)}{N}\]</span></p>
 <ul>
 <li>This is a valid, well-formed language model (p(x) sums to 1, they’re all &gt;= 0).</li>
 <li>However, they’ll assign a probabiliy of 0 to any unseen sentences; no ability to generalise to new sentences.</li>
 <li>How can we build language models that generalise beyond the test sentences?</li>
 </ul>
-<h3 id="markov-processes-part-1"><a href="#TOC">Markov Processes (Part 1)</a></h3>
+<h3 id="markov-processes-part-1"><a href="#markov-processes-part-1">Markov Processes (Part 1)</a></h3>
 <ul>
 <li>Markov Processes
 <ul>
-<li>Consider a sequence of random variables \(X_1, X_2, \ldots, X_n\).</li>
+<li>Consider a sequence of random variables <span class="math">\(X_1, X_2, \ldots, X_n\)</span>.</li>
 <li>Each random variable can take any value in a finite set V.</li>
 <li>For now assume n is fixed, e.g. = 100. Every sequence is the same length.</li>
 <li>Our goal: model the joint probability distribution of the values of these n variables:</li>
 </ul></li>
 </ul>
-<p>\[P(X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n)\]</p>
+<p><span class="math">\[P(X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n)\]</span></p>
 <ul>
-<li><p>This is huge: for vocabulary V, number of sequences of length n is \(|V|^n\).</p></li>
+<li><p>This is huge: for vocabulary V, number of sequences of length n is <span class="math">\(|V|^n\)</span>.</p></li>
 <li>First-Order Markov Processes</li>
 <li>Going to use the chain rule of probabilities to decompose the expression into a product of expressions.</li>
 <li><p>For two expressions, this rule is:</p></li>
 </ul>
-<p>\[P(A,B) = P(A) \times P(B|A)\] \[P(A,B,C) = P(A) \times P(B|A) \times P(C|A,B)\]</p>
+<p><span class="math">\[P(A,B) = P(A) \times P(B|A)\]</span> <span class="math">\[P(A,B,C) = P(A) \times P(B|A) \times P(C|A,B)\]</span></p>
 <ul>
 <li>Hence:</li>
 </ul>
-<p>\[P(X_1 = x_1, X_2 = x_2) = P(X_1 = x_1) \times P(X_2 = x_2 | X_1 = x_1)\] \[P(X_1 = x_1, X_2 = x_2, X_3 = x_3) = ... P(X_3 = x_3 | P(X_2 = x_2, X_1 = x_1)\]</p>
+<p><span class="math">\[P(X_1 = x_1, X_2 = x_2) = P(X_1 = x_1) \times P(X_2 = x_2 | X_1 = x_1)\]</span> <span class="math">\[P(X_1 = x_1, X_2 = x_2, X_3 = x_3) = ... P(X_3 = x_3 | P(X_2 = x_2, X_1 = x_1)\]</span></p>
 <ul>
 <li>This kind of decomposition is <em>exact</em>: this is always true, and no assumptions are involved.</li>
 <li>Hence the general decomposition:</li>
 </ul>
-<p>\[P(X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n)\] \[=P(X_1 = x_1) \prod_{i=2}^{n} P(X_i = x_i\;|\;X_1 = x_1, \dots, X_{i-1} = x_{i-1})\]</p>
+<p><span class="math">\[P(X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n)\]</span> <span class="math">\[=P(X_1 = x_1) \prod_{i=2}^{n} P(X_i = x_i\;|\;X_1 = x_1, \dots, X_{i-1} = x_{i-1})\]</span></p>
 <ul>
 <li>Continuing on, with first-order Markov assumption:</li>
 </ul>
-<p>\[= P(X_1 = x_1) \prod_{i=2}^{n} P(X_i = x_i\;|\; X_{i-1} = x_{i-1})\]</p>
+<p><span class="math">\[= P(X_1 = x_1) \prod_{i=2}^{n} P(X_i = x_i\;|\; X_{i-1} = x_{i-1})\]</span></p>
 <ul>
-<li>The first-order Markov assumption: for any \(i \in \{2, \dots, n\}\), for any \(x_1, \dots, x_n\):</li>
+<li>The first-order Markov assumption: for any <span class="math">\(i \in \{2, \dots, n\}\)</span>, for any <span class="math">\(x_1, \dots, x_n\)</span>:</li>
 </ul>
-<p>\[P(X_i=x_i|X_1=x_1, \ldots, X_{i-1} = x_{i-1}) = P(X_i=x_i | X_{i-1} = x_{i-1})\]</p>
+<p><span class="math">\[P(X_i=x_i|X_1=x_1, \ldots, X_{i-1} = x_{i-1}) = P(X_i=x_i | X_{i-1} = x_{i-1})\]</span></p>
 <ul>
 <li>Random variable at position i depends on just the previous value, on the variable at position (i-1).
 <ul>
-<li>\(X_i\) is conditionally independent of all the other random variables once you condition on \(X_{i-1}\).</li>
+<li><span class="math">\(X_i\)</span> is conditionally independent of all the other random variables once you condition on <span class="math">\(X_{i-1}\)</span>.</li>
 </ul></li>
 </ul>
-<h3 id="markov-processes-part-2"><a href="#TOC"> Markov Processes (Part 2)</a></h3>
+<h3 id="markov-processes-part-2"><a href="#markov-processes-part-2"> Markov Processes (Part 2)</a></h3>
 <ul>
 <li>What about Second-Order Markov Processes?</li>
-<li>Again, the problem is to model the joint distribution over \(n\) random variables:</li>
+<li>Again, the problem is to model the joint distribution over <span class="math">\(n\)</span> random variables:</li>
 </ul>
-<p>\[P(X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n)\] \[=P(X_1 = x_1) P(X_2 = x_2 | X_1 = x_1) \prod_{i=3}^{n} P(X_i = x_i | X_{i-2} = x_{i-2}, X_{i-1} = x_{i-1})\]</p>
+<p><span class="math">\[P(X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n)\]</span> <span class="math">\[=P(X_1 = x_1) P(X_2 = x_2 | X_1 = x_1) \prod_{i=3}^{n} P(X_i = x_i | X_{i-2} = x_{i-2}, X_{i-1} = x_{i-1})\]</span></p>
 <ul>
 <li>For elements further along in the sequence the value for the i’th random variable depends on the previous <em>two</em> random variables.</li>
-<li>This is a bit awkward, so for convenience we assume \(x_0 = x_{-1} = *\), where \(*\) is a special “start” symbol.</li>
+<li>This is a bit awkward, so for convenience we assume <span class="math">\(x_0 = x_{-1} = *\)</span>, where <span class="math">\(*\)</span> is a special “start” symbol.</li>
 </ul>
-<p>\[= \prod_{i=1}^{n} P(X_i = x_i | X_{i-2} = x_{i-2}, X_{i-1} = x_{i-1})\]</p>
+<p><span class="math">\[= \prod_{i=1}^{n} P(X_i = x_i | X_{i-2} = x_{i-2}, X_{i-1} = x_{i-1})\]</span></p>
 <ul>
-<li>For example, \(x_{-1} = *,\;x_0 = *,\;x_1 = the,\;\ldots\),</li>
+<li>For example, <span class="math">\(x_{-1} = *,\;x_0 = *,\;x_1 = the,\;\ldots\)</span>,</li>
 </ul>
-<h4 id="modelling-variable-length-sequences"><a href="#TOC">Modelling Variable Length Sequences</a></h4>
+<h4 id="modelling-variable-length-sequences"><a href="#modelling-variable-length-sequences">Modelling Variable Length Sequences</a></h4>
 <ul>
-<li>Want \(n\) to also be a random variable.</li>
-<li>Simple solution: always define \(X_n = STOP\), where \(STOP\) is a special symbol.</li>
-<li>Use a Markov process as before, but assume \(X_n = STOP\).</li>
+<li>Want <span class="math">\(n\)</span> to also be a random variable.</li>
+<li>Simple solution: always define <span class="math">\(X_n = STOP\)</span>, where <span class="math">\(STOP\)</span> is a special symbol.</li>
+<li>Use a Markov process as before, but assume <span class="math">\(X_n = STOP\)</span>.</li>
 </ul>
-<h3 id="trigram-language-models"><a href="#TOC">Trigram Language Models</a></h3>
+<h3 id="trigram-language-models"><a href="#trigram-language-models">Trigram Language Models</a></h3>
 <ul>
 <li>A trigram language model consists of:
 <ol style="list-style-type: decimal">
-<li>A finite set \(V\) (the words, the vocabulary).</li>
-<li>A parameter \(q(w|u,v)\) for each trigram \(u,v,w\) such that \(w \in V \bigcup \{STOP\}\), and \(u,v \in V \bigcup \{*\}\).
+<li>A finite set <span class="math">\(V\)</span> (the words, the vocabulary).</li>
+<li>A parameter <span class="math">\(q(w|u,v)\)</span> for each trigram <span class="math">\(u,v,w\)</span> such that <span class="math">\(w \in V \bigcup \{STOP\}\)</span>, and <span class="math">\(u,v \in V \bigcup \{*\}\)</span>.
 <ul>
-<li>For each <em>trigram</em> \(u,v,w\), a sequence of three words, we have a parameter \(q(w|u,v)\).</li>
-<li>\(w\) could be any element of V or STOP, and</li>
-<li>\(u,v\) could be any element of V or START.</li>
+<li>For each <em>trigram</em> <span class="math">\(u,v,w\)</span>, a sequence of three words, we have a parameter <span class="math">\(q(w|u,v)\)</span>.</li>
+<li><span class="math">\(w\)</span> could be any element of V or STOP, and</li>
+<li><span class="math">\(u,v\)</span> could be any element of V or START.</li>
 </ul></li>
 </ol></li>
-<li>For any sentence \(x_1, \ldots, x_n\) where \(x_i \in V\) for \(i = 1 \ldots (n-1)\), and \(x_n = STOP\), the probability of the sentence under the trigram model is:</li>
+<li>For any sentence <span class="math">\(x_1, \ldots, x_n\)</span> where <span class="math">\(x_i \in V\)</span> for <span class="math">\(i = 1 \ldots (n-1)\)</span>, and <span class="math">\(x_n = STOP\)</span>, the probability of the sentence under the trigram model is:</li>
 </ul>
-<p>\[p(x_1, \dots, x_n) = \prod_{i=1}^{n}q(x_i\;|\;x_{i-2},x_{i-1})\]</p>
+<p><span class="math">\[p(x_1, \dots, x_n) = \prod_{i=1}^{n}q(x_i\;|\;x_{i-2},x_{i-1})\]</span></p>
 <ul>
-<li>where we define \(x_0 = x_{-1} = *\).</li>
+<li>where we define <span class="math">\(x_0 = x_{-1} = *\)</span>.</li>
 <li>i.e. for any sentence the probability of it is the product of second-order Markov probabilities of its constituent trigrams.</li>
 </ul>
 <p>An example. For the sentence</p>
 <pre><code>    the dog barks STOP</code></pre>
 <p>we could have</p>
-<p>\(p(\textrm{the dog barks STOP}) =\)<br />\(q(\textrm{the | *, *})\)<br />\(\times q(\textrm{dog | *, the})\)<br />\(\times q(\textrm{barks | the, dog})\)<br />\(\times q(\textrm{STOP | dog, barks})\)</p>
+<p><span class="math">\(p(\textrm{the dog barks STOP}) =\)</span><br /><span class="math">\(q(\textrm{the | *, *})\)</span><br /><span class="math">\(\times q(\textrm{dog | *, the})\)</span><br /><span class="math">\(\times q(\textrm{barks | the, dog})\)</span><br /><span class="math">\(\times q(\textrm{STOP | dog, barks})\)</span></p>
 <ul>
 <li>This is still a naive language model. It’s easy to find problems.</li>
 <li>PCFGs, explored later, are much superior.</li>
@@ -353,14 +314,14 @@
 </ul>
 <hr />
 <ul>
-<li>Quiz: say we have a language model with \(V = \{\textrm{the, dog, runs}\}\), and the following parameters:</li>
+<li>Quiz: say we have a language model with <span class="math">\(V = \{\textrm{the, dog, runs}\}\)</span>, and the following parameters:</li>
 </ul>
-<p>\(q(\textrm{the | *, *}) = 1\)<br />\(q(\textrm{dog | *, the}) = 0.5\)<br />\(q(\textrm{STOP | *, the}) = 0.5\)<br />\(q(\textrm{runs | the, dog}) = 0.5\)<br />\(q(\textrm{STOP | the, dog}) = 0.5\)<br />\(q(\textrm{STOP | dog, runs}) = 1\)</p>
+<p><span class="math">\(q(\textrm{the | *, *}) = 1\)</span><br /><span class="math">\(q(\textrm{dog | *, the}) = 0.5\)</span><br /><span class="math">\(q(\textrm{STOP | *, the}) = 0.5\)</span><br /><span class="math">\(q(\textrm{runs | the, dog}) = 0.5\)</span><br /><span class="math">\(q(\textrm{STOP | the, dog}) = 0.5\)</span><br /><span class="math">\(q(\textrm{STOP | dog, runs}) = 1\)</span></p>
 <ul>
 <li>There are <strong>three</strong> sentences with non-zero probability under this model. Draw out a graph, where nodes are words and edge labels denote probabilities, to see this.</li>
 </ul>
 <hr />
-<h4 id="the-trigram-estimation-problem"><a href="#TOC">The Trigram Estimation Problem</a></h4>
+<h4 id="the-trigram-estimation-problem"><a href="#the-trigram-estimation-problem">The Trigram Estimation Problem</a></h4>
 <ul>
 <li>But what are the values of parameters q?</li>
 <li>This turns out to be a challenging problem.</li>
@@ -368,11 +329,11 @@
 <li>Recall that we assume that we have a training set, some example sentences in our language, typically, as you recall, millions or billions of sentences.</li>
 <li>From these sentences we can derive counts; how often do trigrams occur?</li>
 </ul>
-<p>\[q(w_i\;|\;w_{i-2},w_{i-1}) = \frac{\textrm{Count}(w_{i-2},w_{i-1},w_{i})}{\textrm{Count}(w_{i-2},w_{i-1})}\]</p>
+<p><span class="math">\[q(w_i\;|\;w_{i-2},w_{i-1}) = \frac{\textrm{Count}(w_{i-2},w_{i-1},w_{i})}{\textrm{Count}(w_{i-2},w_{i-1})}\]</span></p>
 <ul>
 <li>For example:</li>
 </ul>
-<p>\[q(\textrm{laughs | the, dog}) = \frac{\textrm{Count(the, dog laughs)}}{\textrm{Count(the, dog)}}\]</p>
+<p><span class="math">\[q(\textrm{laughs | the, dog}) = \frac{\textrm{Count(the, dog, laughs)}}{\textrm{Count(the, dog)}}\]</span></p>
 <ul>
 <li>This is intuitive. For instances of a particular bigram how often are they followed by the particular third word of our trigram?</li>
 </ul>
@@ -384,56 +345,56 @@
 <li>walks the dog STOP</li>
 <li>dog walks fast STOP</li>
 </ul></li>
-<li>Let \(q_{ML}\) by the maximum-likelihood parameters of a trigram langauge model trained on this corpus. Which of the following parameters have a value that is both well-defined and non-zero?</li>
+<li>Let <span class="math">\(q_{ML}\)</span> by the maximum-likelihood parameters of a trigram langauge model trained on this corpus. Which of the following parameters have a value that is both well-defined and non-zero?</li>
 </ul>
 <p>Correct:</p>
-<p>\(q_{ML}({\textrm{walks | *, dog}})\)<br />\(q_{ML}({\textrm{dog | walks, the}})\)<br />\(q_{ML}({\textrm{walks | the, dog}})\)</p>
+<p><span class="math">\(q_{ML}({\textrm{walks | *, dog}})\)</span><br /><span class="math">\(q_{ML}({\textrm{dog | walks, the}})\)</span><br /><span class="math">\(q_{ML}({\textrm{walks | the, dog}})\)</span></p>
 <p>Incorrect:</p>
-<p>\(q_{ML}({\textrm{walks | dog, the}})\)<br />\(q_{ML}({\textrm{fast | dog, the}})\)<br />\(q_{ML}({\textrm{STOP | walks, dog}})\)</p>
+<p><span class="math">\(q_{ML}({\textrm{walks | dog, the}})\)</span><br /><span class="math">\(q_{ML}({\textrm{fast | dog, the}})\)</span><br /><span class="math">\(q_{ML}({\textrm{STOP | walks, dog}})\)</span></p>
 <hr />
 <ul>
 <li>ML is a useful starting point, but has serious problems.</li>
 </ul>
 <p>Spare Data problems</p>
 <ul>
-<li>Say our vocabulary size is \(N = |V|\), then there are \(N^3\) parameters in our model.</li>
-<li>e.g. \(N = 20,000\;\implies\;20,000^3 = 8 \times 10^{12}\) parameters.</li>
+<li>Say our vocabulary size is <span class="math">\(N = |V|\)</span>, then there are <span class="math">\(N^3\)</span> parameters in our model.</li>
+<li>e.g. <span class="math">\(N = 20,000\;\implies\;20,000^3 = 8 \times 10^{12}\)</span> parameters.</li>
 <li>Most parameters will be zero; most possible trigrams will not appear.</li>
 <li>But does that mean all trigrams we haven’t seen are necessarily impossible to <em>ever</em> see? No.</li>
 <li>Worse still, the bigram denominator may be zero, and the ML ratio is undefined.</li>
 </ul>
-<h3 id="evaluating-language-models-perplexity"><a href="#TOC">Evaluating Language Models: Perplexity</a></h3>
+<h3 id="evaluating-language-models-perplexity"><a href="#evaluating-language-models-perplexity">Evaluating Language Models: Perplexity</a></h3>
 <ul>
-<li>We have some test data, \(m\) sentences, i.e. \(s_1, s_2, s_3, \ldots, s_m\). Each of these is a sentence in the language, e.g. {the dog laughs STOP}.</li>
+<li>We have some test data, <span class="math">\(m\)</span> sentences, i.e. <span class="math">\(s_1, s_2, s_3, \ldots, s_m\)</span>. Each of these is a sentence in the language, e.g. {the dog laughs STOP}.</li>
 <li>Additionally, assume that use some <em>development</em> data to determine the language model parameters, but hold out some additional <em>test data</em> to evaluate the language model.</li>
-<li>Natural to look at the probability that our language model gives to sentences in the test data \(\prod_{i=1}^{m}p(s_i)\); it’s never seen it before.</li>
+<li>Natural to look at the probability that our language model gives to sentences in the test data <span class="math">\(\prod_{i=1}^{m}p(s_i)\)</span>; it’s never seen it before.</li>
 </ul>
-<p>\[\textrm{log}\;\prod_{i=1}^{m} p(s_i) = \sum_{i=1}^{m} \textrm{log}\;p(s_i)\]</p>
+<p><span class="math">\[\textrm{log}\;\prod_{i=1}^{m} p(s_i) = \sum_{i=1}^{m} \textrm{log}\;p(s_i)\]</span></p>
 <ul>
 <li>(the above is a basic rule of logarithms; log of product = sum of logs).</li>
 <li>recall that e.g.:</li>
 </ul>
-<p>\[p(s_i) = q(\textrm{the | *, *}) \times q(\textrm{dog | *, the}) \times \ldots\]</p>
+<p><span class="math">\[p(s_i) = q(\textrm{the | *, *}) \times q(\textrm{dog | *, the}) \times \ldots\]</span></p>
 <ul>
 <li>Naturally we’d expect better languages models to assign higher probabilities to sentences in the test data.</li>
 <li><p>And log is a monotonically increasing function, so expect the sum of logs to correspondingly be higher for better language models.</p></li>
 <li><p>In fact, the usual evaluation measure is <strong>perplexity</strong>:</p></li>
 </ul>
-<p>\[\textrm{Perplexity} = 2^{-l},\;\textrm{where}\] \[l = \frac{1}{M} \sum_{i=1}^{m} \textrm{log}\;p(s_i)\]</p>
+<p><span class="math">\[\textrm{Perplexity} = 2^{-l},\;\textrm{where}\]</span> <span class="math">\[l = \frac{1}{M} \sum_{i=1}^{m} \textrm{log}\;p(s_i)\]</span></p>
 <ul>
 <li>and M is the total number of <em>words</em> in the test data. In some sense with (1/M) the perplexity is now stable with respect to the size of the test data.</li>
 <li>The <em>lower</em> the perplexity the <em>better the fit</em> of the language model to the test data.</li>
 </ul>
 <p>Some Intuition about Perplexity</p>
 <ul>
-<li>Say we have vocabulary \(V\), and \(N = |V| + 1\), and the dumbest possible model predicts:</li>
+<li>Say we have vocabulary <span class="math">\(V\)</span>, and <span class="math">\(N = |V| + 1\)</span>, and the dumbest possible model predicts:</li>
 </ul>
-<p>\[q(w|u,v) = \frac{1}{N},\;\forall\;w \in V \cup \{\textrm{STOP}\},\;\forall\;u,v \in V \cup \{\textrm{*}\}\].</p>
+<p><span class="math">\[q(w|u,v) = \frac{1}{N},\;\forall\;w \in V \cup \{\textrm{STOP}\},\;\forall\;u,v \in V \cup \{\textrm{*}\}\]</span>.</p>
 <ul>
 <li>This dumbest model assigns the uniform distribution over all possible words in each possible. Ignores previous words, doesn’t measure relative frequency.</li>
 <li>Easy to calculate perplexity:</li>
 </ul>
-<p>\[\textrm{Perplexity} = 2^{-l},\;\textrm{where}\;l=\textrm{log}\;\frac{1}{N}\] \[\implies\; \textrm{Perplexity} = N\]</p>
+<p><span class="math">\[\textrm{Perplexity} = 2^{-l},\;\textrm{where}\;l=\textrm{log}\;\frac{1}{N}\]</span> <span class="math">\[\implies\; \textrm{Perplexity} = N\]</span></p>
 <ul>
 <li>!!AI implying all these calculations use log base 2.</li>
 <li>Perplexity is a measure of effective “branching factor”.
@@ -460,23 +421,23 @@
 </ul>
 <p>Note that the number of words in this corpus, M, is 12.</p>
 <p>What is the perplexity of the language model, to 3dp?</p>
-<p>\[P = 2^{-l}\] \[l = \frac{1}{M} \sum \textrm{log}_2\{p(s_i)\}\]</p>
-<p>\(p(\textrm{the dog runs STOP}) = q(\textrm{the | *, *}) \times q(\textrm{dog | *, the}) \times q(\textrm{runs | the, dog}) \times q(\textrm{STOP | dog, runs})\)<br />\(= 1 \times 0.5 \times 1 \times 1 = 0.5\)</p>
-<p>\(p(\textrm{the cat walks STOP}) = q(\textrm{the | *, *}) \times q(\textrm{cat | *, the}) \times q(\textrm{walks | the, cat}) \times q(\textrm{STOP | cat walks})\)<br />\(= 1 \times 0.5 \times 1 \times 1 = 0.5\)</p>
-<p>\(l = \frac{1}{12} \{ 3 \times \textrm{log}_2(0.5) \}\) \(=\frac{1}{12}(-3) = \frac{-1}{4}\)<br />\(p=2^{\frac{1}{4}} = \sqrt[4]{2} = 1.189\;\textrm{(3dp)}\)</p>
+<p><span class="math">\[P = 2^{-l}\]</span> <span class="math">\[l = \frac{1}{M} \sum \textrm{log}_2\{p(s_i)\}\]</span></p>
+<p><span class="math">\(p(\textrm{the dog runs STOP}) = q(\textrm{the | *, *}) \times q(\textrm{dog | *, the}) \times q(\textrm{runs | the, dog}) \times q(\textrm{STOP | dog, runs})\)</span><br /><span class="math">\(= 1 \times 0.5 \times 1 \times 1 = 0.5\)</span></p>
+<p><span class="math">\(p(\textrm{the cat walks STOP}) = q(\textrm{the | *, *}) \times q(\textrm{cat | *, the}) \times q(\textrm{walks | the, cat}) \times q(\textrm{STOP | cat walks})\)</span><br /><span class="math">\(= 1 \times 0.5 \times 1 \times 1 = 0.5\)</span></p>
+<p><span class="math">\(l = \frac{1}{12} \{ 3 \times \textrm{log}_2(0.5) \}\)</span> <span class="math">\(=\frac{1}{12}(-3) = \frac{-1}{4}\)</span><br /><span class="math">\(p=2^{\frac{1}{4}} = \sqrt[4]{2} = 1.189\;\textrm{(3dp)}\)</span></p>
 <hr />
-<h4 id="typical-values-of-perplexity-goodman"><a href="#TOC"> Typical values of perplexity (Goodman)</a></h4>
+<h4 id="typical-values-of-perplexity-goodman"><a href="#typical-values-of-perplexity-goodman"> Typical values of perplexity (Goodman)</a></h4>
 <ul>
-<li>\(|V| = 50,000\).</li>
-<li>Trigram model, second-order Markov process, \(p(x_1 \dots x_n) = \prod_{i=1}^{n} q(x_i|x_{i-2},x_{i-1})\) gave perplexity = 74.</li>
+<li><span class="math">\(|V| = 50,000\)</span>.</li>
+<li>Trigram model, second-order Markov process, <span class="math">\(p(x_1 \dots x_n) = \prod_{i=1}^{n} q(x_i|x_{i-2},x_{i-1})\)</span> gave perplexity = 74.</li>
 <li>This is vastly smaller than the vocabulary size, so this is vastly superior to the uniform distribution.</li>
-<li>Bigram model, a first-order Markov process, \(p(x_1 \ldots x_n) = \prod_{i=1}^{n}q(x_i|x_{i-1})\) gave perplexity = 137.</li>
-<li>Unigram model, \(p(x_1 \ldots x_n) = \prod_{i=1}^{n} q(x_i)\), gave perplexity = 955.
+<li>Bigram model, a first-order Markov process, <span class="math">\(p(x_1 \ldots x_n) = \prod_{i=1}^{n}q(x_i|x_{i-1})\)</span> gave perplexity = 137.</li>
+<li>Unigram model, <span class="math">\(p(x_1 \ldots x_n) = \prod_{i=1}^{n} q(x_i)\)</span>, gave perplexity = 955.
 <ul>
 <li>Predicting each word without using context of previous words.</li>
 </ul></li>
 </ul>
-<h4 id="some-history"><a href="#TOC">Some history</a></h4>
+<h4 id="some-history"><a href="#some-history">Some history</a></h4>
 <ul>
 <li>Shannon conducted experiments on entropy of English. See “Prediction and entropy of printed English”, 1951.</li>
 <li>Chomsky, in “Syntactic Structures”, 1957
@@ -488,24 +449,24 @@
 <li>Later in the course we’ll look at PCFGs that capture long-range dependencies.</li>
 </ul></li>
 </ul>
-<h2 id="week-1---parameter-estimation-in-language-models"><a href="#TOC">Week 1 - Parameter Estimation in Language Models</a></h2>
-<h3 id="linear-interpolation-part-1"><a href="#TOC">Linear Interpolation (Part 1)</a></h3>
+<h2 id="week-1---parameter-estimation-in-language-models"><a href="#week-1---parameter-estimation-in-language-models">Week 1 - Parameter Estimation in Language Models</a></h2>
+<h3 id="linear-interpolation-part-1"><a href="#linear-interpolation-part-1">Linear Interpolation (Part 1)</a></h3>
 <ul>
 <li>Recall the “Sparse Data Problems” section before.</li>
 </ul>
-<h4 id="the-bias-variance-trade-off"><a href="#TOC">The Bias-Variance Trade-Off</a></h4>
+<h4 id="the-bias-variance-trade-off"><a href="#the-bias-variance-trade-off">The Bias-Variance Trade-Off</a></h4>
 <ul>
 <li>Trigram ML estimate</li>
 </ul>
-<p>\[q_{ML}(w_i\;|\;w_{i-2},w_{i-1}) = \frac{\textrm{Count}(w_{i-2},w_{i-1},w_i)}{\textrm{Count}(w_{i-2},w_{i-1})}\]</p>
+<p><span class="math">\[q_{ML}(w_i\;|\;w_{i-2},w_{i-1}) = \frac{\textrm{Count}(w_{i-2},w_{i-1},w_i)}{\textrm{Count}(w_{i-2},w_{i-1})}\]</span></p>
 <ul>
 <li>Bigram ML estimate</li>
 </ul>
-<p>\[q_{ML}(w_i\;|\;w_{i-1}) = \frac{\textrm{Count}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}\]</p>
+<p><span class="math">\[q_{ML}(w_i\;|\;w_{i-1}) = \frac{\textrm{Count}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}\]</span></p>
 <ul>
 <li>Unigram ML estimate</li>
 </ul>
-<p>\[q_{ML} = \frac{\textrm{Count}(w_i)}{\textrm{Count}()}\]</p>
+<p><span class="math">\[q_{ML} = \frac{\textrm{Count}(w_i)}{\textrm{Count}()}\]</span></p>
 <ul>
 <li>The trigram MLE’s advantage is that it conditions on a lot of context, so given sufficient training data these counts will be high and it will converge to the “true value”.
 <ul>
@@ -522,18 +483,18 @@
 <li>The unigram MLE’s count will converge relatively quickly to their expected value, and so don’t need many samples.</li>
 <li>The bigram MLE is in between the trigram MLE and unigram MLE.</li>
 </ul>
-<h3 id="linear-interpolation-part-2"><a href="#TOC"> Linear Interpolation (Part 2)</a></h3>
-<h4 id="linear-interpolation"><a href="#TOC"> Linear Interpolation</a></h4>
+<h3 id="linear-interpolation-part-2"><a href="#linear-interpolation-part-2"> Linear Interpolation (Part 2)</a></h3>
+<h4 id="linear-interpolation"><a href="#linear-interpolation"> Linear Interpolation</a></h4>
 <ul>
-<li>Take our estimate \(q(w_i\;|\;w_{i-2},w_{i-1})\) to be:</li>
+<li>Take our estimate <span class="math">\(q(w_i\;|\;w_{i-2},w_{i-1})\)</span> to be:</li>
 </ul>
-<p>\(= \lambda_1 \times q_{ML}(w_i\;|\;w_{i-2},w_{i-1})\)<br />\(+ \lambda_2 \times q_{ML}(w_i\;|\;w_{i-1})\)<br />\(+ \lambda_3 \times q_{ML}(w_i)\)</p>
+<p><span class="math">\(= \lambda_1 \times q_{ML}(w_i\;|\;w_{i-2},w_{i-1})\)</span><br /><span class="math">\(+ \lambda_2 \times q_{ML}(w_i\;|\;w_{i-1})\)</span><br /><span class="math">\(+ \lambda_3 \times q_{ML}(w_i)\)</span></p>
 <ul>
-<li>where \(\lambda_1 + \lambda_2 + \lambda_3 = 1\) and \(\lambda_i \ge 0\;\forall\; i\).</li>
+<li>where <span class="math">\(\lambda_1 + \lambda_2 + \lambda_3 = 1\)</span> and <span class="math">\(\lambda_i \ge 0\;\forall\; i\)</span>.</li>
 <li>New estimate is a weighted average of the three MLEs.</li>
-<li>For example, assuming \(\lambda_1 = \lambda_2 = \lambda_3 = \frac{1}{3}\)</li>
+<li>For example, assuming <span class="math">\(\lambda_1 = \lambda_2 = \lambda_3 = \frac{1}{3}\)</span></li>
 </ul>
-<p>\(q(\textrm{laughs | the, dog})\)<br />\(= \frac{1}{3} \times q_{ML}(\textrm{laughs | the, dog})\)<br />\(+ \frac{1}{3} \times q_{ML}(\textrm{laughs | dog})\)<br />\(+ \frac{1}{3} \times q_{ML}(\textrm{laughs})\)</p>
+<p><span class="math">\(q(\textrm{laughs | the, dog})\)</span><br /><span class="math">\(= \frac{1}{3} \times q_{ML}(\textrm{laughs | the, dog})\)</span><br /><span class="math">\(+ \frac{1}{3} \times q_{ML}(\textrm{laughs | dog})\)</span><br /><span class="math">\(+ \frac{1}{3} \times q_{ML}(\textrm{laughs})\)</span></p>
 <hr />
 <p>Quiz: we are given the following corpus:</p>
 <ul>
@@ -542,46 +503,46 @@
 <li>his green house STOP</li>
 <li>book STOP</li>
 </ul>
-<p>Assume we compute a language model based on this corpus using linear interpolation with \(\lambda_i = \frac{1}{3}\;\forall\;i \in \{1,2,3\}\).</p>
-<p>What is the value of the parameter \(q_{LI}(\textrm{book | the, green})\) in this model to 3dp? (Note: please include STOP words in your unigram model).</p>
-<p>\(q_{LI}(\textrm{book | the, green})\)<br />\(= \frac{1}{3} \times q_{ML}(\textrm{book | the, green})\)<br />\(+ \frac{1}{3} \times q_{ML}(\textrm{book | green})\)<br />\(+ \frac{1}{3} \times q_{ML}(\textrm{book})\)</p>
-<p>\(= \frac{1}{3} \times \frac{\textrm{Count(the, green, book)}}{\textrm{Count(the, green)}}\)<br />\(+ \frac{1}{3} \times \frac{\textrm{Count(green, book)}}{\textrm{Count(green)}}\)<br />\(+ \frac{1}{3} \times \frac{\textrm{Count(book)}}{\textrm{Count()}}\)</p>
-<p>\(= \frac{ \frac{1}{3}(1) }{(1)} + \frac{ \frac{1}{3}(1) }{(2)} + \frac{ \frac{1}{3}(3) }{(14)}\)<br />\(= 0.571\;\textrm(3dp)\)</p>
+<p>Assume we compute a language model based on this corpus using linear interpolation with <span class="math">\(\lambda_i = \frac{1}{3}\;\forall\;i \in \{1,2,3\}\)</span>.</p>
+<p>What is the value of the parameter <span class="math">\(q_{LI}(\textrm{book | the, green})\)</span> in this model to 3dp? (Note: please include STOP words in your unigram model).</p>
+<p><span class="math">\(q_{LI}(\textrm{book | the, green})\)</span><br /><span class="math">\(= \frac{1}{3} \times q_{ML}(\textrm{book | the, green})\)</span><br /><span class="math">\(+ \frac{1}{3} \times q_{ML}(\textrm{book | green})\)</span><br /><span class="math">\(+ \frac{1}{3} \times q_{ML}(\textrm{book})\)</span></p>
+<p><span class="math">\(= \frac{1}{3} \times \frac{\textrm{Count(the, green, book)}}{\textrm{Count(the, green)}}\)</span><br /><span class="math">\(+ \frac{1}{3} \times \frac{\textrm{Count(green, book)}}{\textrm{Count(green)}}\)</span><br /><span class="math">\(+ \frac{1}{3} \times \frac{\textrm{Count(book)}}{\textrm{Count()}}\)</span></p>
+<p><span class="math">\(= \frac{ \frac{1}{3}(1) }{(1)} + \frac{ \frac{1}{3}(1) }{(2)} + \frac{ \frac{1}{3}(3) }{(14)}\)</span><br /><span class="math">\(= 0.571\;\textrm(3dp)\)</span></p>
 <hr />
-<p>Our estimate correctly defines a distribution. Define \(V^{&#39;} = V \cup \{STOP\}.\)</p>
-<p>\(\sum_{w \in V^{&#39;}} q(w|u,v)\)<br />\(=\sum_{w \in V^{&#39;}} [\lambda_1 \times q_{ML}(w|u,v) + \lambda_2 \times q_{ML}(w|v) + \lambda_3 \times q_{ML}(w)]\)</p>
+<p>Our estimate correctly defines a distribution. Define <span class="math">\(V^{&#39;} = V \cup \{STOP\}.\)</span></p>
+<p><span class="math">\(\sum_{w \in V^{&#39;}} q(w|u,v)\)</span><br /><span class="math">\(=\sum_{w \in V^{&#39;}} [\lambda_1 \times q_{ML}(w|u,v) + \lambda_2 \times q_{ML}(w|v) + \lambda_3 \times q_{ML}(w)]\)</span></p>
 <p>move out the constant lambdas:</p>
-<p>\(=\lambda_1 \sum_w q_{ML}(w|u,v) + \lambda_2 \sum_w q_{ML}(w|v) + \lambda_3 \sum_w q_{ML}(w)\)</p>
+<p><span class="math">\(=\lambda_1 \sum_w q_{ML}(w|u,v) + \lambda_2 \sum_w q_{ML}(w|v) + \lambda_3 \sum_w q_{ML}(w)\)</span></p>
 <p>By definition the maximum likelihood estimates in a given trigram, bigram, or unigram model sum to 1. Intuitively, the probability of each given trigram, bigram, or unigram probability in the model sums to 1.</p>
-<p>\(= \lambda_1 + \lambda_2 + \lambda_3 = 1\)</p>
-<p>(Can also show that \(q(w|u,v) \ge 0\;\forall\;w \in V^{&#39;}\)).</p>
+<p><span class="math">\(= \lambda_1 + \lambda_2 + \lambda_3 = 1\)</span></p>
+<p>(Can also show that <span class="math">\(q(w|u,v) \ge 0\;\forall\;w \in V^{&#39;}\)</span>).</p>
 <hr />
-<p>Quiz: say we have \(\lambda_1 = -0.5, \lambda_2 = 0.5, \lambda_3 = 1.0\). Note that these satisfy the constraint \(\sum_i \lambda_i = 1\), but violate the constraint that \(\lambda_i \ge 0\).</p>
-<p>Recalling our definition of \(q\) above within: \(\sum_{w \in V^{&#39;}} q(w|u,v)\), it’s hence true that there might be a trigram \(u,v,w\) such that \(q(w|u,v) \lt 0\) or \(q(w|u,v) \gt 1\).</p>
-<p>It is not true that we may have a bigram \(u,v\) such that \(\sum_{w \in V} q(w|u,v) \neq 1\).</p>
+<p>Quiz: say we have <span class="math">\(\lambda_1 = -0.5, \lambda_2 = 0.5, \lambda_3 = 1.0\)</span>. Note that these satisfy the constraint <span class="math">\(\sum_i \lambda_i = 1\)</span>, but violate the constraint that <span class="math">\(\lambda_i \ge 0\)</span>.</p>
+<p>Recalling our definition of <span class="math">\(q\)</span> above within: <span class="math">\(\sum_{w \in V^{&#39;}} q(w|u,v)\)</span>, it’s hence true that there might be a trigram <span class="math">\(u,v,w\)</span> such that <span class="math">\(q(w|u,v) \lt 0\)</span> or <span class="math">\(q(w|u,v) \gt 1\)</span>.</p>
+<p>It is not true that we may have a bigram <span class="math">\(u,v\)</span> such that <span class="math">\(\sum_{w \in V} q(w|u,v) \neq 1\)</span>.</p>
 <hr />
-<h4 id="how-to-estimate-the-lambda-values"><a href="#TOC">How to estimate the \(\lambda\) values?</a></h4>
+<h4 id="how-to-estimate-the-lambda-values"><a href="#how-to-estimate-the-lambda-values">How to estimate the <span class="math">\(\lambda\)</span> values?</a></h4>
 <ul>
 <li>Hold out part of the training set as “validation” data.</li>
-<li>Define \(c^{&#39;}(w_1,w_2,w_3)\) to be the number of times the trigram \((w_1,w_2,w_3)\) is seen in the validation set.</li>
+<li>Define <span class="math">\(c^{&#39;}(w_1,w_2,w_3)\)</span> to be the number of times the trigram <span class="math">\((w_1,w_2,w_3)\)</span> is seen in the validation set.</li>
 <li>Take some small portion of all of our sentences, say 5%, as validation.</li>
 <li>We train on the 95% bigger portion.</li>
-<li>Define \(c^{&#39;}\) as the number of times we see the training data in the smaller, other set.</li>
-<li>Choose \(\lambda_1, \lambda_2, \lambda_3\) to maximize:</li>
+<li>Define <span class="math">\(c^{&#39;}\)</span> as the number of times we see the training data in the smaller, other set.</li>
+<li>Choose <span class="math">\(\lambda_1, \lambda_2, \lambda_3\)</span> to maximize:</li>
 </ul>
-<p>\[L(\lambda_1,\lambda_2,\lambda_3) = \sum_{w_1,w_2,w_3} c^{&#39;}(w_1,w_2,w_3)\;\textrm{log}\;q(w_3|w_1,w_2)\]</p>
-<p>such that \(\lambda_1 + \lambda_2 + \lambda_3 = 1\) and \(\lambda_i \ge 0\;\forall\;i\) and where:</p>
-<p>\(q(w_i|w_{i-2},w_{i-1}) =\)<br />\(\lambda_1 \times q_{ML}(w_i|w_{i-2},w_{i-1})\)<br />\(+\lambda_2 \times q_{ML}(w_i|w_{i-1})\)<br />\(+\lambda_3 \times q_{ML}(w_i)\)</p>
+<p><span class="math">\[L(\lambda_1,\lambda_2,\lambda_3) = \sum_{w_1,w_2,w_3} c^{&#39;}(w_1,w_2,w_3)\;\textrm{log}\;q(w_3|w_1,w_2)\]</span></p>
+<p>such that <span class="math">\(\lambda_1 + \lambda_2 + \lambda_3 = 1\)</span> and <span class="math">\(\lambda_i \ge 0\;\forall\;i\)</span> and where:</p>
+<p><span class="math">\(q(w_i|w_{i-2},w_{i-1}) =\)</span><br /><span class="math">\(\lambda_1  \times q_{ML}(w_i|w_{i-2},w_{i-1})\)</span><br /><span class="math">\(+\lambda_2 \times q_{ML}(w_i|w_{i-1})\)</span><br /><span class="math">\(+\lambda_3 \times q_{ML}(w_i)\)</span></p>
 <ul>
-<li>Many of the \(c^{&#39;}(w_1,w_2,w_3)\) counts will of course be zero.</li>
+<li>Many of the <span class="math">\(c^{&#39;}(w_1,w_2,w_3)\)</span> counts will of course be zero.</li>
 <li>Optimization problem to maximize L, under the contraints that the lambdas are positive and sum to one.</li>
 <li>If you maximize L it is easy to show that you minimize the perplexity of the language model with respect to the validation data.</li>
 </ul>
-<h4 id="allowing-the-lambdas-to-vary"><a href="#TOC">Allowing the \(\lambda\)’s to vary</a></h4>
+<h4 id="allowing-the-lambdas-to-vary"><a href="#allowing-the-lambdas-to-vary">Allowing the <span class="math">\(\lambda\)</span>’s to vary</a></h4>
 <ul>
-<li>Take a function \(\Pi\) that partitions histories, e.g. for some bigram:</li>
+<li>Take a function <span class="math">\(\Pi\)</span> that partitions histories, e.g. for some bigram:</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{equation}
     \Pi(w_{i-2},w_{i-1}) = \begin{cases}
         1, &amp; \textrm{If Count}(w_{i-1},w_{i-2}) = 0\\
@@ -590,11 +551,11 @@
         4, &amp; \textrm{Otherwise}
     \end{cases}
 \end{equation}
-\]</p>
+\]</span></p>
 <ul>
-<li>Introduce a dependence of the \(\lambda\)’s on the partition:</li>
+<li>Introduce a dependence of the <span class="math">\(\lambda\)</span>’s on the partition:</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         q(w_i\;|\;w_{i-2},w_{i-1}) &amp; = \lambda_1^{\Pi(w_{i-2},w_{i-1})} \times q_{ML}(w_i\;|\;w_{i-2},w_{i-1}) \\
@@ -602,34 +563,34 @@
         &amp;\; + \lambda_3^{\Pi(w_{i-2},w_{i-1})} \times q_{ML}(w_i)
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
-<li>where \(\lambda_1^{\Pi(w_{i-2},w_{i-1})} + \lambda_2^{\Pi(w_{i-2},w_{i-1})} + \lambda_3^{\Pi(w_{i-2},w_{i-1})} = 1\), and \(\lambda_i^{\Pi(w_{i-2},w_{i-1})} \ge 0\;\forall\;i\).</li>
+<li>where <span class="math">\(\lambda_1^{\Pi(w_{i-2},w_{i-1})} + \lambda_2^{\Pi(w_{i-2},w_{i-1})} + \lambda_3^{\Pi(w_{i-2},w_{i-1})} = 1\)</span>, and <span class="math">\(\lambda_i^{\Pi(w_{i-2},w_{i-1})} \ge 0\;\forall\;i\)</span>.</li>
 <li>Instead of just 3 lambdas now we have 3 * 4 = 12 lambdas, one per MLE per partition, and we determine which parition to use based on the bigram count.
 <ul>
 <li>We condition on the bigram counts.</li>
-<li>\(\lambda_1^1, \lambda_2^1, \lambda_3^1\). These counts are used if the bigram count is 0.</li>
-<li>\(\lambda_1^2, \lambda_2^2, \lambda_3^2\). These counts are used if the bigram count is [1, 2].</li>
-<li>\(\lambda_1^3, \lambda_2^3, \lambda_3^3\). These counts are used if the bigram count is [3, 5).</li>
-<li>\(\lambda_1^4, \lambda_2^4, \lambda_3^4\). These counts are used if the bigram count is [5, \(\infty\)).</li>
+<li><span class="math">\(\lambda_1^1, \lambda_2^1, \lambda_3^1\)</span>. These counts are used if the bigram count is 0.</li>
+<li><span class="math">\(\lambda_1^2, \lambda_2^2, \lambda_3^2\)</span>. These counts are used if the bigram count is [1, 2].</li>
+<li><span class="math">\(\lambda_1^3, \lambda_2^3, \lambda_3^3\)</span>. These counts are used if the bigram count is [3, 5).</li>
+<li><span class="math">\(\lambda_1^4, \lambda_2^4, \lambda_3^4\)</span>. These counts are used if the bigram count is [5, <span class="math">\(\infty\)</span>).</li>
 </ul></li>
 <li>Partitions are generally chosen by hand, but this one is a typical definition.</li>
 <li>These 12 lambdas are optimized according to L as before using validation data.</li>
-<li>If this bigram count is 0 then parameter \(\lambda_1\) will also be equal to 0, else it is undefined.
+<li>If this bigram count is 0 then parameter <span class="math">\(\lambda_1\)</span> will also be equal to 0, else it is undefined.
 <ul>
-<li>Recall that \(\lambda_1\) is for the trigram MLE, and the bigram count is in the denominator.</li>
+<li>Recall that <span class="math">\(\lambda_1\)</span> is for the trigram MLE, and the bigram count is in the denominator.</li>
 </ul></li>
 </ul>
-<h3 id="discounting-methods-part-1"><a href="#TOC">Discounting Methods (Part 1)</a></h3>
+<h3 id="discounting-methods-part-1"><a href="#discounting-methods-part-1">Discounting Methods (Part 1)</a></h3>
 <ul>
-<li>Suppose we have a table of bigrams, their counts, and corresponding \(q_{ML}(w_i\;|\;w_{i-1})\).</li>
+<li>Suppose we have a table of bigrams, their counts, and corresponding <span class="math">\(q_{ML}(w_i\;|\;w_{i-1})\)</span>.</li>
 </ul>
 <table>
 <thead>
 <tr class="header">
 <th align="left">x</th>
 <th align="left">Count(x)</th>
-<th align="left">\(q_{ML}(w_i\;|\;w_{i-1})\)</th>
+<th align="left"><span class="math">\(q_{ML}(w_i\;|\;w_{i-1})\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -641,59 +602,59 @@
 <tr class="even">
 <td align="left">the, dog</td>
 <td align="left">15</td>
-<td align="left">\(^{15}/_{48}\)</td>
+<td align="left"><span class="math">\(^{15}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, woman</td>
 <td align="left">11</td>
-<td align="left">\(^{11}/_{48}\)</td>
+<td align="left"><span class="math">\(^{11}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, man</td>
 <td align="left">10</td>
-<td align="left">\(^{10}/_{48}\)</td>
+<td align="left"><span class="math">\(^{10}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, park</td>
 <td align="left">5</td>
-<td align="left">\(^{5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{5}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, job</td>
 <td align="left">2</td>
-<td align="left">\(^{2}/_{48}\)</td>
+<td align="left"><span class="math">\(^{2}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, telescope</td>
 <td align="left">1</td>
-<td align="left">\(^{1}/_{48}\)</td>
+<td align="left"><span class="math">\(^{1}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, manual</td>
 <td align="left">1</td>
-<td align="left">\(^{1}/_{48}\)</td>
+<td align="left"><span class="math">\(^{1}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, afternoon</td>
 <td align="left">1</td>
-<td align="left">\(^{1}/_{48}\)</td>
+<td align="left"><span class="math">\(^{1}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, country</td>
 <td align="left">1</td>
-<td align="left">\(^{1}/_{48}\)</td>
+<td align="left"><span class="math">\(^{1}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, street</td>
 <td align="left">1</td>
-<td align="left">\(^{1}/_{48}\)</td>
+<td align="left"><span class="math">\(^{1}/_{48}\)</span></td>
 </tr>
 </tbody>
 </table>
 <ul>
 <li>The MLEs are systematically high, especially if we have a large vocabulary. This is particularly true for the low count items.</li>
 <li><p>In a sense these words that follow “the” are just lucky; what about those poor words that don’t appear after “the” in this data set but, in the “true” language, actually can appear after “the”?</p></li>
-<li><p>Now define “discounted” counts, \(\textrm{Count}^{*}(x) = \textrm{Count}(x) - 0.5\)</p></li>
+<li><p>Now define “discounted” counts, <span class="math">\(\textrm{Count}^{*}(x) = \textrm{Count}(x) - 0.5\)</span></p></li>
 </ul>
 <table>
 <thead>
@@ -701,7 +662,7 @@
 <th align="left">x</th>
 <th align="left">Count(x)</th>
 <th align="left">Count*(x)</th>
-<th align="left">\(\frac{\textrm{Count*(x)}}{\textrm{Count(the)}}\)</th>
+<th align="left"><span class="math">\(\frac{\textrm{Count*(x)}}{\textrm{Count(the)}}\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -715,82 +676,82 @@
 <td align="left">the, dog</td>
 <td align="left">15</td>
 <td align="left">14.5</td>
-<td align="left">\(^{14.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{14.5}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, woman</td>
 <td align="left">11</td>
 <td align="left">10.5</td>
-<td align="left">\(^{10.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{10.5}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, man</td>
 <td align="left">10</td>
 <td align="left">9.5</td>
-<td align="left">\(^{9.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{9.5}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, park</td>
 <td align="left">5</td>
 <td align="left">4.5</td>
-<td align="left">\(^{4.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{4.5}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, job</td>
 <td align="left">2</td>
 <td align="left">1.5</td>
-<td align="left">\(^{1.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{1.5}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, telescope</td>
 <td align="left">1</td>
 <td align="left">0.5</td>
-<td align="left">\(^{0.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{0.5}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, manual</td>
 <td align="left">1</td>
 <td align="left">0.5</td>
-<td align="left">\(^{0.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{0.5}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, afternoon</td>
 <td align="left">1</td>
 <td align="left">0.5</td>
-<td align="left">\(^{0.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{0.5}/_{48}\)</span></td>
 </tr>
 <tr class="even">
 <td align="left">the, country</td>
 <td align="left">1</td>
 <td align="left">0.5</td>
-<td align="left">\(^{0.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{0.5}/_{48}\)</span></td>
 </tr>
 <tr class="odd">
 <td align="left">the, street</td>
 <td align="left">1</td>
 <td align="left">0.5</td>
-<td align="left">\(^{0.5}/_{48}\)</td>
+<td align="left"><span class="math">\(^{0.5}/_{48}\)</span></td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>There is some missing or left over probability mass; if we sum the right-hand column you get \(\frac{43}{48} \lt 1\).</li>
-<li>The left over probability mass, in this case, is \(\frac{5}{48}\).</li>
+<li>There is some missing or left over probability mass; if we sum the right-hand column you get <span class="math">\(\frac{43}{48} \lt 1\)</span>.</li>
+<li>The left over probability mass, in this case, is <span class="math">\(\frac{5}{48}\)</span>.</li>
 <li><p>The essence of discounting is to take this left over probability mass and distribute it back to the words that do not appear after “the” in this data set.</p></li>
-<li><p>We’ll define for any word \(w_{i-1}\) \(\alpha\), which is the left-over or missing probability mass:</p></li>
+<li><p>We’ll define for any word <span class="math">\(w_{i-1}\)</span> <span class="math">\(\alpha\)</span>, which is the left-over or missing probability mass:</p></li>
 </ul>
-<p>\[\alpha(w_{i-1}) = 1 - \sum_{w} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Count}(w_{i-1})}\]</p>
+<p><span class="math">\[\alpha(w_{i-1}) = 1 - \sum_{w} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Count}(w_{i-1})}\]</span></p>
 <ul>
-<li>e.g. in our example, \(\alpha(\textrm{the}) = 10 \times 0.5/48 = 5/48\).</li>
+<li>e.g. in our example, <span class="math">\(\alpha(\textrm{the}) = 10 \times 0.5/48 = 5/48\)</span>.</li>
 </ul>
 <hr />
-<p>Quiz: assume that we are given a corpus with the folloiwng properties:</p>
+<p>Quiz: assume that we are given a corpus with the following properties:</p>
 <ul>
 <li>Count(the) = 70</li>
 <li>|{w: c(the, w) &gt; 0}| = 15, i.e. there are 15 different words that follow “the”.</li>
 </ul>
-<p>Furthermore assume that the discounted counts are defined as \(c^{*}(\textrm{the,w}) = c(\textrm{the,w}) - 0.3\). Under this corpus, what is the missing probability mass \(\alpha(\textrm{the})\) to 3dp?</p>
-<p>\[
+<p>Furthermore assume that the discounted counts are defined as <span class="math">\(c^{*}(\textrm{the,w}) = c(\textrm{the,w}) - 0.3\)</span>. Under this corpus, what is the missing probability mass <span class="math">\(\alpha(\textrm{the})\)</span> to 3dp?</p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
     \alpha(\textrm{the}) &amp; = 1 - \sum_{w} \frac{\textrm{Count}^{*}(\textrm{the, w})}{\textrm{Count(the)}} \\
@@ -802,45 +763,45 @@
     &amp; = \frac{(0.3)(15)}{70} = 0.064\;\textrm{(3 dp)}
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <hr />
-<h4 id="katz-back-off-models-bigrams"><a href="#TOC">Katz Back-Off Models (Bigrams)</a></h4>
+<h4 id="katz-back-off-models-bigrams"><a href="#katz-back-off-models-bigrams">Katz Back-Off Models (Bigrams)</a></h4>
 <ul>
 <li>For a bigram model, define two sets</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         A(w_{i-1}) &amp; = \left\{w : \textrm{Count}(w_{i-1},w) \gt 0\right\} \\
         B(w_{i-1}) &amp; = \left\{w : \textrm{Count}(w_{i-1},w) = 0\right\}
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
-<li>Assuming \(\alpha\) such that:</li>
+<li>Assuming <span class="math">\(\alpha\)</span> such that:</li>
 </ul>
-<p>\[\alpha(w_{i-1}) = 1 - \sum_{w \in A(w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Count}(w_{i-1})}\]</p>
+<p><span class="math">\[\alpha(w_{i-1}) = 1 - \sum_{w \in A(w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-1},w)}{\textrm{Count}(w_{i-1})}\]</span></p>
 <ul>
-<li>And \(\textrm{Count}^{*}\) is such that:</li>
+<li>And <span class="math">\(\textrm{Count}^{*}\)</span> is such that:</li>
 </ul>
-<p>\[\textrm{Count}^{*}(w_{i-1},w_i) = \textrm{Count}(w_{i-1},w_i) - \gamma\\ \textrm{where $\gamma$ is a constant}\].</p>
+<p><span class="math">\[\textrm{Count}^{*}(w_{i-1},w_i) = \textrm{Count}(w_{i-1},w_i) - \gamma\\ \textrm{where $\gamma$ is a constant}\]</span></p>
 <ul>
 <li>A bigram model</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{equation}
     q_{BO}(w_i\;|\;w_{i-1}) = \begin{cases}
         \frac{\textrm{Count}^{*}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}, &amp; \textrm{If } w_i \in A(w_{i-1})\\
         \alpha(w_{i-1})\frac{q_{ML}(w_i)}{\sum_{w \in B(w_{i-1})} q_{ML}(w)}, &amp; \textrm{If } w_i \in B(w_{i-1}) 
     \end{cases}
 \end{equation}
-\]</p>
+\]</span></p>
 <ul>
-<li>\(A(w_{i-1})\) is the set of words whose bigram count is greater than 0, so they follow e.g. “the”.</li>
-<li>\(B(w_{i-1})\) is the set of words whose bigram count is 0, so they’re never seen to follow e.g. “the”.</li>
-<li>\(\alpha(w_{i-1})\) is the missing probability mass.</li>
-<li>\(\frac{\textrm{Count}^{*}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}\) is the discounted count for the words who are seen to follow e.g. “the”.</li>
-<li>If the word is never seen after e.g. “the”, rather than set its \(q(w_i|w_{i-1})\) parameter to 0 we assign it a portion of the missing probabiliy mass \(\alpha(w_{i-1})\), in proportion to its the unigram maximum-likelihood estimate \(q_{ML}(w_i)\) divided by the sum of all the unigram MLEs for other such words \(\sum_{w \in B(w_{i-1})} q_{ML}(w)\).</li>
+<li><span class="math">\(A(w_{i-1})\)</span> is the set of words whose bigram count is greater than 0, so they follow e.g. “the”.</li>
+<li><span class="math">\(B(w_{i-1})\)</span> is the set of words whose bigram count is 0, so they’re never seen to follow e.g. “the”.</li>
+<li><span class="math">\(\alpha(w_{i-1})\)</span> is the missing probability mass.</li>
+<li><span class="math">\(\frac{\textrm{Count}^{*}(w_{i-1},w_i)}{\textrm{Count}(w_{i-1})}\)</span> is the discounted count for the words who are seen to follow e.g. “the”.</li>
+<li>If the word is never seen after e.g. “the”, rather than set its <span class="math">\(q(w_i|w_{i-1})\)</span> parameter to 0 we assign it a portion of the missing probabiliy mass <span class="math">\(\alpha(w_{i-1})\)</span>, in proportion to its the unigram maximum-likelihood estimate <span class="math">\(q_{ML}(w_i)\)</span> divided by the sum of all the unigram MLEs for other such words <span class="math">\(\sum_{w \in B(w_{i-1})} q_{ML}(w)\)</span>.</li>
 </ul>
 <hr />
 <p>Quiz: Let’s return to a smaller version of our corpus:</p>
@@ -848,18 +809,18 @@
 <li>the book STOP</li>
 <li>his house STOP</li>
 </ul>
-<p>This time we computer a bigram language model using Katz back-off with \(c^{*}(v,w) = c(v,w) - 0.5\).</p>
-<p>What is the value of \(q_{BO}(\textrm{book | his})\) estimated from this corpus?</p>
-<p>\[w_i = \textrm{book}, w_{i-1} = \textrm{his}\]</p>
-<p>\[
+<p>This time we computer a bigram language model using Katz back-off with <span class="math">\(c^{*}(v,w) = c(v,w) - 0.5\)</span>.</p>
+<p>What is the value of <span class="math">\(q_{BO}(\textrm{book | his})\)</span> estimated from this corpus?</p>
+<p><span class="math">\[w_i = \textrm{book}, w_{i-1} = \textrm{his}\]</span></p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         A(\textrm{his}) &amp; = \textrm{{house}} \\
         B(\textrm{his}) &amp; = \textrm{{his, the, book, STOP}}
     \end{aligned}
 \end{align}
-\]</p>
-<p>Draw a table for \(w_{i-1}\) and all words that follow it, in order to determine \(\alpha(w_{i-1})\)</p>
+\]</span></p>
+<p>Draw a table for <span class="math">\(w_{i-1}\)</span> and all words that follow it, in order to determine <span class="math">\(\alpha(w_{i-1})\)</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -881,9 +842,9 @@
 </tr>
 </tbody>
 </table>
-<p>\[\alpha(\textrm{his}) = 1 - (0.5)/(1) = 0.5\]</p>
-<p>Since \(\textrm{book} \in B(\textrm{his})\), i.e. since “book” never follows “his” in the corpus:</p>
-<p>\[
+<p><span class="math">\[\alpha(\textrm{his}) = 1 - (0.5)/(1) = 0.5\]</span></p>
+<p>Since <span class="math">\(\textrm{book} \in B(\textrm{his})\)</span>, i.e. since “book” never follows “his” in the corpus:</p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         \sum_{w \in B(w_{i-1})} q_{ML}(w) &amp; = q_{ML}(\textrm{his}) + q_{ML}(\textrm{the}) + q_{ML}(\textrm{book}) + q_{ML}(\textrm{STOP}) \\
@@ -891,8 +852,8 @@
         &amp; = 5/6
     \end{aligned}
 \end{align}
-\]</p>
-<p>\[
+\]</span></p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         q_{BO}(\textrm{book | his}) &amp; = \alpha(w_{i-1})\frac{q_{ML}(w_i)}{\sum_{w \in B(w_{i-1})} q_{ML}(w)} \\
@@ -900,43 +861,43 @@
         &amp; = 0.1
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <hr />
-<h3 id="discounting-methods-part-2"><a href="#TOC">Discounting Methods (Part 2)</a></h3>
-<h4 id="katz-back-off-models-trigrams"><a href="#TOC">Katz Back-Off Models (Trigrams)</a></h4>
+<h3 id="discounting-methods-part-2"><a href="#discounting-methods-part-2">Discounting Methods (Part 2)</a></h3>
+<h4 id="katz-back-off-models-trigrams"><a href="#katz-back-off-models-trigrams">Katz Back-Off Models (Trigrams)</a></h4>
 <ul>
 <li>For a trigram model, first define two sets</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         A(w_{i-2},w_{i-1}) &amp; = \left\{w : \textrm{Count}(w_{i-2},w_{i-1},w) \gt 0\right\} \\
         B(w_{i-2},w_{i-1}) &amp; = \left\{w : \textrm{Count}(w_{i-2},w_{i-1},w) = 0\right\}
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
 <li>A trigram model is defined in terms of the bigram model:</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{equation}
     q_{BO}(w_i\;|\;w_{i-2},w_{i-1}) = \begin{cases}
         \frac{\textrm{Count}^{*}(w_{i-2},w_{i-1},w_i)}{\textrm{Count}(w_{i-2},w_{i-1})}, &amp; \textrm{If } w_i \in A(w_{i-2},w_{i-1})\\
         \alpha(w_{i-2},w_{i-1})\frac{q_{BO}(w_i|w_{i-1})}{\sum_{w \in B(w_{i-2},w_{i-1})} q_{BO}(w|w_{i-1})}, &amp; \textrm{If } w_i \in B(w_{i-2},w_{i-1}) 
     \end{cases}
 \end{equation}
-\]</p>
+\]</span></p>
 <p>where</p>
-<p>\[\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-2},w_{i-1},w)}{\textrm{Count}(w_{i-2},w_{i-1})}\]</p>
+<p><span class="math">\[\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Count}^{*}(w_{i-2},w_{i-1},w)}{\textrm{Count}(w_{i-2},w_{i-1})}\]</span></p>
 <ul>
 <li>The one variable is the discount constant. It is typically between 0 and 1, and it can also be chosen via optimization on a validation data set.</li>
 </ul>
-<h3 id="summary"><a href="#TOC"> Summary</a></h3>
+<h3 id="summary"><a href="#summary"> Summary</a></h3>
 <ul>
 <li>Three steps in deriving the language model probabilities:
 <ol style="list-style-type: decimal">
-<li>Expand \(p(w_1, w_2, \ldots, w_n)\) using <em>Chain Rule</em>.</li>
-<li>Make <em>Markov Independence Assumptions</em>, i.e. \(p(w_i\;|\;w_1, w_2, \ldots, w_{i-2}, w_{i-1}) = p(w_i\;|\;w_{i-2},w_{i-1})\)</li>
+<li>Expand <span class="math">\(p(w_1, w_2, \ldots, w_n)\)</span> using <em>Chain Rule</em>.</li>
+<li>Make <em>Markov Independence Assumptions</em>, i.e. <span class="math">\(p(w_i\;|\;w_1, w_2, \ldots, w_{i-2}, w_{i-1}) = p(w_i\;|\;w_{i-2},w_{i-1})\)</span></li>
 <li><em>Smooth</em> the estimates using low order counts; linear interpolation and discounting.</li>
 </ol></li>
 <li>Other methods used to improve language models
@@ -953,9 +914,9 @@
 </ul></li>
 <li>It’s generally hard to improve on trigram models though!</li>
 </ul>
-<h2 id="week-2---tagging-problems-and-hidden-markov-models"><a href="#TOC"> Week 2 - Tagging Problems and Hidden Markov Models</a></h2>
-<h3 id="the-tagging-problem"><a href="#TOC">The Tagging Problem</a></h3>
-<h4 id="part-of-speech-tagging"><a href="#TOC"> Part-of-Speech Tagging</a></h4>
+<h2 id="week-2---tagging-problems-and-hidden-markov-models"><a href="#week-2---tagging-problems-and-hidden-markov-models"> Week 2 - Tagging Problems and Hidden Markov Models</a></h2>
+<h3 id="the-tagging-problem"><a href="#the-tagging-problem">The Tagging Problem</a></h3>
+<h4 id="part-of-speech-tagging"><a href="#part-of-speech-tagging"> Part-of-Speech Tagging</a></h4>
 <ul>
 <li><strong>Part-of-Speech Tagging</strong>: a fundamental problem.
 <ul>
@@ -991,7 +952,7 @@ quarter/N results/N ./.</code></pre>
 <li>…</li>
 </ul></li>
 </ul>
-<h4 id="named-entity-recognition"><a href="#TOC"> Named Entity Recognition</a></h4>
+<h4 id="named-entity-recognition"><a href="#named-entity-recognition"> Named Entity Recognition</a></h4>
 <ul>
 <li><strong>Named Entity Recognition</strong>
 <ul>
@@ -1006,7 +967,7 @@ quarter/N results/N ./.</code></pre>
 <ul>
 <li>At first blush named entity recognition looks like segmentation, not part-of-speech tagging. But really they’re the same.</li>
 </ul>
-<h4 id="named-entity-extraction-as-tagging"><a href="#TOC"> Named Entity Extraction as Tagging</a></h4>
+<h4 id="named-entity-extraction-as-tagging"><a href="#named-entity-extraction-as-tagging"> Named Entity Extraction as Tagging</a></h4>
 <ul>
 <li>Input: same as above</li>
 <li>Tags:</li>
@@ -1037,7 +998,7 @@ Mulally/CP ...</code></pre>
 <li><code>estimates</code> can be N or V.</li>
 </ul>
 <p>How many tag sequences are possible?</p>
-<p>\[= 2 \times 1 \times 3 \times 3 \times 2 = 36\]</p>
+<p><span class="math">\[= 2 \times 1 \times 3 \times 3 \times 2 = 36\]</span></p>
 <hr />
 <ul>
 <li>Objective: treating this like a supervised machine learning problem
@@ -1054,7 +1015,7 @@ Mulally/CP ...</code></pre>
 </ul></li>
 <li>There are now many corpora available, across many languages.</li>
 </ul>
-<h4 id="two-types-of-contraints"><a href="#TOC">Two Types of Contraints</a></h4>
+<h4 id="two-types-of-contraints"><a href="#two-types-of-contraints">Two Types of Contraints</a></h4>
 <pre><code>Influential/JJ members/NNS of/IN ... bailout/NN agency/NN
 can/MD raise/VB capital/NN ./.</code></pre>
 <ul>
@@ -1080,15 +1041,15 @@ can/MD raise/VB capital/NN ./.</code></pre>
 <li>But clearly <code>can</code> belongs as a whole with <code>trash can</code>, so it depends on <em>context</em>.</li>
 <li>We can build a model that balances these two contraints.</li>
 </ul>
-<h3 id="generative-models-for-supervised-learning"><a href="#TOC">Generative Models for Supervised Learning</a></h3>
-<h4 id="supervised-learning-problems"><a href="#TOC">Supervised Learning Problems</a></h4>
+<h3 id="generative-models-for-supervised-learning"><a href="#generative-models-for-supervised-learning">Generative Models for Supervised Learning</a></h3>
+<h4 id="supervised-learning-problems"><a href="#supervised-learning-problems">Supervised Learning Problems</a></h4>
 <ul>
-<li>We have training examples \(x^{(i)}, y^{(i)}\) for \(i = 1 \ldots m\).</li>
-<li>Each \(x^{(i)}\) is an <strong>input</strong>, each \(y^{(i)}\) is a <strong>label</strong>.</li>
-<li>Objective: learn a function \(f\) that maps inputs \(x\) to labels \(f(x)\).</li>
+<li>We have training examples <span class="math">\(x^{(i)}, y^{(i)}\)</span> for <span class="math">\(i = 1 \ldots m\)</span>.</li>
+<li>Each <span class="math">\(x^{(i)}\)</span> is an <strong>input</strong>, each <span class="math">\(y^{(i)}\)</span> is a <strong>label</strong>.</li>
+<li>Objective: learn a function <span class="math">\(f\)</span> that maps inputs <span class="math">\(x\)</span> to labels <span class="math">\(f(x)\)</span>.</li>
 <li>e.g.</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         &amp; x^{(1)} = \textrm{the dog laughs}, &amp; y^{(1)} = \textrm{DT NN VB} \\
@@ -1096,50 +1057,50 @@ can/MD raise/VB capital/NN ./.</code></pre>
         &amp; \ldots &amp; \ldots
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
 <li>The first model you may consider is a <strong>conditional model</strong>.
 <ul>
-<li>Learn a distribution \(p(y|x)\) from training examples.</li>
-<li>For any test input \(x\), define \(f(x) = \textrm{arg max}_{y}p(y|x)\).
+<li>Learn a distribution <span class="math">\(p(y|x)\)</span> from training examples.</li>
+<li>For any test input <span class="math">\(x\)</span>, define <span class="math">\(f(x) = \textrm{arg max}_{y}p(y|x)\)</span>.
 <ul>
-<li>The \(y\) that maximizes this conditional probability.</li>
-<li>Input \(x\), search through all possible \(y\)’s, return most likely \(y\).</li>
+<li>The <span class="math">\(y\)</span> that maximizes this conditional probability.</li>
+<li>Input <span class="math">\(x\)</span>, search through all possible <span class="math">\(y\)</span>’s, return most likely <span class="math">\(y\)</span>.</li>
 </ul></li>
 </ul></li>
 <li>Alternative are generative models.</li>
 </ul>
-<h4 id="generative-models"><a href="#TOC"> Generative Models</a></h4>
+<h4 id="generative-models"><a href="#generative-models"> Generative Models</a></h4>
 <ul>
 <li>Same problem.</li>
-<li>Learn a <em>joint distribution</em> \(p(x,y)\) from training examples.
+<li>Learn a <em>joint distribution</em> <span class="math">\(p(x,y)\)</span> from training examples.
 <ul>
-<li>Before we had \(p(y|x)\).</li>
+<li>Before we had <span class="math">\(p(y|x)\)</span>.</li>
 </ul></li>
-<li>Often we have \(p(x,y)\) = \(p(y)p(x|y)\).
+<li>Often we have <span class="math">\(p(x,y)\)</span> = <span class="math">\(p(y)p(x|y)\)</span>.
 <ul>
 <li><strong>Bayes Rule</strong>.</li>
-<li>\(p(y)\) is the <strong>prior</strong> probability; how likely is \(y\) a-priori?</li>
-<li>\(p(x|y)\) is the <strong>conditional</strong> probability. <em>Given</em> \(y\) how likely is \(x\)?</li>
+<li><span class="math">\(p(y)\)</span> is the <strong>prior</strong> probability; how likely is <span class="math">\(y\)</span> a-priori?</li>
+<li><span class="math">\(p(x|y)\)</span> is the <strong>conditional</strong> probability. <em>Given</em> <span class="math">\(y\)</span> how likely is <span class="math">\(x\)</span>?</li>
 </ul></li>
 <li>Note: by the total probability variant of Bayes Rule we have:</li>
 </ul>
-<p>\[p(y|x) = \frac{p(y)p(x|y)}{p(x)}\]</p>
+<p><span class="math">\[p(y|x) = \frac{p(y)p(x|y)}{p(x)}\]</span></p>
 <ul>
 <li>where:</li>
 </ul>
-<p>\[p(x) = \sum_y p(y)p(x|y)\]</p>
+<p><span class="math">\[p(x) = \sum_y p(y)p(x|y)\]</span></p>
 <ul>
-<li>Estimating \(p(y|x)\) <em>directly</em> is often referred to as a <strong>discriminative model</strong>.
+<li>Estimating <span class="math">\(p(y|x)\)</span> <em>directly</em> is often referred to as a <strong>discriminative model</strong>.
 <ul>
 <li>We will see a lot of discriminative models later in the course.</li>
 </ul></li>
-<li>Estimating \(p(x,y)\) is a <strong>generative model</strong>.</li>
+<li>Estimating <span class="math">\(p(x,y)\)</span> is a <strong>generative model</strong>.</li>
 <li><p>There are pros and cons to each, a lot of research, back and forth.</p></li>
 <li>How do we apply a generative model to a new test example?</li>
 <li><p>Output from the model:</p></li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         f(x) &amp; = \textrm{argmax}_{y}\;p(y|x) \\
@@ -1147,99 +1108,99 @@ can/MD raise/VB capital/NN ./.</code></pre>
              &amp; = \textrm{argmax}_{y}\;p(y)p(x|y)
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
 <li>Second line: assuming we have a generative model, by Bayes Rule.</li>
-<li>Third line: \(p(x)\) does not vary with \(y\). \(\textrm{argmax}\) implies we’re searching over \(y\), but denominator is constant and hence we can discard it.
+<li>Third line: <span class="math">\(p(x)\)</span> does not vary with <span class="math">\(y\)</span>. <span class="math">\(\textrm{argmax}\)</span> implies we’re searching over <span class="math">\(y\)</span>, but denominator is constant and hence we can discard it.
 <ul>
 <li>This is computationally very useful, can be expensive to calculate.</li>
 </ul></li>
 </ul>
-<h3 id="hidden-markov-models"><a href="#TOC">Hidden Markov Models</a></h3>
+<h3 id="hidden-markov-models"><a href="#hidden-markov-models">Hidden Markov Models</a></h3>
 <ul>
-<li>We have an input sentence \(x = x_1, x_2, \ldots, x_n\). (\(x_i\) is the \(i\)’th word in the sentence).</li>
-<li>We have a tag sequence \(y = y_1, y_2, \ldots, y_n\). (\(y_i\) is the \(i\)’th tag in the sentence).</li>
+<li>We have an input sentence <span class="math">\(x = x_1, x_2, \ldots, x_n\)</span>. (<span class="math">\(x_i\)</span> is the <span class="math">\(i\)</span>’th word in the sentence).</li>
+<li>We have a tag sequence <span class="math">\(y = y_1, y_2, \ldots, y_n\)</span>. (<span class="math">\(y_i\)</span> is the <span class="math">\(i\)</span>’th tag in the sentence).</li>
 <li>We’ll use an HMM to define:</li>
 </ul>
-<p>\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n)\]</p>
+<p><span class="math">\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n)\]</span></p>
 <ul>
-<li>for any sentence \(x_1 \ldots x_n\) and tag sequence \(y_1 \ldots y_n\) of the same length.
+<li>for any sentence <span class="math">\(x_1 \ldots x_n\)</span> and tag sequence <span class="math">\(y_1 \ldots y_n\)</span> of the same length.
 <ul>
-<li>Note this is <strong>generative</strong> (\(p(x,y)\)), not <strong>discriminative</strong> (\(p(y|x)\)).</li>
-<li>Think of the \(x_i\) as an input and the \(y_i\) as a label.</li>
+<li>Note this is <strong>generative</strong> (<span class="math">\(p(x,y)\)</span>), not <strong>discriminative</strong> (<span class="math">\(p(y|x)\)</span>).</li>
+<li>Think of the <span class="math">\(x_i\)</span> as an input and the <span class="math">\(y_i\)</span> as a label.</li>
 </ul></li>
-<li>Then the most likely tag sequence for \(x\) is:</li>
+<li>Then the most likely tag sequence for <span class="math">\(x\)</span> is:</li>
 </ul>
-<p>\[\textrm{arg}\underset{y_1 \ldots y_n}{\textrm{max}} p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n)\]</p>
+<p><span class="math">\[\textrm{arg}\underset{y_1 \ldots y_n}{\textrm{max}} p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n)\]</span></p>
 <ul>
-<li>The number of total possible sequences is \(O(2^n)\), so brute force search is not feasible.</li>
+<li>The number of total possible sequences is <span class="math">\(O(2^n)\)</span>, so brute force search is not feasible.</li>
 </ul>
-<h4 id="trigram-hidden-markov-models-triagram-hmms"><a href="#TOC">Trigram Hidden Markov Models (Triagram HMMs)</a></h4>
+<h4 id="trigram-hidden-markov-models-triagram-hmms"><a href="#trigram-hidden-markov-models-triagram-hmms">Trigram Hidden Markov Models (Triagram HMMs)</a></h4>
 <ul>
-<li>For any sentence \(x_1, x_2, \ldots, x_n\), where \(x_i \in V\) for \(i = 1, 2, \ldots, n\), and</li>
-<li>For any tag sequence \(y_1, y_2, \ldots, y_{n+1}\), where \(y_i \in S\) for \(i = 1, 2, \ldots, n\) and \(y_{n+1} = \textrm{STOP}\).</li>
+<li>For any sentence <span class="math">\(x_1, x_2, \ldots, x_n\)</span>, where <span class="math">\(x_i \in V\)</span> for <span class="math">\(i = 1, 2, \ldots, n\)</span>, and</li>
+<li>For any tag sequence <span class="math">\(y_1, y_2, \ldots, y_{n+1}\)</span>, where <span class="math">\(y_i \in S\)</span> for <span class="math">\(i = 1, 2, \ldots, n\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</li>
 <li>The joint probability of the sentence and tag sequence is:</li>
 </ul>
-<p>\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-2}) \prod_{i=1}^{n} e(x_i|y_i)\]</p>
+<p><span class="math">\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)\]</span></p>
 <ul>
-<li>An example of the joint probability could be \(p(\textrm{the, dog barks, DT, NN, VB, STOP})\).</li>
+<li>An example of the joint probability could be <span class="math">\(p(\textrm{the, dog barks, STOP, DT, NN, VB})\)</span>.</li>
 <li>The first product is a trigram model applied to tag sequences! Very similar to before.
 <ul>
-<li>One \(q\) term for each tag <em>including the STOP symbol</em>.</li>
+<li>One <span class="math">\(q\)</span> term for each tag <em>including the STOP symbol</em>.</li>
 </ul></li>
-<li>The second product could have e.g. \(e(\textrm{the | DT})\) is the probability of a tag emitting or generating a word.
+<li>The second product could have e.g. <span class="math">\(e(\textrm{the | DT})\)</span> is the probability of a tag emitting or generating a word.
 <ul>
-<li>One \(e\) term for each (tagged) word.</li>
+<li>One <span class="math">\(e\)</span> term for each (tagged) word.</li>
 </ul></li>
-<li>where we’ve assumed, as before in Markov Models, that \(x_0 = x_{-1} = {*}\) (the start symbol).</li>
-<li>\(V\) is the set of possible words in the language, e.g. \(\{\textrm{the, dog, book, ate, his}\}\)</li>
-<li>\(S\) is the set of possible tags, e.g. \(\{\textrm{DT, NN, VB, P, ADV, ...}\}\).
+<li>where we’ve assumed, as before in Markov Models, that <span class="math">\(x_0 = x_{-1} = {*}\)</span> (the start symbol).</li>
+<li><span class="math">\(V\)</span> is the set of possible words in the language, e.g. <span class="math">\(\{\textrm{the, dog, book, ate, his}\}\)</span></li>
+<li><span class="math">\(S\)</span> is the set of possible tags, e.g. <span class="math">\(\{\textrm{DT, NN, VB, P, ADV, ...}\}\)</span>.
 <ul>
-<li>\(\simeq\) hundreds of tags; the Wall Street Journal courpus has \(\simeq\) 50 tags.</li>
+<li><span class="math">\(\simeq\)</span> hundreds of tags; the Wall Street Journal courpus has <span class="math">\(\simeq\)</span> 50 tags.</li>
 </ul></li>
 <li>Parameters of the model:
 <ul>
-<li>\(q(s|u,v)\;\forall\;s \in S \cup \{\textrm{STOP}\},\;u,v \in S \cup \{\textrm{*}\}\)
+<li><span class="math">\(q(s|u,v)\;\forall\;s \in S \cup \{\textrm{STOP}\},\;u,v \in S \cup \{\textrm{*}\}\)</span>
 <ul>
 <li><strong>Trigram parameters</strong> (but referred to in a quiz as <strong>transition parameters</strong>).</li>
 </ul></li>
-<li>\(e(x|s)\;\forall\;s \in S, x \in V\)
+<li><span class="math">\(e(x|s)\;\forall\;s \in S, x \in V\)</span>
 <ul>
 <li><strong>Emission parameters</strong>.</li>
 </ul></li>
 </ul></li>
 </ul>
 <hr />
-<p>Quiz: Given tagset \(S = \{\textrm{D, N}\}\), a vocabulary \(V = \{\textrm{the, dog}\}\), and a HMM with transition parameters:</p>
+<p>Quiz: Given tagset <span class="math">\(S = \{\textrm{D, N}\}\)</span>, a vocabulary <span class="math">\(V = \{\textrm{the, dog}\}\)</span>, and a HMM with transition parameters:</p>
 <ul>
-<li>\(q(\textrm{D | *, *}) = 1\)</li>
-<li>\(q(\textrm{N | *, D}) = 1\)</li>
-<li>\(q(\textrm{STOP | D, N}) = 1\)</li>
-<li>\(q(s|u,v) = 0\) for all other \(q\) params.</li>
+<li><span class="math">\(q(\textrm{D | *, *}) = 1\)</span></li>
+<li><span class="math">\(q(\textrm{N | *, D}) = 1\)</span></li>
+<li><span class="math">\(q(\textrm{STOP | D, N}) = 1\)</span></li>
+<li><span class="math">\(q(s|u,v) = 0\)</span> for all other <span class="math">\(q\)</span> params.</li>
 </ul>
 <p>and emission parameters:</p>
 <ul>
-<li>\(e(\textrm{the | D}) = 0.9\)</li>
-<li>\(e(\textrm{dog | D}) = 0.1\)</li>
-<li>\(e(\textrm{dog | N}) = 1\)</li>
+<li><span class="math">\(e(\textrm{the | D}) = 0.9\)</span></li>
+<li><span class="math">\(e(\textrm{dog | D}) = 0.1\)</span></li>
+<li><span class="math">\(e(\textrm{dog | N}) = 1\)</span></li>
 </ul>
-<p>Under this model how many pairs of sequences \(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}\) satisfy \(p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) \gt 0\)?</p>
-<p>First: how many non-zero-probability tag sequences are there? Enumerate them by drawing a graph of nodes and edges, where a node is a word and an edge is labelled with the transition probability to another word. Then follow all paths from any start symbol to any stop symbol whose product of probabilities is \(\gt\) 0.</p>
+<p>Under this model how many pairs of sequences <span class="math">\(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}\)</span> satisfy <span class="math">\(p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) \gt 0\)</span>?</p>
+<p>First: how many non-zero-probability tag sequences are there? Enumerate them by drawing a graph of nodes and edges, where a node is a word and an edge is labelled with the transition probability to another word. Then follow all paths from any start symbol to any stop symbol whose product of probabilities is <span class="math">\(\gt\)</span> 0.</p>
 <pre><code>D, N, STOP</code></pre>
 <p>There’s only one! OK. Refer back to your taq sequence graph and copy it for each possible word that a given tag (i.e. node) that it may “generate”. If e.g. N could generate two words, not one, we would have <em>four</em> possible sentences.</p>
 <pre><code>the dog
 dog dog</code></pre>
 <p>There’s only two! OK. Hence the answer itself is two, because we have just generated a sentence for each possible (tag, word) pair.</p>
 <hr />
-<h4 id="an-example"><a href="#TOC">An example</a></h4>
+<h4 id="an-example"><a href="#an-example">An example</a></h4>
 <p>If we have:</p>
 <ul>
-<li>\(n = 3\),</li>
-<li>The sentence \(\{x_1, x_2, x_3\} = \{\textrm{the, dog, laughs}\}\), and</li>
-<li>The tag sequence \(\{y_1, y_2, y_3, y_4\} = \{\textrm{D, N, V, STOP}\}\).</li>
+<li><span class="math">\(n = 3\)</span>,</li>
+<li>The sentence <span class="math">\(\{x_1, x_2, x_3\} = \{\textrm{the, dog, laughs}\}\)</span>, and</li>
+<li>The tag sequence <span class="math">\(\{y_1, y_2, y_3, y_4\} = \{\textrm{D, N, V, STOP}\}\)</span>.</li>
 </ul>
 <p>Then:</p>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         &amp; p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) \\
@@ -1247,57 +1208,57 @@ dog dog</code></pre>
         &amp; e(\textrm{the | D}) \times e(\textrm{dog | N}) \times e(\textrm{laughs | V})
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
 <li>STOP is a special tag that terminates the sequence.</li>
-<li>We take \(y_0 = y_{-1} = \textrm{*}\), where \(\textrm{*}\) is a special “padding” symbol.</li>
+<li>We take <span class="math">\(y_0 = y_{-1} = \textrm{*}\)</span>, where <span class="math">\(\textrm{*}\)</span> is a special “padding” symbol.</li>
 </ul>
 <hr />
-<p>Quiz: given set \(S = \{\textrm{D, N, V}\}\), and vocabulary \(V = \{\textrm{the, cat, drinks, milk, dog}\}\), and an HMM model:</p>
+<p>Quiz: given set <span class="math">\(S = \{\textrm{D, N, V}\}\)</span>, and vocabulary <span class="math">\(V = \{\textrm{the, cat, drinks, milk, dog}\}\)</span>, and an HMM model:</p>
 <ul>
-<li>transition parameters \(q(s|u,v) = \frac{1}{4}\;\forall\;s, u, v\)</li>
-<li>generative parameters \(e(x|s) = \frac{1}{5}\;\forall\; \textrm{tags}\;s\;\textrm{and words}\;x\).</li>
+<li>transition parameters <span class="math">\(q(s|u,v) = \frac{1}{4}\;\forall\;s, u, v\)</span></li>
+<li>generative parameters <span class="math">\(e(x|s) = \frac{1}{5}\;\forall\; \textrm{tags}\;s\;\textrm{and words}\;x\)</span>.</li>
 </ul>
 <p>What is the value, under this model, of:</p>
-<p>\[p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP})\]</p>
-<p>\[
+<p><span class="math">\[p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP})\]</span></p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
-        &amp; p(\textrm{the, cat, drinks, milk, D, N, V, N, STOP}) \\
-      = &amp; \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-2}) \prod_{i=1}^{n} e(x_i|y_i) \\
+        &amp; p(\textrm{the, cat, drinks, milk, STOP, D, N, V, N}) \\
+      = &amp; \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i) \\
       = &amp; \{ p(\textrm{the | *, *}) \times p(\textrm{cat | *, the}) \times p(\textrm{drinks | the, cat}) \times p(\textrm{milk | cat, drinks}) \times p(\textrm{STOP | drinks, milk}) \} \times \\
         &amp; e(\textrm{the | D}) \times e(\textrm{cat | N}) \times e(\textrm{drinks | V}) \times e(\textrm{milk | N}) \\
       = &amp; \left(\frac{1}{4}\right)^5 \times \left(\frac{1}{5}\right)^4
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <hr />
-<h4 id="why-the-name"><a href="#TOC">Why the Name?</a></h4>
+<h4 id="why-the-name"><a href="#why-the-name">Why the Name?</a></h4>
 <ul>
 <li>The first product is a <strong>second-order Markov Chain</strong>
 <ul>
-<li>Recall \(p(x,y) = p(y) \times p(x|y)\)</li>
-<li>This product is solving for \(p(y)\).</li>
+<li>Recall <span class="math">\(p(x,y) = p(y) \times p(x|y)\)</span></li>
+<li>This product is solving for <span class="math">\(p(y)\)</span>.</li>
 </ul></li>
-<li>The second project is \(x_j\)’s <strong>being observed</strong>.
+<li>The second project is <span class="math">\(x_j\)</span>’s <strong>being observed</strong>.
 <ul>
 <li>Strong independence assumption that each word depends only on its underlying, generating tag.</li>
 </ul></li>
 <li>The generative process: we choose a sequence of tags, and then for each tag generate an associated word.
 <ul>
-<li>The \(y\)’s are <em>not observed</em>.</li>
-<li>The \(x\)’s are <em>observed</em>.</li>
+<li>The <span class="math">\(y\)</span>’s are <em>not observed</em>.</li>
+<li>The <span class="math">\(x\)</span>’s are <em>observed</em>.</li>
 </ul></li>
 <li>And so we will flip this: given an observation find the most likely underlying (<strong>hidden</strong>) tag sequence.</li>
 </ul>
 <hr />
 <p>Quiz: for a bigram HMM:</p>
-<p>\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n) = \prod_{i=1}^{n+1} q(y_i|y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)\]</p>
+<p><span class="math">\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_n) = \prod_{i=1}^{n+1} q(y_i|y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)\]</span></p>
 <hr />
-<h3 id="parameter-estimation-in-hmms"><a href="#TOC">Parameter Estimation in HMMs</a></h3>
-<h4 id="smoothed-estimation"><a href="#TOC">Smoothed Estimation</a></h4>
+<h3 id="parameter-estimation-in-hmms"><a href="#parameter-estimation-in-hmms">Parameter Estimation in HMMs</a></h3>
+<h4 id="smoothed-estimation"><a href="#smoothed-estimation">Smoothed Estimation</a></h4>
 <p>e.g.</p>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         q(\textrm{Vt | DT, JJ}) &amp; = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ}} \\
@@ -1305,17 +1266,17 @@ dog dog</code></pre>
                                 &amp; + \lambda_3 \times \frac{\textrm{Count(Vt)}}{\textrm{Count()}}
     \end{aligned}
 \end{align}
-\]</p>
-<p>\[\lambda_1 + \lambda_2 + \lambda_3 = 1\] \[\forall\;i, \lambda_i \ge 0\]</p>
-<p>\[e(\textrm{base | Vt}) = \frac{\textrm{Count(Vt, base)}}{\textrm{Count(Vt)}}\]</p>
+\]</span></p>
+<p><span class="math">\[\lambda_1 + \lambda_2 + \lambda_3 = 1\]</span> <span class="math">\[\forall\;i, \lambda_i \ge 0\]</span></p>
+<p><span class="math">\[e(\textrm{base | Vt}) = \frac{\textrm{Count(Vt, base)}}{\textrm{Count(Vt)}}\]</span></p>
 <ul>
 <li>For trigram / transition parameters:
 <ul>
 <li>We can of course induce counts of tag sequences directly from our corpus, and then determine <strong>maximum-likelihood estimates</strong>.
 <ul>
-<li>\(\lambda_1\) for <strong>trigram MLE</strong>.</li>
-<li>\(\lambda_2\) for <strong>bigram MLE</strong>.</li>
-<li>\(\lambda_3\) for <strong>unigram MLE</strong>.</li>
+<li><span class="math">\(\lambda_1\)</span> for <strong>trigram MLE</strong>.</li>
+<li><span class="math">\(\lambda_2\)</span> for <strong>bigram MLE</strong>.</li>
+<li><span class="math">\(\lambda_3\)</span> for <strong>unigram MLE</strong>.</li>
 </ul></li>
 <li>Linear interpolation is used, as seen before.</li>
 </ul></li>
@@ -1324,7 +1285,7 @@ dog dog</code></pre>
 <li>Can use <strong>bigram MLEs</strong>.</li>
 </ul></li>
 <li>One problem.</li>
-<li>\(e(x|y) = 0\;\forall\;y\) if \(x\) is never seen in the training data.
+<li><span class="math">\(e(x|y) = 0\;\forall\;y\)</span> if <span class="math">\(x\)</span> is never seen in the training data.
 <ul>
 <li>!!AI sounds familiar! Will we do Laplacian smoothing, we we “add fudge” to everything, or back-off smoothing, where high mass gets re-distributed to zero mass, or something else?</li>
 </ul></li>
@@ -1335,17 +1296,17 @@ dog dog</code></pre>
 <li>the dog barks -&gt; D N V STOP</li>
 <li>the cat sings -&gt; D N V STOP</li>
 </ul>
-<p>Assume we’ve calculated MLEs of a trigram HMM from this data. What is the value of the emission parameter \(e(\textrm{cat | N})\) from this HMM?</p>
-<p>\[
+<p>Assume we’ve calculated MLEs of a trigram HMM from this data. What is the value of the emission parameter <span class="math">\(e(\textrm{cat | N})\)</span> from this HMM?</p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         e(\textrm{cat | N}) = &amp; \frac{\textrm{Count(N, cat)}}{\textrm{Count(N)}} \\
                             = &amp; \frac{(1)}{(2)}
     \end{aligned}
 \end{align}
-\]</p>
-<p>Say we estimate the transition parameters for a trigram HMM using linear interpolation, such that \(\lambda_i = \frac{1}{3}\) for \(i = \{1, 2, 3\}\). What is the value of the transition parameter \(q(\textrm{STOP | N, V})\) under this model?</p>
-<p>\[
+\]</span></p>
+<p>Say we estimate the transition parameters for a trigram HMM using linear interpolation, such that <span class="math">\(\lambda_i = \frac{1}{3}\)</span> for <span class="math">\(i = \{1, 2, 3\}\)</span>. What is the value of the transition parameter <span class="math">\(q(\textrm{STOP | N, V})\)</span> under this model?</p>
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         q(\textrm{STOP | N, V}) = &amp; \lambda_1 \times \frac{\textrm{Count(N, V, STOP)}}{\textrm{Count(N, V)}} \\
@@ -1357,9 +1318,9 @@ dog dog</code></pre>
                                 = &amp; 0.75
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <hr />
-<h4 id="dealing-with-low-frequency-words-an-example"><a href="#TOC">Dealing with Low-Frequency Words: An Example</a></h4>
+<h4 id="dealing-with-low-frequency-words-an-example"><a href="#dealing-with-low-frequency-words-an-example">Dealing with Low-Frequency Words: An Example</a></h4>
 <ul>
 <li>Test sentence</li>
 </ul>
@@ -1368,15 +1329,15 @@ CEO Alan Mulally.</code></pre>
 <ul>
 <li><code>topping</code> and <code>Mulally</code> are likely to be infrequent.</li>
 <li>Long tail: you will frequently encounter words in test data that you have never encountered in training data.</li>
-<li>And hence: \(e(\textrm{Mulally | y}) = 0\) for all tags \(y\).</li>
-<li>And it can be verified that the joint probability \(p(x_1, \ldots, x_n, y_1, \ldots, y_{n+1}) = 0\) for all tag sequences \(y_1, \ldots, y_{n+1}\).</li>
+<li>And hence: <span class="math">\(e(\textrm{Mulally | y}) = 0\)</span> for all tags <span class="math">\(y\)</span>.</li>
+<li>And it can be verified that the joint probability <span class="math">\(p(x_1, \ldots, x_n, y_1, \ldots, y_{n+1}) = 0\)</span> for all tag sequences <span class="math">\(y_1, \ldots, y_{n+1}\)</span>.</li>
 <li>This is because all tag sequences will involve this emission parameter.</li>
-<li><p>And hence all tag sequences are equally likely; applying argmax to an expression that <em>always</em> evaluates to zero implies that \(y\) is equally maximum everywhere!</p></li>
+<li><p>And hence all tag sequences are equally likely; applying argmax to an expression that <em>always</em> evaluates to zero implies that <span class="math">\(y\)</span> is equally maximum everywhere!</p></li>
 <li>A common way of dealing with this:
 <ol style="list-style-type: decimal">
 <li><strong>Split the vocabulary into two sets</strong>.
 <ul>
-<li><em>Frequent words</em>: words occurring \(\ge\) 5 times in training (or some threshold).</li>
+<li><em>Frequent words</em>: words occurring <span class="math">\(\ge\)</span> 5 times in training (or some threshold).</li>
 <li><em>Low frequency words</em>: all other words.</li>
 </ul></li>
 <li><strong>Map</strong> low frequency words into a small, finite set, depending on affixes.</li>
@@ -1486,38 +1447,38 @@ quarter/NA results/NA ./NA</code></pre>
 <li>Resolving low-frequency words in a way that preserves their spelling is useful for the named-entity recognition problem.</li>
 <li>Build our HMM on this transformed data.
 <ul>
-<li>\(e(\textrm{firstword | NA})\)</li>
-<li>\(e(\textrm{initCap | SC})\)</li>
+<li><span class="math">\(e(\textrm{firstword | NA})\)</span></li>
+<li><span class="math">\(e(\textrm{initCap | SC})\)</span></li>
 </ul></li>
 <li>We’re <strong>closing</strong> the vocabulary.</li>
 <li>This is a simple method, but requires human heuristics.</li>
 </ul>
-<h3 id="the-viterbi-algorithm-for-hmms"><a href="#TOC">The Viterbi Algorithm for HMMs</a></h3>
+<h3 id="the-viterbi-algorithm-for-hmms"><a href="#the-viterbi-algorithm-for-hmms">The Viterbi Algorithm for HMMs</a></h3>
 <ul>
 <li>How to apply HMMs to new test sentences?</li>
 </ul>
-<h4 id="problem"><a href="#TOC">Problem</a></h4>
+<h4 id="problem"><a href="#problem">Problem</a></h4>
 <ul>
-<li>For a <em>new</em> test input sentence \(x_1, \ldots, x_n\), map it onto the most likely set of tags, i.e. find:</li>
+<li>For a <em>new</em> test input sentence <span class="math">\(x_1, \ldots, x_n\)</span>, map it onto the most likely set of tags, i.e. find:</li>
 </ul>
-<p>\[\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\]</p>
+<p><span class="math">\[\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\]</span></p>
 <ul>
-<li><p>where the arg max is taken over all seuqneces \(y_1 \ldots y_{n+1)}\) such that \(y_i \in S\) for \(i = 1, \ldots, n\) and \(y_{n+1} = \textrm{STOP}\).</p></li>
-<li><p>We assume that \(p\) again takes the form:</p></li>
+<li><p>where the arg max is taken over all seuqneces <span class="math">\(y_1 \ldots y_{n+1)}\)</span> such that <span class="math">\(y_i \in S\)</span> for <span class="math">\(i = 1, \ldots, n\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</p></li>
+<li><p>We assume that <span class="math">\(p\)</span> again takes the form:</p></li>
 </ul>
-<p>\[p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)\]</p>
+<p><span class="math">\[p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)\]</span></p>
 <ul>
-<li>Recall the assumptions that \(y_0 = y_{-1} = \textrm{*}\) and \(y_{n+1} = \textrm{STOP}\).</li>
+<li>Recall the assumptions that <span class="math">\(y_0 = y_{-1} = \textrm{*}\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</li>
 </ul>
-<h4 id="brute-force-search-is-hopelessly-inefficient"><a href="#TOC">Brute Force Search is Hopelessly Inefficient</a></h4>
+<h4 id="brute-force-search-is-hopelessly-inefficient"><a href="#brute-force-search-is-hopelessly-inefficient">Brute Force Search is Hopelessly Inefficient</a></h4>
 <ul>
 <li>For example
 <ul>
-<li>\(x_1 \ldots x_n = \{\textrm{the, dog, laughs}\}\).</li>
-<li>\(y_1 \ldots y_n = \{\textrm{D, N, V}\}\) (the correct answer).</li>
-<li>\(S = \{\textrm{D, N, V}\}\) (assume that the set of all possible tags is just this).</li>
+<li><span class="math">\(x_1 \ldots x_n = \{\textrm{the, dog, laughs}\}\)</span>.</li>
+<li><span class="math">\(y_1 \ldots y_n = \{\textrm{D, N, V}\}\)</span> (the correct answer).</li>
+<li><span class="math">\(S = \{\textrm{D, N, V}\}\)</span> (assume that the set of all possible tags is just this).</li>
 </ul></li>
-<li>So \(|S| = 3\), and all possible tag sequences are all combinations (<em>not</em> permutations):
+<li>So <span class="math">\(|S| = 3\)</span>, and all possible tag sequences are all combinations (<em>not</em> permutations):
 <ul>
 <li>D D D STOP</li>
 <li>D D N STOP</li>
@@ -1525,50 +1486,50 @@ quarter/NA results/NA ./NA</code></pre>
 <li>D U D STOP</li>
 <li>…</li>
 </ul></li>
-<li>Only \(3^3 = 27\) possible tag sequences.</li>
+<li>Only <span class="math">\(3^3 = 27\)</span> possible tag sequences.</li>
 <li>Use the transmission and emissions parameters of the HMM model to assign probabilities to each particular tag sequnce, then choose the most likely tag sequence.</li>
-<li><p>However, in the general case \(|S|^n\), where \(n\) is sentence length, is the number of possible sequences.</p></li>
+<li><p>However, in the general case <span class="math">\(|S|^n\)</span>, where <span class="math">\(n\)</span> is sentence length, is the number of possible sequences.</p></li>
 <li>The transmission parameters only depend on sequences of length three for trigram HMMs.
 <ul>
 <li>This structure allows a more efficient solution.</li>
 </ul></li>
 </ul>
-<h4 id="the-viterbi-algorithm"><a href="#TOC">The Viterbi Algorithm</a></h4>
+<h3 id="the-viterbi-algorithm"><a href="#the-viterbi-algorithm">The Viterbi Algorithm</a></h3>
 <ul>
-<li>Define \(n\) to be length of sentence.</li>
-<li>Define \(S_k\) for \(k = -1, 0, \ldots, n\), to be set of possible tags at position \(k\):</li>
+<li>Define <span class="math">\(n\)</span> to be length of sentence.</li>
+<li>Define <span class="math">\(S_k\)</span> for <span class="math">\(k = -1, 0, \ldots, n\)</span>, to be set of possible tags at position <span class="math">\(k\)</span>:</li>
 </ul>
-<p>\[S_{-1} = S_0 = \{\textrm{*}\}\] \[S_k = S\;\textrm{for}\;k \in \{1, 2, \ldots n\}\]</p>
+<p><span class="math">\[S_{-1} = S_0 = \{\textrm{*}\}\]</span> <span class="math">\[S_k = S\;\textrm{for}\;k \in \{1, 2, \ldots n\}\]</span></p>
 <ul>
 <li>Define:</li>
 </ul>
-<p>\[r(y_{-1}, y_0, y_1, \ldots, y_k) = \prod_{i=1}^{k} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i)\]</p>
+<p><span class="math">\[r(y_{-1}, y_0, y_1, \ldots, y_k) = \prod_{i=1}^{k} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i)\]</span></p>
 <ul>
-<li>Note that, always, \(y_{-1} = y_0 = \{\textrm{*}\}\).</li>
-<li>This is a truncated \(q\), as it only goes \(i=1\) to \(k\).</li>
+<li>Note that, always, <span class="math">\(y_{-1} = y_0 = \{\textrm{*}\}\)</span>.</li>
+<li>This is a truncated <span class="math">\(q\)</span>, as it only goes <span class="math">\(i=1\)</span> to <span class="math">\(k\)</span>.</li>
 <li>Define a dynamic programming table</li>
 </ul>
-<p>\[\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k\].</p>
+<p><span class="math">\[\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k\]</span>.</p>
 <p>i.e.</p>
-<p>\[\pi(k,u,v) = max_{(y_{-1},y_0,y_{1},\ldots,y_k):y_{k-1}=u,\;y_k=v} r(y_{-1},y_0,y_1,\ldots,y_k)\]</p>
+<p><span class="math">\[\pi(k,u,v) = max_{(y_{-1},y_0,y_{1},\ldots,y_k):y_{k-1}=u,\;y_k=v} r(y_{-1},y_0,y_1,\ldots,y_k)\]</span></p>
 <ul>
-<li>\(k\) takes any value \(\{\textrm{1,2,...,n}\}\).</li>
-<li>\(u \in S_{k-1}\).</li>
-<li><p>\(v \in S_k\).</p></li>
-<li>What do the \(S\) and \(k\) expressions at the begining imply:
+<li><span class="math">\(k\)</span> takes any value <span class="math">\(\{\textrm{1,2,...,n}\}\)</span>.</li>
+<li><span class="math">\(u \in S_{k-1}\)</span>.</li>
+<li><p><span class="math">\(v \in S_k\)</span>.</p></li>
+<li>What do the <span class="math">\(S\)</span> and <span class="math">\(k\)</span> expressions at the begining imply:
 <ul>
-<li>For example, (the, dog, laughs, D, N, V) implies \(k = 3\).</li>
-<li>Each tag in \(S\) could be responsible for generating a word in \(x\).
+<li>For example, (the, dog, laughs, D, N, V) implies <span class="math">\(k = 3\)</span>.</li>
+<li>Each tag in <span class="math">\(S\)</span> could be responsible for generating a word in <span class="math">\(x\)</span>.
 <ul>
-<li>If \(S = \{\textrm{D, N, V, P}\}\), then \(x_1\) could be one of D, N, V, P, as is \(x_2\), etc.</li>
+<li>If <span class="math">\(S = \{\textrm{D, N, V, P}\}\)</span>, then <span class="math">\(x_1\)</span> could be one of D, N, V, P, as is <span class="math">\(x_2\)</span>, etc.</li>
 </ul></li>
 </ul></li>
 </ul>
-<h4 id="an-example-1"><a href="#TOC">An Example</a></h4>
-<p>\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;\]</p>
+<h4 id="an-example-1"><a href="#an-example-1">An Example</a></h4>
+<p><span class="math">\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;\]</span></p>
 <ul>
-<li>Assume \(S = \{\textrm{D, N, V, P}\}\)</li>
-<li>What does \(\pi(7, \textrm{P}, \textrm{D})\) mean, intuitively?
+<li>Assume <span class="math">\(S = \{\textrm{D, N, V, P}\}\)</span></li>
+<li>What does <span class="math">\(\pi(7, \textrm{P}, \textrm{D})\)</span> mean, intuitively?
 <ul>
 <li>The probability of the most likely tag sequence ending at the word in position 7 such that the last two tags are (P, D).</li>
 <li>Fix ‘with’ (6) to P.</li>
@@ -1586,43 +1547,43 @@ quarter/NA results/NA ./NA</code></pre>
 <hr />
 <p>Quiz: We have a trigram HMM model with the following transition parameters:</p>
 <ul>
-<li>\(q(\textrm{D | *, *}) = 1\)</li>
-<li>\(q(\textrm{N | *, D}) = 1\)</li>
-<li>\(q(\textrm{V | D, N}) = 1\)</li>
-<li>\(q(\textrm{STOP | N, V}) = 1\)</li>
+<li><span class="math">\(q(\textrm{D | *, *}) = 1\)</span></li>
+<li><span class="math">\(q(\textrm{N | *, D}) = 1\)</span></li>
+<li><span class="math">\(q(\textrm{V | D, N}) = 1\)</span></li>
+<li><span class="math">\(q(\textrm{STOP | N, V}) = 1\)</span></li>
 </ul>
 <p>and emission parameters:</p>
 <ul>
-<li>\(e(\textrm{the | D}) = 0.8\)</li>
-<li>\(e(\textrm{dog | D}) = 0.2\)</li>
-<li>\(e(\textrm{dog | N}) = 0.8\)</li>
-<li>\(e(\textrm{the | N}) = 0.2\)</li>
-<li>\(e(\textrm{barks | V}) = 1.0\)</li>
+<li><span class="math">\(e(\textrm{the | D}) = 0.8\)</span></li>
+<li><span class="math">\(e(\textrm{dog | D}) = 0.2\)</span></li>
+<li><span class="math">\(e(\textrm{dog | N}) = 0.8\)</span></li>
+<li><span class="math">\(e(\textrm{the | N}) = 0.2\)</span></li>
+<li><span class="math">\(e(\textrm{barks | V}) = 1.0\)</span></li>
 </ul>
 <p>Say we have the sentence:</p>
 <pre><code>the dog barks</code></pre>
-<p>What is the value of \(\pi(3, \textrm{N}, \textrm{V})\)?</p>
+<p>What is the value of <span class="math">\(\pi(3, \textrm{N}, \textrm{V})\)</span>?</p>
 <ul>
 <li>Intuitively, this reads as ‘what is the probability of the most likely tag sequence that ends at position 3 such that the last two tags are N and V?’</li>
 <li>First, expand and label your test sentence, omitting the STOP symbol:</li>
 </ul>
-<p>\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{the}}\;\underset{2}{\textrm{dog}}\;\underset{3}{\textrm{barks}}\]</p>
+<p><span class="math">\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{the}}\;\underset{2}{\textrm{dog}}\;\underset{3}{\textrm{barks}}\]</span></p>
 <ul>
 <li>Draw a Markov Chain graph of your transmission parameters, covering every single possible path.
 <ul>
 <li>Think of every tag as a node (including the start symbols), and an edge as moving from one tag to another with a certain probability.</li>
-<li>In our case this is very easy; there is only one path, i.e. \(\textrm{* -&gt; * -&gt; D -&gt; N -&gt; V -&gt; STOP}\), with probabilities of \(1\) for each edge.</li>
+<li>In our case this is very easy; there is only one path, i.e. <span class="math">\(\textrm{* -&gt; * -&gt; D -&gt; N -&gt; V -&gt; STOP}\)</span>, with probabilities of <span class="math">\(1\)</span> for each edge.</li>
 </ul></li>
-<li>Eliminate all paths from the Markov Chain graph that do not meet the constraints of \(\pi(3,\textrm{N},\textrm{V})\). Also eliminate any paths that contain an edge with zero probability.</li>
+<li>Eliminate all paths from the Markov Chain graph that do not meet the constraints of <span class="math">\(\pi(3,\textrm{N},\textrm{V})\)</span>. Also eliminate any paths that contain an edge with zero probability.</li>
 <li>For us, we only have one path, and this path meets the contraints of this function.</li>
-<li><p>Prove this to yourself by putting one finger on the start of the test sentence, and one finger on the start of the Markon Chain graph, and counting until \(k=3\).</p></li>
-<li>Your Markov Chain graph now covers every possible combination of tags that <em>could</em> match this test sentence. For each path calculate the product of probabilities from a start symbol to \(k=3\). Determine which path gives you the highest probability.</li>
+<li><p>Prove this to yourself by putting one finger on the start of the test sentence, and one finger on the start of the Markon Chain graph, and counting until <span class="math">\(k=3\)</span>.</p></li>
+<li>Your Markov Chain graph now covers every possible combination of tags that <em>could</em> match this test sentence. For each path calculate the product of probabilities from a start symbol to <span class="math">\(k=3\)</span>. Determine which path gives you the highest probability.</li>
 <li>In our case there is only one path, so the <strong>most likely tag sequence</strong> is (D, N, V).</li>
-<li>This gives us the \(q\) part of the \(r\) expression.</li>
-<li>For this tag sequence use the emission parameters to “generate” the appropriate word in order to calculate the \(e\) parameters.</li>
+<li>This gives us the <span class="math">\(q\)</span> part of the <span class="math">\(r\)</span> expression.</li>
+<li>For this tag sequence use the emission parameters to “generate” the appropriate word in order to calculate the <span class="math">\(e\)</span> parameters.</li>
 <li><p>Mathematically:</p></li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         r(y_{-1},y_0,y_1,\ldots,y_n) &amp; = \prod_{i=1}^{k} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{k} e(x_i|y_i) \\
@@ -1632,62 +1593,62 @@ quarter/NA results/NA ./NA</code></pre>
         &amp; = 0.64
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <hr />
-<h4 id="a-recursive-definition"><a href="#TOC">A Recursive Definition</a></h4>
+<h4 id="a-recursive-definition"><a href="#a-recursive-definition">A Recursive Definition</a></h4>
 <ul>
-<li>Base case: \(\pi(0, \textrm{*}, \textrm{*}) = 1\)
+<li>Base case: <span class="math">\(\pi(0, \textrm{*}, \textrm{*}) = 1\)</span>
 <ul>
-<li>Every tag sequence starts with \(\textrm{* *}\).</li>
+<li>Every tag sequence starts with <span class="math">\(\textrm{* *}\)</span>.</li>
 </ul></li>
-<li><strong>Recursive definition</strong>: \(\forall\; k \in \{1 \ldots n\},\;\forall\; u \in S_{k-1}\;\textrm{and}\;v \in S_k:\)</li>
+<li><strong>Recursive definition</strong>: <span class="math">\(\forall\; k \in \{1 \ldots n\},\;\forall\; u \in S_{k-1}\;\textrm{and}\;v \in S_k:\)</span></li>
 </ul>
-<p>\[\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v))\]</p>
+<p><span class="math">\[\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v))\]</span></p>
 <ul>
-<li>\(u\) can take any tag in \(S_{k-1}\), \(v\) can take any tag in \(S_k\).</li>
+<li><span class="math">\(u\)</span> can take any tag in <span class="math">\(S_{k-1}\)</span>, <span class="math">\(v\)</span> can take any tag in <span class="math">\(S_k\)</span>.</li>
 <li>Notice how we’re working backwards in the sentence back to the base case, the start.</li>
 </ul>
-<h4 id="justification-for-the-recursive-definition"><a href="#TOC">Justification for the Recursive Definition</a></h4>
+<h4 id="justification-for-the-recursive-definition"><a href="#justification-for-the-recursive-definition">Justification for the Recursive Definition</a></h4>
 <p>(part 2)</p>
-<p>\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;\]</p>
-<p>What is \(\pi(7, P, D)\)?</p>
+<p><span class="math">\[\underset{-1}{\textrm{*}}\;\underset{0}{\textrm{*}}\;\underset{1}{\textrm{The}}\;\underset{2}{\textrm{man}}\;\underset{3}{\textrm{saw}}\;\underset{4}{\textrm{the}}\;\underset{5}{\textrm{dog}}\;\underset{6}{\textrm{with}}\;\underset{7}{\textrm{the}}\;\underset{8}{\textrm{telescope}}\;\]</span></p>
+<p>What is <span class="math">\(\pi(7, P, D)\)</span>?</p>
 <ul>
 <li>Recall this puts ‘with’ (6) = P, ‘the’ (7) = D.</li>
-<li>\(u = \textrm{P}, v = \textrm{D}\)</li>
-<li>Note that \(S_5 = S_4 = \ldots = S = \{\textrm{D, N, V, P}\}\).</li>
+<li><span class="math">\(u = \textrm{P}, v = \textrm{D}\)</span></li>
+<li>Note that <span class="math">\(S_5 = S_4 = \ldots = S = \{\textrm{D, N, V, P}\}\)</span>.</li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         \pi(7, \textrm{P}, \textrm{D}) = &amp; \underset{w \in \{\textrm{D,N,V,P}\}}{\textrm{max}} \left\{ \pi(6, w, \textrm{P}) \times q(\textrm{D} | w, \textrm{P}) \times e(\textrm{the} | \textrm{D}) \right\}
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <ul>
 <li>Any tag sequence ending in (P, D) must have included one previous tag in (D, N, V, P). The ‘max’ explicitly searches over these.</li>
 </ul>
 <hr />
-<p>Quiz: assume \(S = \{\textrm{D, N, V, P}\}\) and a trigram HMM with parameters:</p>
+<p>Quiz: assume <span class="math">\(S = \{\textrm{D, N, V, P}\}\)</span> and a trigram HMM with parameters:</p>
 <ul>
-<li>\(q(\textrm{D | N, P}) = 0.4\)</li>
-<li>\(q(\textrm{D | w, P}) = 0\) for \(w \neq N\).</li>
-<li>\(e(\textrm{the | D}) = 0.6\)</li>
+<li><span class="math">\(q(\textrm{D | N, P}) = 0.4\)</span></li>
+<li><span class="math">\(q(\textrm{D | w, P}) = 0\)</span> for <span class="math">\(w \neq N\)</span>.</li>
+<li><span class="math">\(e(\textrm{the | D}) = 0.6\)</span></li>
 </ul>
 <p>We are also given the sentence:</p>
 <pre><code>Ella walks to the red house</code></pre>
 <p>Say the dynamic programming table for this sentence has the following entries:</p>
 <ul>
-<li>\(\pi(\textrm{3, D, P}) = 0.1\)</li>
-<li>\(\pi(\textrm{3, N, P}) = 0.2\)</li>
-<li>\(\pi(\textrm{3, V, P}) = 0.01\)</li>
-<li>\(\pi(\textrm{3, P, P}) = 0.5\)</li>
+<li><span class="math">\(\pi(\textrm{3, D, P}) = 0.1\)</span></li>
+<li><span class="math">\(\pi(\textrm{3, N, P}) = 0.2\)</span></li>
+<li><span class="math">\(\pi(\textrm{3, V, P}) = 0.01\)</span></li>
+<li><span class="math">\(\pi(\textrm{3, P, P}) = 0.5\)</span></li>
 </ul>
-<p>What is the value of \(\pi(\textrm{4, P, D})\)?</p>
+<p>What is the value of <span class="math">\(\pi(\textrm{4, P, D})\)</span>?</p>
 <ul>
-<li>\(u = \textrm{P}\)</li>
-<li>\(v = \textrm{D}\)</li>
+<li><span class="math">\(u = \textrm{P}\)</span></li>
+<li><span class="math">\(v = \textrm{D}\)</span></li>
 </ul>
-<p>\[
+<p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
         \pi(k,u,v) = &amp; \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1),w,u) \times q(v|w,u) \times e(x_k|v)) \\
@@ -1696,102 +1657,102 @@ quarter/NA results/NA ./NA</code></pre>
         = &amp; 0.048
     \end{aligned}
 \end{align}
-\]</p>
+\]</span></p>
 <hr />
-<h3 id="the-viterbi-algorithm-1"><a href="#TOC">The Viterbi Algorithm</a></h3>
+<h3 id="the-viterbi-algorithm-1"><a href="#the-viterbi-algorithm-1">The Viterbi Algorithm</a></h3>
 <ul>
 <li><strong>Inputs</strong>:
 <ul>
-<li>a sentence \(x_1 \ldots x_n\), a sequence of words</li>
-<li>transmisson parameters \(q(s|u,v)\),</li>
-<li>emission parameters \(e(x|s)\).</li>
+<li>a sentence <span class="math">\(x_1 \ldots x_n\)</span>, a sequence of words</li>
+<li>transmisson parameters <span class="math">\(q(s|u,v)\)</span>,</li>
+<li>emission parameters <span class="math">\(e(x|s)\)</span>.</li>
 </ul></li>
 <li><strong>Output</strong>:
 <ul>
-<li>\(\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</li>
+<li><span class="math">\(\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</span></li>
 <li>Notice this is <em>not argmax</em>; just returns max probability. A simple change later will fix this.</li>
 </ul></li>
 <li><strong>Initializtion</strong>:
 <ul>
-<li>Set \(\pi(0,\textrm{*},\textrm{*}) = 1\).
+<li>Set <span class="math">\(\pi(0,\textrm{*},\textrm{*}) = 1\)</span>.
 <ul>
 <li>Base case of the recursion.</li>
 </ul></li>
 </ul></li>
 <li><strong>Definition</strong>:
 <ul>
-<li>\(S_{-1} = S_0 = \{\textrm{*}\}\)
+<li><span class="math">\(S_{-1} = S_0 = \{\textrm{*}\}\)</span>
 <ul>
 <li>Can only have the star symbols at positions -1 and 0.</li>
 </ul></li>
-<li>\(S_k = S\;\forall\;k \in \{1 \ldots n\}\)
+<li><span class="math">\(S_k = S\;\forall\;k \in \{1 \ldots n\}\)</span>
 <ul>
 <li>Recall e.g. {D, N, V, P}</li>
 </ul></li>
 </ul></li>
 <li><strong>Algorithm</strong>
 <ul>
-<li>For \(k = 1 \ldots n\):
+<li>For <span class="math">\(k = 1 \ldots n\)</span>:
 <ul>
-<li>For \(u \in S_{k-1}\), \(v \in S_k\):
+<li>For <span class="math">\(u \in S_{k-1}\)</span>, <span class="math">\(v \in S_k\)</span>:
 <ul>
-<li>\(\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</li>
+<li><span class="math">\(\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</span></li>
 </ul></li>
 </ul></li>
-<li><strong>Return</strong>: \(\textrm{max}_{u \in S_{n-1},v \in S_n} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))\)</li>
+<li><strong>Return</strong>: <span class="math">\(\textrm{max}_{u \in S_{n-1},v \in S_n} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))\)</span></li>
 </ul></li>
 </ul>
-<h4 id="the-viterbi-algorithm-with-backpointers"><a href="#TOC">The Viterbi Algorithm with Backpointers</a></h4>
+<h4 id="the-viterbi-algorithm-with-backpointers"><a href="#the-viterbi-algorithm-with-backpointers">The Viterbi Algorithm with Backpointers</a></h4>
 <p>We want ‘argmax’, not ‘max’, i.e. the actual most-likely tag seuqence.</p>
 <ul>
 <li><strong>Inputs</strong>:
 <ul>
-<li>a sentence \(x_1 \ldots x_n\), a sequence of words</li>
-<li>transmisson parameters \(q(s|u,v)\),</li>
-<li>emission parameters \(e(x|s)\).</li>
+<li>a sentence <span class="math">\(x_1 \ldots x_n\)</span>, a sequence of words</li>
+<li>transmisson parameters <span class="math">\(q(s|u,v)\)</span>,</li>
+<li>emission parameters <span class="math">\(e(x|s)\)</span>.</li>
 </ul></li>
 <li><strong>Output</strong>:
 <ul>
-<li>\(\textrm{arg}\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</li>
+<li><span class="math">\(\textrm{arg}\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</span></li>
 </ul></li>
 <li><strong>Initializtion</strong>:
 <ul>
-<li>Set \(\pi(0,\textrm{*},\textrm{*}) = 1\).</li>
+<li>Set <span class="math">\(\pi(0,\textrm{*},\textrm{*}) = 1\)</span>.</li>
 </ul></li>
 <li><strong>Definition</strong>:
 <ul>
-<li>\(S_{-1} = S_0 = \{\textrm{*}\}\)</li>
-<li>\(S_k = S\;\forall\;k \in \{1 \ldots n\}\)<br /></li>
+<li><span class="math">\(S_{-1} = S_0 = \{\textrm{*}\}\)</span></li>
+<li><span class="math">\(S_k = S\;\forall\;k \in \{1 \ldots n\}\)</span><br /></li>
 </ul></li>
 <li><strong>Algorithm</strong>
 <ul>
-<li>For \(k = 1 \ldots n\):
+<li>For <span class="math">\(k = 1 \ldots n\)</span>:
 <ul>
-<li>For \(u \in S_{k-1}\), \(v \in S_k\):
+<li>For <span class="math">\(u \in S_{k-1}\)</span>, <span class="math">\(v \in S_k\)</span>:
 <ul>
-<li>\(\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</li>
-<li>\(bp(k,u,v) = arg \underset{w \in S_{k-2}}{max} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</li>
+<li><span class="math">\(\pi(k,u,v) = \underset{w \in S_{k-2}}{\textrm{max}} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</span></li>
+<li><span class="math">\(bp(k,u,v) = arg \underset{w \in S_{k-2}}{max} (\pi(k-1,w,u) \times q(v|w,u) \times e(x_k|v))\)</span></li>
 </ul></li>
 </ul></li>
-<li>Set \((y_{n-1},y_n) = \textrm{argmax}_{(u,v)} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))\)</li>
-<li>For \(k = (n-2) \ldots 1\), \(y_k = bp(k+1, y_{k+1}, y_{k+2})\)</li>
-<li><strong>Return</strong> the tag sequence \(y_1 \ldots y_n\).</li>
+<li>Set <span class="math">\((y_{n-1},y_n) = \textrm{argmax}_{(u,v)} (\pi(n,u,v) \times q(\textrm{STOP}|u,v))\)</span></li>
+<li>For <span class="math">\(k = (n-2) \ldots 1\)</span>, <span class="math">\(y_k = bp(k+1, y_{k+1}, y_{k+2})\)</span></li>
+<li><strong>Return</strong> the tag sequence <span class="math">\(y_1 \ldots y_n\)</span>.</li>
 </ul></li>
 <li>What is different?
 <ul>
-<li>Don’t just record \(\pi\) at each point but also a backpointer \(bp\); which tag achieved this max. Which tag is most likely at \(k\) given \(u,v\).</li>
-<li>We then have \(\pi\) and \(bp\) values.</li>
+<li>Don’t just record <span class="math">\(\pi\)</span> at each point but also a backpointer <span class="math">\(bp\)</span>; which tag achieved this max. Which tag is most likely at <span class="math">\(k\)</span> given <span class="math">\(u,v\)</span>.</li>
+<li>We then have <span class="math">\(\pi\)</span> and <span class="math">\(bp\)</span> values.</li>
 <li>At the end we go backwards in the sequence.</li>
 </ul></li>
-<li>Run-time complexity is \(O(n \times |S|^3)\).
+<li>Run-time complexity is <span class="math">\(O(n \times |S|^3)\)</span>.
 <ul>
-<li>We enter the \(u,v\) loop \(n \times |S|^2\) times.</li>
-<li>Each time we enter we need to search over \(|S|\) possible tags.</li>
+<li>We enter the <span class="math">\(u,v\)</span> loop <span class="math">\(n \times |S|^2\)</span> times.</li>
+<li>Each time we enter we need to search over <span class="math">\(|S|\)</span> possible tags.</li>
 <li>It is <strong>linear</strong> with respect to sentence length.</li>
-<li>Much better than brute force, which was \(O(|S|^n)\).</li>
+<li>Much better than brute force, which was <span class="math">\(O(|S|^n)\)</span>.</li>
 </ul></li>
 </ul>
-<h4 id="summary-1"><a href="#TOC">Summary</a></h4>
+<h3 id="summary-1"><a href="#summary-1">Summary</a></h3>
 <ul>
 <li>HMM taggers are <strong>very simple to train</strong>.
 <ul>
@@ -1805,9 +1766,9 @@ quarter/NA results/NA ./NA</code></pre>
 <li>Later in the course we develop more complex methods.</li>
 </ul></li>
 </ul>
-<h3 id="readings"><a href="#TOC">Readings</a></h3>
-<h4 id="speech-and-language-processing-chapter-3-words-and-transducers"><a href="#TOC">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></h4>
-<h5 id="word-and-sentence-tokenization"><a href="#TOC">3.9: Word and Sentence Tokenization</a></h5>
+<h2 id="readings"><a href="#readings">Readings</a></h2>
+<h3 id="speech-and-language-processing-chapter-3-words-and-transducers"><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></h3>
+<h4 id="word-and-sentence-tokenization"><a href="#word-and-sentence-tokenization">3.9: Word and Sentence Tokenization</a></h4>
 <ul>
 <li>p75: <strong>Tokenization</strong>: segmenting running text into words and sentences.</li>
 <li><p>Consider:</p>
@@ -1858,11 +1819,11 @@ closed at $62.625, up 62.5 cents.</code></pre></li>
 <li>This is the case. Karttunen et. al 1996 and Beesley and Karttunen 2003 give descriptions.</li>
 </ul></li>
 </ul>
-<h4 id="speech-and-language-processing-chapter-4-n-gram-models"><a href="#TOC">Speech and Language Processing, Chapter 4 (n-gram models)</a></h4>
+<h3 id="speech-and-language-processing-chapter-4-n-gram-models"><a href="#speech-and-language-processing-chapter-4-n-gram-models">Speech and Language Processing, Chapter 4 (n-gram models)</a></h3>
 <ul>
 <li>p96: a <strong>word</strong> is the full inflected or derived form of a word.
 <ul>
-<li>In English n-gram models are based on wordforms, not the *<em>lemmas</em>, i.e. root.</li>
+<li>In English n-gram models are based on wordforms, not the <strong>lemmas</strong>, i.e. root.</li>
 <li>e.g. cat is the lemma, cats is the inflected wordform.</li>
 </ul></li>
 <li>p96: n-gram models, and counting words in general, requires tokenization or text normalization; separating out punctuation, dealing with abbreviations, normalizing spelling, etc.
@@ -1879,10 +1840,10 @@ closed at $62.625, up 62.5 cents.</code></pre></li>
 <li>p104: be sure to choose similar training and test copurses. Don’t choose from different genres.</li>
 <li>p105: <strong>closed vocabulary</strong> assumes we know all the words in the vocabulary.
 <ul>
-<li>This can’t possible be exactly true.</li>
+<li>This can’t possibly be exactly true.</li>
 <li>There will be <strong>out of vocabulary (OOV)</strong> words.</li>
 <li>The percentive of OOV words in the test set is called the <strong>OOV rate</strong>.</li>
-<li>An <strong>open voabulary</strong> is one where we model OOV words by adding a pseudo-word called <code>&lt;UNK&gt;</code>. We train these probabilities as follows:
+<li>An <strong>open vocabulary</strong> is one where we model OOV words by adding a pseudo-word called <code>&lt;UNK&gt;</code>. We train these probabilities as follows:
 <ol style="list-style-type: decimal">
 <li><em>Choose a fixed vocabulary</em> in advance.</li>
 <li><em>Convert</em> in the training set any OOV word to the unknown word token <code>&lt;UNK&gt;</code> in a text normalization step.</li>
@@ -1909,18 +1870,18 @@ closed at $62.625, up 62.5 cents.</code></pre></li>
 <li>The <strong>frequency of frequency c</strong> is the number of n-grams that occur c times.</li>
 <li>More formally:</li>
 </ul>
-<p>\[N_c = \sum_{x\;:\;\textrm{Count(x)} = c} 1\]</p>
+<p><span class="math">\[N_c = \sum_{x\;:\;\textrm{Count(x)} = c} 1\]</span></p>
 <ul>
-<li>The MLE count for \(N_c\) is \(c\). The Good-Turing estimate replaces this with a smoothed count \(c^*\), as a function of \(N_{c+1}\):</li>
+<li>The MLE count for <span class="math">\(N_c\)</span> is <span class="math">\(c\)</span>. The Good-Turing estimate replaces this with a smoothed count <span class="math">\(c^*\)</span>, as a function of <span class="math">\(N_{c+1}\)</span>:</li>
 </ul>
-<p>\[c^* = (c+1)\frac{N_{c+1}}{N_c}\]</p>
+<p><span class="math">\[c^* = (c+1)\frac{N_{c+1}}{N_c}\]</span></p>
 <ul>
-<li>We can use the equation above to replace the MLE counts for all the bins \(N_1, N_2, \ldots\).</li>
-<li>However, instead of using this equation directly to re-estimate the smoothed count \(c^*\) for \(N_0\), use the following which we can call the <strong>missing mass</strong>:</li>
+<li>We can use the equation above to replace the MLE counts for all the bins <span class="math">\(N_1, N_2, \ldots\)</span>.</li>
+<li>However, instead of using this equation directly to re-estimate the smoothed count <span class="math">\(c^*\)</span> for <span class="math">\(N_0\)</span>, use the following which we can call the <strong>missing mass</strong>:</li>
 </ul>
-<p>\[P_{GT}^{*}\;\textrm{(things with frequency zero in training)} = \frac{N_1}{N}\]</p>
+<p><span class="math">\[P_{GT}^{*}\;\textrm{(things with frequency zero in training)} = \frac{N_1}{N}\]</span></p>
 <ul>
-<li>Here \(N_1\) is the count of items in bin 1, i.e. seen once in the training set, and \(N\) is the total number of items we have seen in training.</li>
+<li>Here <span class="math">\(N_1\)</span> is the count of items in bin 1, i.e. seen once in the training set, and <span class="math">\(N\)</span> is the total number of items we have seen in training.</li>
 <li>p113: some advanced issues in Good-Turing estimation</li>
 <li>p114: Good-Turing discounting is not used by itself; it’s only used in combination with backoff and interpolation, discused later.</li>
 </ul>
@@ -1943,18 +1904,18 @@ closed at $62.625, up 62.5 cents.</code></pre></li>
 <li>Hence we use log probabilities rather than raw probabilities, and add in log space rather than multiply in linear space.</li>
 <li>In order to report probabilities just take the “exp” of the logprob:</li>
 </ul>
-<p>\[p_1 \times p_2 \times p_3 \times p_4 = exp(log p_1 + log p_2 + log p_3 + log p_4)\]</p>
+<p><span class="math">\[p_1 \times p_2 \times p_3 \times p_4 = exp(log p_1 + log p_2 + log p_3 + log p_4)\]</span></p>
 <ul>
 <li>Backoff N-gram language models are generally stored in <strong>ARPA format</strong>
 <ul>
 <li>Small header.</li>
 <li>List of all non-zero N-gram probabilities (all unigrams, followed by bigrams, followed by trigrams, etc).</li>
-<li>Each N-gram entry is stored with its discounted log probabiliy (in \(\textrm{log}_{10}\) format) and its backoff weight \(\alpha\).</li>
+<li>Each N-gram entry is stored with its discounted log probabiliy (in <span class="math">\(\textrm{log}_{10}\)</span> format) and its backoff weight <span class="math">\(\alpha\)</span>.</li>
 <li>Backoff weights only necessary if the N-gram forms a prefix of a longer N-gram.</li>
 <li>Thus, for trigram grammar, the format of each N-gram is:</li>
 </ul></li>
 </ul>
-<TODO>
+<p><TODO></p>
 <ul>
 <li><p>p119: e.g.</p>
 <pre><code>\data\ 
@@ -1978,12 +1939,12 @@ ngram 3=5000
 -3.3245     &lt;s&gt;     i     prefer     3.434
 ...</code></pre></li>
 <li>In training mode each toolkit takes a raw text file, one sentence per line, words separated by white-space.</li>
-<li>It also takes parameters such as order \(N\), thresholds, type of discounting.</li>
+<li>It also takes parameters such as order <span class="math">\(N\)</span>, thresholds, type of discounting.</li>
 <li><p>It outputs a language model in ARPA format.</p></li>
 <li><p>In perplexity or decoding mode the toolkit take a language model in ARPA format, a sentence or corpus, and produces the probability and perplexity of the sentence or corpus.</p></li>
 </ul>
 <hr />
-<all TODO>
+<p><all TODO></p>
 <ul>
 <li>p119: Advanced smoothing methods: Kneser-Ney Smoothing</li>
 <li>p121: it turns out that any interpolation model can be represented as a backoff model, hence stored in ARPA backoff format.</li>
@@ -2005,6 +1966,49 @@ ngram 3=5000
 <li><strong>skip N-grams</strong>: we skip over an intermediate word.</li>
 <li><p><strong>variable-length N-grams</strong>: adjust context size.</p></li>
 <li><p>pruning by removing low-probability events is important, and essential on low-power platforms like cellphones.</p></li>
+</ul>
+<h3 id="arpa-language-model-lm-file-format"><a href="#arpa-language-model-lm-file-format">ARPA language model (LM) file format</a></h3>
+<p>Example:</p>
+<pre><code>\data\
+ngram 1=19979
+ngram 2=4987955
+ngram 3=6136155
+
+\1-grams:
+-1.6682  A      -2.2371
+-5.5975  A&#39;S    -0.2818
+-2.8755  A.     -1.1409
+-4.3297  A.&#39;S   -0.5886
+-5.1432  A.S    -0.4862
+...
+
+\2-grams:
+-3.4627  A  BABY    -0.2884
+-4.8091  A  BABY&#39;S  -0.1659
+-5.4763  A  BACH    -0.4722
+-3.6622  A  BACK    -0.8814
+...
+
+\3-grams:
+-4.3813  !SENT_START    A       CAMBRIDGE
+-4.4782  !SENT_START    A       CAMEL
+-4.0196  !SENT_START    A       CAMERA
+-4.9004  !SENT_START    A       CAMP
+-3.4319  !SENT_START    A       CAMPAIGN
+...
+\end\</code></pre>
+<ul>
+<li>Official reference: <a href="http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html">http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html</a>
+<ul>
+<li>If you need to represent 0 probability (noting that log 0 is minus infinity) just put “-99”, and when parsing interpret this as 0.</li>
+<li>You’re allowed to put in other <code>key=value</code> pairs in the <code>\data\</code> section at the top (e.g. lambda’s for linear interpolation models, bucket sizes, etc.).</li>
+</ul></li>
+<li>Concise blog interpretation: <a href="http://kered.org/blog/2008-08-12/arpa-language-model-file-format/">http://kered.org/blog/2008-08-12/arpa-language-model-file-format/</a></li>
+<li>Grammar-like interpretation: <a href="http://www.ee.ucla.edu/~weichu/htkbook/node243_ct.html">http://www.ee.ucla.edu/~weichu/htkbook/node243_ct.html</a></li>
+<li>!!AI I think “start sentence” is <code>&lt;s&gt;</code> and “end sentence” is <code>&lt;/s&gt;</code>.</li>
+<li>Note that for unigrams you have <code>log_prob word1 log_alpha</code>.</li>
+<li>Note that for bigrams you have <code>log_prob word1 word2 log_alpha</code>.</li>
+<li>Note that for trigrams there is no backoff parameter; it is useless because, if you note the definition of Katz-backoff, it’s never used.</li>
 </ul>
 <hr />
 </body>

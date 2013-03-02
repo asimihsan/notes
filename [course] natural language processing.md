@@ -1308,7 +1308,7 @@ $$p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{
 -   The transmission parameters only depend on sequences of length three for trigram HMMs.
     -   This structure allows a more efficient solution.
 
-#### The Viterbi Algorithm
+### The Viterbi Algorithm
 
 -   Define $n$ to be length of sentence.
 -   Define $S_k$ for $k = -1, 0, \ldots, n$, to be set of possible tags at position $k$:
@@ -1545,7 +1545,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   It is **linear** with respect to sentence length.
     -   Much better than brute force, which was $O(|S|^n)$.
 
-#### Summary
+### Summary
 
 -   HMM taggers are **very simple to train**.
     -   Just compile counts from training corpus, calculate MLEs.
@@ -1555,11 +1555,11 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   When words are complex even worse.
     -   Later in the course we develop more complex methods.
 
-### Readings
+## Readings
 
-#### Speech and Language Processing, Chapter 3 (Words and Transducers)
+### Speech and Language Processing, Chapter 3 (Words and Transducers)
 
-##### 3.9: Word and Sentence Tokenization
+#### 3.9: Word and Sentence Tokenization
 
 -   p75: **Tokenization**: segmenting running text into words and sentences.
 -   Consider:
@@ -1597,7 +1597,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
 -   p78: this is so simple that this suggests Finite State Transducers (FSTs) may also be easily implemented.
     -   This is the case. Karttunen et. al 1996 and Beesley and Karttunen 2003 give descriptions.
 
-#### Speech and Language Processing, Chapter 4 (n-gram models)
+### Speech and Language Processing, Chapter 4 (n-gram models)
 
 -   p96: a **word** is the full inflected or derived form of a word.
     -   In English n-gram models are based on wordforms, not the **lemmas**, i.e. root.
@@ -1611,7 +1611,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   The n-gram probability matrices are very sparse.
 -   p104: be sure to choose similar training and test copurses. Don't choose from different genres.
 -   p105: **closed vocabulary** assumes we know all the words in the vocabulary.
-    -   This can't possible be exactly true.
+    -   This can't possibly be exactly true.
     -   There will be **out of vocabulary (OOV)** words.
     -   The percentive of OOV words in the test set is called the **OOV rate**.
     -   An **open vocabulary** is one where we model OOV words by adding a pseudo-word called `<UNK>`. We train these probabilities as follows:
@@ -1734,6 +1734,51 @@ $$p_1 \times p_2 \times p_3 \times p_4 = exp(log p_1 + log p_2 + log p_3 + log p
 -   **variable-length N-grams**: adjust context size.
 
 -   pruning by removing low-probability events is important, and essential on low-power platforms like cellphones.
+
+### ARPA language model (LM) file format
+
+Example:
+
+```
+\data\
+ngram 1=19979
+ngram 2=4987955
+ngram 3=6136155
+
+\1-grams:
+-1.6682  A      -2.2371
+-5.5975  A'S    -0.2818
+-2.8755  A.     -1.1409
+-4.3297  A.'S   -0.5886
+-5.1432  A.S    -0.4862
+...
+
+\2-grams:
+-3.4627  A  BABY    -0.2884
+-4.8091  A  BABY'S  -0.1659
+-5.4763  A  BACH    -0.4722
+-3.6622  A  BACK    -0.8814
+...
+
+\3-grams:
+-4.3813  !SENT_START    A       CAMBRIDGE
+-4.4782  !SENT_START    A       CAMEL
+-4.0196  !SENT_START    A       CAMERA
+-4.9004  !SENT_START    A       CAMP
+-3.4319  !SENT_START    A       CAMPAIGN
+...
+\end\
+```
+
+-   Official reference: [http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html](http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html)
+    -   If you need to represent 0 probability (noting that log 0 is minus infinity) just put "-99", and when parsing interpret this as 0.
+    -   You're allowed to put in other `key=value` pairs in the `\data\` section at the top (e.g. lambda's for linear interpolation models, bucket sizes, etc.).
+-   Concise blog interpretation: [http://kered.org/blog/2008-08-12/arpa-language-model-file-format/](http://kered.org/blog/2008-08-12/arpa-language-model-file-format/)
+-   Grammar-like interpretation: [http://www.ee.ucla.edu/~weichu/htkbook/node243_ct.html](http://www.ee.ucla.edu/~weichu/htkbook/node243_ct.html)
+-   !!AI I think "start sentence" is `<s>` and "end sentence" is `</s>`.
+-   Note that for unigrams you have `log_prob word1 log_alpha`.
+-   Note that for bigrams you have `log_prob word1 word2 log_alpha`.
+-   Note that for trigrams there is no backoff parameter; it is useless because, if you note the definition of Katz-backoff, it's never used.
 
 - - -
 
