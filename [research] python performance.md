@@ -952,6 +952,44 @@ A signing off!
     -   So the overhead is not that severe and yet provides extensive statistics.
 -   This is in contrast to **statistical profiling**, where you dip in and out.
 
+## Expensive lessons in Python performance
+
+-   [http://blog.explainmydata.com/2012/07/expensive-lessons-in-python-performance.html](http://blog.explainmydata.com/2012/07/expensive-lessons-in-python-performance.html)
+-   Profile everything.
+-   Be suspicious of loops,  but once you've offloaded to standard library modules then have faith.
+-   Idioms often beat whatever hair-brained scheme you can come up with; the humble `for line in file`.
+-   If you're using simple objects just for data storage, use `namedtuples`.
+-   If you're using simple classes with fixed set of variables, use `__slots__`.
+-   Use algorithms (duh).
+
+## A guide to analyzing Python performance
+
+- [http://www.huyng.com/posts/python-performance-analysis/](http://www.huyng.com/posts/python-performance-analysis/)
+
+-   How fast is it running? Coarse estimate using `time`.
+
+```
+time python myprogram.py
+```
+
+-   `real` is actual elapsed time.
+-   `user` is time spent outside the kernel.
+-   `sys` is time spent inside the kernel.
+-   if `user + sys` much less than `real` then I/O bound.
+
+-   Finer estimate using `time.time()` around functions; can use decorators or context managers (!!AI surely decorators more appropriate).
+
+-   Use `line_profiler` to debug CPU occupancy for lines.
+-   Use `memory_profiler` (with `psutil`) to debug memory occupancy for lines.
+    -   Similar usage as `line_profiler`: decorate with `@profile` then run `python -m memory_profiler script.py`.
+
+-   Use `objgraph` to debug memory leaks (within `muppy`, so do that there).
+
+## PyMOTW on `profile`, `cProfile`, and `pstats`
+
+-   [http://pymotw.com/2/profile/index.html](http://pymotw.com/2/profile/index.html)
+
+
 ## Official Python Performance Tips
 
 [http://wiki.python.org/moin/PythonSpeed/PerformanceTips](http://wiki.python.org/moin/PythonSpeed/PerformanceTips)
