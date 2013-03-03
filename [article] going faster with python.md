@@ -200,6 +200,92 @@ quantifiable, and measureable performance metrics, and lo and
 behold you're not meeting them after implementing a significant
 portion of tested functionality. Now what?
 
+### Basic timing
+
+Particularly if you're looking at system command-line utilities
+or scientific computing simply knowing "how much time did this
+take to finish?" or "how much RAM did it use at its peak?" is
+a good first step.
+
+Typical approaches to doing this use `top` and `time`, and
+are very simple effective. Often however people forget that
+measurements must be repeated in order to gain confidence as
+to their accuracy. Hence to help you get started I've created a
+noddy little script for this article, `src/utilities/measureproc.py`
+[@going_faster_with_python:measureproc.py].
+
+Let's assume we using this little toy script:
+
+~~~~ {.python .numberLines}
+#!/usr/bin/env python
+
+import time
+
+if __name__ == "__main__":
+    a = range(2 ** 24)
+    print a[-1]
+    time.sleep(1)
+~~~~
+
+In order to make repeated measurements as to its CPU and memory
+usage:
+
+```bash
+(going_faster_with_python)Mill:going_faster_with_python ai$ pwd
+/Users/ai/Programming/going_faster_with_python
+
+(going_faster_with_python)Mill:going_faster_with_python ai$ python src/utilities/measureproc.py
+python src/utilities/longscript.py
+Summary of 5 runs
+metric  | min    | Q1     | median | Q2     | max   
+--------+--------+--------+--------+--------+-------
+clock   | 1.96   | 1.97   | 1.98   | 1.97   | 2.08  
+user    | 0.68   | 0.68   | 0.68   | 0.68   | 0.76  
+system  | 0.22   | 0.22   | 0.22   | 0.22   | 0.25  
+rss_max | 525.39 | 525.39 | 525.39 | 525.39 | 525.39
+```
+
+The script outputs four important metrics:
+
+-   **clock** (s): how much time elapsed between the start and
+end of the program. You'll note that the median clock time
+is approximately two seconds.
+-   **user** (s): how much time spent by the CPU in the **user
+space**, i.e. in your script's code.
+-   **system** (s): how much time spent by the CPU in the
+**kernel space**, i.e. executing code within the lower levels
+of the operating system.
+-   **rss_max** (MB): the peak amount of memory allocated for
+the program's **Resident Set Size** (RSS), i.e. the memory
+allocated within physical memory, as opposed to the **Virtual
+Memory Size** (VMS).
+
+The script summarises the measurements of these metrics over
+N runs using:
+
+-   **min**: the minimum value.
+-   **Q1**: the 25% percentile, i.e. 25% of values are equal
+or less than this value.
+-   **median**: the 50% percentile.
+-   **Q2**: the 75% percentile.
+-   **max**: the maximum value.
+
+We note the following observations:
+
+-   $(Q2 - Q1)$ for all metrics is very small. The measurements
+are consistent over time and the results are readily
+reproducible.
+-   The median clock time is 2 seconds. The user's perception
+of the programme is that it took two seconds to execute.
+-   The sum of the user and system times is approximately 0.9
+seconds. This means that $2 - 0.9 = 1.1$ seconds was spent
+waiting for I/O operations. This script spent half its time
+using the CPU and half its time waiting.
+-   The sum of the above two observations is that perhaps
+one second was spent allocating memory for the array and
+one second was spent sleeping.
+-   The RSS max is approximately 525MB. This is rather large!
+
 ### Logging
 
 The humblest yet most important of approaches, **logging** is an
@@ -218,7 +304,8 @@ trace their *arguments*.
 an else statement, a try statement, a finally statement, etc.,
 should be traced by a log of at least the lowest severity type.
     -   All *exceptions* are logged either with e.g.
-`logging.exception` [@pydocs:logging:exception] to log the stack of the failure, or using a package like `sentry` [@sentry].
+`logging.exception` [@pydocs:logging:exception] to log the stack of 
+the failure, or using a package like `sentry` [@sentry].
     -   All potentially *long-running tasks* are wrapped in
 logging statements immediately preceding and following them. This
  is especially true for tasks involving external interfaces or
@@ -273,7 +360,104 @@ the greatest possible precision. If the effort of such measurement
  the actual functionality of the software system, at the cost of
  less precise measurements.
 
-Let's run through a variety of CPU profilers with toy examples.
+Let's run through a variety of CPU profilers with a toy example.
+
+#### Our toy example
+
+Let's assume there is a BZIP2 compressed log file that we want
+to parse, and that each line is a measurement of a metric in the
+format `epoch, metric name, metric value`, e.g.:
+
+```
+1362330056,cpu_usage,112
+1362330057,cpu_usage,21
+...
+```
+
+Our objective is to determine the arithmetic mean of the `cpu_usage`
+values throughout the whole file.
+
+I've created a script `src/utilities/generate_log.py`
+[@going_faster_with_python:generate_log.py] that will generate
+a log in this format into the path `src/utilities/example.log.bz2`.
+Please run this script before continuing.
+
+In order to parse this script we're using
+`src/cpu_profiling/parse_log.py`
+[@going_faster_with_python:parse_log.py]. It has shown poor
+performance and we want to see what parts are slow (I've deliberately
+made this script very non-idiomatic and obtuse in places. This is
+*not* an example of good code! Unsurprising considering the context):
+
+~~~~ {.python .numberLines}
+#!/usr/bin/env python
+
+from __future__ import division
+
+import os
+import sys
+import bz2
+import contextlib
+import re
+
+# -------------------------------------------------------------------
+#   Constants.
+# -------------------------------------------------------------------
+current_dir = os.path.abspath(os.path.join(__file__, os.pardir))
+parent_dir = os.path.join(current_dir, os.pardir)
+log_filepath = os.path.join(parent_dir, "utilities", "example.log.bz2")
+
+re_log_line = re.compile("(.*?),(.*?),(.*)\n")
+# -------------------------------------------------------------------
+
+def main():
+    cpu_usages = []
+    with contextlib.closing(bz2.BZ2File(log_filepath)) as f_in:
+        for line in f_in:
+            process_line(line, cpu_usages)
+    summarise(cpu_usages)
+
+def summarise(cpu_usages):
+    print "avg: %s" % (sum(cpu_usages) / len(cpu_usages), )
+
+def process_line(line, cpu_usages):
+    re_obj = re_log_line.search(line)
+    try:
+        elems = re_obj.groups()
+    except:
+        pass
+    else:
+        if elems[1] == "cpu_usage":
+            cpu_usages.append(int(elems[2]))
+
+if __name__ == "__main__":
+    main()
+~~~~
+
+Looking at this script there are many possible reasons for
+performance problems:
+
+-   Looping over a compressed file must be slow! Surely we can
+afford larger hard drives, keep logs decompressed, and the script
+will become much faster?
+-   The regular expression looks quite inefficient! It needs tuning.
+-   Process calls in Python have a very large overhead. We should
+be avoiding function calls within inner loops.
+-   What is going on with the regular expression matching?! Exception
+handling?!
+-   Maybe computing the average would be faster if we maintained a
+running sum rather than storing all the values in a giant array.
+We'd save memory too!
+
+These are all valid points. However, put aside the toy script for a
+moment and consider the bigger picture. You may instead be faced with
+a convulted, complex, and poorly documented system, where such
+points are not obvious. Hence, instead of jumping in and "optimising"
+the code, your response to anyone who suggests such "optimisations",
+in simple or complex scenarios, is always:
+
+> "Before we waste time on **opinions** I'd like to proceed on the
+basis of **empirical measurements**.
 
 #### cProfile
 
@@ -283,16 +467,242 @@ enough that it has neglible impact on many programmes, and with
 a little trickery can be used with a decorator to profile 
 individual functions.
 
-Let's suppose we have the following code:
+To use it on our toy example:
 
+```
+python -m cProfile -o profile.stats parse_log.py
+```
+
+This will output a file `profile.stats` to the current working
+directory. It contains low-level details that may be parsed out
+and summarised. One command I like using sorts the statistics by
+total time spent in particular functions, as follows:
+
+```
+(going_faster_with_python)Mill:src ai$ python -c "import pstats; p = pstats.Stats('profile.stats');
+p.sort_stats('time').print_stats(5)"
+Sun Mar  3 17:49:04 2013    profile.stats
+
+         20000398 function calls (20000376 primitive calls) in 31.770 seconds
+
+   Ordered by: internal time
+   List reduced from 67 to 5 due to restriction <5>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+  5000000   12.930    0.000   23.044    0.000 cpu_profiling/parse_log.py:31(process_line)
+        1    8.666    8.666   31.756   31.756 cpu_profiling/parse_log.py:21(main)
+  5000000    7.917    0.000    7.917    0.000 {method 'search' of '_sre.SRE_Pattern' objects}
+  5000000    1.621    0.000    1.621    0.000 {method 'groups' of '_sre.SRE_Match' objects}
+  5000065    0.575    0.000    0.575    0.000 {method 'append' of 'list' objects}
+```
+
+Interpreting the results:
+
+-   The script took approximately 31.8 seconds to execute.
+-   The **tottime** column specifies the total time spent in a
+function and *excludes* time spent in calls to sub functions.
+-   The **cumtime** column specifies the total time spent in a
+function and *includes* time spent in calls to sub functions.
+-   12.9 seconds, or 40.7% of the total time, was spent in 
+`process_line()`, and this *excludes* time spent in calls to the
+regular expression module. It was called five million times.
+-   8.67 seconds, or 27.2% of the total time, was spent in
+`process_log()`, and this *excludes* time spent in the five
+millions calls to `process_line()`.
+-   7.92 seconds, or 25% of the total time, was spent calling
+`re.search()`, i.e. using our regular expression.
+-   The top three functions account for $\frac{12.9 + 8.67 + 7.92}{31.8} \times 100 = 92.7\textrm{%}$ of the total execution time.
+
+What can we conclude from the results? These conclusions are
+**ordered** from most to least important:
+
+-   There is something terribly wrong with `process_line()` that is
+**independent** of the regular expression used and the list append
+operation.
+    -   Looking at the function this suggests that the
+non-idiomatic usage of exception handling is causing us pain.
+(Why? Stay tuned for the "CPython and Bytecode Analysis" section
+to learn more).
+    -   Instead of doing a string comparison on the results of the
+regular expression why couldn't we get the regular expression
+to do this comparison for us, by putting `cpu_usage` into the
+regular expression itself?
+-   There is something about the `main()` function, **independent**
+of calls to sub functions, that is slow. Looking at the function
+this must largely be the decompression of the bzip2-compressed log
+ file. Your options depend on your requirements. Could you get away
+ with gzip compression instead, which consumes less CPU resources at
+the cost of a lower compression ratio? Could you get away with no
+ compression?
+-   What's wrong with our regular expression? It seems a bit slow!
+Could we re-write it to make it faster? (Hint: yes).
+-   `summarise()` isn't even in the top five. Although this is not
+the most efficient manner in which to calculate an arithmetic mean
+it is most certainly **completely irrelevant at this stage of our
+investigation**.
+
+You can also use the cProfiler output to trace which functions are
+calling whom. Rather than cover that in detail here I'm going to
+cover the same functionality in a better user interface in the 
+"callgrind" section below. However, here is how you'd get such
+information from the command-line for who is *calling* the hot
+functions:
+
+```
+(going_faster_with_python)Mill:src ai$ python -c "import pstats;
+p = pstats.Stats('profile.stats');
+p.sort_stats('cumulative').print_callers(5)"
+
+   Ordered by: cumulative time
+   List reduced from 67 to 5 due to restriction <5>
+
+Function                                         was called by...
+                                                     ncalls  tottime  cumtime
+cpu_profiling/parse_log.py:3(<module>)           <-
+cpu_profiling/parse_log.py:21(main)              <-       1    7.869   27.992  cpu_profiling/parse_log.py:3(<module>)
+cpu_profiling/parse_log.py:31(process_line)      <- 5000000   11.267   20.078  cpu_profiling/parse_log.py:21(main)
+{method 'search' of '_sre.SRE_Pattern' objects}  <- 5000000    6.946    6.946  cpu_profiling/parse_log.py:31(process_line)
+{method 'groups' of '_sre.SRE_Match' objects}    <- 5000000    1.360    1.360  cpu_profiling/parse_log.py:31(process_line)
+```
+
+and for who *the hot functions are calling*:
+
+```
+(going_faster_with_python)Mill:src ai$ python -c "import pstats;
+p = pstats.Stats('profile.stats');
+p.sort_stats('cumulative').print_callees(5)"
+
+   Ordered by: cumulative time
+   List reduced from 67 to 5 due to restriction <5>
+
+Function                                         called...
+                                                     ncalls  tottime  cumtime
+cpu_profiling/parse_log.py:3(<module>)           ->       3    0.000    0.000  /Users/ai/Programming/.envs/going_faster_with_python/lib/python2.7/posixpath.py:60(join)
+                                                          1    0.000    0.000  /Users/ai/Programming/.envs/going_faster_with_python/lib/python2.7/posixpath.py:341(abspath)
+                                                          1    0.000    0.000  /Users/ai/Programming/.envs/going_faster_with_python/lib/python2.7/re.py:188(compile)
+                                                          1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/__future__.py:48(<module>)
+                                                          1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:1(<module>)
+                                                          1    7.869   27.992  cpu_profiling/parse_log.py:21(main)
+cpu_profiling/parse_log.py:21(main)              ->       1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:149(__init__)
+                                                          1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:151(__enter__)
+                                                          1    0.000    0.001  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:153(__exit__)
+                                                          1    0.000    0.045  cpu_profiling/parse_log.py:28(summarise)
+                                                    5000000   11.267   20.078  cpu_profiling/parse_log.py:31(process_line)
+cpu_profiling/parse_log.py:31(process_line)      -> 5000000    0.505    0.505  {method 'append' of 'list' objects}
+                                                    5000000    1.360    1.360  {method 'groups' of '_sre.SRE_Match' objects}
+                                                    5000000    6.946    6.946  {method 'search' of '_sre.SRE_Pattern' objects}
+{method 'search' of '_sre.SRE_Pattern' objects}  ->
+{method 'groups' of '_sre.SRE_Match' objects}    ->
+```
+
+A final trick with `cProfile` is that you can craft a decorator to
+only trigger it for particular functions. This is useful when the
+overhead of `cProfile` over *all* the code is too high, but you
+need a profile of a function and called subfunctions [@stackoverflow:cprofile_decorator]:
+
+~~~~ {.python .numberLines}
+import cProfile
+
+def profileit(name):
+    def inner(func):
+        def wrapper(*args, **kwargs):
+            prof = cProfile.Profile()
+            retval = prof.runcall(func, *args, **kwargs)
+            # Note use of name from outer scope
+            prof.dump_stats(name)
+            return retval
+        return wrapper
+    return inner
+
+@profileit("profile_for_func1_001")
+def func1(...)
+    ...
+~~~~
+
+#### line_profiler
+
+`cProfiler` is rather coarse because it only traces function calls,
+and so is only precise at the function call level. Using a module
+called `line_profiler` we can measure CPU occupancy at the line-level.
+
+After a `pip install line_profiler` you just need to decorate the
+functions you're interested in with `@profile`. Note that this will
+render the script unexecutable because we do not use any imported
+modules to profile our script. I've already done the decorating in
+ `src/cpu_profiling/parse_log_line_profiler.py`. Afterward
+execute `kernprof.py`:
+
+```
+(going_faster_with_python)Mill:src ai$ kernprof.py -l -v cpu_profiling/parse_log_line_profiler.py
+
+avg: 49.9978002
+Wrote profile results to parse_log_line_profiler.py.lprof
+Timer unit: 1e-06 s
+
+File: cpu_profiling/parse_log_line_profiler.py
+Function: main at line 21
+Total time: 105.217 s
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    21                                           @profile
+    22                                           def main():
+    23         1            2      2.0      0.0      cpu_usages = []
+    24         1           34     34.0      0.0      with contextlib.closing(bz2.BZ2File(log_filepath)) as f_in:
+    25   5000001     11602598      2.3     11.0          for line in f_in:
+    26   5000000     93565103     18.7     88.9              process_line(line, cpu_usages)
+    27         1        49088  49088.0      0.0      summarise(cpu_usages)
+
+File: cpu_profiling/parse_log_line_profiler.py
+Function: process_line at line 32
+Total time: 44.2081 s
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    32                                           @profile
+    33                                           def process_line(line, cpu_usages):
+    34   5000000     14758591      3.0     33.4      re_obj = re_log_line.search(line)
+    35   5000000      4406648      0.9     10.0      try:
+    36   5000000      6765236      1.4     15.3          elems = re_obj.groups()
+    37                                               except:
+    38                                                   pass
+    39                                               else:
+    40   5000000      5814440      1.2     13.2          if elems[1] == "cpu_usage":
+    41   5000000     12463137      2.5     28.2              cpu_usages.append(int(elems[2]))
+```
+
+The output is quite intuitive and you'll note it confirms many of
+our intuitions from the "cProfiler" section. We already knew that 
+`process_line()` was quite slow. However, `line_profiler` indicates 
+that appending to a list in order to track CPU usage takes up 30% of 
+the execution time of the function. Is it, however, the `append` 
+itself, the `int`, or the array access that takes up this time? You'd 
+need to do a bit of **refactoring** and spread the code over several 
+lines to aid `line_profiler`.
+
+However, the "total time" values seem a bit off. Why did `cProfiler`
+run the script in 30-odd seconds and this one is spending eons just
+in the individual functions? Recall that both `cProfiler` and
+`line_profiler` are instances of **deterministic profilers**; in fact
+the actual execution of our script is faster without such profiling
+(although cProfiler doesn't add *that* much overhead):
+
+```
+(going_faster_with_python)Mill:src ai$ python utilities/measureproc.py python cpu_profiling/parse_log.py
+
+Summary of 5 runs
+metric  | min   | Q1    | median | Q2    | max  
+--------+-------+-------+--------+-------+------
+clock   | 24.15 | 24.23 | 24.67  | 26.02 | 31.76
+user    | 24.00 | 24.12 | 24.48  | 25.86 | 30.46
+system  | 0.07  | 0.09  | 0.09   | 0.11  | 0.15 
+rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05
+```
 
 #### callgrind
 
 TODO
 
-#### line_profiler
-
-TODO
 
 #### profilestats
 
@@ -310,7 +720,7 @@ TODO
 
 TODO
 
-#### muppy
+#### pympler
 
 TODO
 

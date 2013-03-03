@@ -40,6 +40,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#part-1---when-do-i-optimise">Part 1 - When Do I Optimise?</a></li>
 <li><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a><ul>
+<li><a href="#basic-timing">Basic timing</a></li>
 <li><a href="#logging">Logging</a></li>
 <li><a href="#cpu-profiling">CPU profiling</a></li>
 <li><a href="#memory-profiling">Memory profiling</a></li>
@@ -162,6 +163,62 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </blockquote>
 <h2 id="part-2---how-do-i-know-where-to-optimise"><a href="#part-2---how-do-i-know-where-to-optimise">Part 2 - How Do I Know Where To Optimise?</a></h2>
 <p>If Part 1 is “how fast?”, part 2, in an extraordinary leap of atrocious grammar, is “where slow?”. Your software architecture is modular with well-defined interfaces, you’ve defined precise, quantifiable, and measureable performance metrics, and lo and behold you’re not meeting them after implementing a significant portion of tested functionality. Now what?</p>
+<h3 id="basic-timing"><a href="#basic-timing">Basic timing</a></h3>
+<p>Particularly if you’re looking at system command-line utilities or scientific computing simply knowing “how much time did this take to finish?” or “how much RAM did it use at its peak?” is a good first step.</p>
+<p>Typical approaches to doing this use <code>top</code> and <code>time</code>, and are very simple effective. Often however people forget that measurements must be repeated in order to gain confidence as to their accuracy. Hence to help you get started I’ve created a noddy little script for this article, <code>src/utilities/measureproc.py</code>.<span class="citation"><sup><a href="#fn14" class="footnoteRef" id="fnref14">14</a></sup></span></p>
+<p>Let’s assume we using this little toy script:</p>
+<table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="sourceCode"><pre><code class="sourceCode python"><span class="co">#!/usr/bin/env python</span>
+
+<span class="ch">import</span> time
+
+<span class="kw">if</span> <span class="dt">__name__</span> == <span class="st">&quot;__main__&quot;</span>:
+    a = <span class="dt">range</span>(<span class="dv">2</span> ** <span class="dv">24</span>)
+    <span class="kw">print</span> a[-<span class="dv">1</span>]
+    time.sleep(<span class="dv">1</span>)</code></pre></td></tr></table>
+<p>In order to make repeated measurements as to its CPU and memory usage:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">(</span>going_faster_with_python<span class="kw">)</span>Mill:going_faster_with_python ai$ <span class="kw">pwd</span>
+/Users/ai/Programming/going_faster_with_python
+
+<span class="kw">(</span>going_faster_with_python<span class="kw">)</span>Mill:going_faster_with_python ai$ python src/utilities/measureproc.py
+python src/utilities/longscript.py
+Summary of 5 runs
+metric  <span class="kw">|</span> min    <span class="kw">|</span> Q1     <span class="kw">|</span> median <span class="kw">|</span> Q2     <span class="kw">|</span> max   
+--------+--------+--------+--------+--------+-------
+clock   <span class="kw">|</span> 1.96   <span class="kw">|</span> 1.97   <span class="kw">|</span> 1.98   <span class="kw">|</span> 1.97   <span class="kw">|</span> 2.08  
+user    <span class="kw">|</span> 0.68   <span class="kw">|</span> 0.68   <span class="kw">|</span> 0.68   <span class="kw">|</span> 0.68   <span class="kw">|</span> 0.76  
+system  <span class="kw">|</span> 0.22   <span class="kw">|</span> 0.22   <span class="kw">|</span> 0.22   <span class="kw">|</span> 0.22   <span class="kw">|</span> 0.25  
+rss_max <span class="kw">|</span> 525.39 <span class="kw">|</span> 525.39 <span class="kw">|</span> 525.39 <span class="kw">|</span> 525.39 <span class="kw">|</span> 525.39</code></pre>
+<p>The script outputs four important metrics:</p>
+<ul>
+<li><strong>clock</strong> (s): how much time elapsed between the start and end of the program. You’ll note that the median clock time is approximately two seconds.</li>
+<li><strong>user</strong> (s): how much time spent by the CPU in the <strong>user space</strong>, i.e. in your script’s code.</li>
+<li><strong>system</strong> (s): how much time spent by the CPU in the <strong>kernel space</strong>, i.e. executing code within the lower levels of the operating system.</li>
+<li><strong>rss_max</strong> (MB): the peak amount of memory allocated for the program’s <strong>Resident Set Size</strong> (RSS), i.e. the memory allocated within physical memory, as opposed to the <strong>Virtual Memory Size</strong> (VMS).</li>
+</ul>
+<p>The script summarises the measurements of these metrics over N runs using:</p>
+<ul>
+<li><strong>min</strong>: the minimum value.</li>
+<li><strong>Q1</strong>: the 25% percentile, i.e. 25% of values are equal or less than this value.</li>
+<li><strong>median</strong>: the 50% percentile.</li>
+<li><strong>Q2</strong>: the 75% percentile.</li>
+<li><strong>max</strong>: the maximum value.</li>
+</ul>
+<p>We note the following observations:</p>
+<ul>
+<li><span class="math">\((Q2 - Q1)\)</span> for all metrics is very small. The measurements are consistent over time and the results are readily reproducible.</li>
+<li>The median clock time is 2 seconds. The user’s perception of the programme is that it took two seconds to execute.</li>
+<li>The sum of the user and system times is approximately 0.9 seconds. This means that <span class="math">\(2 - 0.9 = 1.1\)</span> seconds was spent waiting for I/O operations. This script spent half its time using the CPU and half its time waiting.</li>
+<li>The sum of the above two observations is that perhaps one second was spent allocating memory for the array and one second was spent sleeping.</li>
+<li>The RSS max is approximately 525MB. This is rather large!</li>
+</ul>
 <h3 id="logging"><a href="#logging">Logging</a></h3>
 <p>The humblest yet most important of approaches, <strong>logging</strong> is an old friend to most of us. In fact some of you may be thinking “Why am I even bothering with this article? Everyone knows that configurable tracing is critical in any production system.”. Although logging isn’t the focus of this article I wanted to cover some quick points regarding it.</p>
 <ul>
@@ -169,12 +226,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <ul>
 <li>All <em>function entries and exits</em> should be traced by a log of the lowest severity type. Function entries also within reason trace their <em>arguments</em>.</li>
 <li>All <em>branches</em>, for example following an if statement, an else statement, a try statement, a finally statement, etc., should be traced by a log of at least the lowest severity type.</li>
-<li>All <em>exceptions</em> are logged either with e.g. <code>logging.exception</code><span class="citation"><sup><a href="#fn14" class="footnoteRef" id="fnref14">14</a></sup></span> to log the stack of the failure, or using a package like <code>sentry</code>.<span class="citation"><sup><a href="#fn15" class="footnoteRef" id="fnref15">15</a></sup></span></li>
+<li>All <em>exceptions</em> are logged either with e.g. <code>logging.exception</code><span class="citation"><sup><a href="#fn15" class="footnoteRef" id="fnref15">15</a></sup></span> to log the stack of the failure, or using a package like <code>sentry</code>.<span class="citation"><sup><a href="#fn16" class="footnoteRef" id="fnref16">16</a></sup></span></li>
 <li>All potentially <em>long-running tasks</em> are wrapped in logging statements immediately preceding and following them. This is especially true for tasks involving external interfaces or tasks with tightly defined performance requirements (you have those, right?).</li>
 </ul></li>
 <li>Logs are far more valuable when they’re <strong>collected</strong>, <strong>parsed</strong>, and <strong>analysed</strong>.
 <ul>
-<li>With end-to-end solutions like <code>logstash</code><span class="citation"><sup><a href="#fn16" class="footnoteRef" id="fnref16">16</a></sup></span> becoming more common there’s little excuse leaving your poor logs sitting alone in the corner.</li>
+<li>With end-to-end solutions like <code>logstash</code><span class="citation"><sup><a href="#fn17" class="footnoteRef" id="fnref17">17</a></sup></span> becoming more common there’s little excuse leaving your poor logs sitting alone in the corner.</li>
 </ul></li>
 </ul>
 <p>With such discipline, in time forming habit, you can react quite effectively to a wide variety of inquiries, such as:</p>
@@ -182,7 +239,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>“Well, most of the time this page is fine, but when a new user searches for”foo bar’s excellent bizz&quot; from their empty profile page everything grinds to a halt!&quot;</li>
 <li>“When I search for ‘2013/01/43 19:00’ as a start datetime the server reaches 100% CPU usage, runs out of memory, then kernel panics.” (This happened to me in a legacy system I inherited, true story).</li>
 </ul>
-<p>For Django fans <code>django-debug-toolbar</code><span class="citation"><sup><a href="#fn17" class="footnoteRef" id="fnref17">17</a></sup></span> helps tie together the behaviour of Django components throughout the request cycle, including SQL queries and time taken to execute them.</p>
+<p>For Django fans <code>django-debug-toolbar</code><span class="citation"><sup><a href="#fn18" class="footnoteRef" id="fnref18">18</a></sup></span> helps tie together the behaviour of Django components throughout the request cycle, including SQL queries and time taken to execute them.</p>
 <h4 id="pycounter"><a href="#pycounter">PyCounter</a></h4>
 <p>TODO</p>
 <h3 id="cpu-profiling"><a href="#cpu-profiling">CPU profiling</a></h3>
@@ -192,13 +249,277 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><strong>Deterministic profiling</strong>. Your measurements are comprehensive, in that you record every single function call at the greatest possible precision. If the effort of such measurement <em>does not impede the actual functionality</em> of the softare system this method is fine, but this is a big assumption.</li>
 <li><strong>Statistical profiling</strong>. Your measurements are sporadic but regular, with a configurable interval. By being sporadic the hope is that you have less, and hopefully negligible, impact on the actual functionality of the software system, at the cost of less precise measurements.</li>
 </ol>
-<p>Let’s run through a variety of CPU profilers with toy examples.</p>
+<p>Let’s run through a variety of CPU profilers with a toy example.</p>
+<h4 id="our-toy-example"><a href="#our-toy-example">Our toy example</a></h4>
+<p>Let’s assume there is a BZIP2 compressed log file that we want to parse, and that each line is a measurement of a metric in the format <code>epoch, metric name, metric value</code>, e.g.:</p>
+<pre><code>1362330056,cpu_usage,112
+1362330057,cpu_usage,21
+...</code></pre>
+<p>Our objective is to determine the arithmetic mean of the <code>cpu_usage</code> values throughout the whole file.</p>
+<p>I’ve created a script <code>src/utilities/generate_log.py</code><span class="citation"><sup><a href="#fn19" class="footnoteRef" id="fnref19">19</a></sup></span> that will generate a log in this format into the path <code>src/utilities/example.log.bz2</code>. Please run this script before continuing.</p>
+<p>In order to parse this script we’re using <code>src/cpu_profiling/parse_log.py</code>.<span class="citation"><sup><a href="#fn20" class="footnoteRef" id="fnref20">20</a></sup></span> It has shown poor performance and we want to see what parts are slow (I’ve deliberately made this script very non-idiomatic and obtuse in places. This is <em>not</em> an example of good code! Unsurprising considering the context):</p>
+<table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+</pre></td><td class="sourceCode"><pre><code class="sourceCode python"><span class="co">#!/usr/bin/env python</span>
+
+<span class="ch">from</span> <span class="dt">__future__</span> <span class="ch">import</span> division
+
+<span class="ch">import</span> os
+<span class="ch">import</span> sys
+<span class="ch">import</span> bz2
+<span class="ch">import</span> contextlib
+<span class="ch">import</span> re
+
+<span class="co"># -------------------------------------------------------------------</span>
+<span class="co">#   Constants.</span>
+<span class="co"># -------------------------------------------------------------------</span>
+current_dir = os.path.abspath(os.path.join(<span class="ot">__file__</span>, os.pardir))
+parent_dir = os.path.join(current_dir, os.pardir)
+log_filepath = os.path.join(parent_dir, <span class="st">&quot;utilities&quot;</span>, <span class="st">&quot;example.log.bz2&quot;</span>)
+
+re_log_line = re.<span class="dt">compile</span>(<span class="st">&quot;(.*?),(.*?),(.*)</span><span class="ch">\n</span><span class="st">&quot;</span>)
+<span class="co"># -------------------------------------------------------------------</span>
+
+<span class="kw">def</span> main():
+    cpu_usages = []
+    <span class="kw">with</span> contextlib.closing(bz2.BZ2File(log_filepath)) <span class="ch">as</span> f_in:
+        <span class="kw">for</span> line in f_in:
+            process_line(line, cpu_usages)
+    summarise(cpu_usages)
+
+<span class="kw">def</span> summarise(cpu_usages):
+    <span class="kw">print</span> <span class="st">&quot;avg: </span><span class="ot">%s</span><span class="st">&quot;</span> % (<span class="dt">sum</span>(cpu_usages) / <span class="dt">len</span>(cpu_usages), )
+
+<span class="kw">def</span> process_line(line, cpu_usages):
+    re_obj = re_log_line.search(line)
+    <span class="kw">try</span>:
+        elems = re_obj.groups()
+    <span class="kw">except</span>:
+        <span class="kw">pass</span>
+    <span class="kw">else</span>:
+        <span class="kw">if</span> elems[<span class="dv">1</span>] == <span class="st">&quot;cpu_usage&quot;</span>:
+            cpu_usages.append(<span class="dt">int</span>(elems[<span class="dv">2</span>]))
+
+<span class="kw">if</span> <span class="dt">__name__</span> == <span class="st">&quot;__main__&quot;</span>:
+    main()</code></pre></td></tr></table>
+<p>Looking at this script there are many possible reasons for performance problems:</p>
+<ul>
+<li>Looping over a compressed file must be slow! Surely we can afford larger hard drives, keep logs decompressed, and the script will become much faster?</li>
+<li>The regular expression looks quite inefficient! It needs tuning.</li>
+<li>Process calls in Python have a very large overhead. We should be avoiding function calls within inner loops.</li>
+<li>What is going on with the regular expression matching?! Exception handling?!</li>
+<li>Maybe computing the average would be faster if we maintained a running sum rather than storing all the values in a giant array. We’d save memory too!</li>
+</ul>
+<p>These are all valid points. However, put aside the toy script for a moment and consider the bigger picture. You may instead be faced with a convulted, complex, and poorly documented system, where such points are not obvious. Hence, instead of jumping in and “optimising” the code, your response to anyone who suggests such “optimisations”, in simple or complex scenarios, is always:</p>
+<blockquote>
+<p>&quot;Before we waste time on <strong>opinions</strong> I’d like to proceed on the basis of <strong>empirical measurements</strong>.</p>
+</blockquote>
 <h4 id="cprofile"><a href="#cprofile">cProfile</a></h4>
-<p><code>cProfile</code><span class="citation"><sup><a href="#fn18" class="footnoteRef" id="fnref18">18</a></sup></span> is a deterministic profiler that’s part of the Python standard library. It’s easy to use, efficient enough that it has neglible impact on many programmes, and with a little trickery can be used with a decorator to profile individual functions.</p>
-<p>Let’s suppose we have the following code:</p>
-<h4 id="callgrind"><a href="#callgrind">callgrind</a></h4>
-<p>TODO</p>
+<p><code>cProfile</code><span class="citation"><sup><a href="#fn21" class="footnoteRef" id="fnref21">21</a></sup></span> is a deterministic profiler that’s part of the Python standard library. It’s easy to use, efficient enough that it has neglible impact on many programmes, and with a little trickery can be used with a decorator to profile individual functions.</p>
+<p>To use it on our toy example:</p>
+<pre><code>python -m cProfile -o profile.stats parse_log.py</code></pre>
+<p>This will output a file <code>profile.stats</code> to the current working directory. It contains low-level details that may be parsed out and summarised. One command I like using sorts the statistics by total time spent in particular functions, as follows:</p>
+<pre><code>(going_faster_with_python)Mill:src ai$ python -c &quot;import pstats; p = pstats.Stats(&#39;profile.stats&#39;);
+p.sort_stats(&#39;time&#39;).print_stats(5)&quot;
+Sun Mar  3 17:49:04 2013    profile.stats
+
+         20000398 function calls (20000376 primitive calls) in 31.770 seconds
+
+   Ordered by: internal time
+   List reduced from 67 to 5 due to restriction &lt;5&gt;
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+  5000000   12.930    0.000   23.044    0.000 cpu_profiling/parse_log.py:31(process_line)
+        1    8.666    8.666   31.756   31.756 cpu_profiling/parse_log.py:21(main)
+  5000000    7.917    0.000    7.917    0.000 {method &#39;search&#39; of &#39;_sre.SRE_Pattern&#39; objects}
+  5000000    1.621    0.000    1.621    0.000 {method &#39;groups&#39; of &#39;_sre.SRE_Match&#39; objects}
+  5000065    0.575    0.000    0.575    0.000 {method &#39;append&#39; of &#39;list&#39; objects}</code></pre>
+<p>Interpreting the results:</p>
+<ul>
+<li>The script took approximately 31.8 seconds to execute.</li>
+<li>The <strong>tottime</strong> column specifies the total time spent in a function and <em>excludes</em> time spent in calls to sub functions.</li>
+<li>The <strong>cumtime</strong> column specifies the total time spent in a function and <em>includes</em> time spent in calls to sub functions.</li>
+<li>12.9 seconds, or 40.7% of the total time, was spent in <code>process_line()</code>, and this <em>excludes</em> time spent in calls to the regular expression module. It was called five million times.</li>
+<li>8.67 seconds, or 27.2% of the total time, was spent in <code>process_log()</code>, and this <em>excludes</em> time spent in the five millions calls to <code>process_line()</code>.</li>
+<li>7.92 seconds, or 25% of the total time, was spent calling <code>re.search()</code>, i.e. using our regular expression.</li>
+<li>The top three functions account for <span class="math">\(\frac{12.9 + 8.67 + 7.92}{31.8} \times 100 = 92.7\textrm{%}\)</span> of the total execution time.</li>
+</ul>
+<p>What can we conclude from the results? These conclusions are <strong>ordered</strong> from most to least important:</p>
+<ul>
+<li>There is something terribly wrong with <code>process_line()</code> that is <strong>independent</strong> of the regular expression used and the list append operation.
+<ul>
+<li>Looking at the function this suggests that the non-idiomatic usage of exception handling is causing us pain. (Why? Stay tuned for the “CPython and Bytecode Analysis” section to learn more).</li>
+<li>Instead of doing a string comparison on the results of the regular expression why couldn’t we get the regular expression to do this comparison for us, by putting <code>cpu_usage</code> into the regular expression itself?</li>
+</ul></li>
+<li>There is something about the <code>main()</code> function, <strong>independent</strong> of calls to sub functions, that is slow. Looking at the function this must largely be the decompression of the bzip2-compressed log file. Your options depend on your requirements. Could you get away with gzip compression instead, which consumes less CPU resources at the cost of a lower compression ratio? Could you get away with no compression?</li>
+<li>What’s wrong with our regular expression? It seems a bit slow! Could we re-write it to make it faster? (Hint: yes).</li>
+<li><code>summarise()</code> isn’t even in the top five. Although this is not the most efficient manner in which to calculate an arithmetic mean it is most certainly <strong>completely irrelevant at this stage of our investigation</strong>.</li>
+</ul>
+<p>You can also use the cProfiler output to trace which functions are calling whom. Rather than cover that in detail here I’m going to cover the same functionality in a better user interface in the “callgrind” section below. However, here is how you’d get such information from the command-line for who is <em>calling</em> the hot functions:</p>
+<pre><code>(going_faster_with_python)Mill:src ai$ python -c &quot;import pstats;
+p = pstats.Stats(&#39;profile.stats&#39;);
+p.sort_stats(&#39;cumulative&#39;).print_callers(5)&quot;
+
+   Ordered by: cumulative time
+   List reduced from 67 to 5 due to restriction &lt;5&gt;
+
+Function                                         was called by...
+                                                     ncalls  tottime  cumtime
+cpu_profiling/parse_log.py:3(&lt;module&gt;)           &lt;-
+cpu_profiling/parse_log.py:21(main)              &lt;-       1    7.869   27.992  cpu_profiling/parse_log.py:3(&lt;module&gt;)
+cpu_profiling/parse_log.py:31(process_line)      &lt;- 5000000   11.267   20.078  cpu_profiling/parse_log.py:21(main)
+{method &#39;search&#39; of &#39;_sre.SRE_Pattern&#39; objects}  &lt;- 5000000    6.946    6.946  cpu_profiling/parse_log.py:31(process_line)
+{method &#39;groups&#39; of &#39;_sre.SRE_Match&#39; objects}    &lt;- 5000000    1.360    1.360  cpu_profiling/parse_log.py:31(process_line)</code></pre>
+<p>and for who <em>the hot functions are calling</em>:</p>
+<pre><code>(going_faster_with_python)Mill:src ai$ python -c &quot;import pstats;
+p = pstats.Stats(&#39;profile.stats&#39;);
+p.sort_stats(&#39;cumulative&#39;).print_callees(5)&quot;
+
+   Ordered by: cumulative time
+   List reduced from 67 to 5 due to restriction &lt;5&gt;
+
+Function                                         called...
+                                                     ncalls  tottime  cumtime
+cpu_profiling/parse_log.py:3(&lt;module&gt;)           -&gt;       3    0.000    0.000  /Users/ai/Programming/.envs/going_faster_with_python/lib/python2.7/posixpath.py:60(join)
+                                                          1    0.000    0.000  /Users/ai/Programming/.envs/going_faster_with_python/lib/python2.7/posixpath.py:341(abspath)
+                                                          1    0.000    0.000  /Users/ai/Programming/.envs/going_faster_with_python/lib/python2.7/re.py:188(compile)
+                                                          1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/__future__.py:48(&lt;module&gt;)
+                                                          1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:1(&lt;module&gt;)
+                                                          1    7.869   27.992  cpu_profiling/parse_log.py:21(main)
+cpu_profiling/parse_log.py:21(main)              -&gt;       1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:149(__init__)
+                                                          1    0.000    0.000  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:151(__enter__)
+                                                          1    0.000    0.001  /usr/local/Cellar/python/2.7.3/lib/python2.7/contextlib.py:153(__exit__)
+                                                          1    0.000    0.045  cpu_profiling/parse_log.py:28(summarise)
+                                                    5000000   11.267   20.078  cpu_profiling/parse_log.py:31(process_line)
+cpu_profiling/parse_log.py:31(process_line)      -&gt; 5000000    0.505    0.505  {method &#39;append&#39; of &#39;list&#39; objects}
+                                                    5000000    1.360    1.360  {method &#39;groups&#39; of &#39;_sre.SRE_Match&#39; objects}
+                                                    5000000    6.946    6.946  {method &#39;search&#39; of &#39;_sre.SRE_Pattern&#39; objects}
+{method &#39;search&#39; of &#39;_sre.SRE_Pattern&#39; objects}  -&gt;
+{method &#39;groups&#39; of &#39;_sre.SRE_Match&#39; objects}    -&gt;</code></pre>
+<p>A final trick with <code>cProfile</code> is that you can craft a decorator to only trigger it for particular functions. This is useful when the overhead of <code>cProfile</code> over <em>all</em> the code is too high, but you need a profile of a function and called subfunctions:<span class="citation"><sup><a href="#fn22" class="footnoteRef" id="fnref22">22</a></sup></span></p>
+<table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="sourceCode"><pre><code class="sourceCode python"><span class="ch">import</span> cProfile
+
+<span class="kw">def</span> profileit(name):
+    <span class="kw">def</span> inner(func):
+        <span class="kw">def</span> wrapper(*args, **kwargs):
+            prof = cProfile.Profile()
+            retval = prof.runcall(func, *args, **kwargs)
+            <span class="co"># Note use of name from outer scope</span>
+            prof.dump_stats(name)
+            <span class="kw">return</span> retval
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> inner
+
+<span class="ot">@profileit</span>(<span class="st">&quot;profile_for_func1_001&quot;</span>)
+<span class="kw">def</span> func1(...)
+    ...</code></pre></td></tr></table>
 <h4 id="line_profiler"><a href="#line_profiler">line_profiler</a></h4>
+<p><code>cProfiler</code> is rather coarse because it only traces function calls, and so is only precise at the function call level. Using a module called <code>line_profiler</code> we can measure CPU occupancy at the line-level.</p>
+<p>After a <code>pip install line_profiler</code> you just need to decorate the functions you’re interested in with <code>@profile</code>. Note that this will render the script unexecutable because we do not use any imported modules to profile our script. I’ve already done the decorating in <code>src/cpu_profiling/parse_log_line_profiler.py</code>. Afterward execute <code>kernprof.py</code>:</p>
+<pre><code>(going_faster_with_python)Mill:src ai$ kernprof.py -l -v cpu_profiling/parse_log_line_profiler.py
+
+avg: 49.9978002
+Wrote profile results to parse_log_line_profiler.py.lprof
+Timer unit: 1e-06 s
+
+File: cpu_profiling/parse_log_line_profiler.py
+Function: main at line 21
+Total time: 105.217 s
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    21                                           @profile
+    22                                           def main():
+    23         1            2      2.0      0.0      cpu_usages = []
+    24         1           34     34.0      0.0      with contextlib.closing(bz2.BZ2File(log_filepath)) as f_in:
+    25   5000001     11602598      2.3     11.0          for line in f_in:
+    26   5000000     93565103     18.7     88.9              process_line(line, cpu_usages)
+    27         1        49088  49088.0      0.0      summarise(cpu_usages)
+
+File: cpu_profiling/parse_log_line_profiler.py
+Function: process_line at line 32
+Total time: 44.2081 s
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    32                                           @profile
+    33                                           def process_line(line, cpu_usages):
+    34   5000000     14758591      3.0     33.4      re_obj = re_log_line.search(line)
+    35   5000000      4406648      0.9     10.0      try:
+    36   5000000      6765236      1.4     15.3          elems = re_obj.groups()
+    37                                               except:
+    38                                                   pass
+    39                                               else:
+    40   5000000      5814440      1.2     13.2          if elems[1] == &quot;cpu_usage&quot;:
+    41   5000000     12463137      2.5     28.2              cpu_usages.append(int(elems[2]))</code></pre>
+<p>The output is quite intuitive and you’ll note it confirms many of our intuitions from the “cProfiler” section. We already knew that <code>process_line()</code> was quite slow. However, <code>line_profiler</code> indicates that appending to a list in order to track CPU usage takes up 30% of the execution time of the function. Is it, however, the <code>append</code> itself, the <code>int</code>, or the array access that takes up this time? You’d need to do a bit of <strong>refactoring</strong> and spread the code over several lines to aid <code>line_profiler</code>.</p>
+<p>However, the “total time” values seem a bit off. Why did <code>cProfiler</code> run the script in 30-odd seconds and this one is spending eons just in the individual functions? Recall that both <code>cProfiler</code> and <code>line_profiler</code> are instances of <strong>deterministic profilers</strong>; in fact the actual execution of our script is faster without such profiling (although cProfiler doesn’t add <em>that</em> much overhead):</p>
+<pre><code>(going_faster_with_python)Mill:src ai$ python utilities/measureproc.py python cpu_profiling/parse_log.py
+
+Summary of 5 runs
+metric  | min   | Q1    | median | Q2    | max  
+--------+-------+-------+--------+-------+------
+clock   | 24.15 | 24.23 | 24.67  | 26.02 | 31.76
+user    | 24.00 | 24.12 | 24.48  | 25.86 | 30.46
+system  | 0.07  | 0.09  | 0.09   | 0.11  | 0.15 
+rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05</code></pre>
+<h4 id="callgrind"><a href="#callgrind">callgrind</a></h4>
 <p>TODO</p>
 <h4 id="profilestats"><a href="#profilestats">profilestats</a></h4>
 <p>TODO</p>
@@ -208,7 +529,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>TODO</p>
 <h3 id="memory-profiling"><a href="#memory-profiling">Memory profiling</a></h3>
 <p>TODO</p>
-<h4 id="muppy"><a href="#muppy">muppy</a></h4>
+<h4 id="pympler"><a href="#pympler">pympler</a></h4>
 <p>TODO</p>
 <h4 id="maliae"><a href="#maliae">maliae</a></h4>
 <p>TODO</p>
@@ -236,6 +557,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Cramer, David. “Django-debug-toolbar.” Accessed February 26, 2013. <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.</p>
 <p>Fowler, Martin, and Kent Beck. <em>Refactoring: Improving the Design of Existing Code</em>. Addison-Wesley Professional, 1999.</p>
 <p>Hellman, Doug. “CProfile.” Accessed February 26, 2013. <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.</p>
+<p>Ihsan, Asim. “Generate_log.py.” Accessed March 03, 2013. <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py</a>.</p>
+<p>———. “Measureproc.py.” Accessed March 03, 2013. <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/measureproc.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/measureproc.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/measureproc.py</a>.</p>
+<p>———. “Parse_log.py.” Accessed March 03, 2013. <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py</a>.</p>
 <p>Knuth, Donald E. “An Empirical Study of FORTRAN Programs.” <em>Software: Practice and Experience</em> 1, no. 2: 105–133.</p>
 <p>———. “Structured Programming With Go To Statements.” <em>Computing Surveys</em> 6: 261–301.</p>
 <p>McConnell, Steve. <em>Code Complete</em>. Microsoft Press, 2009.</p>
@@ -250,6 +574,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Tsui, Frank, and Orlando Karam. <em>Essentials of Software Engineering</em>. Jones &amp; Bartlett Learning, 2010.</p>
 <p>Vanovschi, Vitalii. “ParallelPython.” Accessed February 24, 2013. <a href="http://www.parallelpython.com/" title="http://www.parallelpython.com/">http://www.parallelpython.com/</a>.</p>
 <p>Williams, Lloyd G., and Connie U. Smith. “Five Steps To Solving Software Performance Problems.” <em>Software Engineering Research and Performance Engineering Services</em>.</p>
+<p>jsdalton. “CProfile Decorator (Stackoverflow).” Accessed March 03, 2013. <a href="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result" title="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result">http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result</a>.</p>
 <div class="footnotes">
 <hr />
 <ol>
@@ -266,11 +591,15 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li id="fn11"><p>David A. Patterson and John L. Hennessy, <em>Computer Organization and Design: The Hardware/Software Interface</em> (Morgan Kaufmann, 2009), chap. 1 ‘Fundamentals of Computer Design.’<a href="#fnref11">↩</a></p></li>
 <li id="fn12"><p>Ibid., chap. 1 ‘Fundamentals of Computer Design.’<a href="#fnref12">↩</a></p></li>
 <li id="fn13"><p>Andy Oram and Greg Wilson, <em>Beautiful Code: Leading Programmers Explain How They Think</em> (O’Reilly Media, Incorporated, 2007), chap. 5 ‘Correct, Beautiful, Fast.’<a href="#fnref13">↩</a></p></li>
-<li id="fn14"><p>PythonDocs, “Logger.exception,” accessed February 26, 2013, <a href="http://docs.python.org/2/library/logging.html logging.Logger.exception" title="http://docs.python.org/2/library/logging.html logging.Logger.exception">http://docs.python.org/2/library/logging.html logging.Logger.exception</a>.<a href="#fnref14">↩</a></p></li>
-<li id="fn15"><p>Sentry, “Sentry,” accessed February 26, 2013, <a href="https://www.getsentry.com/" title="https://www.getsentry.com/">https://www.getsentry.com/</a>.<a href="#fnref15">↩</a></p></li>
-<li id="fn16"><p>Jordan Sissel, “Logstash,” accessed February 26, 2013, <a href="http://www.logstash.net/" title="http://www.logstash.net/">http://www.logstash.net/</a>.<a href="#fnref16">↩</a></p></li>
-<li id="fn17"><p>David Cramer, “Django-debug-toolbar,” accessed February 26, 2013, <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.<a href="#fnref17">↩</a></p></li>
-<li id="fn18"><p>Doug Hellman, “CProfile,” accessed February 26, 2013, <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.<a href="#fnref18">↩</a></p></li>
+<li id="fn14"><p>Asim Ihsan, “Measureproc.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/measureproc.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/measureproc.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/measureproc.py</a>.<a href="#fnref14">↩</a></p></li>
+<li id="fn15"><p>PythonDocs, “Logger.exception,” accessed February 26, 2013, <a href="http://docs.python.org/2/library/logging.html logging.Logger.exception" title="http://docs.python.org/2/library/logging.html logging.Logger.exception">http://docs.python.org/2/library/logging.html logging.Logger.exception</a>.<a href="#fnref15">↩</a></p></li>
+<li id="fn16"><p>Sentry, “Sentry,” accessed February 26, 2013, <a href="https://www.getsentry.com/" title="https://www.getsentry.com/">https://www.getsentry.com/</a>.<a href="#fnref16">↩</a></p></li>
+<li id="fn17"><p>Jordan Sissel, “Logstash,” accessed February 26, 2013, <a href="http://www.logstash.net/" title="http://www.logstash.net/">http://www.logstash.net/</a>.<a href="#fnref17">↩</a></p></li>
+<li id="fn18"><p>David Cramer, “Django-debug-toolbar,” accessed February 26, 2013, <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.<a href="#fnref18">↩</a></p></li>
+<li id="fn19"><p>Asim Ihsan, “Generate_log.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py</a>.<a href="#fnref19">↩</a></p></li>
+<li id="fn20"><p>Asim Ihsan, “Parse_log.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py</a>.<a href="#fnref20">↩</a></p></li>
+<li id="fn21"><p>Doug Hellman, “CProfile,” accessed February 26, 2013, <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.<a href="#fnref21">↩</a></p></li>
+<li id="fn22"><p>Jsdalton, “CProfile Decorator (Stackoverflow),” accessed March 03, 2013, <a href="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result" title="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result">http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result</a>.<a href="#fnref22">↩</a></p></li>
 </ol>
 </div>
 </body>

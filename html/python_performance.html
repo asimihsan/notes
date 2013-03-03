@@ -98,6 +98,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#scipy-weave">SciPy Weave</a></li>
 <li><a href="#pypy-1">PyPy</a></li>
 <li><a href="#profile-official-docs">Profile official docs</a></li>
+<li><a href="#expensive-lessons-in-python-performance"> Expensive lessons in Python performance</a></li>
+<li><a href="#a-guide-to-analyzing-python-performance">A guide to analyzing Python performance</a></li>
+<li><a href="#pymotw-on-profile-cprofile-and-pstats">PyMOTW on <code>profile</code>, <code>cProfile</code>, and <code>pstats</code></a></li>
 <li><a href="#official-python-performance-tips">Official Python Performance Tips</a></li>
 <li><a href="#how-to-get-the-most-out-of-your-pypy">How to get the most out of your PyPy</a></li>
 <li><a href="#faster-python-programs-through-optimization">Faster Python Programs through Optimization</a></li>
@@ -1064,6 +1067,39 @@ A signing off!</code></pre>
 <li>So the overhead is not that severe and yet provides extensive statistics.</li>
 </ul></li>
 <li>This is in contrast to <strong>statistical profiling</strong>, where you dip in and out.</li>
+</ul>
+<h2 id="expensive-lessons-in-python-performance"><a href="#expensive-lessons-in-python-performance"> Expensive lessons in Python performance</a></h2>
+<ul>
+<li><a href="http://blog.explainmydata.com/2012/07/expensive-lessons-in-python-performance.html">http://blog.explainmydata.com/2012/07/expensive-lessons-in-python-performance.html</a></li>
+<li>Profile everything.</li>
+<li>Be suspicious of loops, but once you’ve offloaded to standard library modules then have faith.</li>
+<li>Idioms often beat whatever hair-brained scheme you can come up with; the humble <code>for line in file</code>.</li>
+<li>If you’re using simple objects just for data storage, use <code>namedtuples</code>.</li>
+<li>If you’re using simple classes with fixed set of variables, use <code>__slots__</code>.</li>
+<li>Use algorithms (duh).</li>
+</ul>
+<h2 id="a-guide-to-analyzing-python-performance"><a href="#a-guide-to-analyzing-python-performance">A guide to analyzing Python performance</a></h2>
+<ul>
+<li><p><a href="http://www.huyng.com/posts/python-performance-analysis/">http://www.huyng.com/posts/python-performance-analysis/</a></p></li>
+<li><p>How fast is it running? Coarse estimate using <code>time</code>.</p></li>
+</ul>
+<pre><code>time python myprogram.py</code></pre>
+<ul>
+<li><code>real</code> is actual elapsed time.</li>
+<li><code>user</code> is time spent outside the kernel.</li>
+<li><code>sys</code> is time spent inside the kernel.</li>
+<li><p>if <code>user + sys</code> much less than <code>real</code> then I/O bound.</p></li>
+<li><p>Finer estimate using <code>time.time()</code> around functions; can use decorators or context managers (!!AI surely decorators more appropriate).</p></li>
+<li>Use <code>line_profiler</code> to debug CPU occupancy for lines.</li>
+<li>Use <code>memory_profiler</code> (with <code>psutil</code>) to debug memory occupancy for lines.
+<ul>
+<li>Similar usage as <code>line_profiler</code>: decorate with <code>@profile</code> then run <code>python -m memory_profiler script.py</code>.</li>
+</ul></li>
+<li><p>Use <code>objgraph</code> to debug memory leaks (within <code>muppy</code>, so do that there).</p></li>
+</ul>
+<h2 id="pymotw-on-profile-cprofile-and-pstats"><a href="#pymotw-on-profile-cprofile-and-pstats">PyMOTW on <code>profile</code>, <code>cProfile</code>, and <code>pstats</code></a></h2>
+<ul>
+<li><a href="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a></li>
 </ul>
 <h2 id="official-python-performance-tips"><a href="#official-python-performance-tips">Official Python Performance Tips</a></h2>
 <p><a href="http://wiki.python.org/moin/PythonSpeed/PerformanceTips">http://wiki.python.org/moin/PythonSpeed/PerformanceTips</a></p>
