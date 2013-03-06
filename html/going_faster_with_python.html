@@ -242,6 +242,29 @@ rss_max <span class="kw">|</span> 525.39 <span class="kw">|</span> 525.39 <span 
 <p>For Django fans <code>django-debug-toolbar</code><span class="citation"><sup><a href="#fn18" class="footnoteRef" id="fnref18">18</a></sup></span> helps tie together the behaviour of Django components throughout the request cycle, including SQL queries and time taken to execute them.</p>
 <h4 id="pycounter"><a href="#pycounter">PyCounter</a></h4>
 <p>TODO</p>
+<p>Decorator that records frequency and time spent for individual functions.</p>
+<p>To install: <code>pip install pycounters</code>.</p>
+<p>To use:</p>
+<ul>
+<li><code>from pycounters.shortcuts import frequency, time</code></li>
+<li>Set up a log reporter:</li>
+</ul>
+<table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="sourceCode"><pre><code class="sourceCode python"><span class="ch">import</span> pycounters
+<span class="ch">import</span> logging
+
+reporter=pycounters.reporters.LogReporter(logging.getLogger(<span class="st">&quot;counters&quot;</span>))
+pycounters.register_reporter(reporter)
+pycounters.start_auto_reporting(seconds=<span class="dv">300</span>)</code></pre></td></tr></table>
+<ul>
+<li>Decorate functions with <code>@frequency()</code> and <code>@time()</code>.</li>
+</ul>
+<p>For more information see.<span class="citation"><sup><a href="#fn19" class="footnoteRef" id="fnref19">19</a></sup></span></p>
 <h3 id="cpu-profiling"><a href="#cpu-profiling">CPU profiling</a></h3>
 <p>Detailed logging, and coming up with efficient and useful toolchains for analysing them, can be a chore sometimes. Fortunately, particularly if you’re dealing with smaller command-line-based tools or scientific computing, <strong>CPU profiling</strong> is another option.</p>
 <p>In CPU profiling you gather information about function call chains (who calls whom) and how long functions take to return. There are two types of CPU profiling methods:</p>
@@ -256,8 +279,8 @@ rss_max <span class="kw">|</span> 525.39 <span class="kw">|</span> 525.39 <span 
 1362330057,cpu_usage,21
 ...</code></pre>
 <p>Our objective is to determine the arithmetic mean of the <code>cpu_usage</code> values throughout the whole file.</p>
-<p>I’ve created a script <code>src/utilities/generate_log.py</code><span class="citation"><sup><a href="#fn19" class="footnoteRef" id="fnref19">19</a></sup></span> that will generate a log in this format into the path <code>src/utilities/example.log.bz2</code>. Please run this script before continuing.</p>
-<p>In order to parse this script we’re using <code>src/cpu_profiling/parse_log.py</code>.<span class="citation"><sup><a href="#fn20" class="footnoteRef" id="fnref20">20</a></sup></span> It has shown poor performance and we want to see what parts are slow (I’ve deliberately made this script very non-idiomatic and obtuse in places. This is <em>not</em> an example of good code! Unsurprising considering the context):</p>
+<p>I’ve created a script <code>src/utilities/generate_log.py</code><span class="citation"><sup><a href="#fn20" class="footnoteRef" id="fnref20">20</a></sup></span> that will generate a log in this format into the path <code>src/utilities/example.log.bz2</code>. Please run this script before continuing.</p>
+<p>In order to parse this script we’re using <code>src/cpu_profiling/parse_log.py</code>.<span class="citation"><sup><a href="#fn21" class="footnoteRef" id="fnref21">21</a></sup></span> It has shown poor performance and we want to see what parts are slow (I’ve deliberately made this script very non-idiomatic and obtuse in places. This is <em>not</em> an example of good code! Unsurprising considering the context):</p>
 <table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
 3
@@ -355,7 +378,7 @@ re_log_line = re.<span class="dt">compile</span>(<span class="st">&quot;(.*?),(.
 <p>&quot;Before we waste time on <strong>opinions</strong> I’d like to proceed on the basis of <strong>empirical measurements</strong>.</p>
 </blockquote>
 <h4 id="cprofile"><a href="#cprofile">cProfile</a></h4>
-<p><code>cProfile</code><span class="citation"><sup><a href="#fn21" class="footnoteRef" id="fnref21">21</a></sup></span> is a deterministic profiler that’s part of the Python standard library. It’s easy to use, efficient enough that it has neglible impact on many programmes, and with a little trickery can be used with a decorator to profile individual functions.</p>
+<p><code>cProfile</code><span class="citation"><sup><a href="#fn22" class="footnoteRef" id="fnref22">22</a></sup></span> is a deterministic profiler that’s part of the Python standard library. It’s easy to use, efficient enough that it has neglible impact on many programmes, and with a little trickery can be used with a decorator to profile individual functions.</p>
 <p>To use it on our toy example:</p>
 <pre><code>python -m cProfile -o profile.stats parse_log.py</code></pre>
 <p>This will output a file <code>profile.stats</code> to the current working directory. It contains low-level details that may be parsed out and summarised. One command I like using sorts the statistics by total time spent in particular functions, as follows:</p>
@@ -436,7 +459,7 @@ cpu_profiling/parse_log.py:31(process_line)      -&gt; 5000000    0.505    0.505
                                                     5000000    6.946    6.946  {method &#39;search&#39; of &#39;_sre.SRE_Pattern&#39; objects}
 {method &#39;search&#39; of &#39;_sre.SRE_Pattern&#39; objects}  -&gt;
 {method &#39;groups&#39; of &#39;_sre.SRE_Match&#39; objects}    -&gt;</code></pre>
-<p>A final trick with <code>cProfile</code> is that you can craft a decorator to only trigger it for particular functions. This is useful when the overhead of <code>cProfile</code> over <em>all</em> the code is too high, but you need a profile of a function and called subfunctions:<span class="citation"><sup><a href="#fn22" class="footnoteRef" id="fnref22">22</a></sup></span></p>
+<p>A final trick with <code>cProfile</code> is that you can craft a decorator to only trigger it for particular functions. This is useful when the overhead of <code>cProfile</code> over <em>all</em> the code is too high, but you need a profile of a function and called subfunctions:<span class="citation"><sup><a href="#fn23" class="footnoteRef" id="fnref23">23</a></sup></span></p>
 <table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
 3
@@ -521,12 +544,76 @@ system  | 0.07  | 0.09  | 0.09   | 0.11  | 0.15
 rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05</code></pre>
 <h4 id="callgrind"><a href="#callgrind">callgrind</a></h4>
 <p>TODO</p>
+<p>This is far superior to RunSnakeRun, and to boot is actually usable.</p>
+<p>Installation on Mac OS X:</p>
+<ul>
+<li>You’ll need XCode Developer Tools.</li>
+<li><code>brew install qt graphview</code></li>
+<li>Download the KCachegrind source.<span class="citation"><sup><a href="#fn24" class="footnoteRef" id="fnref24">24</a></sup></span></li>
+<li><code>cd kcachegrind/qcachegrind</code></li>
+<li><code>qmake; make</code></li>
+<li>You’ll have a <code>qcachegrind.app</code>, move it to Applications.</li>
+<li>callgrind wants the Graphviz executable <code>dot</code> to be accessible without a <code>~/.bash_profile</code>, so you need to <code>sudo ln -s /usr/local/bin/dot /usr/bin/dot</code></li>
+<li><code>pip install pyprof2calltree</code></li>
+</ul>
+<p>To use this:</p>
+<ul>
+<li>Generate a regular <code>cProfile</code> profile file (see earlier).</li>
+<li><code>pyprof2calltree -i cprofile.out -o callgrind.output</code></li>
+<li>Open <code>callgrind.output</code> in QCachegrind.</li>
+<li>Pretty pictures!</li>
+</ul>
+<p>For more information see,<span class="citation"><sup><a href="#fn25" class="footnoteRef" id="fnref25">25</a></sup></span>.<span class="citation"><sup><a href="#fn26" class="footnoteRef" id="fnref26">26</a></sup></span></p>
 <h4 id="profilestats"><a href="#profilestats">profilestats</a></h4>
 <p>TODO</p>
+<p>Decorator for profiling individual functions then converting the profiling data to kcachegrind format. Of course you could just use the <code>cProfile</code> decorator trick explained above and then call <code>pyprof2calltree</code>, but to each their own.</p>
+<p>To install this: <code>pip install profilestats</code>.</p>
+<p>Usage:</p>
+<ul>
+<li><code>from profilestats import profile</code></li>
+<li><code>@profile</code> on function.</li>
+</ul>
+<p>For more information see.<span class="citation"><sup><a href="#fn27" class="footnoteRef" id="fnref27">27</a></sup></span></p>
 <h4 id="statprof"><a href="#statprof">statprof</a></h4>
 <p>TODO</p>
+<p>Statistical profiler. Intended to have lighter impact than <code>cProfiler</code>. It regularly gathers the stack on a timer, rather than deterministically tracing all calls.</p>
+<p>To install: <code>pip install statprof</code>.</p>
+<p>To use:</p>
+<table class="sourceCode python numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="sourceCode"><pre><code class="sourceCode python"><span class="ch">import</span> statprof
+
+statprof.start()
+    <span class="kw">try</span>:
+        my_questionable_function()
+    <span class="kw">finally</span>:
+        statprof.stop()
+        statprof.display()</code></pre></td></tr></table>
+<p>For more information see.<span class="citation"><sup><a href="#fn28" class="footnoteRef" id="fnref28">28</a></sup></span></p>
 <h4 id="plop"><a href="#plop">plop</a></h4>
 <p>TODO</p>
+<p>Statistical profiler, low CPU overhead.</p>
+<p>To install: <code>pip install plop tornado</code></p>
+<p>To use:</p>
+<ul>
+<li><code>python -m plop.collectory myscript.py</code></li>
+<li>Writes output to <code>/tmp/plop.out</code></li>
+<li><code>python -m python.viewer --datadir=/tmp</code></li>
+<li>This launches a Tornado web server.</li>
+<li>Browse to <a href="http://localhost:8888">http://localhost:8888</a></li>
+<li>Pretty pictures!
+<ul>
+<li>D3 force-layout directed call graph.</li>
+<li>Radius of node is percentage of total time it takes.</li>
+</ul></li>
+</ul>
+<p>For more information see,<span class="citation"><sup><a href="#fn29" class="footnoteRef" id="fnref29">29</a></sup></span><span class="citation"><sup><a href="#fn30" class="footnoteRef" id="fnref30">30</a></sup></span></p>
 <h3 id="memory-profiling"><a href="#memory-profiling">Memory profiling</a></h3>
 <p>TODO</p>
 <h4 id="pympler"><a href="#pympler">pympler</a></h4>
@@ -555,6 +642,8 @@ rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05</code></pre>
 <h3 id="initial-profiling-1"><a href="#initial-profiling-1">Initial Profiling</a></h3>
 <h2 id="references"><a href="#references">References</a></h2>
 <p>Cramer, David. “Django-debug-toolbar.” Accessed February 26, 2013. <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.</p>
+<p>Darnell, Ben. “Plop: Low-overhead Profiling for Python.” Accessed March 06, 2013. <a href="https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/" title="https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/">https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/</a>.</p>
+<p>———. “Plop.” Accessed March 06, 2013. <a href="https://github.com/bdarnell/plop" title="https://github.com/bdarnell/plop">https://github.com/bdarnell/plop</a>.</p>
 <p>Fowler, Martin, and Kent Beck. <em>Refactoring: Improving the Design of Existing Code</em>. Addison-Wesley Professional, 1999.</p>
 <p>Hellman, Doug. “CProfile.” Accessed February 26, 2013. <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.</p>
 <p>Ihsan, Asim. “Generate_log.py.” Accessed March 03, 2013. <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py</a>.</p>
@@ -562,19 +651,25 @@ rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05</code></pre>
 <p>———. “Parse_log.py.” Accessed March 03, 2013. <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py</a>.</p>
 <p>Knuth, Donald E. “An Empirical Study of FORTRAN Programs.” <em>Software: Practice and Experience</em> 1, no. 2: 105–133.</p>
 <p>———. “Structured Programming With Go To Statements.” <em>Computing Surveys</em> 6: 261–301.</p>
+<p>Leskes, Boaz. “PyCounter.” Accessed March 06, 2013. <a href="http://pycounters.readthedocs.org/en/latest/" title="http://pycounters.readthedocs.org/en/latest/">http://pycounters.readthedocs.org/en/latest/</a>.</p>
 <p>McConnell, Steve. <em>Code Complete</em>. Microsoft Press, 2009.</p>
 <p>Oram, Andy, and Greg Wilson. <em>Beautiful Code: Leading Programmers Explain How They Think</em>. O’Reilly Media, Incorporated, 2007.</p>
+<p>O’Sullivan, Bryan. “Statprof.” Accessed March 06, 2013. <a href="https://github.com/bos/statprof.py" title="https://github.com/bos/statprof.py">https://github.com/bos/statprof.py</a>.</p>
 <p>Patterson, David A., and John L. Hennessy. <em>Computer Organization and Design: The Hardware/Software Interface</em>. Morgan Kaufmann, 2009.</p>
 <p>PythonDocs. “Logger.exception.” Accessed February 26, 2013. <a href="http://docs.python.org/2/library/logging.html logging.Logger.exception" title="http://docs.python.org/2/library/logging.html logging.Logger.exception">http://docs.python.org/2/library/logging.html logging.Logger.exception</a>.</p>
 <p>———. “Multiprocessing.” Accessed February 24, 2013. <a href="http://docs.python.org/2/library/multiprocessing.html" title="http://docs.python.org/2/library/multiprocessing.html">http://docs.python.org/2/library/multiprocessing.html</a>.</p>
+<p>Schlichting, Hanno. “Profilestats.” Accessed March 06, 2013. <a href="https://pypi.python.org/pypi/profilestats" title="https://pypi.python.org/pypi/profilestats">https://pypi.python.org/pypi/profilestats</a>.</p>
 <p>Sedgewick, Robert, and Kevin Wayne. <em>Algorithms</em>. 4 ed. Addison-Wesley Professional, 2011.</p>
 <p>Sentry. “Sentry.” Accessed February 26, 2013. <a href="https://www.getsentry.com/" title="https://www.getsentry.com/">https://www.getsentry.com/</a>.</p>
 <p>Sissel, Jordan. “Logstash.” Accessed February 26, 2013. <a href="http://www.logstash.net/" title="http://www.logstash.net/">http://www.logstash.net/</a>.</p>
 <p>Solem, Ask. “Celery.” Accessed February 24, 2013. <a href="http://www.celeryproject.org/" title="http://www.celeryproject.org/">http://www.celeryproject.org/</a>.</p>
 <p>Tsui, Frank, and Orlando Karam. <em>Essentials of Software Engineering</em>. Jones &amp; Bartlett Learning, 2010.</p>
 <p>Vanovschi, Vitalii. “ParallelPython.” Accessed February 24, 2013. <a href="http://www.parallelpython.com/" title="http://www.parallelpython.com/">http://www.parallelpython.com/</a>.</p>
+<p>Weidendorfer, Josef. “KCachegrind.” Accessed March 06, 2013. <a href="http://kcachegrind.sourceforge.net/html/Home.html" title="http://kcachegrind.sourceforge.net/html/Home.html">http://kcachegrind.sourceforge.net/html/Home.html</a>.</p>
+<p>———. “KCachegrind Source.” Accessed March 06, 2013. <a href="http://kcachegrind.sourceforge.net/html/Download.html" title="http://kcachegrind.sourceforge.net/html/Download.html">http://kcachegrind.sourceforge.net/html/Download.html</a>.</p>
 <p>Williams, Lloyd G., and Connie U. Smith. “Five Steps To Solving Software Performance Problems.” <em>Software Engineering Research and Performance Engineering Services</em>.</p>
 <p>jsdalton. “CProfile Decorator (Stackoverflow).” Accessed March 03, 2013. <a href="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result" title="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result">http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result</a>.</p>
+<p>justfalter. “How To Install Qcachegrind (kcachegrind) on Mac OSX Snow Leopard.” Accessed March 06, 2013. <a href="http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/" title="http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/">http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/</a>.</p>
 <div class="footnotes">
 <hr />
 <ol>
@@ -596,10 +691,18 @@ rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05</code></pre>
 <li id="fn16"><p>Sentry, “Sentry,” accessed February 26, 2013, <a href="https://www.getsentry.com/" title="https://www.getsentry.com/">https://www.getsentry.com/</a>.<a href="#fnref16">↩</a></p></li>
 <li id="fn17"><p>Jordan Sissel, “Logstash,” accessed February 26, 2013, <a href="http://www.logstash.net/" title="http://www.logstash.net/">http://www.logstash.net/</a>.<a href="#fnref17">↩</a></p></li>
 <li id="fn18"><p>David Cramer, “Django-debug-toolbar,” accessed February 26, 2013, <a href="https://github.com/django-debug-toolbar/django-debug-toolbar" title="https://github.com/django-debug-toolbar/django-debug-toolbar">https://github.com/django-debug-toolbar/django-debug-toolbar</a>.<a href="#fnref18">↩</a></p></li>
-<li id="fn19"><p>Asim Ihsan, “Generate_log.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py</a>.<a href="#fnref19">↩</a></p></li>
-<li id="fn20"><p>Asim Ihsan, “Parse_log.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py</a>.<a href="#fnref20">↩</a></p></li>
-<li id="fn21"><p>Doug Hellman, “CProfile,” accessed February 26, 2013, <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.<a href="#fnref21">↩</a></p></li>
-<li id="fn22"><p>Jsdalton, “CProfile Decorator (Stackoverflow),” accessed March 03, 2013, <a href="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result" title="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result">http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result</a>.<a href="#fnref22">↩</a></p></li>
+<li id="fn19"><p>Boaz Leskes, “PyCounter,” accessed March 06, 2013, <a href="http://pycounters.readthedocs.org/en/latest/" title="http://pycounters.readthedocs.org/en/latest/">http://pycounters.readthedocs.org/en/latest/</a>.<a href="#fnref19">↩</a></p></li>
+<li id="fn20"><p>Asim Ihsan, “Generate_log.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/utilities/generate_log.py</a>.<a href="#fnref20">↩</a></p></li>
+<li id="fn21"><p>Asim Ihsan, “Parse_log.py,” accessed March 03, 2013, <a href="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py" title="https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py">https://github.com/asimihsan/going_faster_with_python/blob/master/src/cpu_profiling/parse_log.py</a>.<a href="#fnref21">↩</a></p></li>
+<li id="fn22"><p>Doug Hellman, “CProfile,” accessed February 26, 2013, <a href="http://pymotw.com/2/profile/index.html" title="http://pymotw.com/2/profile/index.html">http://pymotw.com/2/profile/index.html</a>.<a href="#fnref22">↩</a></p></li>
+<li id="fn23"><p>Jsdalton, “CProfile Decorator (Stackoverflow),” accessed March 03, 2013, <a href="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result" title="http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result">http://stackoverflow.com/questions/5375624/a-decorator-that-profiles-a-method-call-and-logs-the-profiling-result</a>.<a href="#fnref23">↩</a></p></li>
+<li id="fn24"><p>Josef Weidendorfer, “KCachegrind Source,” accessed March 06, 2013, <a href="http://kcachegrind.sourceforge.net/html/Download.html" title="http://kcachegrind.sourceforge.net/html/Download.html">http://kcachegrind.sourceforge.net/html/Download.html</a>.<a href="#fnref24">↩</a></p></li>
+<li id="fn25"><p>Josef Weidendorfer, “KCachegrind,” accessed March 06, 2013, <a href="http://kcachegrind.sourceforge.net/html/Home.html" title="http://kcachegrind.sourceforge.net/html/Home.html">http://kcachegrind.sourceforge.net/html/Home.html</a>.<a href="#fnref25">↩</a></p></li>
+<li id="fn26"><p>Justfalter, “How To Install Qcachegrind (kcachegrind) on Mac OSX Snow Leopard,” accessed March 06, 2013, <a href="http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/" title="http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/">http://langui.sh/2011/06/16/how-to-install-qcachegrind-kcachegrind-on-mac-osx-snow-leopard/</a>.<a href="#fnref26">↩</a></p></li>
+<li id="fn27"><p>Hanno Schlichting, “Profilestats,” accessed March 06, 2013, <a href="https://pypi.python.org/pypi/profilestats" title="https://pypi.python.org/pypi/profilestats">https://pypi.python.org/pypi/profilestats</a>.<a href="#fnref27">↩</a></p></li>
+<li id="fn28"><p>Bryan O’Sullivan, “Statprof,” accessed March 06, 2013, <a href="https://github.com/bos/statprof.py" title="https://github.com/bos/statprof.py">https://github.com/bos/statprof.py</a>.<a href="#fnref28">↩</a></p></li>
+<li id="fn29"><p>Ben Darnell, “Plop,” accessed March 06, 2013, <a href="https://github.com/bdarnell/plop" title="https://github.com/bdarnell/plop">https://github.com/bdarnell/plop</a>.<a href="#fnref29">↩</a></p></li>
+<li id="fn30"><p>Ben Darnell, “Plop: Low-overhead Profiling for Python,” accessed March 06, 2013, <a href="https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/" title="https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/">https://tech.dropbox.com/2012/07/plop-low-overhead-profiling-for-python/</a>.<a href="#fnref30">↩</a></p></li>
 </ol>
 </div>
 </body>
