@@ -918,12 +918,17 @@
 <h3 id="the-tagging-problem"><a href="#the-tagging-problem">The Tagging Problem</a></h3>
 <h4 id="part-of-speech-tagging"><a href="#part-of-speech-tagging"> Part-of-Speech Tagging</a></h4>
 <ul>
+<li>We’d like to model <em>pairs of sequences</em>, rather than just one sequence.
+<ul>
+<li>The general problem is the <strong>sequence labelling problem</strong>, aka the <strong>tagging problem</strong>.</li>
+</ul></li>
+<li><p>Two instances of this problem - POS tagging and named entity recognition.</p></li>
 <li><strong>Part-of-Speech Tagging</strong>: a fundamental problem.
 <ul>
 <li>Input: sentence.</li>
-<li>Output: a tag sequence.</li>
+<li>Output: a tag sequence, aka a state sequence.</li>
 </ul></li>
-<li>Input, some sequence of words, a sentence:</li>
+<li><p>Input, some sequence of words, a sentence:</p></li>
 </ul>
 <pre><code>Profits soared at Boeing Co., easily topping forecasts on Wall
 Street, as their CEO Alan Nulally announced first quarter
@@ -950,6 +955,14 @@ quarter/N results/N ./.</code></pre>
 <li><code>profits</code> isn’t always a noun, it can sometimes be a verb.</li>
 <li><code>topping</code> is a verb, but can sometimes be a noun.</li>
 <li>…</li>
+</ul></li>
+<li>Also, individual words, regardless of context, have a preference for their part of speech.
+<ul>
+<li><code>quarter</code> can be a noun or a verb, but in general is more likely to be a noun.</li>
+</ul></li>
+<li>Also some words are very rare, and may not show up in the training data.
+<ul>
+<li>Important to be able to deal with this.</li>
 </ul></li>
 </ul>
 <h4 id="named-entity-recognition"><a href="#named-entity-recognition"> Named Entity Recognition</a></h4>
@@ -1096,9 +1109,21 @@ can/MD raise/VB capital/NN ./.</code></pre>
 <li>We will see a lot of discriminative models later in the course.</li>
 </ul></li>
 <li>Estimating <span class="math">\(p(x,y)\)</span> is a <strong>generative model</strong>.</li>
-<li><p>There are pros and cons to each, a lot of research, back and forth.</p></li>
+<li>There are pros and cons to each, a lot of research, back and forth.</li>
+<li>Still confused about generative vs. discriminative? <a href="http://stackoverflow.com/questions/879432/what-is-the-difference-between-a-generative-and-discriminative-algorithm">http://stackoverflow.com/questions/879432/what-is-the-difference-between-a-generative-and-discriminative-algorithm</a>
+<ul>
+<li>A generative algorithm takes into account some model about how the data was generated, and then classifies the input.
+<ul>
+<li>By calculating <span class="math">\(p(x,y)\)</span> we have enough to shove it into Bayes’ rule in order to generate <span class="math">\(p(y|x)\)</span>.</li>
+<li>However, if we want, we can generate more <span class="math">\((x,y)\)</span> that fit the model.</li>
+</ul></li>
+<li>A discriminative model doesn’t care and just classifies.
+<ul>
+<li>Given some input it discerns what’s necessary to map it onto the most likely output.</li>
+</ul></li>
+</ul></li>
 <li>How do we apply a generative model to a new test example?</li>
-<li><p>Output from the model:</p></li>
+<li>Output from the model:</li>
 </ul>
 <p><span class="math">\[
 \begin{align}
@@ -1114,6 +1139,14 @@ can/MD raise/VB capital/NN ./.</code></pre>
 <li>Third line: <span class="math">\(p(x)\)</span> does not vary with <span class="math">\(y\)</span>. <span class="math">\(\textrm{argmax}\)</span> implies we’re searching over <span class="math">\(y\)</span>, but denominator is constant and hence we can discard it.
 <ul>
 <li>This is computationally very useful, can be expensive to calculate.</li>
+</ul></li>
+<li>Models that decompose the joint probability <span class="math">\(p(x,y)\)</span> into <span class="math">\(p(y)\)</span> and <span class="math">\(p(x|y)\)</span> are called <strong>noisy-channel models</strong>.
+<ul>
+<li>Intuitively, the input <span class="math">\(x\)</span> is generated in two steps.
+<ol style="list-style-type: decimal">
+<li>Label <span class="math">\(y\)</span> is chosen with probability <span class="math">\(p(y)\)</span>.</li>
+<li>Input <span class="math">\(x\)</span> is generated from the distribution <span class="math">\(p(x|y)\)</span>.</li>
+</ol></li>
 </ul></li>
 </ul>
 <h3 id="hidden-markov-models"><a href="#hidden-markov-models">Hidden Markov Models</a></h3>
@@ -1143,7 +1176,7 @@ can/MD raise/VB capital/NN ./.</code></pre>
 </ul>
 <p><span class="math">\[p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)\]</span></p>
 <ul>
-<li>An example of the joint probability could be <span class="math">\(p(\textrm{the, dog barks, STOP, DT, NN, VB})\)</span>.</li>
+<li>An example of the joint probability could be <span class="math">\(p(\textrm{the, dog barks, DT, NN, VB, STOP})\)</span>.</li>
 <li>The first product is a trigram model applied to tag sequences! Very similar to before.
 <ul>
 <li>One <span class="math">\(q\)</span> term for each tag <em>including the STOP symbol</em>.</li>
@@ -1152,7 +1185,7 @@ can/MD raise/VB capital/NN ./.</code></pre>
 <ul>
 <li>One <span class="math">\(e\)</span> term for each (tagged) word.</li>
 </ul></li>
-<li>where we’ve assumed, as before in Markov Models, that <span class="math">\(x_0 = x_{-1} = {*}\)</span> (the start symbol).</li>
+<li>where we’ve assumed, as before in Markov Models, that <span class="math">\(y_0 = y_{-1} = {*}\)</span> (the start symbol).</li>
 <li><span class="math">\(V\)</span> is the set of possible words in the language, e.g. <span class="math">\(\{\textrm{the, dog, book, ate, his}\}\)</span></li>
 <li><span class="math">\(S\)</span> is the set of possible tags, e.g. <span class="math">\(\{\textrm{DT, NN, VB, P, ADV, ...}\}\)</span>.
 <ul>
@@ -1169,6 +1202,24 @@ can/MD raise/VB capital/NN ./.</code></pre>
 <li><strong>Emission parameters</strong>.</li>
 </ul></li>
 </ul></li>
+<li>This model has the same form as a noisy-channel model.
+<ul>
+<li>The first <span class="math">\(q\)</span> parameters are the prior probability of the tags, i.e. <span class="math">\(p(y)\)</span>.</li>
+<li>The second <span class="math">\(e\)</span> parameters are the conditional probabilities, i.e. <span class="math">\(p(x|y)\)</span>.</li>
+</ul></li>
+<li>Notice that the <span class="math">\(e\)</span> parameters have an independence assumption.
+<ul>
+<li>Any value for random variable <span class="math">\(X_i = x_i\)</span> is only dependent on <span class="math">\(Y_i = y_i\)</span>.</li>
+<li>More formally given the value of <span class="math">\(Y_i\)</span> the value for <span class="math">\(X_i\)</span> is conditionally independent of both previous observations <span class="math">\(X_1 \ldots X_{i-1}\)</span> and other state values <span class="math">\(Y_1 \ldots Y_{i-1}, Y_{i+1}, \ldots Y_{n+1}\)</span>.</li>
+<li>See notes p12.</li>
+</ul></li>
+<li>Useful thinking exercise - how do I generate sequence pairs <span class="math">\(y_1, \ldots, y_{n+1}, x_1, \ldots, x_n\)</span>?
+<ol style="list-style-type: decimal">
+<li>Initialize <span class="math">\(i=1\)</span> and <span class="math">\(y_0 = y_{-1} = \textrm{*}\)</span>.</li>
+<li>Generate <span class="math">\(y_i\)</span> from distribution <span class="math">\(q(y_i|y_{i-2},y_{i-1})\)</span>.</li>
+<li>If <span class="math">\(y_i = \textrm{STOP}\)</span> then return <span class="math">\(y_1 \ldots y_i, x_1 \ldots x_{i-1}\)</span>. Else, generate <span class="math">\(x\)</span> from distribution <span class="math">\(e(x_i|y_i)\)</span>.</li>
+<li>Set <span class="math">\(i=i+1\)</span>, return to step 2.</li>
+</ol></li>
 </ul>
 <hr />
 <p>Quiz: Given tagset <span class="math">\(S = \{\textrm{D, N}\}\)</span>, a vocabulary <span class="math">\(V = \{\textrm{the, dog}\}\)</span>, and a HMM with transition parameters:</p>
@@ -1212,6 +1263,7 @@ dog dog</code></pre>
 <ul>
 <li>STOP is a special tag that terminates the sequence.</li>
 <li>We take <span class="math">\(y_0 = y_{-1} = \textrm{*}\)</span>, where <span class="math">\(\textrm{*}\)</span> is a special “padding” symbol.</li>
+<li>The <span class="math">\(e\)</span> parameters can be interpreted as the conditional probability <span class="math">\(p(\textrm{the dog laughs | D N V STOP})\)</span>.</li>
 </ul>
 <hr />
 <p>Quiz: given set <span class="math">\(S = \{\textrm{D, N, V}\}\)</span>, and vocabulary <span class="math">\(V = \{\textrm{the, cat, drinks, milk, dog}\}\)</span>, and an HMM model:</p>
@@ -1261,7 +1313,7 @@ dog dog</code></pre>
 <p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
-        q(\textrm{Vt | DT, JJ}) &amp; = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ}} \\
+        q(\textrm{Vt | DT, JJ}) &amp; = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ)} \\
                                 &amp; + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ}} \\
                                 &amp; + \lambda_3 \times \frac{\textrm{Count(Vt)}}{\textrm{Count()}}
     \end{aligned}
@@ -1463,7 +1515,7 @@ quarter/NA results/NA ./NA</code></pre>
 </ul>
 <p><span class="math">\[\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\]</span></p>
 <ul>
-<li><p>where the arg max is taken over all seuqneces <span class="math">\(y_1 \ldots y_{n+1)}\)</span> such that <span class="math">\(y_i \in S\)</span> for <span class="math">\(i = 1, \ldots, n\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</p></li>
+<li><p>where the arg max is taken over all sequences <span class="math">\(y_1 \ldots y_{n+1)}\)</span> such that <span class="math">\(y_i \in S\)</span> for <span class="math">\(i = 1, \ldots, n\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</p></li>
 <li><p>We assume that <span class="math">\(p\)</span> again takes the form:</p></li>
 </ul>
 <p><span class="math">\[p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)\]</span></p>
@@ -1509,7 +1561,7 @@ quarter/NA results/NA ./NA</code></pre>
 <li>This is a truncated <span class="math">\(q\)</span>, as it only goes <span class="math">\(i=1\)</span> to <span class="math">\(k\)</span>.</li>
 <li>Define a dynamic programming table</li>
 </ul>
-<p><span class="math">\[\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k\]</span>.</p>
+<p><span class="math">\[\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k\]</span></p>
 <p>i.e.</p>
 <p><span class="math">\[\pi(k,u,v) = max_{(y_{-1},y_0,y_{1},\ldots,y_k):y_{k-1}=u,\;y_k=v} r(y_{-1},y_0,y_1,\ldots,y_k)\]</span></p>
 <ul>
@@ -2011,5 +2063,41 @@ ngram 3=6136155
 <li>Note that for trigrams there is no backoff parameter; it is useless because, if you note the definition of Katz-backoff, it’s never used.</li>
 </ul>
 <hr />
+<!-- START: Livefyre Embed -->
+<div id="livefyre-comments"></div>
+<script type="text/javascript" src="http://zor.livefyre.com/wjs/v3.0/javascripts/livefyre.js"></script>
+<script type="text/javascript">
+(function () {
+    var articleId = fyre.conv.load.makeArticleId(null);
+    fyre.conv.load({}, [{
+        el: 'livefyre-comments',
+        network: "livefyre.com",
+        siteId: "324868",
+        articleId: articleId,
+        signed: false,
+        collectionMeta: {
+            articleId: articleId,
+            url: fyre.conv.load.makeCollectionUrl(),
+        }
+    }], function() {});
+}());
+</script>
+<!-- END: Livefyre Embed -->            
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22326574-1']);
+  _gaq.push(['_setDomainName', 'asimihsan.com']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
 </body>
 </html>
