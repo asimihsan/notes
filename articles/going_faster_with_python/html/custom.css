@@ -1,0 +1,442 @@
+/* 
+	THEME NAME: Portfolio.me
+	AUTHOR: eAM Developers/ Joseph Wachira (@JWChiwa)
+	WEBSITE: http://eamdevelopers.com
+	VERSION: 2.0 | 2012.07.15 
+
+    Custom for notes.
+*/
+
+body,li,blockquote p {
+    margin: auto;
+    padding-right: 1em;
+    padding-left: 1em;
+    max-width: 840px; 
+    color: black;
+    font-family: 'Noticia Text', Verdana, sans-serif;
+    line-height: 1.8em;
+    color: #333; 
+    background-color: #FDFDFA;
+}
+
+body {
+    font-size: 120%;
+}
+
+p {
+    margin: 1.2em 0;
+}
+
+h1, h2, h3, h4, h5, h6  {
+	font-family: 'Source Sans Pro', Verdana, sans-serif !important;
+	font-style: normal;
+	font-weight: 400 !important;
+    border-bottom: 1px dotted black;
+    padding-top: 1em;
+    margin-bottom: 0.5em;
+}
+.header {
+	padding: 0;
+	margin: 0;
+	color: white;
+	border-bottom: solid #333 1px;
+	background: #555 url(../img/patterns/bg_dark.jpg);	
+	}
+	.header-inner {
+		padding: 5px 0;
+	}
+	.navbar {
+		color: white;
+	}
+	.brand {
+		float: left;
+		display: block;
+		margin-left: -20px;
+		font-size: 20px;
+		font-weight: 200;
+		line-height: 1;
+	}	
+	.h-nav {
+		color: white;
+	}
+	.navbar .nav .active > a, 
+	.navbar .nav .active > a:hover {
+		background: none !important;
+	}
+	.navbar .nav li a {
+		/*color: white;*/
+		font-family: 'Source Sans Pro', Verdana, sans-serif !important;
+		font-style: normal;
+		font-weight: 400 !important;
+		font-size: 14px;	
+	}
+	.navbar li.dropdown a{
+		color: #999;
+	}
+.topic {
+	background: #262626 url(../img/patterns/px_by_Gre3g.png) repeat;
+	border-top: 1px solid #555;
+	}
+	.inner-topic {
+		color: white;
+		padding: 2em 0;		
+	}
+.intro {
+	background: #CCC url(../img/patterns/bg_main_light.jpg);
+	font-size: 13px;
+	line-height: 18px;
+	padding: 20px 0 25px 0;
+	border-top: solid #EEE 1px;
+	border-bottom: solid #BBB 1px;
+	/*text-shadow: 0 1px 1px white;	*/
+	}
+	.inner-intro {
+		/*padding: 20px 0;*/
+		color: #2B2B2C;
+	}
+	.inner-intro p {
+		padding-top: 10px;
+		font-size: 13px;
+		font-weight: 24px;
+	}
+.wrapper {
+	margin: 0;
+	padding: 25px 0;
+	background: #EEE url(../img/patterns/bg_main_dark.jpg);
+	border-top: solid #EEE 1px;	
+	border-bottom: solid #444 1px;
+	}		
+	.wii-feature p, .wii p, .sidebar-wii p{
+		font-size: 13px;
+		font-weight: 24px;
+	}
+	.wii-feature {
+		margin: 20px 0;
+		padding: 0;
+		max-width: 625px;
+		background-color: white;
+		border: 1px solid #d6d5d4;
+		-webkit-border-radius: 6px;
+		-mox-border-radius: 6px;
+		border-radius: 6px;
+	}
+	.wii {
+		margin: 20px 0;
+		padding: 0 0 4em 0;
+		max-width: 320px;
+		background-color: white;
+		border: 1px solid #d6d5d4;
+		-webkit-border-radius: 6px;
+		-mox-border-radius: 6px;
+		border-radius: 6px;
+	}
+	.browser-bar {
+		height: 30px;
+		background: #ececec;
+		-webkit-border-top-right-radius: 6px;
+		-webkit-border-top-left-radius: 6px;
+		-mox-border-top-right-radius: 6px;
+		-mox-border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+		border-top-left-radius: 6px;
+		background-image: linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -o-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -moz-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -webkit-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -ms-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+
+		background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.23, rgb(201,201,201)),
+			color-stop(0.8, rgb(232,232,232))
+		);
+		}
+	.wii-thumb {
+		padding: 0;
+		margin: 0;
+	}
+	.wii img {
+		max-width: 100%;
+		-webkit-transition: opacity 1s ease-in-out;
+		-moz-transition: opacity 1s ease-in-out;
+		-o-transition: opacity 1s ease-in-out;
+		-ms-transition: opacity 1s ease-in-out;	
+		transition: opacity 1s ease-in-out;
+	}
+	.wii img:hover {
+		opacity:0.6;
+	}		
+	.wii-desc {
+		padding: 10px 10px 15px 10px;
+	}
+	.wii-meta  {
+		color: #999;
+	}		
+	.sidebar-wii {
+		margin: 20px 0;
+		padding: 0 0 10px 0;
+		background: #ececec;
+		border: 1px solid #d6d5d4;
+	}
+	.title-bar {
+		padding: 10px;
+		background: #D0D0D0;
+		background-image: linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -o-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -moz-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -webkit-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+		background-image: -ms-linear-gradient(bottom, rgb(201,201,201) 23%, rgb(232,232,232) 80%);
+
+		background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.23, rgb(201,201,201)),
+			color-stop(0.8, rgb(232,232,232))
+		);
+	}	
+	.sidebar-wii-conte {
+		padding: 10px;
+	}
+	.connect {
+		width: 210px;
+		margin: 20px 40px 10px 0;
+		padding: 0px;
+		height: 34px;
+	}
+	.connect li {
+		float: left;
+	}
+	.connect li a {
+		display: block;
+		width: 34px;
+		height: 34px;
+		outline: none;
+		margin: 0 4px;
+		background: transparent url(../img/social.png) no-repeat 0 0;
+		text-indent: -9000px;
+		position: relative;
+	}
+	.connect li .connect-rss {
+		background-position: 0px -1px;
+	}
+	.connect li .connect-rss:hover{
+		background-position:0 -39px;
+	}
+	.connect li .connect-email {
+		background-position: -42px -1px;
+	}
+	.connect li .connect-email:hover {
+		background-position: -42px -39px;
+	}
+	.connect li .connect-twitter {
+		background-position: -84px -1px;
+	}
+	.connect li .connect-twitter:hover {
+		background-position: -84px -39px;
+	}
+	.connect li .connect-facebook {
+		background-position: -126px -1px;
+	}
+	.connect li .connect-facebook:hover{
+		background-position: -126px -39px;
+	}
+	.connect li .connect-gplus {
+		background-position: -168px -1px;
+	}
+	.connect li .connect-gplus:hover {
+		background-position: -168px -39px;
+	}	
+	article {
+		margin-bottom: 25px;
+		padding: 0 10px 3px;
+		border-left: 2px solid white;
+	}
+	article.eamdevelopers {
+		border-color: #3ABDC9;
+	}
+	article.victoriapod {
+		border-color: #E7293B;
+	}
+	article h1 {
+		color: #D95B44;
+		font-size: 16px;
+		font-weight: 700;
+	}
+	article h2 {
+		color: #666;
+		font-size: 14px;
+	}
+	article time {
+		font-size: 13px;
+		color: #555;
+		padding-bottom: 10px;
+	}
+	.my-skills {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+	.my-skills li {
+		color: #f3f3f3;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: inline-block;
+		list-style: none;
+		background: #404141;
+		padding: 5px;
+		width: 40%;
+		float: left;
+		margin-right: 5%;
+		margin-bottom: 2%;
+	}
+	ul.friend-list {
+		padding: 0;
+		margin: 0 0 9px 0;
+	}
+	.friend-list li {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+		list-style: none;
+		background: #404141;
+		padding: 5px;
+		margin-left: 0;
+		margin-bottom: 5px;
+		-webkit-transition: background 0.3s ease;
+		-moz-transition: background 0.3s ease;
+		-o-transition: background 0.3s ease;
+		transition: background 0.3s ease;
+	}
+	.friend-list li:hover {
+		background: #666;
+	}
+	.friend-list li a {
+		color: #f3f3f3;
+		text-decoration: none;
+	}
+	.wii-form {
+		margin: 20px 0;
+		padding: 0;
+		max-width: 625px;
+		background: #f5f5f5;
+		border: 1px solid #d6d5d4;
+		-webkit-border-radius: 6px;
+		-mox-border-radius: 6px;
+		border-radius: 6px;
+	}
+	.form-bar {
+		height: 30px;
+		background: #ececec;
+		-webkit-border-top-right-radius: 6px;
+		-webkit-border-top-left-radius: 6px;
+		-mox-border-top-right-radius: 6px;
+		-mox-border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+		border-top-left-radius: 6px;
+	}
+	.rango { 
+		padding: 19px;
+	}
+	
+.footer {
+	padding: 20px 0 15px 0;
+	margin: 0;
+	background: #222;
+	text-shadow: 1px 1px 2px #222;	
+	border-top: solid #666 1px;	
+	}
+	.upper-f {
+		}
+		.f-logo {
+			float: left;
+			display: block;
+			padding: 8px 20px 12px;
+			margin-left: -20px;
+			text-decoration: none !important;
+			font-size: 20px;
+			font-weight: 200;
+			line-height: 1;
+			color: #fff;
+		}	
+		.f-logo:hover {
+			color: #fff;
+		}	
+		.upper-f .social a {
+			background: url(../img/footer-icons.gif) -3px 0 no-repeat;
+			float: right;
+			width: 35px;
+			height: 35px;
+			overflow: hidden;
+			text-indent: -900px;
+			margin: 0 5px 0 0;
+		}
+		.upper-f .social .facebook {
+			background-position: -44px 0;
+			margin: 0;
+		}
+		.upper-f .social .rss {
+			background-position: -80px 0;
+		}
+		.upper-f .social .linkedin {
+			background-position: -124px 0;
+		}
+		.upper-f .social .youtube {
+			background-position: -170px 0;
+		}
+	.middle-f p {
+		padding-top: 10px;
+		color: #999;
+		font-size: 12px;
+		max-width: 800px;
+		float: left;
+	}
+	.flink {
+		padding: 0 10px 0 10px;
+		color: white;
+		text-decoration: none !important;
+		text-transform: uppercase;
+	}
+	
+@media (max-width: 767px) {
+	body {
+		padding-right: 0 !important;
+		padding-left: 0 !important;
+	}
+	.container {
+		padding-right: 20px;
+		padding-left: 20px;
+	}
+	.navbar {
+		overflow: visible;
+		margin-bottom: 0 !important;
+	}
+	h2.nuck {
+		text-align: center;
+	}
+	.wii {
+		margin: 10px auto !important;
+	}
+}
+
+table#articles-table.table tbody tr:hover td,
+table#articles-table.table tbody tr:hover th {
+    background-color: transparent;
+}
+
+table#articles-table.table {
+    font-size: 18px;
+    line-height: 1.5em;
+}
+
+blockquote {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+    padding-left: 15px;
+    border-left: 3px solid #ccc;
+    font-style: italic;
+}
