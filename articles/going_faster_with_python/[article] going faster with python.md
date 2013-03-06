@@ -337,6 +337,29 @@ execute them.
 
 TODO
 
+Decorator that records frequency and time spent for individual
+functions.
+
+To install: `pip install pycounters`.
+
+To use:
+
+-   `from pycounters.shortcuts import frequency, time`
+-   Set up a log reporter:
+
+~~~~ {.python .numberLines}
+import pycounters
+import logging
+
+reporter=pycounters.reporters.LogReporter(logging.getLogger("counters"))
+pycounters.register_reporter(reporter)
+pycounters.start_auto_reporting(seconds=300)
+~~~~
+
+-   Decorate functions with `@frequency()` and `@time()`.
+
+For more information see [@pycounter].
+
 ### CPU profiling
 
 Detailed logging, and coming up with efficient and useful
@@ -703,18 +726,94 @@ rss_max | 46.02 | 46.04 | 46.04  | 46.04 | 46.05
 
 TODO
 
+This is far superior to RunSnakeRun, and to boot is actually
+usable.
+
+Installation on Mac OS X:
+
+-   You'll need XCode Developer Tools.
+-   `brew install qt graphview`
+-   Download the KCachegrind source [@callgrind:source].
+-   `cd kcachegrind/qcachegrind`
+-   `qmake; make`
+-   You'll have a `qcachegrind.app`, move it to Applications.
+-   callgrind wants the Graphviz executable `dot` to be
+accessible without a `~/.bash_profile`, so you need to
+`sudo ln -s /usr/local/bin/dot /usr/bin/dot`
+-   `pip install pyprof2calltree`
+
+To use this:
+
+-   Generate a regular `cProfile` profile file (see earlier).
+-   `pyprof2calltree -i cprofile.out -o callgrind.output`
+-   Open `callgrind.output` in QCachegrind.
+-   Pretty pictures!
+
+For more information see [@callgrind], [@callgrind:install].
 
 #### profilestats
 
 TODO
 
+Decorator for profiling individual functions then converting
+the profiling data to kcachegrind format. Of course you
+could just use the `cProfile` decorator trick explained above
+and then call `pyprof2calltree`, but to each their own.
+
+To install this: `pip install profilestats`.
+
+Usage:
+
+-   `from profilestats import profile`
+-   `@profile` on function.
+
+For more information see [@profilestats].
+
 #### statprof
 
 TODO
 
+Statistical profiler. Intended to have lighter impact than 
+`cProfiler`. It regularly gathers the stack on a timer, rather
+than deterministically tracing all calls.
+
+To install: `pip install statprof`.
+
+To use:
+
+~~~~ {.python .numberLines}
+import statprof
+
+statprof.start()
+    try:
+        my_questionable_function()
+    finally:
+        statprof.stop()
+        statprof.display()
+~~~~
+
+For more information see [@statprof].
+
 #### plop
 
 TODO
+
+Statistical profiler, low CPU overhead.
+
+To install: `pip install plop tornado`
+
+To use:
+
+-   `python -m plop.collectory myscript.py`
+-   Writes output to `/tmp/plop.out`
+-   `python -m python.viewer --datadir=/tmp`
+-   This launches a Tornado web server.
+-   Browse to [http://localhost:8888](http://localhost:8888)
+-   Pretty pictures!
+    -   D3 force-layout directed call graph.
+    -   Radius of node is percentage of total time it takes.
+
+For more information see [@plop], [@plop:blog]
 
 ### Memory profiling
 
