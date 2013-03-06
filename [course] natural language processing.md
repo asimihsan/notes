@@ -786,9 +786,13 @@ $$\alpha(w_{i-2},w_{i-1}) = 1 - \sum_{w \in A(w_{i-2},w_{i-1})} \frac{\textrm{Co
 
 #### Part-of-Speech Tagging
 
+-   We'd like to model *pairs of sequences*, rather than just one sequence.
+    -   The general problem is the **sequence labelling problem**, aka the **tagging problem**.
+-   Two instances of this problem - POS tagging and named entity recognition.
+
 -   **Part-of-Speech Tagging**: a fundamental problem.
     -   Input: sentence.
-    -   Output: a tag sequence.
+    -   Output: a tag sequence, aka a state sequence.
 
 -   Input, some sequence of words, a sentence:
 
@@ -822,6 +826,10 @@ quarter/N results/N ./.
     -   `profits` isn't always a noun, it can sometimes be a verb.
     -   `topping` is a verb, but can sometimes be a noun.
     -   ...
+-   Also, individual words, regardless of context, have a preference for their part of speech.
+    -   `quarter` can be a noun or a verb, but in general is more likely to be a noun.
+-   Also some words are very rare, and may not show up in the training data.
+    -   Important to be able to deal with this.
 
 #### Named Entity Recognition
 
@@ -965,6 +973,12 @@ $$p(x) = \sum_y p(y)p(x|y)$$
     -   We will see a lot of discriminative models later in the course.
 -   Estimating $p(x,y)$ is a **generative model**.
 -   There are pros and cons to each, a lot of research, back and forth.
+-   Still confused about generative vs. discriminative? [http://stackoverflow.com/questions/879432/what-is-the-difference-between-a-generative-and-discriminative-algorithm](http://stackoverflow.com/questions/879432/what-is-the-difference-between-a-generative-and-discriminative-algorithm)
+    -   A generative algorithm takes into account some model about how the data was generated, and then classifies the input.
+        -   By calculating $p(x,y)$ we have enough to shove it into Bayes' rule in order to generate $p(y|x)$.
+        -   However, if we want, we can generate more $(x,y)$ that fit the model.
+    -   A discriminative model doesn't care and just classifies.
+        -   Given some input it discerns what's necessary to map it onto the most likely output.
 
 -   How do we apply a generative model to a new test example?
 -   Output from the model:
@@ -982,6 +996,10 @@ $$
 -   Second line: assuming we have a generative model, by Bayes Rule.
 -   Third line: $p(x)$ does not vary with $y$. $\textrm{argmax}$ implies we're searching over $y$, but denominator is constant and hence we can discard it.
     -   This is computationally very useful, can be expensive to calculate.
+-   Models that decompose the joint probability $p(x,y)$ into $p(y)$ and $p(x|y)$ are called **noisy-channel models**.
+    -   Intuitively, the input $x$ is generated in two steps.
+        1.  Label $y$ is chosen with probability $p(y)$. 
+        2.  Input $x$ is generated from the distribution $p(x|y)$.
 
 ### Hidden Markov Models
 
@@ -1009,13 +1027,13 @@ $$\textrm{arg}\underset{y_1 \ldots y_n}{\textrm{max}} p(x_1, x_2, \ldots, x_n, y
 
 $$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|y_{i-2},y_{i-1}) \prod_{i=1}^{n} e(x_i|y_i)$$
 
--   An example of the joint probability could be $p(\textrm{the, dog barks, STOP, DT, NN, VB})$.
+-   An example of the joint probability could be $p(\textrm{the, dog barks, DT, NN, VB, STOP})$.
 -   The first product is a trigram model applied to tag sequences! Very similar to before.
     -   One $q$ term for each tag *including the STOP symbol*.
 -   The second product could have e.g. $e(\textrm{the | DT})$ is the probability of a tag emitting or generating a word.
     -   One $e$ term for each (tagged) word.
 
--   where we've assumed, as before in Markov Models, that $x_0 = x_{-1} = {*}$ (the start symbol).
+-   where we've assumed, as before in Markov Models, that $y_0 = y_{-1} = {*}$ (the start symbol).
 -   $V$ is the set of possible words in the language, e.g. $\{\textrm{the, dog, book, ate, his}\}$
 -   $S$ is the set of possible tags, e.g. $\{\textrm{DT, NN, VB, P, ADV, ...}\}$.
     -   $\simeq$ hundreds of tags; the Wall Street Journal courpus has $\simeq$ 50 tags.
@@ -1025,6 +1043,21 @@ $$p(x_1, x_2, \ldots, x_n, y_1, y_2, \ldots, y_{n+1}) = \prod_{i=1}^{n+1} q(y_i|
         -   **Trigram parameters** (but referred to in a quiz as **transition parameters**).
     -   $e(x|s)\;\forall\;s \in S, x \in V$
         -   **Emission parameters**.
+
+-   This model has the same form as a noisy-channel model.
+    -   The first $q$ parameters are the prior probability of the tags, i.e. $p(y)$.
+    -   The second $e$ parameters are the conditional probabilities, i.e. $p(x|y)$.
+
+-   Notice that the $e$ parameters have an independence assumption.
+    -   Any value for random variable $X_i = x_i$ is only dependent on $Y_i = y_i$.
+    -   More formally given the value of $Y_i$ the value for $X_i$ is conditionally independent of both previous observations $X_1 \ldots X_{i-1}$ and other state values $Y_1 \ldots Y_{i-1}, Y_{i+1}, \ldots Y_{n+1}$.
+    -   See notes p12.
+
+-   Useful thinking exercise - how do I generate sequence pairs $y_1, \ldots, y_{n+1}, x_1, \ldots, x_n$?
+    1.  Initialize $i=1$ and $y_0 = y_{-1} = \textrm{*}$.
+    2.  Generate $y_i$ from distribution $q(y_i|y_{i-2},y_{i-1})$.
+    3.  If $y_i = \textrm{STOP}$ then return $y_1 \ldots y_i, x_1 \ldots x_{i-1}$. Else, generate $x$ from distribution $e(x_i|y_i)$.
+    4.  Set $i=i+1$, return to step 2.
 
 - - -
 
@@ -1082,6 +1115,7 @@ $$
 
 -   STOP is a special tag that terminates the sequence.
 -   We take $y_0 = y_{-1} = \textrm{*}$, where $\textrm{*}$ is a special "padding" symbol.
+-   The $e$ parameters can be interpreted as the conditional probability $p(\textrm{the dog laughs | D N V STOP})$.
 
 - - -
 
@@ -1137,7 +1171,7 @@ e.g.
 $$
 \begin{align}
     &\begin{aligned}
-        q(\textrm{Vt | DT, JJ}) & = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ}} \\
+        q(\textrm{Vt | DT, JJ}) & = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ)} \\
                                 & + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ}} \\
                                 & + \lambda_3 \times \frac{\textrm{Count(Vt)}}{\textrm{Count()}}
     \end{aligned}
@@ -1281,7 +1315,7 @@ quarter/NA results/NA ./NA
 
 $$\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})$$
 
--   where the arg max is taken over all seuqneces $y_1 \ldots y_{n+1)}$ such that $y_i \in S$ for $i = 1, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
+-   where the arg max is taken over all sequences $y_1 \ldots y_{n+1)}$ such that $y_i \in S$ for $i = 1, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
 
 -   We assume that $p$ again takes the form:
 
@@ -1324,7 +1358,7 @@ $$r(y_{-1}, y_0, y_1, \ldots, y_k) = \prod_{i=1}^{k} q(y_i | y_{i-2}, y_{i-1}) \
 -   This is a truncated $q$, as it only goes $i=1$ to $k$.
 -   Define a dynamic programming table
 
-$$\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k$$.
+$$\pi(k,u,v) = \textrm{maximum probability of a tag sequence ending in tags}\;u, v\;\textrm{at position}\;k$$
 
 i.e.
 
