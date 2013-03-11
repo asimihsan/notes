@@ -114,3 +114,17 @@
 	-	Set IP connectivity to enable in startup:
 
 			chkconfig network on
+
+-    Install latest GCC on Mac OS X
+
+        # Install homebrew.
+        brew update
+        brew tap homebrew/dupes
+        brew install gcc --use-llvm --enable-all-languages --enable-profiled-build
+        
+-    To get GCC 4.7 working on Mac we have to force distutils to give up using `-Qunused-arguments`. It's painful, so we hack it real hard:
+
+        import distutils.sysconfig
+        for key in distutils.sysconfig._config_vars:
+            if key in ['CONFIG_ARGS', 'PY_CFLAGS', 'CFLAGS']:
+                distutils.sysconfig._config_vars[key] = distutils.sysconfig._config_vars[key].replace("-Qunused-arguments ", "")
