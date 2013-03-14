@@ -316,9 +316,66 @@
 <ul>
 <li>Quiz: say we have a language model with <span class="math">\(V = \{\textrm{the, dog, runs}\}\)</span>, and the following parameters:</li>
 </ul>
-<p><span class="math">\(q(\textrm{the | *, *}) = 1\)</span><br /><span class="math">\(q(\textrm{dog | *, the}) = 0.5\)</span><br /><span class="math">\(q(\textrm{STOP | *, the}) = 0.5\)</span><br /><span class="math">\(q(\textrm{runs | the, dog}) = 0.5\)</span><br /><span class="math">\(q(\textrm{STOP | the, dog}) = 0.5\)</span><br /><span class="math">\(q(\textrm{STOP | dog, runs}) = 1\)</span></p>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        q(\textrm{the | *, *}) &amp; = 1 \\
+        q(\textrm{dog | *, the}) &amp; = 0.5 \\  
+        q(\textrm{STOP | *, the}) &amp; = 0.5 \\
+        q(\textrm{runs | the, dog}) &amp; = 0.5 \\ 
+        q(\textrm{STOP | the, dog}) &amp; = 0.5 \\
+        q(\textrm{STOP | dog, runs}) &amp; = 1
+    \end{aligned}
+\end{align}
+\]</span></p>
 <ul>
-<li>There are <strong>three</strong> sentences with non-zero probability under this model. Draw out a graph, where nodes are words and edge labels denote probabilities, to see this.</li>
+<li>There are <strong>three</strong> sentences with non-zero probability under this model.
+<ul>
+<li>{*, *, the, STOP}</li>
+<li>{*, *, the, dog, STOP}</li>
+<li>{*, *, the, dog, runs, STOP}</li>
+</ul></li>
+<li>Draw out a graph, where nodes are words and edge labels denote probabilities, to see this:</li>
+</ul>
+<div class="figure">
+<img src="nlp_01_trigram_graph.png" />
+</div>
+<ul>
+<li>The above is a <a href="http://en.wikipedia.org/wiki/Markov_chain">Markov chain</a> drawn in the style of a <a href="http://en.wikipedia.org/wiki/Finite-state_machine">finite-state machine</a>. This is a lot of fancy talk for a very simple idea.</li>
+<li>People call these sorts of diagrams all sorts of fancy names.
+<ul>
+<li>Mathematicians call this type of diagram a <strong>graph</strong>. (No, not a pie <em>chart</em>).
+<ul>
+<li>Since there are arrows in this diagram this is a <strong>directed graph</strong>.</li>
+<li>If the digram just had plain lines, without arrow heads, it would be an <strong>undirected graph</strong>.</li>
+</ul></li>
+<li>Computer scientists call this type of diagram a <strong>finite-state machine</strong> (FSM).</li>
+<li>Electrical engineers call diagrams that (kind of) look like this <strong>Markov chains</strong>.</li>
+<li>In graph-speak, each circle is a <strong>node</strong> and each arrow is an <strong>edge</strong>.</li>
+<li>In FSM-speak, each circle is a <strong>state</strong> and each arrow is a <strong>transition</strong>.</li>
+<li>People will often use node/state and edge/transition interchangably, and others love pointing out that they’re using the wrong words.</li>
+</ul></li>
+<li>Every circle and double circle represents a <em>state</em>. A state is “somewhere you can be”, which’ll make sense soon.</li>
+<li>Every line is the <em>likelihood of moving from one state to another</em>. If this number is 0 this transition is impossible, if it is 1 it is certain, and could be something in between.
+<ul>
+<li>This number can never be less than 0 or greater than 1. If it is then the probability distribution is no longer “well-formed”, i.e. doesn’t make sense.</li>
+</ul></li>
+<li>On the left-hand side an arrow appears to come out of nowhere to the first start symbol (*). This is the <em>start state</em>.</li>
+<li>Every double circle is an <em>accepting state</em>. <strong>The only accepting state is the STOP symbol</strong>.</li>
+<li>Take your finger and trace out every path from every start state to every accepting state. This is a possible sequence of words in this language model.
+<ul>
+<li>As the STOP symbol is the only accepting state, <strong>every sequence of words in this language model must end with the STOP symbol</strong>.</li>
+</ul></li>
+<li>The probability of a given sequence of words is the <strong>product</strong> of all the edge probabilities.</li>
+<li>The sum of probabilities of all possible sequences of words must add up to one if the language model is “well-formed”.
+<ul>
+<li>One of the rules of a probability distributions is that all the “little probabilities”, or probabilities of individual events, must sum to 1 or else it just doesn’t make sense.</li>
+</ul></li>
+<li>You’ll notice something peculiar. If any edge has a value of 0 then all sequences of words that include that edge must be impossible, no matter how likely the other transitions in that sequence!
+<ul>
+<li>Hence when you’re tracing your finger looking for possible sequences you <strong>exclude any paths that include an edge with a probability of 0</strong>.</li>
+</ul></li>
+<li>You may be wondering how hard this gets with many nodes and many edges. Very hard. This is just a visual depiction of how utterly impossible brute force is when it comes to language models, and hence how important the upcoming Vitterbi algorithm is.</li>
 </ul>
 <hr />
 <h4 id="the-trigram-estimation-problem"><a href="#the-trigram-estimation-problem">The Trigram Estimation Problem</a></h4>
@@ -518,8 +575,26 @@
 <p>(Can also show that <span class="math">\(q(w|u,v) \ge 0\;\forall\;w \in V^{&#39;}\)</span>).</p>
 <hr />
 <p>Quiz: say we have <span class="math">\(\lambda_1 = -0.5, \lambda_2 = 0.5, \lambda_3 = 1.0\)</span>. Note that these satisfy the constraint <span class="math">\(\sum_i \lambda_i = 1\)</span>, but violate the constraint that <span class="math">\(\lambda_i \ge 0\)</span>.</p>
-<p>Recalling our definition of <span class="math">\(q\)</span> above within: <span class="math">\(\sum_{w \in V^{&#39;}} q(w|u,v)\)</span>, it’s hence true that there might be a trigram <span class="math">\(u,v,w\)</span> such that <span class="math">\(q(w|u,v) \lt 0\)</span> or <span class="math">\(q(w|u,v) \gt 1\)</span>.</p>
-<p>It is not true that we may have a bigram <span class="math">\(u,v\)</span> such that <span class="math">\(\sum_{w \in V} q(w|u,v) \neq 1\)</span>.</p>
+<p>(Credit to <a href="https://www.coursera.org/user/i/82f8725f5c57afaa5ef1cdded36d5f1d">Philip M. Hession</a> for the explanations).</p>
+<p>Recalling our definition of <span class="math">\(q\)</span> above within: <span class="math">\(\sum_{w \in V^{&#39;}} q(w|u,v)\)</span>, it’s hence true that there might be a trigram <span class="math">\(u,v,w\)</span> such that <span class="math">\(q(w|u,v) \lt 0\)</span>:</p>
+<p><span class="math">\[q(\text{barks}|\text{the,dog})=-\frac{1}{2}\frac{c(\text{the,dog,barks})}{c(\text{the,dog})}+\frac{1}{2}\frac{c(\text{dog,barks})}{c(\text{dog})}+1\cdot\frac{c(\text{barks})}{c()}\]</span></p>
+<ul>
+<li>if <span class="math">\(c() \gg c(\text{barks})\)</span></li>
+<li>and if <span class="math">\(c(\text{dog}) \gg c(\text{dog,barks})\)</span></li>
+<li>and if <span class="math">\(c(\text{the,dog}) \approx c(\text{the,dog,barks})\)</span></li>
+</ul>
+<p>then <span class="math">\(q(\text{barks}|\text{the,dog})=-\frac{1}{2}(\sim 1)+\frac{1}{2}(\ll 1)+1(\ll 1) \lt0\)</span></p>
+<p>and there might be a trigram <span class="math">\(u,v,w\)</span> such that <span class="math">\(q(w|u,v) \gt 1\)</span>:</p>
+<p><span class="math">\[q(\text{barks}|\text{the,dog})=-\frac{1}{2}\frac{c(\text{the,dog,barks})}{c(\text{the,dog})}+\frac{1}{2}\frac{c(\text{dog,barks})}{c(\text{dog})}+1\cdot\frac{c(\text{barks})}{c()}\]</span></p>
+<ul>
+<li>if <span class="math">\(c() \approx c(\text{barks})\)</span></li>
+<li>and if <span class="math">\(c(\text{dog}) \approx c(\text{dog,barks})\)</span></li>
+<li>and if <span class="math">\(c(\text{the,dog}) \gg c(\text{the,dog,barks})\)</span></li>
+</ul>
+<p>then <span class="math">\[q(\text{barks}|\text{the,dog})=-\frac{1}{2}(\ll 1)+\frac{1}{2}(\sim 1)+1(\sim 1) \gt 1\]</span></p>
+<p>It is not true that we may have a bigram <span class="math">\(u,v\)</span> such that <span class="math">\(\sum_{w \in V} q(w|u,v) \neq 1\)</span>:</p>
+<p><span class="math">\[\sum_{w}q(w|u,v) = -\frac{1}{2}\frac{\sum_w c(u,v,w)}{c(u,v)}+\frac{1}{2}\frac{\sum_w c(v,w)}{c(v)}+1\cdot\frac{\sum_w c(w)}{c()} = -\frac{1}{2}(1)+\frac{1}{2}(1)+1(1)=1\]</span></p>
+<p>since <span class="math">\(\sum_w c(u,v,w)=c(u,v)\)</span>, <span class="math">\(\sum_w c(v,w)=c(v)\)</span>, and <span class="math">\(\sum_w c(w)=c()\)</span>.</p>
 <hr />
 <h4 id="how-to-estimate-the-lambda-values"><a href="#how-to-estimate-the-lambda-values">How to estimate the <span class="math">\(\lambda\)</span> values?</a></h4>
 <ul>
@@ -2063,41 +2138,5 @@ ngram 3=6136155
 <li>Note that for trigrams there is no backoff parameter; it is useless because, if you note the definition of Katz-backoff, it’s never used.</li>
 </ul>
 <hr />
-<!-- START: Livefyre Embed -->
-<div id="livefyre-comments"></div>
-<script type="text/javascript" src="http://zor.livefyre.com/wjs/v3.0/javascripts/livefyre.js"></script>
-<script type="text/javascript">
-(function () {
-    var articleId = fyre.conv.load.makeArticleId(null);
-    fyre.conv.load({}, [{
-        el: 'livefyre-comments',
-        network: "livefyre.com",
-        siteId: "324868",
-        articleId: articleId,
-        signed: false,
-        collectionMeta: {
-            articleId: articleId,
-            url: fyre.conv.load.makeCollectionUrl(),
-        }
-    }], function() {});
-}());
-</script>
-<!-- END: Livefyre Embed -->            
-
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-22326574-1']);
-  _gaq.push(['_setDomainName', 'asimihsan.com']);
-  _gaq.push(['_setAllowLinker', true]);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
 </body>
 </html>

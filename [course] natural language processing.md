@@ -249,14 +249,50 @@ $\times q(\textrm{STOP | dog, barks})$
 
 -   Quiz: say we have a language model with $V = \{\textrm{the, dog, runs}\}$, and the following parameters:
 
-$q(\textrm{the | *, *}) = 1$  
-$q(\textrm{dog | *, the}) = 0.5$  
-$q(\textrm{STOP | *, the}) = 0.5$  
-$q(\textrm{runs | the, dog}) = 0.5$  
-$q(\textrm{STOP | the, dog}) = 0.5$  
-$q(\textrm{STOP | dog, runs}) = 1$  
+$$
+\begin{align}
+    &\begin{aligned}
+        q(\textrm{the | *, *}) & = 1 \\
+        q(\textrm{dog | *, the}) & = 0.5 \\  
+        q(\textrm{STOP | *, the}) & = 0.5 \\
+        q(\textrm{runs | the, dog}) & = 0.5 \\ 
+        q(\textrm{STOP | the, dog}) & = 0.5 \\
+        q(\textrm{STOP | dog, runs}) & = 1
+    \end{aligned}
+\end{align}
+$$
 
--   There are **three** sentences with non-zero probability under this model. Draw out a graph, where nodes are words and edge labels denote probabilities, to see this.
+-   There are **three** sentences with non-zero probability under this model.
+    -   {\*, \*, the, STOP}
+    -   {\*, \*, the, dog, STOP}
+    -   {\*, \*, the, dog, runs, STOP}
+-   Draw out a graph, where nodes are words and edge labels denote probabilities, to see this:
+
+![](nlp_01_trigram_graph.png)
+
+-   The above is a [Markov chain](http://en.wikipedia.org/wiki/Markov_chain) drawn in the style of a [finite-state machine](http://en.wikipedia.org/wiki/Finite-state_machine). This is a lot of fancy talk for a very simple idea.
+-   People call these sorts of diagrams all sorts of fancy names.
+    -   Mathematicians call this type of diagram a **graph**. (No, not a pie *chart*).
+        -   Since there are arrows in this diagram this is a **directed graph**.
+        -   If the digram just had plain lines, without arrow heads, it would be an **undirected graph**.
+    -   Computer scientists call this type of diagram a **finite-state machine** (FSM).
+    -   Electrical engineers call diagrams that (kind of) look like this **Markov chains**.
+    -   In graph-speak, each circle is a **node** and each arrow is an **edge**.
+    -   In FSM-speak, each circle is a **state** and each arrow is a **transition**.
+    -   People will often use node/state and edge/transition interchangably, and others love pointing out that they're using the wrong words.
+-   Every circle and double circle represents a *state*. A state is "somewhere you can be", which'll make sense soon.
+-   Every line is the *likelihood of moving from one state to another*. If this number is 0 this transition is impossible, if it is 1 it is certain, and could be something in between.
+    -   This number can never be less than 0 or greater than 1. If it is then the probability distribution is no longer "well-formed", i.e. doesn't make sense.
+-   On the left-hand side an arrow appears to come out of nowhere to the first start symbol (\*). This is the *start state*.
+-   Every double circle is an *accepting state*. **The only accepting state is the STOP symbol**.
+-   Take your finger and trace out every path from every start state to every accepting state. This is a possible sequence of words in this language model.
+    -   As the STOP symbol is the only accepting state, **every sequence of words in this language model must end with the STOP symbol**.
+-   The probability of a given sequence of words is the **product** of all the edge probabilities.
+-   The sum of probabilities of all possible sequences of words must add up to one if the language model is "well-formed".
+    -   One of the rules of a probability distributions is that all the "little probabilities", or probabilities of individual events, must sum to 1 or else it just doesn't make sense.
+-   You'll notice something peculiar. If any edge has a value of 0 then all sequences of words that include that edge must be impossible, no matter how likely the other transitions in that sequence!
+    -   Hence when you're tracing your finger looking for possible sequences you **exclude any paths that include an edge with a probability of 0**.
+-   You may be wondering how hard this gets with many nodes and many edges. Very hard. This is just a visual depiction of how utterly impossible brute force is when it comes to language models, and hence how important the upcoming Vitterbi algorithm is. 
 
 - - -
 
@@ -500,9 +536,33 @@ $= \lambda_1 + \lambda_2 + \lambda_3 = 1$
 
 Quiz: say we have $\lambda_1 = -0.5, \lambda_2 = 0.5, \lambda_3 = 1.0$. Note that these satisfy the constraint $\sum_i \lambda_i = 1$, but violate the constraint that $\lambda_i \ge 0$.
 
-Recalling our definition of $q$ above within: $\sum_{w \in V^{'}} q(w|u,v)$, it's hence true that there might be a trigram $u,v,w$ such that $q(w|u,v) \lt 0$ or $q(w|u,v) \gt 1$.
+(Credit to [Philip M. Hession](https://www.coursera.org/user/i/82f8725f5c57afaa5ef1cdded36d5f1d) for the explanations).
 
-It is not true that we may have a bigram $u,v$ such that $\sum_{w \in V} q(w|u,v) \neq 1$.
+Recalling our definition of $q$ above within: $\sum_{w \in V^{'}} q(w|u,v)$, it's hence true that there might be a trigram $u,v,w$ such that $q(w|u,v) \lt 0$:
+
+$$q(\text{barks}|\text{the,dog})=-\frac{1}{2}\frac{c(\text{the,dog,barks})}{c(\text{the,dog})}+\frac{1}{2}\frac{c(\text{dog,barks})}{c(\text{dog})}+1\cdot\frac{c(\text{barks})}{c()}$$
+
+- if $c() \gg c(\text{barks})$
+- and if $c(\text{dog}) \gg c(\text{dog,barks})$
+- and if $c(\text{the,dog}) \approx c(\text{the,dog,barks})$
+
+then $q(\text{barks}|\text{the,dog})=-\frac{1}{2}(\sim 1)+\frac{1}{2}(\ll 1)+1(\ll 1) \lt0$
+
+and there might be a trigram $u,v,w$ such that $q(w|u,v) \gt 1$:
+
+$$q(\text{barks}|\text{the,dog})=-\frac{1}{2}\frac{c(\text{the,dog,barks})}{c(\text{the,dog})}+\frac{1}{2}\frac{c(\text{dog,barks})}{c(\text{dog})}+1\cdot\frac{c(\text{barks})}{c()}$$
+
+- if $c() \approx c(\text{barks})$
+- and if $c(\text{dog}) \approx c(\text{dog,barks})$
+- and if $c(\text{the,dog}) \gg c(\text{the,dog,barks})$
+
+then $$q(\text{barks}|\text{the,dog})=-\frac{1}{2}(\ll 1)+\frac{1}{2}(\sim 1)+1(\sim 1) \gt 1$$
+
+It is not true that we may have a bigram $u,v$ such that $\sum_{w \in V} q(w|u,v) \neq 1$:
+
+$$\sum_{w}q(w|u,v) = -\frac{1}{2}\frac{\sum_w c(u,v,w)}{c(u,v)}+\frac{1}{2}\frac{\sum_w c(v,w)}{c(v)}+1\cdot\frac{\sum_w c(w)}{c()} = -\frac{1}{2}(1)+\frac{1}{2}(1)+1(1)=1$$
+
+since $\sum_w c(u,v,w)=c(u,v)$, $\sum_w c(v,w)=c(v)$, and $\sum_w c(w)=c()$.
 
 - - -
 
