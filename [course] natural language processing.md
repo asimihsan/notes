@@ -1231,8 +1231,8 @@ e.g.
 $$
 \begin{align}
     &\begin{aligned}
-        q(\textrm{Vt | DT, JJ}) & = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ)} \\
-                                & + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ}} \\
+        q(\textrm{Vt | DT, JJ}) & = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ)}} \\
+                                & + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ)}} \\
                                 & + \lambda_3 \times \frac{\textrm{Count(Vt)}}{\textrm{Count()}}
     \end{aligned}
 \end{align}
@@ -1375,13 +1375,52 @@ quarter/NA results/NA ./NA
 
 $$\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})$$
 
--   where the arg max is taken over all sequences $y_1 \ldots y_{n+1)}$ such that $y_i \in S$ for $i = 1, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
+-   where the arg max is taken over all sequences $y_1 \ldots y_{n+1}$ such that $y_i \in S$ for $i = 1, \ldots, n$ and $y_{n+1} = \textrm{STOP}$.
 
 -   We assume that $p$ again takes the form:
 
 $$p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)$$
 
 -   Recall the assumptions that $y_0 = y_{-1} = \textrm{*}$ and $y_{n+1} = \textrm{STOP}$.
+
+-   !!AI from a practical perspective the product of many small numbers will rapidly become unrepresentable on a machine.
+-   Logarithms come up again and again in machine learning because it is a **monotonic increasing** function with some **very useful rules**.
+    -   [http://en.wikipedia.org/wiki/Monotonic_function](http://en.wikipedia.org/wiki/Monotonic_function)
+    -   A monotically increasing function $f(x)$ is such that for all $x, y$ such that $x \le y$ the following is always true: $f(x) \le f(y)$.
+    -   Colloquially, $f$ *preserves order*.
+-   Also recall that $\textrm{log}(a \times b) = \textrm{log}(a) + \textrm{log}(b)$.
+-   Hence if we apply logarithms to everything in $p$ we can not only **add instead of multiply** but also **retain** the ability to calculate argmax over the y's, i.e. determine the most likely tag sequence.
+-   To clarify what I mean by **retain**:
+
+$$\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} \textrm{log} \left\{ p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) \right\}$$
+
+-   And to clarify what I mean by **add instead of multiply**:
+
+$$
+\begin{align}
+    &\begin{aligned}
+        p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) & = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i) \\
+        \textrm{log} \left\{ p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) \right\} & = \textrm{log} \left\{ \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i) \right\} \\
+        & = \textrm{log} \left\{ \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \right\} + \textrm{log} \left\{ \prod_{i=1}^{n} e(x_i | y_i) \right\}
+    \end{aligned}
+\end{align}
+$$
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & = \textrm{log} \left\{ q(y_1|y_{-1},y_0) \times q(y_2|y_0,y_1) \times \ldots \times q(y_{n+1}|y_{n-1},y_{n}) \right\} \\
+        & + \textrm{log} \left\{ e(x_0|y_0) \times e(x_1|y_1) \times \ldots \times e(x_n|y_n) \right\} \\
+        & = \textrm{log} \left\{ q(y_1|y_{-1},y_0) \right\} + \textrm{log} \left\{ q(y_2|y_0,y_1) \right\} + \ldots + \textrm{log} \left\{ q(y_{n+1}|y_{n-1},y_{n}) \right\} \\
+        & + \textrm{log} \left\{ e(x_0|y_0) \right\} + \textrm{log} \left\{ e(x_1|y_1) \right\} + \ldots + \textrm{log} \left\{ e(x_n|y_n) \right\}
+    \end{aligned}
+\end{align}
+$$
+
+-   To be absolutely clear: it is irrelevant what base you use in the logarithm.
+    -   In this course I think we're expected to use base 2.
+    -   In the ARPA file format of backoff language models base 10 is used.
+    -   But use whatever you want! **Just don't forget** which one you used ;).
 
 #### Brute Force Search is Hopelessly Inefficient
 
@@ -1604,7 +1643,7 @@ $$
 
 #### The Viterbi Algorithm with Backpointers
 
-We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
+We want 'argmax', not 'max', i.e. the actual most-likely tag sequence.
 
 
 -   **Inputs**:
@@ -1613,7 +1652,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   emission parameters $e(x|s)$.
 -   **Output**:
     -   $\textrm{arg}\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})$
--   **Initializtion**:
+-   **Initialization**:
     -   Set $\pi(0,\textrm{*},\textrm{*}) = 1$.
 -   **Definition**:
     -   $S_{-1} = S_0 = \{\textrm{*}\}$
@@ -1648,6 +1687,12 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag seuqence.
     -   One approach is to group low-frequency words into classes, but very clumsy and heuristic.
     -   When words are complex even worse.
     -   Later in the course we develop more complex methods.
+
+## Week 3 - Parsing, and Context-Free Grammars
+
+### Introduction
+
+-   
 
 ## Readings
 
