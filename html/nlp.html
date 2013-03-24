@@ -48,6 +48,9 @@
 <li><a href="#the-viterbi-algorithm-1">The Viterbi Algorithm</a></li>
 <li><a href="#summary-1">Summary</a></li>
 </ul></li>
+<li><a href="#week-3---parsing-and-context-free-grammars">Week 3 - Parsing, and Context-Free Grammars</a><ul>
+<li><a href="#introduction"> Introduction</a></li>
+</ul></li>
 <li><a href="#readings">Readings</a><ul>
 <li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></li>
 <li><a href="#speech-and-language-processing-chapter-4-n-gram-models">Speech and Language Processing, Chapter 4 (n-gram models)</a></li>
@@ -1388,8 +1391,8 @@ dog dog</code></pre>
 <p><span class="math">\[
 \begin{align}
     &amp;\begin{aligned}
-        q(\textrm{Vt | DT, JJ}) &amp; = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ)} \\
-                                &amp; + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ}} \\
+        q(\textrm{Vt | DT, JJ}) &amp; = \lambda_1 \times \frac{\textrm{Count(Dt, JJ, Vt)}}{\textrm{Count(Dt, JJ)}} \\
+                                &amp; + \lambda_2 \times \frac{\textrm{Count(JJ, Vt)}}{\textrm{Count(JJ)}} \\
                                 &amp; + \lambda_3 \times \frac{\textrm{Count(Vt)}}{\textrm{Count()}}
     \end{aligned}
 \end{align}
@@ -1590,12 +1593,53 @@ quarter/NA results/NA ./NA</code></pre>
 </ul>
 <p><span class="math">\[\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\]</span></p>
 <ul>
-<li><p>where the arg max is taken over all sequences <span class="math">\(y_1 \ldots y_{n+1)}\)</span> such that <span class="math">\(y_i \in S\)</span> for <span class="math">\(i = 1, \ldots, n\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</p></li>
+<li><p>where the arg max is taken over all sequences <span class="math">\(y_1 \ldots y_{n+1}\)</span> such that <span class="math">\(y_i \in S\)</span> for <span class="math">\(i = 1, \ldots, n\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</p></li>
 <li><p>We assume that <span class="math">\(p\)</span> again takes the form:</p></li>
 </ul>
 <p><span class="math">\[p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i)\]</span></p>
 <ul>
-<li>Recall the assumptions that <span class="math">\(y_0 = y_{-1} = \textrm{*}\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</li>
+<li><p>Recall the assumptions that <span class="math">\(y_0 = y_{-1} = \textrm{*}\)</span> and <span class="math">\(y_{n+1} = \textrm{STOP}\)</span>.</p></li>
+<li>!!AI from a practical perspective the product of many small numbers will rapidly become unrepresentable on a machine.</li>
+<li>Logarithms come up again and again in machine learning because it is a <strong>monotonic increasing</strong> function with some <strong>very useful rules</strong>.
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Monotonic_function">http://en.wikipedia.org/wiki/Monotonic_function</a></li>
+<li>A monotically increasing function <span class="math">\(f(x)\)</span> is such that for all <span class="math">\(x, y\)</span> such that <span class="math">\(x \le y\)</span> the following is always true: <span class="math">\(f(x) \le f(y)\)</span>.</li>
+<li>Colloquially, <span class="math">\(f\)</span> <em>preserves order</em>.</li>
+</ul></li>
+<li>Also recall that <span class="math">\(\textrm{log}(a \times b) = \textrm{log}(a) + \textrm{log}(b)\)</span>.</li>
+<li>Hence if we apply logarithms to everything in <span class="math">\(p\)</span> we can not only <strong>add instead of multiply</strong> but also <strong>retain</strong> the ability to calculate argmax over the y’s, i.e. determine the most likely tag sequence.</li>
+<li><p>To clarify what I mean by <strong>retain</strong>:</p></li>
+</ul>
+<p><span class="math">\[\textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) = \textrm{arg}\underset{y_1 \dots y_{n+1}}{\textrm{max}} \textrm{log} \left\{ p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) \right\}\]</span></p>
+<ul>
+<li>And to clarify what I mean by <strong>add instead of multiply</strong>:</li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) &amp; = \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i) \\
+        \textrm{log} \left\{ p(x_1 \ldots x_n, y_1 \ldots y_{n+1}) \right\} &amp; = \textrm{log} \left\{ \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \prod_{i=1}^{n} e(x_i | y_i) \right\} \\
+        &amp; = \textrm{log} \left\{ \prod_{i=1}^{n+1} q(y_i | y_{i-2}, y_{i-1}) \right\} + \textrm{log} \left\{ \prod_{i=1}^{n} e(x_i | y_i) \right\}
+    \end{aligned}
+\end{align}
+\]</span></p>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        &amp; = \textrm{log} \left\{ q(y_1|y_{-1},y_0) \times q(y_2|y_0,y_1) \times \ldots \times q(y_{n+1}|y_{n-1},y_{n}) \right\} \\
+        &amp; + \textrm{log} \left\{ e(x_0|y_0) \times e(x_1|y_1) \times \ldots \times e(x_n|y_n) \right\} \\
+        &amp; = \textrm{log} \left\{ q(y_1|y_{-1},y_0) \right\} + \textrm{log} \left\{ q(y_2|y_0,y_1) \right\} + \ldots + \textrm{log} \left\{ q(y_{n+1}|y_{n-1},y_{n}) \right\} \\
+        &amp; + \textrm{log} \left\{ e(x_0|y_0) \right\} + \textrm{log} \left\{ e(x_1|y_1) \right\} + \ldots + \textrm{log} \left\{ e(x_n|y_n) \right\}
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>To be absolutely clear: it is irrelevant what base you use in the logarithm.
+<ul>
+<li>In this course I think we’re expected to use base 2.</li>
+<li>In the ARPA file format of backoff language models base 10 is used.</li>
+<li>But use whatever you want! <strong>Just don’t forget</strong> which one you used ;).</li>
+</ul></li>
 </ul>
 <h4 id="brute-force-search-is-hopelessly-inefficient"><a href="#brute-force-search-is-hopelessly-inefficient">Brute Force Search is Hopelessly Inefficient</a></h4>
 <ul>
@@ -1830,7 +1874,7 @@ quarter/NA results/NA ./NA</code></pre>
 </ul></li>
 </ul>
 <h4 id="the-viterbi-algorithm-with-backpointers"><a href="#the-viterbi-algorithm-with-backpointers">The Viterbi Algorithm with Backpointers</a></h4>
-<p>We want ‘argmax’, not ‘max’, i.e. the actual most-likely tag seuqence.</p>
+<p>We want ‘argmax’, not ‘max’, i.e. the actual most-likely tag sequence.</p>
 <ul>
 <li><strong>Inputs</strong>:
 <ul>
@@ -1842,7 +1886,7 @@ quarter/NA results/NA ./NA</code></pre>
 <ul>
 <li><span class="math">\(\textrm{arg}\underset{y_1 \ldots y_{n+1}}{\textrm{max}} p(x_1 \ldots x_n, y_1 \ldots y_{n+1})\)</span></li>
 </ul></li>
-<li><strong>Initializtion</strong>:
+<li><strong>Initialization</strong>:
 <ul>
 <li>Set <span class="math">\(\pi(0,\textrm{*},\textrm{*}) = 1\)</span>.</li>
 </ul></li>
@@ -1893,6 +1937,9 @@ quarter/NA results/NA ./NA</code></pre>
 <li>Later in the course we develop more complex methods.</li>
 </ul></li>
 </ul>
+<h2 id="week-3---parsing-and-context-free-grammars"><a href="#week-3---parsing-and-context-free-grammars">Week 3 - Parsing, and Context-Free Grammars</a></h2>
+<h3 id="introduction"><a href="#introduction"> Introduction</a></h3>
+<p>-</p>
 <h2 id="readings"><a href="#readings">Readings</a></h2>
 <h3 id="speech-and-language-processing-chapter-3-words-and-transducers"><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></h3>
 <h4 id="word-and-sentence-tokenization"><a href="#word-and-sentence-tokenization">3.9: Word and Sentence Tokenization</a></h4>
