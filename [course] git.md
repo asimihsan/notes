@@ -76,3 +76,24 @@ Via Code School
 ## Git Real
 
 Via Code School
+
+### Level 1: Introduction
+
+-    **Distributed**: everyone has a copy of the repo, not *centralised*.
+-    Initial config:
+
+        git config --global user.name "Asim Ihsan"
+        git config --global user.email user@host.com
+        git config --global color.ui true
+        
+-    Git workflow
+    -    Create a file.
+    -    Add file to staging area
+    -    Commit changes.
+    -    Modify file again.
+    -    Add file to staging area.
+    -    Commit changes.
+    -    etc.
+
+### Level 2: Staging and Remotes
+
