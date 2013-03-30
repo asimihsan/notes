@@ -49,7 +49,18 @@
 <li><a href="#summary-1">Summary</a></li>
 </ul></li>
 <li><a href="#week-3---parsing-and-context-free-grammars">Week 3 - Parsing, and Context-Free Grammars</a><ul>
-<li><a href="#introduction"> Introduction</a></li>
+<li><a href="#parsing-syntatic-structure"> Parsing (Syntatic Structure)</a></li>
+<li><a href="#syntactic-formalisms">Syntactic Formalisms</a></li>
+<li><a href="#the-information-conveyed-by-parse-trees">The Information Conveyed By Parse Trees</a></li>
+<li><a href="#an-example-application-machine-translation">An Example Application: Machine Translation</a></li>
+<li><a href="#context-free-grammars">Context-Free Grammars</a></li>
+<li><a href="#example-cfg-for-english">Example CFG for English</a></li>
+<li><a href="#left-most-derivations">Left-Most Derivations</a></li>
+<li><a href="#an-example-2"> An Example</a></li>
+<li><a href="#properties-of-cfgs"> Properties of CFGs</a></li>
+<li><a href="#the-problem-with-parsing-ambiguity">The Problem with Parsing: Ambiguity</a></li>
+<li><a href="#a-brief-sketch-of-the-syntax-of-english">A brief sketch of the syntax of English</a></li>
+<li><a href="#a-fragment-of-a-noun-phrase-grammar"> A Fragment of a Noun Phrase Grammar</a></li>
 </ul></li>
 <li><a href="#readings">Readings</a><ul>
 <li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></li>
@@ -1938,8 +1949,342 @@ quarter/NA results/NA ./NA</code></pre>
 </ul></li>
 </ul>
 <h2 id="week-3---parsing-and-context-free-grammars"><a href="#week-3---parsing-and-context-free-grammars">Week 3 - Parsing, and Context-Free Grammars</a></h2>
-<h3 id="introduction"><a href="#introduction"> Introduction</a></h3>
-<p>-</p>
+<h3 id="parsing-syntatic-structure"><a href="#parsing-syntatic-structure"> Parsing (Syntatic Structure)</a></h3>
+<ul>
+<li>Input: a sentence, e.g. “Boeing is located in Seattle”.</li>
+<li>Output: a parse tree.
+<ul>
+<li><em>leaves</em> of tree: words.</li>
+<li><em>internal nodes</em>: labels (e.g. S, NP, VP, …)<br /></li>
+</ul></li>
+<li>Hierarchical decomposition.</li>
+</ul>
+<h3 id="syntactic-formalisms"><a href="#syntactic-formalisms">Syntactic Formalisms</a></h3>
+<ul>
+<li>Work in formal syntax goes back to Chomsky’s PhD thesis in 1950s.
+<ul>
+<li>Syntactic Structures, Chomsky, 1957</li>
+</ul></li>
+<li>More syntactic formalisms:
+<ul>
+<li>Minimalism</li>
+<li>Lexical functional grammar (LFG)</li>
+<li>Head-driven phrase-structure grammar (HPSG)</li>
+<li>Tree adjoining grammars (TAG)</li>
+<li>Categorical grammars.</li>
+</ul></li>
+<li>But we are going to use <em>context-free grammars</em> (CFGs), which forms the basis of other formalisms.</li>
+<li>We will (again) treat parsing as a supervised learning problem.
+<ul>
+<li>Penn Wall Street Journal Treebank.</li>
+<li>50k sentences with associated trees, annotated by hands.</li>
+<li><strong>Treebank</strong>: set of sentences with associated parse trees.</li>
+</ul></li>
+</ul>
+<h3 id="the-information-conveyed-by-parse-trees"><a href="#the-information-conveyed-by-parse-trees">The Information Conveyed By Parse Trees</a></h3>
+<ul>
+<li>“The burglar robbed the apartment”</li>
+<li><strong>First level</strong>: <em>part-of-speech tags</em> for each word.
+<ul>
+<li>(N = noun, V = verb, DT = determiner).</li>
+<li>DT -&gt; the</li>
+<li>N -&gt; burglar</li>
+<li>V -&gt; robbed</li>
+<li>DT -&gt; the</li>
+<li>N -&gt; apartment</li>
+</ul></li>
+<li><strong>Second level</strong>: <em>phrases</em>.
+<ul>
+<li>(NP = noun phrases, VP = verb phrases, S = sentences)</li>
+<li>“the/DT burglar/N” is dominated by an internal node “NP”.
+<ul>
+<li>This means the two tagged words are grouped as a noun phrase.</li>
+</ul></li>
+<li>“robbed the apartment” is a VP.
+<ul>
+<li>robbed/V.</li>
+<li>an NP
+<ul>
+<li>the/DT apartment/N.</li>
+</ul></li>
+</ul></li>
+<li>“the burglar robbed the apartment” is an S.</li>
+</ul></li>
+<li><strong>Third level</strong>: useful relationships
+<ul>
+<li>subject to verb.
+<ul>
+<li>NP then VP -&gt; V.</li>
+<li>“the/DT burglar/N”/NP is the subject of “robbed”/V, by looking at fragments of the tree.</li>
+</ul></li>
+<li>verb to direct object.
+<ul>
+<li>VP to V and NP.</li>
+<li>This is verb to direct object.</li>
+<li>“robbed”/V “the/DT apartment/N”/NP.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="an-example-application-machine-translation"><a href="#an-example-application-machine-translation">An Example Application: Machine Translation</a></h3>
+<ul>
+<li>English word order: subject -&gt; verb -&gt; object.</li>
+<li><p>Japanese word order: subject -&gt; object -&gt; verb.</p></li>
+<li>English: IBM bought Lotus</li>
+<li><p>Japanese: IBM Lotus bought.</p></li>
+<li>English: Sources said that IBM bought Lotus yesterday.</li>
+<li><p>Japanese: Sources yesterday IBM Lotus bought that said.</p></li>
+<li>The reordering has been applied <em>recursively</em>.</li>
+<li><p>Such reording is difficult to see in a sentence, but consists of <strong>rotations</strong> in the parse tree (swapping the order).</p></li>
+</ul>
+<h3 id="context-free-grammars"><a href="#context-free-grammars">Context-Free Grammars</a></h3>
+<ul>
+<li>Hopcroft and Ullman, 1979</li>
+<li>A CFG <span class="math">\(G = (N, \Sigma, R, S)\)</span>, where
+<ul>
+<li><span class="math">\(N\)</span> is a finite set of <strong>non-terminal</strong> symbols.</li>
+<li><span class="math">\(\Sigma\)</span> is a finite set of <strong>terminal</strong> symbols.</li>
+<li><span class="math">\(R\)</span> is a finite set of <strong>rules</strong> of the form <span class="math">\(X \rightarrow Y_1 Y_2 \ldots Y_n\)</span> for <span class="math">\(n \ge 0\)</span>, <span class="math">\(X \in N\)</span>, <span class="math">\(Y_i \in (N \cup \Sigma)\)</span>.
+<ul>
+<li>Each rule’s left hand side must be a non-terminal.</li>
+<li>Each rule’s right hand side may be “empty” ($), a non-terminal, or terminal, or both.</li>
+</ul></li>
+<li><span class="math">\(S \in N\)</span> is a distinguished <strong>start symbol</strong>.</li>
+</ul></li>
+</ul>
+<h3 id="example-cfg-for-english"><a href="#example-cfg-for-english">Example CFG for English</a></h3>
+<ul>
+<li><span class="math">\(N\)</span> = {S, NP, VP, PP, DT, Vi, Vt, NN, I}</li>
+<li><span class="math">\(S\)</span> = S</li>
+<li><span class="math">\(\Sigma\)</span> = {sleeps, saw, man, woman, telescope, the, with in}.</li>
+<li><span class="math">\(R\)</span>:
+<ul>
+<li>S -&gt; NP VP</li>
+<li>VP -&gt; Vi</li>
+<li>VP -&gt; Vt NP</li>
+<li>VP -&gt; VP PP</li>
+<li>NP -&gt; DT NN</li>
+<li>NP -&gt; NP PP</li>
+<li>PP -&gt; IN NP</li>
+<li>Vi -&gt; sleeps</li>
+<li>Vt -&gt; saw</li>
+<li>NN -&gt; man</li>
+<li>NN -&gt; woman</li>
+<li>NN -&gt; telescope</li>
+<li>DT -&gt; the</li>
+<li>IN -&gt; with</li>
+<li>IN -&gt; in</li>
+</ul></li>
+<li>Symbol meanings:
+<ul>
+<li>S -&gt; sentence</li>
+<li>VP -&gt; verb phrase</li>
+<li>NP -&gt; noun phrase</li>
+<li>PP -&gt; prepositional phrase</li>
+<li>DT -&gt; determiner</li>
+<li>Vi -&gt; intransitive verb</li>
+<li>Vt -&gt; transitive verb</li>
+<li>NN -&gt; noun</li>
+<li>IN -&gt; preposition</li>
+</ul></li>
+</ul>
+<h3 id="left-most-derivations"><a href="#left-most-derivations">Left-Most Derivations</a></h3>
+<ul>
+<li>A <strong>derivation</strong> is a sequence of strings <span class="math">\(s_1 \ldots s_n\)</span> such that:
+<ul>
+<li><span class="math">\(s_1 = S\)</span>; first symbol is the start symbol</li>
+<li><span class="math">\(s_n \in \Sigma^{*}\)</span>, i.e. <span class="math">\(s_n\)</span> is made up of terminal symbols only such that it is the set of all possible strings.</li>
+<li>If <span class="math">\(\Sigma\)</span> = {the, dog, a}, then <span class="math">\(\Sigma^{*}\)</span> = {<span class="math">\(\epsilon\)</span>, a, dog, the, a dog, the dog, …}.</li>
+</ul></li>
+<li>A <strong>left-most derivation</strong> is such that:
+<ul>
+<li>Each <span class="math">\(s_i\)</span> for <span class="math">\(i = 2, \ldots, n\)</span> is derived from <span class="math">\(s_{i-1}\)</span> by picking the <strong>left-most non-terminal</strong> <span class="math">\(X\)</span> in <span class="math">\(s_{i-1}\)</span> and replacing it by some <span class="math">\(\beta\)</span> where <span class="math">\(X \rightarrow \beta\)</span> is a rule in <span class="math">\(R\)</span>.</li>
+</ul></li>
+<li>For example, “the man sleeps”.</li>
+<li>[S], [NP VP], [D N VP], [the N VP], [the man VP], [the man Vi], [the man sleeps]</li>
+<li>We “pop as left as possible”.</li>
+</ul>
+<h3 id="an-example-2"><a href="#an-example-2"> An Example</a></h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Derivation</th>
+<th align="left">Rules Used</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">S</td>
+<td align="left">S -&gt; NP VP</td>
+</tr>
+<tr class="even">
+<td align="left">NP VP</td>
+<td align="left">NP -&gt; DT N</td>
+</tr>
+<tr class="odd">
+<td align="left">DT N VP</td>
+<td align="left">DT -&gt; the</td>
+</tr>
+<tr class="even">
+<td align="left">the N VP</td>
+<td align="left">N -&gt; dog</td>
+</tr>
+<tr class="odd">
+<td align="left">the dog VP</td>
+<td align="left">VP -&gt; VB</td>
+</tr>
+<tr class="even">
+<td align="left">the dog VB</td>
+<td align="left">VB -&gt; laughs</td>
+</tr>
+<tr class="odd">
+<td align="left">the dog laughs</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="properties-of-cfgs"><a href="#properties-of-cfgs"> Properties of CFGs</a></h3>
+<ul>
+<li>CFG defines a set of valid derivations.
+<ul>
+<li>Set may be countably infinite.</li>
+</ul></li>
+<li>A string <span class="math">\(s \in \Sigma^{*}\)</span> is <strong>in the language defined by CFG</strong> if there is at least one derivation that yields <span class="math">\(s\)</span>.</li>
+<li><p>Each string in the language generated by the CFG may have <strong>more than one derivation</strong>, i.e. may be <strong>ambiguous</strong>.</p></li>
+<li>!!AI at this stage of the course there is no magic algorithm which will tell you the answer to this question.</li>
+<li>Start with the string and <strong>go backwards</strong>, trying to get to <span class="math">\(S\)</span>, <strong>whilst obeying left-most derivation</strong>.
+<ul>
+<li>You <em>must</em> consider the left-most symbol first. If <strong>any rule</strong> applies to the left-most symbol then you must use it. You can’t skip to the right.</li>
+<li>For small grammars <strong>going forwards</strong> in a brute-force fashion might be faster, but if the grammar is too large it’s too difficult to keep track of.</li>
+</ul></li>
+</ul>
+<h3 id="the-problem-with-parsing-ambiguity"><a href="#the-problem-with-parsing-ambiguity">The Problem with Parsing: Ambiguity</a></h3>
+<ul>
+<li>Input: “She announced a program to promote safety in trucks and vans”.</li>
+<li>Output:
+<ul>
+<li>Correctly: she’s announcing a program that will promote safety in both trucks and vans.</li>
+<li>Also: she’s announcing a program that will promote safety in trucks, and “vans” (just throwing in the word vans).</li>
+<li>Also: she’s announcing a program that wil promote safety. This program is located within trucks and vans.</li>
+<li>14 different syntactic structures.</li>
+</ul></li>
+</ul>
+<hr />
+<p>Quiz: given “Jon saw Bill in Paris in June”, and grammar:</p>
+<ul>
+<li>S -&gt; NP VP</li>
+<li>PP -&gt; P NP</li>
+<li>NP -&gt; N</li>
+<li>NP -&gt; NP PP</li>
+<li>VP -&gt; V NP</li>
+<li>VP -&gt; VP PP</li>
+<li>P -&gt; in</li>
+<li>V -&gt; saw</li>
+<li>N -&gt; Jon</li>
+<li>N -&gt; Bill</li>
+<li>N -&gt; June</li>
+<li>N -&gt; Paris</li>
+</ul>
+<p>How many parse trees are there for this sentence?</p>
+<ul>
+<li>!!AI I couldn’t get this. First step is probably to draw one valid parse tree. Then, according to the quiz answer:</li>
+</ul>
+<blockquote>
+<p>There are three places to attach the two PPs: the verb, the first noun, the second noun. The <strong>five</strong> valid derivations are (1) verb, verb, (2) first noun, verb, (3) first noun, second noun, (4) first noun, first noun, (5) verb, second noun.</p>
+</blockquote>
+<div class="figure">
+<img src="nlp_03_parsetree1.png" />
+</div>
+<h3 id="a-brief-sketch-of-the-syntax-of-english"><a href="#a-brief-sketch-of-the-syntax-of-english">A brief sketch of the syntax of English</a></h3>
+<ul>
+<li><p>“A Comprehensive Grammar of the English Language”, 1800 pages, 4.6lbs, 10 inches x 8.4 inches x 2.4 inches :).</p></li>
+<li>Parts of Speech (tags from the <em>Brown corpus</em>, from the early 1960’s).
+<ul>
+<li>Nouns
+<ul>
+<li>NN = singular noun (e.g. man, dog, park)</li>
+<li>NNS = plural noun (e.g. telescopes, houses, buildings)</li>
+<li>NNP = proper noun (e.g. Smith, Gates, IBM)</li>
+</ul></li>
+<li>Determiners
+<ul>
+<li>DT = determiner (e.g. the, a, some, every)</li>
+</ul></li>
+<li>Adjectives
+<ul>
+<li>JJ = adjective (e.g. red, green, large, idealistic)</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="a-fragment-of-a-noun-phrase-grammar"><a href="#a-fragment-of-a-noun-phrase-grammar"> A Fragment of a Noun Phrase Grammar</a></h3>
+<ul>
+<li>NP is a Noun Phrase.</li>
+<li><span class="math">\(\bar{N} \rightarrow NN\)</span></li>
+<li><span class="math">\(\bar{N} \rightarrow NN\enspace\bar{N}\)</span></li>
+<li><span class="math">\(\bar{N} \rightarrow JJ\enspace\bar{N}\)</span></li>
+<li><span class="math">\(\bar{N} \rightarrow \bar{N}\enspace\bar{N}\)</span></li>
+<li><span class="math">\(NP \rightarrow DT\enspace\bar{N}\)</span></li>
+</ul>
+<hr />
+<p>An example</p>
+<ul>
+<li>NN -&gt; box</li>
+<li>NN -&gt; car</li>
+<li>NN -&gt; mechanic</li>
+<li>NN -&gt; pigeon</li>
+<li>DT -&gt; the</li>
+<li>DT -&gt; a</li>
+<li>JJ -&gt; fast</li>
+<li>JJ -&gt; metal</li>
+<li>JJ -&gt; idealistic</li>
+<li><p>JJ -&gt; clay</p></li>
+<li>NP</li>
+<li>[DT, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, <span class="math">\(NN\)</span>]</li>
+<li><p>[the, car]</p></li>
+</ul>
+<p>and</p>
+<ul>
+<li>NP</li>
+<li>[DT, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, JJ, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, fast, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, fast, <span class="math">\(NN\)</span>]</li>
+<li>[the, fast, car]</li>
+</ul>
+<p>and</p>
+<ul>
+<li>NP</li>
+<li>[DT, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, JJ, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, JJ, JJ, <span class="math">\(\bar{N}\)</span>]</li>
+<li>[the, fast, red, car]</li>
+</ul>
+<hr />
+<ul>
+<li>So, intuitively, <span class="math">\(\bar{N} \rightarrow JJ\enspace\bar{N}\)</span> is prepending any number of adjectives to a noun.</li>
+<li>Very similarly, <span class="math">\(\bar{N} \rightarrow NN\enspace\bar{N}\)</span> prepends any number of nouns to a noun (“the car factory”).</li>
+<li>The <span class="math">\(\bar{N}\)</span> category is an intermediate category with these noun phrases. It always follows a determiner.</li>
+</ul>
+<hr />
+<p>Quiz: given “the fast car mechanic”, there are <strong>three</strong> parse trees.</p>
+<ol style="list-style-type: decimal">
+<li>[ NP [ D the ][ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+<ul>
+<li>“the”, “fast car mechanic”</li>
+</ul></li>
+<li>[ NP [ D the ][ $\bar{N}$ [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ]
+<ul>
+<li>“the”, “fast car”, “mechanic”</li>
+</ul></li>
+<li>[ NP [ D the ][ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ $\bar{N}$ [ NN car ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+<ul>
+<li>“the”, “fast”, “car mechanic”</li>
+</ul></li>
+</ol>
+<p>(draw them out to see).</p>
 <h2 id="readings"><a href="#readings">Readings</a></h2>
 <h3 id="speech-and-language-processing-chapter-3-words-and-transducers"><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></h3>
 <h4 id="word-and-sentence-tokenization"><a href="#word-and-sentence-tokenization">3.9: Word and Sentence Tokenization</a></h4>
