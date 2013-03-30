@@ -1690,9 +1690,267 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag sequence.
 
 ## Week 3 - Parsing, and Context-Free Grammars
 
-### Introduction
+### Parsing (Syntatic Structure)
 
--   
+-   Input: a sentence, e.g. "Boeing is located in Seattle".
+-   Output: a parse tree.
+    -   *leaves* of tree: words.
+    -   *internal nodes*: labels (e.g. S, NP, VP, ...)   
+-   Hierarchical decomposition.
+
+### Syntactic Formalisms
+
+-   Work in formal syntax goes back to Chomsky's PhD thesis in 1950s.
+    -   Syntactic Structures, Chomsky, 1957
+-   More syntactic formalisms:
+    -   Minimalism
+    -   Lexical functional grammar (LFG)
+    -   Head-driven phrase-structure grammar (HPSG)
+    -   Tree adjoining grammars (TAG)
+    -   Categorical grammars.
+-   But we are going to use *context-free grammars* (CFGs), which forms the basis of other formalisms.
+-   We will (again) treat parsing as a supervised learning problem.
+    -   Penn Wall Street Journal Treebank.
+    -   50k sentences with associated trees, annotated by hands. 
+    -   **Treebank**: set of sentences with associated parse trees.
+
+### The Information Conveyed By Parse Trees
+
+-   "The burglar robbed the apartment"
+-   **First level**: *part-of-speech tags* for each word.
+    -   (N = noun, V = verb, DT = determiner).
+    -   DT -> the
+    -   N -> burglar
+    -   V -> robbed
+    -   DT -> the
+    -   N -> apartment
+-   **Second level**: *phrases*.
+    -   (NP = noun phrases, VP = verb phrases, S = sentences)
+    -   "the/DT burglar/N" is dominated by an internal node "NP".
+        -   This means the two tagged words are grouped as a noun phrase.
+    -   "robbed the apartment" is a VP.
+        -   robbed/V.
+        -   an NP
+            -   the/DT apartment/N.
+    -   "the burglar robbed the apartment" is an S.
+-   **Third level**: useful relationships
+    -   subject to verb.
+        -   NP then VP -> V.
+        -  "the/DT burglar/N"/NP is the subject of "robbed"/V, by looking at fragments of the tree.
+    -   verb to direct object.
+        -   VP to V and NP.
+        -   This is verb to direct object. 
+        -   "robbed"/V "the/DT apartment/N"/NP.
+
+### An Example Application: Machine Translation
+
+-   English word order: subject -> verb -> object.
+-   Japanese word order: subject -> object -> verb.
+
+-   English: IBM bought Lotus
+-   Japanese: IBM Lotus bought.
+
+-   English: Sources said that IBM bought Lotus yesterday.
+-   Japanese: Sources yesterday IBM Lotus bought that said.
+
+-   The reordering has been applied *recursively*.
+-   Such reording is difficult to see in a sentence, but consists of **rotations** in the parse tree (swapping the order).
+
+### Context-Free Grammars
+
+-   Hopcroft and Ullman, 1979
+-   A CFG $G = (N, \Sigma, R, S)$, where
+    -   $N$ is a finite set of **non-terminal** symbols.
+    -   $\Sigma$ is a finite set of **terminal** symbols.
+    -   $R$ is a finite set of **rules** of the form $X \rightarrow Y_1 Y_2 \ldots Y_n$ for $n \ge 0$, $X \in N$, $Y_i \in (N \cup \Sigma)$.
+        -   Each rule's left hand side must be a non-terminal.
+        -   Each rule's right hand side may be "empty" ($\epsilon), a non-terminal, or terminal, or both.
+    -   $S \in N$ is a distinguished **start symbol**.
+
+### Example CFG for English
+
+-   $N$ = {S, NP, VP, PP, DT, Vi, Vt, NN, I}
+-   $S$ = S
+-   $\Sigma$ = {sleeps, saw, man, woman, telescope, the, with in}.
+-   $R$:
+    -   S -> NP VP
+    -   VP -> Vi
+    -   VP -> Vt NP
+    -   VP -> VP PP
+    -   NP -> DT NN
+    -   NP -> NP PP
+    -   PP -> IN NP
+    -   Vi -> sleeps
+    -   Vt -> saw
+    -   NN -> man
+    -   NN -> woman
+    -   NN -> telescope
+    -   DT -> the
+    -   IN -> with
+    -   IN -> in
+-   Symbol meanings:
+    -   S -> sentence
+    -   VP -> verb phrase
+    -   NP -> noun phrase
+    -   PP -> prepositional phrase
+    -   DT -> determiner
+    -   Vi -> intransitive verb
+    -   Vt -> transitive verb
+    -   NN -> noun
+    -   IN -> preposition
+
+### Left-Most Derivations
+
+-   A **derivation** is a sequence of strings $s_1 \ldots s_n$ such that:
+    -   $s_1 = S$; first symbol is the start symbol
+    -   $s_n \in \Sigma^{*}$, i.e. $s_n$ is made up of terminal symbols only such that it is the set of all possible strings.
+    -   If $\Sigma$ = {the, dog, a}, then $\Sigma^{*}$ = {$\epsilon$, a, dog, the, a dog, the dog, ...}.
+-   A **left-most derivation** is such that:
+    -   Each $s_i$ for $i = 2, \ldots, n$ is derived from $s_{i-1}$ by picking the **left-most non-terminal** $X$ in $s_{i-1}$ and replacing it by some $\beta$ where $X \rightarrow \beta$ is a rule in $R$.
+
+-   For example, "the man sleeps".
+-   [S], [NP VP], [D N VP], [the N VP], [the man VP], [the man Vi], [the man sleeps]
+-   We "pop as left as possible". 
+
+### An Example
+
+Derivation       Rules Used
+----------       ----------
+S                S -> NP VP
+NP VP            NP -> DT N
+DT N VP          DT -> the
+the N VP         N -> dog
+the dog VP       VP -> VB
+the dog VB       VB -> laughs
+the dog laughs
+
+### Properties of CFGs
+
+-   CFG defines a set of valid derivations.
+    -   Set may be countably infinite.
+-   A string $s \in \Sigma^{*}$ is **in the language defined by CFG** if there is at least one derivation that yields $s$.
+-   Each string in the language generated by the CFG may have **more than one derivation**, i.e. may be **ambiguous**.
+
+-   !!AI at this stage of the course there is no magic algorithm which will tell you the answer to this question. 
+-   Start with the string and **go backwards**, trying to get to $S$, **whilst obeying left-most derivation**.
+    -   You *must* consider the left-most symbol first. If **any rule** applies to the left-most symbol then you must use it. You can't skip to the right.
+    -   For small grammars **going forwards** in a brute-force fashion might be faster, but if the grammar is too large it's too difficult to keep track of.
+
+### The Problem with Parsing: Ambiguity
+
+-   Input: "She announced a program to promote safety in trucks and vans".
+-   Output:
+    -   Correctly: she's announcing a program that will promote safety in both trucks and vans.
+    -   Also: she's announcing a program that will promote safety in trucks, and "vans" (just throwing in the word vans).
+    -   Also: she's announcing a program that wil promote safety. This program is located within trucks and vans.
+    -   14 different syntactic structures.
+
+- - -
+
+Quiz: given "Jon saw Bill in Paris in June", and grammar:
+
+-   S -> NP VP
+-   PP -> P NP
+-   NP -> N
+-   NP -> NP PP
+-   VP -> V NP
+-   VP -> VP PP
+-   P -> in
+-   V -> saw
+-   N -> Jon
+-   N -> Bill
+-   N -> June
+-   N -> Paris
+
+How many parse trees are there for this sentence?
+
+-   !!AI I couldn't get this. First step is probably to draw one valid parse tree. Then, according to the quiz answer:
+
+>There are three places to attach the two PPs: the verb, the first noun, the second noun. The **five** valid derivations are (1) verb, verb, (2) first noun, verb, (3) first noun, second noun, (4) first noun, first noun, (5) verb, second noun.
+
+![](nlp_03_parsetree1.png)
+
+### A brief sketch of the syntax of English
+
+-   "A Comprehensive Grammar of the English Language", 1800 pages, 4.6lbs, 10 inches x 8.4 inches x 2.4 inches :).
+
+-   Parts of Speech (tags from the *Brown corpus*, from the early 1960's).
+    -   Nouns
+        -   NN = singular noun (e.g. man, dog, park)
+        -   NNS = plural noun (e.g. telescopes, houses, buildings)
+        -   NNP = proper noun (e.g. Smith, Gates, IBM)
+    -   Determiners
+        -   DT = determiner (e.g. the, a, some, every)
+    -   Adjectives
+        -   JJ = adjective (e.g. red, green, large, idealistic)
+
+### A Fragment of a Noun Phrase Grammar
+
+-   NP is a Noun Phrase.
+-   $\bar{N} \rightarrow NN$
+-   $\bar{N} \rightarrow NN\enspace\bar{N}$
+-   $\bar{N} \rightarrow JJ\enspace\bar{N}$
+-   $\bar{N} \rightarrow \bar{N}\enspace\bar{N}$
+-   $NP \rightarrow DT\enspace\bar{N}$
+
+- - -
+
+An example
+
+-   NN -> box
+-   NN -> car
+-   NN -> mechanic
+-   NN -> pigeon
+-   DT -> the
+-   DT -> a
+-   JJ -> fast
+-   JJ -> metal
+-   JJ -> idealistic
+-   JJ -> clay
+
+-   NP
+-   [DT, $\bar{N}$]
+-   [the, $\bar{N}$]
+-   [the, $NN$]
+-   [the, car]
+
+and
+
+-   NP
+-   [DT, $\bar{N}$]
+-   [the, $\bar{N}$]
+-   [the, JJ, $\bar{N}$]
+-   [the, fast, $\bar{N}$]
+-   [the, fast, $NN$]
+-   [the, fast, car]
+
+and
+
+-   NP
+-   [DT, $\bar{N}$]
+-   [the, $\bar{N}$]
+-   [the, JJ, $\bar{N}$]
+-   [the, JJ, JJ, $\bar{N}$]
+-   [the, fast, red, car]
+
+- - -
+
+-   So, intuitively, $\bar{N} \rightarrow JJ\enspace\bar{N}$ is prepending any number of adjectives to a noun.
+-   Very similarly, $\bar{N} \rightarrow NN\enspace\bar{N}$ prepends any number of nouns to a noun ("the car factory").
+-   The $\bar{N}$ category is an intermediate category with these noun phrases. It always follows a determiner.
+
+- - -
+
+Quiz: given "the fast car mechanic", there are **three** parse trees.
+
+1. [ NP [ D the ] [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+    -   "the", "fast car mechanic"
+2. [ NP [ D the ] [ $\bar{N}$ [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ]
+    -   "the", "fast car", "mechanic"
+3. [ NP [ D the ] [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ $\bar{N}$ [ NN car ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+    -   "the", "fast", "car mechanic" 
+
+(draw them out to see).
 
 ## Readings
 
