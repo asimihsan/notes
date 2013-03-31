@@ -128,3 +128,50 @@
         for key in distutils.sysconfig._config_vars:
             if key in ['CONFIG_ARGS', 'PY_CFLAGS', 'CFLAGS']:
                 distutils.sysconfig._config_vars[key] = distutils.sysconfig._config_vars[key].replace("-Qunused-arguments ", "")
+
+-    GPG symmetric encryption and compression
+
+        gpg --symmetric --cipher-algo "AES256" --digest-algo "SHA512" --compress-algo "BZIP2" --passphrase "password" -o test.svg.gpg test.svg 
+        
+-    GPG symmetric decryption and decompression
+
+        gpg --passphrase "password" test.svg.gpg
+     
+-    OpenSSL symmetric encryption and compression
+
+        bzip2 --best --stdout -- test.svg | /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -salt -k "password" > test.svg.openssl
+
+-    OpenSSL symmetric decryption and decompression
+
+        /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -d -salt -k "password" -in test.svg.openssl | bunzip2 > test.svg.2
+        
+-    With OpenSSL 1.0.1e, AES-CBC-HMAC-SHA1 segfaults and AES-GCM always fails; they are not intended for command-line usage.
+
+-    OpenSSL encrypt and HMAC simultaneously
+
+        bzip2 --best --stdout -- test.svg | /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -salt -k "password" | tee test.svg.2 | /usr/local/Cellar/openssl/1.0.1e/bin/openssl sha256 -hmac "password"
+
+- - -
+
+### CentOS initial setup
+
+-    Install with "Software development workstation" selected.
+-    Set up Solarized theme for gnome-terminal
+
+        git clone git://github.com/sigurdga/gnome-terminal-colors-solarized.git
+        cd gnome-terminal-colors-solarized
+        
+        # make it light
+        ./solarize
+        
+        # make it dark
+        ./solarize
+        
+        # then restart terminal
+
+-    Set up "Oh My ZSH" with my custom theme
+
+        curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+
+
+-    Set up gvim
