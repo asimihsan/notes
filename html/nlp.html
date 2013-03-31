@@ -61,6 +61,14 @@
 <li><a href="#the-problem-with-parsing-ambiguity">The Problem with Parsing: Ambiguity</a></li>
 <li><a href="#a-brief-sketch-of-the-syntax-of-english">A brief sketch of the syntax of English</a></li>
 <li><a href="#a-fragment-of-a-noun-phrase-grammar"> A Fragment of a Noun Phrase Grammar</a></li>
+<li><a href="#prepositions-and-prepositional-phrases">Prepositions and Prepositional Phrases</a></li>
+<li><a href="#verbs-verb-phrases-and-sentences">Verbs, Verb Phrases, and Sentences</a></li>
+<li><a href="#pps-modifying-verb-phrases">PPs Modifying Verb Phrases</a></li>
+<li><a href="#complementizers-and-sbars">Complementizers, and SBARs</a></li>
+<li><a href="#more-verbs">More Verbs</a></li>
+<li><a href="#coordination">Coordination</a></li>
+<li><a href="#weve-only-scratched-the-surface"> We’ve only scratched the surface…</a></li>
+<li><a href="#sources-of-ambiguity">Sources of Ambiguity</a></li>
 </ul></li>
 <li><a href="#readings">Readings</a><ul>
 <li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></li>
@@ -2271,20 +2279,209 @@ quarter/NA results/NA ./NA</code></pre>
 <hr />
 <p>Quiz: given “the fast car mechanic”, there are <strong>three</strong> parse trees.</p>
 <ol style="list-style-type: decimal">
-<li>[ NP [ D the ][ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+<li>[ NP [ D the ] [ <span class="math">\(\bar{N}\)</span> [ JJ fast ] [ <span class="math">\(\bar{N}\)</span> [ NN car ] [ <span class="math">\(\bar{N}\)</span> [ NN mechanic ] ] ] ] ]
 <ul>
 <li>“the”, “fast car mechanic”</li>
 </ul></li>
-<li>[ NP [ D the ][ $\bar{N}$ [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ]
+<li>[ NP [ D the ] [ <span class="math">\(\bar{N}\)</span> [ <span class="math">\(\bar{N}\)</span> [ JJ fast ] [ <span class="math">\(\bar{N}\)</span> [ NN car ] ] ] [ <span class="math">\(\bar{N}\)</span> [ NN mechanic ] ] ] ]
 <ul>
 <li>“the”, “fast car”, “mechanic”</li>
 </ul></li>
-<li>[ NP [ D the ][ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ $\bar{N}$ [ NN car ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+<li>[ NP [ D the ] [ <span class="math">\(\bar{N}\)</span> [ JJ fast ] [ <span class="math">\(\bar{N}\)</span> [ <span class="math">\(\bar{N}\)</span> [ NN car ] ] [ <span class="math">\(\bar{N}\)</span> [ NN mechanic ] ] ] ] ]
 <ul>
 <li>“the”, “fast”, “car mechanic”</li>
 </ul></li>
 </ol>
 <p>(draw them out to see).</p>
+<h3 id="prepositions-and-prepositional-phrases"><a href="#prepositions-and-prepositional-phrases">Prepositions and Prepositional Phrases</a></h3>
+<ul>
+<li>Brown corpus uses IN = preposition (e.g. of, in, out, beside, as).</li>
+<li>e.g. “of the man”, “in the room”.</li>
+<li>We add two rules to hand prepositional phrases:
+<ul>
+<li><span class="math">\(PP \rightarrow IN \enspace NP\)</span></li>
+<li><span class="math">\(\bar{N} \rightarrow \bar{N} \enspace PP\)</span></li>
+</ul></li>
+<li>Roughly 100 prepositions in English.</li>
+<li>a full triangle in a parse tree means that there are some undefined set of other nodes that make up the words.
+<ul>
+<li>NP, then full triangle, then “the room” as only child.</li>
+</ul></li>
+<li><span class="math">\(\bar{N} \rightarrow \bar{N} \enspace PP\)</span> means the prepositional phrase (PP) is a post-modifier to the noun.
+<ul>
+<li>“the dog in the car”; “in the car” is a post-modifier to “dog”.</li>
+</ul></li>
+<li>!!AI last slide in “An Extended Grammar”, for lecture &quot;A Simple Grammar for English (Part 2) is worth re-watching.</li>
+</ul>
+<h3 id="verbs-verb-phrases-and-sentences"><a href="#verbs-verb-phrases-and-sentences">Verbs, Verb Phrases, and Sentences</a></h3>
+<ul>
+<li>Basic Verb Types
+<ul>
+<li>Vi = instransitive verb (e.g. sleeps, walks, laughs)</li>
+<li>Vt = transitive verb (e.g. sees, saw, likes)</li>
+<li>Vd = ditransitive verb (e.g. gave)</li>
+</ul></li>
+<li>Basic VP rules
+<ul>
+<li><span class="math">\(VP \rightarrow Vi\)</span></li>
+<li><span class="math">\(VP \rightarrow Vt \enspace NP\)</span></li>
+<li><span class="math">\(VP \rightarrow Vd \enspace NP \enspace NP\)</span></li>
+</ul></li>
+<li>Basic S rule
+<ul>
+<li><span class="math">\(S \rightarrow NP \enspace VP\)</span>
+<ul>
+<li>The NP is the <strong>subject</strong>.</li>
+<li>The VP generates some <strong>verb</strong> followed by zero or more noun phrases.</li>
+</ul></li>
+</ul></li>
+<li>Examples of VP
+<ul>
+<li>sleeps</li>
+<li>walks</li>
+<li>likes the mechanic</li>
+<li>gave the mechanic the fast car</li>
+</ul></li>
+<li>Examples of S
+<ul>
+<li>the man sleeps</li>
+<li>the dog walks</li>
+<li>the dog gave the mechanic the fast car</li>
+</ul></li>
+</ul>
+<h3 id="pps-modifying-verb-phrases"><a href="#pps-modifying-verb-phrases">PPs Modifying Verb Phrases</a></h3>
+<ul>
+<li>A new rule: <span class="math">\(VP \rightarrow VP \enspace PP\)</span></li>
+<li>New examples of VP:
+<ul>
+<li>sleeps in the car</li>
+<li>walks like the mechanic</li>
+<li>gave the mechanic the fast car on Tuesday</li>
+</ul></li>
+<li>The Prepositional Phrase (PP) usually adds information about the location or the time etc. of the Verb Phrase (VP).</li>
+</ul>
+<h3 id="complementizers-and-sbars"><a href="#complementizers-and-sbars">Complementizers, and SBARs</a></h3>
+<ul>
+<li>Complementizers
+<ul>
+<li>COMP = complementizer (e.g. that)</li>
+</ul></li>
+<li>SBAR
+<ul>
+<li><span class="math">\(SBAR \rightarrow COMP \enspace S\)</span></li>
+</ul></li>
+<li>Examples
+<ul>
+<li>that the man sleeps</li>
+<li>that the mechanic saw the dog</li>
+</ul></li>
+</ul>
+<h3 id="more-verbs"><a href="#more-verbs">More Verbs</a></h3>
+<ul>
+<li>New Verb Types
+<ul>
+<li>V[5] (e.g. said, reported)</li>
+<li>V[6] (e.g. told, informed)</li>
+<li>V[7] (e.g. bet)</li>
+</ul></li>
+<li>New VP rules
+<ul>
+<li><span class="math">\(VP \rightarrow V[5] \enspace SBAR\)</span></li>
+<li><span class="math">\(VP \rightarrow V[6] \enspace NP \enspace SBAR\)</span></li>
+<li><span class="math">\(VP \rightarrow V[7] \enspace NP \enspace NP \enspace SBAR\)</span></li>
+</ul></li>
+<li>Examples of new VPs:
+<ul>
+<li>said that the man sleeps.</li>
+<li>told the dog that the mechanic likes the pigeon.
+<ul>
+<li>the NP is “the dog”</li>
+<li>the SBAR is “that the mechanic likes the pigeon”</li>
+</ul></li>
+<li>bet the pigeon $50 that the mechanic owns a fast car.
+<ul>
+<li>the V[7] is “bet”. This is a very rare verb category.</li>
+<li>the NP is “the pigeon”</li>
+<li>another NP is “$50”</li>
+<li>the SBAR is “that the mechanic owns a fast car”</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="coordination"><a href="#coordination">Coordination</a></h3>
+<ul>
+<li>A new part-of-speech
+<ul>
+<li>CC = coordinator (e.g. and, or, but)</li>
+</ul></li>
+<li>New Rules
+<ul>
+<li><span class="math">\(NP \rightarrow NP \enspace CC \enspace NP\)</span>
+<ul>
+<li>NP made up of “the man”/NP “and”/CC “the dog”/NP</li>
+</ul></li>
+<li><span class="math">\(\bar{N} \rightarrow \bar{N} \enspace CC \enspace \bar{N}\)</span></li>
+<li><span class="math">\(VP \rightarrow VP \enspace CC \enspace VP\)</span>
+<ul>
+<li>VP made up of “sleeps”/VP “and”/CC “likes the dog”/VP</li>
+</ul></li>
+<li><span class="math">\(S \rightarrow S \enspace CC \enspace S\)</span></li>
+<li><span class="math">\(SBAR \rightarrow SBAR \enspace CC \enspace SBAR\)</span></li>
+</ul></li>
+</ul>
+<h3 id="weve-only-scratched-the-surface"><a href="#weve-only-scratched-the-surface"> We’ve only scratched the surface…</a></h3>
+<ul>
+<li>Agreement
+<ul>
+<li>“The dogs laugh” vs. “The dog laughs”</li>
+<li>Some notion of agreement between verb and main subject. Our current grammar fails to capture this constraint.</li>
+</ul></li>
+<li>Wh-movement
+<ul>
+<li>“The dog that the cat liked …”
+<ul>
+<li>“cat” is a transitive verb (Vt). Really “dog” should come after it, but it’s moved to the start.</li>
+</ul></li>
+</ul></li>
+<li>Active vs. passive
+<ul>
+<li>The dog saw the cat vs.</li>
+<li>The cat was seen by the dog</li>
+</ul></li>
+<li>For more information: <em>Syntactic Theory: A Formal Introduction, 2nd edition. Ivan A. Sag, Thomas Wasow, and Emily M. Bender.</em></li>
+</ul>
+<h3 id="sources-of-ambiguity"><a href="#sources-of-ambiguity">Sources of Ambiguity</a></h3>
+<hr />
+<ul>
+<li><p>One source: <strong>part-of-speech ambiguity</strong>.</p></li>
+<li><span class="math">\(NN \rightarrow \textrm{duck}\)</span></li>
+<li><span class="math">\(Vi \rightarrow \textrm{duck}\)</span></li>
+<li>Which one is it? Affects the parse tree, not just a tag.</li>
+<li><p>e.g. “saw her duck with the telescope”.</p></li>
+</ul>
+<hr />
+<ul>
+<li>Second source: <strong>prepositional phrase attachment</strong>.</li>
+<li>“I drove down the road in the car”.
+<ul>
+<li>“I” “drove down the road” “in the car”</li>
+<li>“I” “drown down” “the road in the car”</li>
+</ul></li>
+<li>“John was believed to have been shot by Bill”
+<ol style="list-style-type: decimal">
+<li>Bill shot John.</li>
+<li>Bill believed that John has been shot.</li>
+</ol></li>
+<li>Despite both interpretations being, a prior, equally likely, humans have a strong tendency to attach prepositional phrases to the most recent verb. Hence 1) is more intuitive.</li>
+</ul>
+<hr />
+<ul>
+<li>Another source: <strong>noun premodifiers</strong></li>
+<li>“the fast car mechanic”
+<ul>
+<li>“the” “fast” “car mechanic”</li>
+<li>“the” “fast car” “mechanic”</li>
+</ul></li>
+</ul>
 <h2 id="readings"><a href="#readings">Readings</a></h2>
 <h3 id="speech-and-language-processing-chapter-3-words-and-transducers"><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></h3>
 <h4 id="word-and-sentence-tokenization"><a href="#word-and-sentence-tokenization">3.9: Word and Sentence Tokenization</a></h4>

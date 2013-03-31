@@ -1943,14 +1943,155 @@ and
 
 Quiz: given "the fast car mechanic", there are **three** parse trees.
 
-1. [ NP [ D the ] [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+1. \[ NP \[ D the \] \[ $\bar{N}$ \[ JJ fast \] \[ $\bar{N}$ \[ NN car \] \[ $\bar{N}$ \[ NN mechanic \] \] \] \] \]
     -   "the", "fast car mechanic"
-2. [ NP [ D the ] [ $\bar{N}$ [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ NN car ] ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ]
+2. \[ NP \[ D the \] \[ $\bar{N}$ \[ $\bar{N}$ \[ JJ fast \] \[ $\bar{N}$ \[ NN car \] \] \] \[ $\bar{N}$ \[ NN mechanic \] \] \] \]
     -   "the", "fast car", "mechanic"
-3. [ NP [ D the ] [ $\bar{N}$ [ JJ fast ] [ $\bar{N}$ [ $\bar{N}$ [ NN car ] ] [ $\bar{N}$ [ NN mechanic ] ] ] ] ]
+3. \[ NP \[ D the \] \[ $\bar{N}$ \[ JJ fast \] \[ $\bar{N}$ \[ $\bar{N}$ \[ NN car \] \] \[ $\bar{N}$ \[ NN mechanic \] \] \] \] \]
     -   "the", "fast", "car mechanic" 
 
 (draw them out to see).
+
+### Prepositions and Prepositional Phrases
+
+-   Brown corpus uses IN = preposition (e.g. of, in, out, beside, as).
+-   e.g. "of the man", "in the room".
+-   We add two rules to hand prepositional phrases:
+    -   $PP \rightarrow IN \enspace NP$
+    -   $\bar{N} \rightarrow \bar{N} \enspace PP$
+-   Roughly 100 prepositions in English.
+-   a full triangle in a parse tree means that there are some undefined set of other nodes that make up the words.
+    -   NP, then full triangle, then "the room" as only child.
+-   $\bar{N} \rightarrow \bar{N} \enspace PP$ means the prepositional phrase (PP) is a post-modifier to the noun.
+    -   "the dog in the car"; "in the car" is a post-modifier to "dog".
+-   !!AI last slide in "An Extended Grammar", for lecture "A Simple Grammar for English (Part 2) is worth re-watching.
+
+### Verbs, Verb Phrases, and Sentences
+
+-   Basic Verb Types
+    -   Vi = instransitive verb (e.g. sleeps, walks, laughs)
+    -   Vt = transitive verb (e.g. sees, saw, likes)
+    -   Vd = ditransitive verb (e.g. gave)
+
+-   Basic VP rules
+    -   $VP \rightarrow Vi$
+    -   $VP \rightarrow Vt \enspace NP$
+    -   $VP \rightarrow Vd \enspace NP \enspace NP$
+
+-   Basic S rule
+    -   $S \rightarrow NP \enspace VP$
+        -   The NP is the **subject**.
+        -   The VP generates some **verb** followed by zero or more noun phrases.
+
+-   Examples of VP
+    -   sleeps
+    -   walks
+    -   likes the mechanic
+    -   gave the mechanic the fast car
+
+-   Examples of S
+    -   the man sleeps
+    -   the dog walks
+    -   the dog gave the mechanic the fast car
+
+### PPs Modifying Verb Phrases
+
+-   A new rule: $VP \rightarrow VP \enspace PP$
+-   New examples of VP:
+    -   sleeps in the car
+    -   walks like the mechanic
+    -   gave the mechanic the fast car on Tuesday
+-   The Prepositional Phrase (PP) usually adds information about the location or the time etc. of the Verb Phrase (VP).
+
+### Complementizers, and SBARs
+
+-   Complementizers
+    -   COMP = complementizer (e.g. that)
+-   SBAR
+    -   $SBAR \rightarrow COMP \enspace S$
+-   Examples
+    -   that the man sleeps
+    -   that the mechanic saw the dog
+
+### More Verbs
+
+-   New Verb Types
+    -   V[5] (e.g. said, reported)
+    -   V[6] (e.g. told, informed)
+    -   V[7] (e.g. bet)
+
+-   New VP rules
+    -   $VP \rightarrow V[5] \enspace SBAR$
+    -   $VP \rightarrow V[6] \enspace NP \enspace SBAR$
+    -   $VP \rightarrow V[7] \enspace NP \enspace NP \enspace SBAR$
+
+-   Examples of new VPs:
+    -   said that the man sleeps.
+    -   told the dog that the mechanic likes the pigeon.
+        -   the NP is "the dog"
+        -   the SBAR is "that the mechanic likes the pigeon"
+    -   bet the pigeon $50 that the mechanic owns a fast car.
+        -   the V[7] is "bet". This is a very rare verb category.
+        -   the NP is "the pigeon"
+        -   another NP is "$50"
+        -   the SBAR is "that the mechanic owns a fast car"
+
+### Coordination
+
+-   A new part-of-speech
+    -   CC = coordinator (e.g. and, or, but)
+
+-   New Rules
+    -   $NP \rightarrow NP \enspace CC \enspace NP$
+        -   NP made up of "the man"/NP "and"/CC "the dog"/NP
+    -   $\bar{N} \rightarrow \bar{N} \enspace CC \enspace \bar{N}$
+    -   $VP \rightarrow VP \enspace CC \enspace VP$
+        -   VP made up of "sleeps"/VP "and"/CC "likes the dog"/VP
+    -   $S \rightarrow S \enspace CC \enspace S$
+    -   $SBAR \rightarrow SBAR \enspace CC \enspace SBAR$
+
+### We've only scratched the surface...
+
+-   Agreement
+    -   "The dogs laugh" vs. "The dog laughs"
+    -   Some notion of agreement between verb and main subject. Our current grammar fails to capture this constraint.
+-   Wh-movement
+    -   "The dog that the cat liked ..."
+        -   "cat" is a transitive verb (Vt). Really "dog" should come after it, but it's moved to the start.
+-   Active vs. passive
+    -   The dog saw the cat vs.
+    -   The cat was seen by the dog
+
+-   For more information: *Syntactic Theory: A Formal Introduction, 2nd edition. Ivan A. Sag, Thomas Wasow, and Emily M. Bender.*
+
+### Sources of Ambiguity
+
+- - -
+
+-   One source: **part-of-speech ambiguity**.
+
+-   $NN \rightarrow \textrm{duck}$
+-   $Vi \rightarrow \textrm{duck}$
+-   Which one is it? Affects the parse tree, not just a tag.
+-   e.g. "saw her duck with the telescope".
+
+- - -
+
+-   Second source: **prepositional phrase attachment**.
+-   "I drove down the road in the car".
+    -   "I" "drove down the road" "in the car"
+    -   "I" "drown down" "the road in the car"
+-   "John was believed to have been shot by Bill"
+    1.  Bill shot John.
+    2.  Bill believed that John has been shot.
+-   Despite both interpretations being, a prior, equally likely, humans have a strong tendency to attach prepositional phrases to the most recent verb. Hence 1) is more intuitive.
+
+- - -
+
+-   Another source: **noun premodifiers**
+-   "the fast car mechanic"
+    -   "the" "fast" "car mechanic"
+    -   "the" "fast car" "mechanic"
 
 ## Readings
 
