@@ -48,7 +48,7 @@
 <li><a href="#the-viterbi-algorithm-1">The Viterbi Algorithm</a></li>
 <li><a href="#summary-1">Summary</a></li>
 </ul></li>
-<li><a href="#week-3---parsing-and-context-free-grammars">Week 3 - Parsing, and Context-Free Grammars</a><ul>
+<li><a href="#week-3---parsing-and-context-free-grammars-cfgs">Week 3 - Parsing, and Context-Free Grammars (CFGs)</a><ul>
 <li><a href="#parsing-syntatic-structure"> Parsing (Syntatic Structure)</a></li>
 <li><a href="#syntactic-formalisms">Syntactic Formalisms</a></li>
 <li><a href="#the-information-conveyed-by-parse-trees">The Information Conveyed By Parse Trees</a></li>
@@ -69,6 +69,48 @@
 <li><a href="#coordination">Coordination</a></li>
 <li><a href="#weve-only-scratched-the-surface"> We’ve only scratched the surface…</a></li>
 <li><a href="#sources-of-ambiguity">Sources of Ambiguity</a></li>
+</ul></li>
+<li><a href="#week-3---probabilistic-context-free-grammars-pcfgs">Week 3 - Probabilistic Context-Free Grammars (PCFGs)</a><ul>
+<li><a href="#a-probabilistic-context-free-grammar-pcfg">A Probabilistic Context-Free Grammar (PCFG)</a></li>
+<li><a href="#properties-of-cfgs-1">Properties of CFGs</a></li>
+<li><a href="#data-for-parsing-experiments-treebanks">Data for Parsing Experiments: Treebanks</a></li>
+<li><a href="#deriving-a-pcfg-from-a-treebank">Deriving a PCFG from a Treebank</a></li>
+<li><a href="#pcfgs">PCFGs</a></li>
+<li><a href="#parsing-with-a-pcfg">Parsing with a PCFG</a></li>
+<li><a href="#chomsky-normal-form">Chomsky Normal Form</a></li>
+<li><a href="#a-dynamic-programming-algorithm">A Dynamic Programming Algorithm</a></li>
+<li><a href="#an-example-3"> An Example</a></li>
+<li><a href="#a-dynamic-programming-algorithm-1"> A Dynamic Programming Algorithm</a></li>
+<li><a href="#an-example-4">An Example</a></li>
+<li><a href="#justification">Justification</a></li>
+<li><a href="#the-full-dynamic-programming-algorithm"> The Full Dynamic Programming Algorithm</a></li>
+<li><a href="#summary-2"> Summary</a></li>
+</ul></li>
+<li><a href="#week-4---weaknesses-of-pcfgs"> Week 4 - Weaknesses of PCFGs</a><ul>
+<li><a href="#lack-of-sensitivity-to-lexical-information">Lack of sensitivity to lexical information</a></li>
+<li><a href="#lack-of-sensitivity-to-structural-frequencies">Lack of sensitivity to structural frequencies</a></li>
+</ul></li>
+<li><a href="#week-4---lexicalized-pcfgs">Week 4 - Lexicalized PCFGs</a><ul>
+<li><a href="#heads-in-context-free-rules">Heads in Context-Free Rules</a></li>
+<li><a href="#more-about-heads">More about Heads</a></li>
+<li><a href="#rules-which-recover-heads-an-example-for-nps">Rules which Recover Heads: An Example for NPs</a></li>
+<li><a href="#rules-which-recover-heads-an-example-for-vps">Rules which Recover Heads: An Example for VPs</a></li>
+<li><a href="#adding-headwords-to-trees">Adding Headwords to Trees</a></li>
+<li><a href="#adding-headwords-to-trees-continued">Adding Headwords to Trees (Continued)</a></li>
+<li><a href="#chomsky-normal-form-1">Chomsky Normal Form</a></li>
+<li><a href="#lexicalized-context-free-grammars-in-chomsky-normal-form"> Lexicalized Context-Free Grammars in Chomsky Normal Form</a></li>
+<li><a href="#an-example-5"> An Example</a></li>
+<li><a href="#parameters-in-a-lexicalized-pcfg">Parameters in a Lexicalized PCFG</a></li>
+<li><a href="#parsing-with-lexicalized-cfgs">Parsing with Lexicalized CFGs</a></li>
+<li><a href="#a-model-from-charniak-1997">A Model from Charniak (1997)</a></li>
+<li><a href="#other-important-details">Other Important Details</a></li>
+<li><a href="#evaluation-representing-trees-as-constituents">Evaluation: Representing Trees as Constituents</a></li>
+<li><a href="#precision-and-recall"> Precision and Recall</a></li>
+<li><a href="#results">Results</a></li>
+<li><a href="#evaluation-dependencies">Evaluation: Dependencies</a></li>
+<li><a href="#strengths-and-weaknesses-of-modern-parsers"> Strengths and Weaknesses of Modern Parsers</a></li>
+<li><a href="#summary-3">Summary</a></li>
+<li><a href="#dependency-accuracies">Dependency Accuracies</a></li>
 </ul></li>
 <li><a href="#readings">Readings</a><ul>
 <li><a href="#speech-and-language-processing-chapter-3-words-and-transducers">Speech and Language Processing, Chapter 3 (Words and Transducers)</a></li>
@@ -1956,7 +1998,7 @@ quarter/NA results/NA ./NA</code></pre>
 <li>Later in the course we develop more complex methods.</li>
 </ul></li>
 </ul>
-<h2 id="week-3---parsing-and-context-free-grammars"><a href="#week-3---parsing-and-context-free-grammars">Week 3 - Parsing, and Context-Free Grammars</a></h2>
+<h2 id="week-3---parsing-and-context-free-grammars-cfgs"><a href="#week-3---parsing-and-context-free-grammars-cfgs">Week 3 - Parsing, and Context-Free Grammars (CFGs)</a></h2>
 <h3 id="parsing-syntatic-structure"><a href="#parsing-syntatic-structure"> Parsing (Syntatic Structure)</a></h3>
 <ul>
 <li>Input: a sentence, e.g. “Boeing is located in Seattle”.</li>
@@ -2475,11 +2517,876 @@ quarter/NA results/NA ./NA</code></pre>
 </ul>
 <hr />
 <ul>
-<li>Another source: <strong>noun premodifiers</strong></li>
+<li>Third source: <strong>noun premodifiers</strong></li>
 <li>“the fast car mechanic”
 <ul>
 <li>“the” “fast” “car mechanic”</li>
 <li>“the” “fast car” “mechanic”</li>
+</ul></li>
+</ul>
+<h2 id="week-3---probabilistic-context-free-grammars-pcfgs"><a href="#week-3---probabilistic-context-free-grammars-pcfgs">Week 3 - Probabilistic Context-Free Grammars (PCFGs)</a></h2>
+<ul>
+<li>Probability assigned to each rule.</li>
+<li>Hence probability assigned to each possible parse tree when ambiguity presence.</li>
+<li>Naive application is very poor, but simple to make better.</li>
+</ul>
+<h3 id="a-probabilistic-context-free-grammar-pcfg"><a href="#a-probabilistic-context-free-grammar-pcfg">A Probabilistic Context-Free Grammar (PCFG)</a></h3>
+<ul>
+<li>Every rule, even the rules that lead only to terminal symbols (e.g. <span class="math">\(Vi \rightarrow \textrm{sleeps}\)</span>), has a probability associated with it.</li>
+<li>Probability of a tree <span class="math">\(t\)</span> with rules:</li>
+</ul>
+<p><span class="math">\[\alpha_1 \rightarrow \beta_1, \alpha_2 \rightarrow \beta_2, \ldots, \alpha_n \rightarrow \beta_n\]</span></p>
+<ul>
+<li><span class="math">\(p(t) = \prod_{i=1}^{n} q(\alpha_i \rightarrow \beta_i)\)</span>, where <span class="math">\(q(\alpha \rightarrow \beta)\)</span> is the probability for rule <span class="math">\(\alpha \rightarrow \beta\)</span>.</li>
+<li>Note that the sum of all probabilities for a particular <span class="math">\(\alpha_i\)</span> left-hand-side (LHS) non-terminal is 1.</li>
+</ul>
+<hr />
+<ul>
+<li>Top-down stochastic processe where we can sample parse trees.</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Derivation</th>
+<th align="left">Rules used</th>
+<th align="left">Probability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">S</td>
+<td align="left">S <span class="math">\(\rightarrow\)</span> NP VP</td>
+<td align="left">1.0</td>
+</tr>
+<tr class="even">
+<td align="left">NP VP</td>
+<td align="left">NP <span class="math">\(\rightarrow\)</span> DT NN</td>
+<td align="left">0.3</td>
+</tr>
+<tr class="odd">
+<td align="left">DT NN VP</td>
+<td align="left">DT <span class="math">\(\rightarrow\)</span> the</td>
+<td align="left">1.0</td>
+</tr>
+<tr class="even">
+<td align="left">the NN VP</td>
+<td align="left">NN <span class="math">\(\rightarrow\)</span> dog</td>
+<td align="left">0.1</td>
+</tr>
+<tr class="odd">
+<td align="left">the dog VP</td>
+<td align="left">VP <span class="math">\(\rightarrow\)</span> Vi</td>
+<td align="left">0.4</td>
+</tr>
+<tr class="even">
+<td align="left">the dog Vi</td>
+<td align="left">Vi <span class="math">\(\rightarrow\)</span> laughs</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="odd">
+<td align="left">the dog laughs</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The process ends when we have no non-terminals left.</li>
+</ul>
+<hr />
+<p>Quiz: consider the following PCFG:</p>
+<ul>
+<li>q(S -&gt; NP VP) = 0.9</li>
+<li>q(S -&gt; NP) = 0.1</li>
+<li>q(NP -&gt; D N) = 1</li>
+<li>q(VP -&gt; V) = 1</li>
+<li>q(D -&gt; the) = 0.8</li>
+<li>q(D -&gt; a) = 0.2</li>
+<li>q(N -&gt; cat) = 0.5</li>
+<li>q(N -&gt; dog) = 0.5</li>
+<li>q(V -&gt; sings) = 1</li>
+</ul>
+<p>And parse tree:</p>
+<p>(S, (NP, (D, the), (N, cat)), (VP, (V, sings)))</p>
+<p>Probability:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Derivation</th>
+<th align="left">Rules used</th>
+<th align="left">Probability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">S</td>
+<td align="left">S -&gt; NP VP</td>
+<td align="left">0.9</td>
+</tr>
+<tr class="even">
+<td align="left">NP VP</td>
+<td align="left">NP -&gt; D N</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">D N VP</td>
+<td align="left">D -&gt; the</td>
+<td align="left">0.8</td>
+</tr>
+<tr class="even">
+<td align="left">the N VP</td>
+<td align="left">N -&gt; cat</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="odd">
+<td align="left">the cat VP</td>
+<td align="left">VP -&gt; V</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">the cat V</td>
+<td align="left">V -&gt; sings</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">the cat sings</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>Total probability = <span class="math">\(0.9 \times 1 \times 0.8 \times 0.5 \times 0.5 \times 1 \times 1 = 0.36\)</span></p>
+<hr />
+<h3 id="properties-of-cfgs-1"><a href="#properties-of-cfgs-1">Properties of CFGs</a></h3>
+<ul>
+<li>Assigns a probability to each <em>left-most derivation</em>, or parse-tree, allowed by the underlying CFG.</li>
+<li>Assume:
+<ul>
+<li>sentence <span class="math">\(s\)</span>,</li>
+<li>set of derivations for that sentence <span class="math">\(T(s)\)</span></li>
+</ul></li>
+<li>Thus PCFG assigns probability <span class="math">\(p(t)\)</span> to each derivation in <span class="math">\(T(s)\)</span>.</li>
+<li>There is a <em>ranking in order of probability</em>.</li>
+<li>The most likely parse tree for sentence <span class="math">\(s\)</span> is <span class="math">\(\textrm{arg} \underset{t \in T(s)}{\textrm{max}} p(t)\)</span></li>
+</ul>
+<hr />
+<p>Quiz: consider the following PCFG:</p>
+<ul>
+<li>q(S -&gt; NP VP) = 1.0</li>
+<li>q(VP -&gt; VP PP) = 0.9</li>
+<li>q(VP -&gt; V NP) = 0.1</li>
+<li>q(NP -&gt; NP PP) = 0.5</li>
+<li>q(NP -&gt; N) = 0.5</li>
+<li>q(PP -&gt; P NP) = 1.0</li>
+<li>q(N -&gt; Ted) = 0.2</li>
+<li>q(N -&gt; Jill) = 0.2</li>
+<li>q(N -&gt; town) = 0.6</li>
+<li>q(V -&gt; saw) = 1.0</li>
+<li>q(P -&gt; in) = 1.0</li>
+</ul>
+<p>Given sentence “Ted saw Jill in Town”, what is highest probability for any parse tree under this PCFG?</p>
+<p>Right now there’s no clever way, just brute force. Also note that just because a PCFG parse tree has a non-zero probability doesn’t mean it’s a <strong>valid left-most derivation</strong>.</p>
+<p>I could only find two valid left-most derivations; intuitively they are:</p>
+<ol style="list-style-type: decimal">
+<li>Ted “saw” “Jill in town”, i.e. Jill was in town when Ted saw her.</li>
+<li>Ted “saw Jill” “in town”, i.e. Ted was in town and saw Jill.</li>
+</ol>
+<p>Strictly speaking the parse trees and corresponding probabilities are:</p>
+<p>(S, (NP, N, Ted), (VP, (V, saw), (NP, (NP, N, Jill), (PP, (P, in), (NP, N, town))))), = 0.00015</p>
+<p>(S, (NP, N, Ted), (VP, (VP, (V, saw), (NP, N, Jill)), (PP, (P, in), (NP, in town)))) = 0.00027</p>
+<p>Note that these probabilities do not add up to 1; not all possible PCFG parse-trees are valid left-most derivations.</p>
+<h3 id="data-for-parsing-experiments-treebanks"><a href="#data-for-parsing-experiments-treebanks">Data for Parsing Experiments: Treebanks</a></h3>
+<ul>
+<li>Penn WSJ Treebank = 50,000 sentences with associated trees</li>
+<li>Usual set up: 40,000 training sentences (80%), 2,400 test sentences (4.8%).</li>
+</ul>
+<h3 id="deriving-a-pcfg-from-a-treebank"><a href="#deriving-a-pcfg-from-a-treebank">Deriving a PCFG from a Treebank</a></h3>
+<ul>
+<li>Given a set of examples (a <strong>treebank</strong>), the underlying CFG can simply be <em>all the rules seen in the corpus</em>.</li>
+<li>Maximum Likelihood estimates:</li>
+</ul>
+<p><span class="math">\[q_{ML}(\alpha \rightarrow \beta) = \frac{\textrm{Count}(\alpha \rightarrow \beta)}{\textrm{Count}(\alpha)}\]</span></p>
+<ul>
+<li>e.g.:</li>
+</ul>
+<p><span class="math">\[q_{ML}(\textrm{VP} \rightarrow \textrm{Vt NP}) = \frac{\textrm{Count}(\textrm{VP} \rightarrow \textrm{Vt NP})}{\textrm{Count}(\textrm{VP})}\]</span></p>
+<ul>
+<li>where the counts are taken from a training set of example trees.</li>
+<li><strong>If the training data is generated by a PCFG</strong>, then as training data size goes to infinite, the maximum-likelihood PCFG will converge to the same distribution as the “true” PCFG.</li>
+</ul>
+<hr />
+<p>Quiz: given these three parse trees, what’s <span class="math">\(q_{ML}(\textrm{NP} \rightarrow \textrm{NP PP})\)</span>? It’s 2/7.</p>
+<hr />
+<h3 id="pcfgs"><a href="#pcfgs">PCFGs</a></h3>
+<ul>
+<li>Booth and Thompson (1973) show that a CFG with rule probabilities correctly defines a distribution over the set of derivations provided that:</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>The rule probabilities define conditional distributions over the different ways of rewriting each non-terminal.</li>
+<li>A technical condition on the rule probabilities ensuring that the probability of the derivation terminating in a finite number of steps is 1. (This condition is not really a practical concern).
+<ul>
+<li>Consider “S -&gt; S S” with probability 1.0, “S -&gt; a” with probability 0.</li>
+<li>But more interesting is that “S -&gt; S S” with probability 0.6, “S -&gt; a” with probability 0.4 <em>also</em> fails. Not elaborated on.</li>
+</ul></li>
+</ol>
+<h3 id="parsing-with-a-pcfg"><a href="#parsing-with-a-pcfg">Parsing with a PCFG</a></h3>
+<ul>
+<li>Given a PCFG and a sentence <span class="math">\(s\)</span>, define <span class="math">\(T(s)\)</span> to be the set of trees with <span class="math">\(s\)</span> as the yield.</li>
+<li>Given a PCFG and a sentence <span class="math">\(s\)</span>, how do we find:</li>
+</ul>
+<p><span class="math">\[\textrm{arg} \underset{t \in T(s)}{\textrm{max}} p(t)\]</span></p>
+<ul>
+<li>We could enumerate, brute force.
+<ol style="list-style-type: decimal">
+<li>Find all trees.</li>
+<li>Calculate probabilities for each tree.</li>
+<li>Find tree with maximum probability.</li>
+</ol></li>
+<li>This is exponential, but can be efficiently solved using dynamic programming.</li>
+</ul>
+<h3 id="chomsky-normal-form"><a href="#chomsky-normal-form">Chomsky Normal Form</a></h3>
+<ul>
+<li>Assume CFG <span class="math">\(G = (N, \Sigma, R, S)\)</span> is in <strong>Chomsky Normal Form</strong>, as follows:
+<ul>
+<li><span class="math">\(N\)</span> is a set of non-terminal symbols.</li>
+<li><span class="math">\(\Sigma\)</span> is a set of terminal symbols.</li>
+<li><span class="math">\(R\)</span> is a set of rules which take one of two forms:
+<ul>
+<li><span class="math">\(X \rightarrow Y_1 Y_2\)</span> for <span class="math">\(X \in N\)</span>, and <span class="math">\(Y_1, Y_2 \in N\)</span>
+<ul>
+<li><span class="math">\(X, Y_1, Y_2\)</span> are all non-terminals</li>
+</ul></li>
+<li><span class="math">\(X \rightarrow Y\)</span> for <span class="math">\(X \in N\)</span>, and <span class="math">\(Y \in \Sigma\)</span>.
+<ul>
+<li><span class="math">\(X\)</span> is non-terminal, <span class="math">\(Y\)</span> is terminal.</li>
+</ul></li>
+</ul></li>
+<li><span class="math">\(S \in N\)</span> is a distinguished start symbol.</li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>You can take any PCFG and convert it to a PCFG in Chomsky Normal Form.</li>
+<li>“VP -&gt; Vt NP PP”, with probability 0.2</li>
+<li>Introduce a new symbol.</li>
+<li>“VP -&gt; Vt-NP PP”, with probability 0.2</li>
+<li>“Vt-NP -&gt; Vt NP”, with probability 1.0</li>
+<li>This just introduces intermediary non-terminals; to move from Chomsky Normal Form back to the original PCFG just remove these dummy non-terminals.</li>
+<li>Notice that the original rule with three non-terminals has the same probability as the new rule with two non-terminals; this is also the answer to the quiz.</li>
+</ul>
+<h3 id="a-dynamic-programming-algorithm"><a href="#a-dynamic-programming-algorithm">A Dynamic Programming Algorithm</a></h3>
+<ul>
+<li>Given a PCFG and a sentence <span class="math">\(s\)</span>, how do we find:</li>
+</ul>
+<p><span class="math">\[\underset{t \in T(s)}{\textrm{max}} p(t)\]</span></p>
+<ul>
+<li>(we really want argmax, but we’ll do that later).</li>
+<li>Notation:
+<ul>
+<li><span class="math">\(n\)</span> = number of words in the sentence</li>
+<li><span class="math">\(w_i\)</span> = <span class="math">\(i\)</span>’th word in the sentence</li>
+<li><span class="math">\(N\)</span> = the set of non-terminals in the grammar</li>
+<li><span class="math">\(S\)</span> = the start symbol in the grammar</li>
+</ul></li>
+<li>Define a dynamic programming table
+<ul>
+<li><span class="math">\(\pi[i,j,X]\)</span> = maximum probability of a constituent with non-terminal <span class="math">\(X\)</span> spanning words <span class="math">\(i \ldots j\)</span> inclusive</li>
+<li><span class="math">\(i = 1, 2, \ldots, n\)</span></li>
+<li><span class="math">\(j = 1, 2, \ldots, n\)</span></li>
+<li><span class="math">\(X \in N\)</span></li>
+</ul></li>
+<li>Our goal is to calculate <span class="math">\(max_{i \in T(S)} p(t) = \pi[1,n,S]\)</span>.
+<ul>
+<li>“What is the proability of the most likely parse tree that has S at the root and spans all the words in the sentence?”</li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>Assume sentence <span class="math">\(w_1, w_2, w_3, w_4, w_5, w_6\)</span>.</li>
+<li><span class="math">\(\pi(2, 5, NP)\)</span> means &quot;what is the probability of the most likely way of having an NP in the parse tree such that it dominates / spans <span class="math">\(w_2, w_3, w_4, w_5\)</span> inclusive?</li>
+</ul>
+<hr />
+<h3 id="an-example-3"><a href="#an-example-3"> An Example</a></h3>
+<p><span class="math">\[\underset{1}{\textrm{the}} \enspace \underset{2}{\textrm{dog}} \enspace \underset{3}{\textrm{saw}} \enspace \underset{4}{\textrm{the}} \enspace \underset{5}{\textrm{man}} \enspace \underset{6}{\textrm{with}} \enspace \underset{7}{\textrm{the}} \enspace \underset{8}{\textrm{telescope}}\]</span></p>
+<p><span class="math">\(\pi(3, 8, \textrm{VP})\)</span> is all VPs that span words 3 to 8 inclusive.</p>
+<ul>
+<li>the dog using the telescope to see the man</li>
+<li>the dog seeing a man with the telescope</li>
+<li>The <span class="math">\(\pi\)</span> statement is “which of the two is the more likely spanning VP?”</li>
+</ul>
+<hr />
+<h3 id="a-dynamic-programming-algorithm-1"><a href="#a-dynamic-programming-algorithm-1"> A Dynamic Programming Algorithm</a></h3>
+<ul>
+<li>Base case definition: <span class="math">\(\forall i = 1, 2, \ldots, n, \forall X \in V\)</span>:</li>
+</ul>
+<p><span class="math">\[\pi[i,i,X] = q(X \rightarrow w_i)\]</span></p>
+<ul>
+<li>Note: define <span class="math">\(q(X \rightarrow w_i) = 0\)</span> if <span class="math">\(X \rightarrow w_i\)</span> is not in the grammar.</li>
+<li><p>e.g. “the/1 dog/2 laughs/3”, <span class="math">\(\pi(2,2,\textrm{NN})\)</span> only has one possible parse tree because it must be “NN -&gt; dog”, hence <span class="math">\(= q(\textrm{NN} \rightarrow \textrm{dog})\)</span></p></li>
+<li><p>Recursive definition: <span class="math">\(\forall i = 1, 2, \ldots, (n-1)\)</span>, <span class="math">\(j = (i+1), \ldots, n\)</span>, <span class="math">\(X \in N\)</span>:</p></li>
+</ul>
+<p><span class="math">\[\pi(i,j,X) = \underset{\underset{s \in i \ldots (j-1)}{X \rightarrow Y \enspace Z \in R}}{max} (q(X \rightarrow Y \enspace Z) \times \pi(i,s,Y) \times \pi(s+1,j,Z))\]</span></p>
+<ul>
+<li><span class="math">\(s\)</span> is the <strong>split point</strong>.</li>
+</ul>
+<h3 id="an-example-4"><a href="#an-example-4">An Example</a></h3>
+<p><span class="math">\[\underset{1}{\textrm{the}} \enspace \underset{2}{\textrm{dog}} \enspace \underset{3}{\textrm{saw}} \enspace \underset{4}{\textrm{the}} \enspace \underset{5}{\textrm{man}} \enspace \underset{6}{\textrm{with}} \enspace \underset{7}{\textrm{the}} \enspace \underset{8}{\textrm{telescope}}\]</span></p>
+<p><span class="math">\(\pi(3,8,\textrm{VP})\)</span></p>
+<p>Suppose we have:</p>
+<ul>
+<li>VP -&gt; Vt NP, probability 0.4</li>
+<li>VP -&gt; VP PP, probability 0.6</li>
+</ul>
+<p>We’re searching over two possible things:</p>
+<ul>
+<li>We’re searching over all possible rules in the grammar (<span class="math">\(X \rightarrow Y \enspace Z \in R\)</span>).</li>
+<li>We’re searching over all possible split points (<span class="math">\(s \in i \ldots (j-1)\)</span>).
+<ul>
+<li><span class="math">\(s \in \{3, 4, 5, 6, 7\}\)</span>.</li>
+</ul></li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        &amp; q(\textrm{VP} \rightarrow \textrm{VT NP}) \times \pi(3,3,\textrm{Vt}) \times \pi(4,8,NP) \\
+        &amp; q(\textrm{VP} \rightarrow \textrm{VT NP}) \times \pi(3,4,\textrm{Vt}) \times \pi(5,8,NP) \\
+        &amp; \vdots \\
+        &amp; q(\textrm{VP} \rightarrow \textrm{VT NP}) \times \pi(3,7,\textrm{Vt}) \times \pi(8,8,NP) \\
+        &amp; q(\textrm{VP} \rightarrow \textrm{VT PP}) \times \pi(3,3,\textrm{Vt}) \times \pi(4,8,PP) \\
+        &amp; q(\textrm{VP} \rightarrow \textrm{VT PP}) \times \pi(3,4,\textrm{Vt}) \times \pi(5,8,PP) \\
+        &amp; \vdots \\
+        &amp; q(\textrm{VP} \rightarrow \textrm{VT PP}) \times \pi(3,7,\textrm{Vt}) \times \pi(8,8,PP)
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>Each of these products will have a different value, and the max is the value for <span class="math">\(\pi(3,8,\textrm{VP})\)</span>.</li>
+<li>We will calculate the <span class="math">\(pi\)</span> values bottom-up to ensure correctness.</li>
+</ul>
+<h3 id="justification"><a href="#justification">Justification</a></h3>
+<ul>
+<li>Consider the above example yet again.</li>
+<li>Suppose for <span class="math">\(\pi(3,8,\textrm{VP})\)</span> we choose “VP -&gt; VP PP”.</li>
+<li>And suppose we also choose split point <span class="math">\(s = 5\)</span>.</li>
+<li>This means that the first right-hand-side <span class="math">\(VP\)</span> spans <span class="math">\(w_3, w_4, w_5\)</span>, and the second right-hand-side <span class="math">\(PP\)</span> spans <span class="math">\(w_6, w_7, w_8\)</span>.</li>
+<li>The highest probability tree is formed of two child trees, which themselves must be the highest probabilities trees, etc.</li>
+<li>This is a classic observation of “dividing a problem into equivalent subproblems”, i.e. dynamic programming.</li>
+</ul>
+<h3 id="the-full-dynamic-programming-algorithm"><a href="#the-full-dynamic-programming-algorithm"> The Full Dynamic Programming Algorithm</a></h3>
+<p><strong>Input</strong>: a sentence <span class="math">\(s = x_1 \ldots x_n\)</span>, a PCFG in Chomsky Normal Form (CNF) <span class="math">\(G = (N, \Sigma, S, R, q)\)</span>.</p>
+<p><strong>Initialization</strong>:</p>
+<p><span class="math">\(\forall \enspace i \in \{1, \ldots, n\}, \forall \enspace X \in N,\)</span></p>
+<p><span class="math">\[
+\begin{equation}
+    \pi(i,i,X) = \begin{cases}
+        q(X \rightarrow x_i), &amp; \textrm{if} \enspace X \rightarrow x_i \in R \\
+        0, &amp; \textrm{Otherwise}
+    \end{cases}
+\end{equation}
+\]</span></p>
+<p><strong>Algorithm</strong></p>
+<ul>
+<li>For <span class="math">\(l = 1 \ldots (n-1)\)</span>
+<ul>
+<li>For <span class="math">\(i = 1 \ldots (n-l)\)</span>
+<ul>
+<li>Set <span class="math">\(j = i + l\)</span></li>
+<li><span class="math">\(\pi(i,j,X) = \underset{\underset{s \in i \ldots (j-1)}{X \rightarrow Y \enspace Z \in R}}{max} (q(X \rightarrow Y \enspace Z) \times \pi(i,s,Y) \times \pi(s+1,j,Z))\)</span></li>
+<li>and</li>
+<li><span class="math">\(bp(i,j,X) = \textrm{arg}\underset{\underset{s \in i \ldots (j-1)}{X \rightarrow Y \enspace Z \in R}}{max} (q(X \rightarrow Y \enspace Z) \times \pi(i,s,Y) \times \pi(s+1,j,Z))\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li><span class="math">\(l\)</span> is the length of the segment we’re filling in.
+<ul>
+<li>Hence we go from smallest to largest, satisfying the rule that we do small lengths first.</li>
+<li>l = 1
+<ul>
+<li>i = 1, j = 2</li>
+<li>i = 2, j = 3</li>
+<li>i = 3, j = 4</li>
+</ul></li>
+<li>l = 2
+<ul>
+<li>i = 1, j = 3</li>
+<li>i = 2, j = 4</li>
+</ul></li>
+</ul></li>
+</ul>
+<hr />
+<ul>
+<li>The runtime is <span class="math">\(O(n^3 \times |N|^3)\)</span>
+<ul>
+<li>Cubic with respect to number of words <span class="math">\(n\)</span>.</li>
+<li>Also cubic with respect to the number of non-terminals in the grammar, <span class="math">\(|N|\)</span>.</li>
+<li>Consider that there are <span class="math">\(n^2\)</span> choices for <span class="math">\((i,j)\)</span>.</li>
+<li>There are <span class="math">\(|N|\)</span> choices for X, then <span class="math">\(\times |N|^2\)</span> when considering <span class="math">\(Y\)</span> and <span class="math">\(Z\)</span>.</li>
+<li>And <span class="math">\(s\)</span> also varies with <span class="math">\(n\)</span>.</li>
+<li>This is way easier than brute-force search.</li>
+</ul></li>
+</ul>
+<h3 id="summary-2"><a href="#summary-2"> Summary</a></h3>
+<ul>
+<li>PCFGs augments CFGs by including a probability for each rule in the grammar.</li>
+<li>The probability for a parse tree is the product of probabilities for the rules in the tree.</li>
+<li>To build a PCFG-parsed parser:
+<ol style="list-style-type: decimal">
+<li>Learn a PCFG from a treebank.</li>
+<li>Given a test data sentence, use the CKY algorithm to computer the highest probability tree for the sentence under the PCFG.</li>
+</ol></li>
+</ul>
+<h2 id="week-4---weaknesses-of-pcfgs"><a href="#week-4---weaknesses-of-pcfgs"> Week 4 - Weaknesses of PCFGs</a></h2>
+<ul>
+<li>Lack of sensitivity to lexical information</li>
+<li><p>Lack of sensitivity to structural frequencies</p></li>
+<li>History:
+<ul>
+<li>First treebanks in early 1990s.</li>
+<li>PCFGs applies as seen before, but only around 72% accuracy for WSJ corpus.</li>
+</ul></li>
+<li><p>Modern parsers get around 92% accuracy for WSJ corpus.</p></li>
+</ul>
+<h3 id="lack-of-sensitivity-to-lexical-information"><a href="#lack-of-sensitivity-to-lexical-information">Lack of sensitivity to lexical information</a></h3>
+<ul>
+<li>Note that every rule to a terminal is independent of every other part of the parse tree; very strong and wrong independence assumption.</li>
+<li><strong>Attachment ambiguity</strong> Attachment decision for prepositional phrases (PP) is completely independent of the words.
+<ul>
+<li>We know this is a bad decision.</li>
+</ul></li>
+<li><strong>Coordination ambiguity</strong>: for the coordinator (CC), could be e.g.
+<ul>
+<li>“dogs in houses” “and” “cats”, or</li>
+<li>“dogs” “in” “houses and cats”</li>
+</ul></li>
+</ul>
+<h3 id="lack-of-sensitivity-to-structural-frequencies"><a href="#lack-of-sensitivity-to-structural-frequencies">Lack of sensitivity to structural frequencies</a></h3>
+<ul>
+<li>e.g. “president of a company in Africa”
+<ul>
+<li>“president” “of a” “company in Africa”, or</li>
+<li>“president” “of a company” “in Africa” (president in Africa)</li>
+</ul></li>
+<li>Both parse have the same rules, therefore receive the same probability under a PCFG.</li>
+<li><strong>Close attachment</strong> (“Africa” attaching to “company” because it’s close) is twice as likely in WSJ test.</li>
+</ul>
+<hr />
+<ul>
+<li>Previous example: “John was believed to have been shot by Bill”
+<ul>
+<li>Here the low attachment analysis (Bill does the shooting) contains the same rules as the high attachment analysis (Bill does the believing), so the two analyses receive same probability.</li>
+</ul></li>
+</ul>
+<h2 id="week-4---lexicalized-pcfgs"><a href="#week-4---lexicalized-pcfgs">Week 4 - Lexicalized PCFGs</a></h2>
+<h3 id="heads-in-context-free-rules"><a href="#heads-in-context-free-rules">Heads in Context-Free Rules</a></h3>
+<ul>
+<li><p>Add <strong>annotations</strong> specifying the <strong>“head”</strong> of each rule:</p></li>
+<li>S -&gt; NP <strong>VP</strong></li>
+<li>VP -&gt; <strong>Vi</strong></li>
+<li>VP -&gt; <strong>Vt</strong> NP</li>
+<li>VP -&gt; <strong>VP</strong> PP</li>
+<li>NP -&gt; DT <strong>NN</strong></li>
+<li>NP -&gt; <strong>NP</strong> PP</li>
+<li><p>PP -&gt; <strong>IN</strong> NP</p></li>
+</ul>
+<hr />
+<ul>
+<li>Vi -&gt; sleeps</li>
+<li>Vt -&gt; saw</li>
+<li>NN -&gt; man</li>
+<li>NN -&gt; woman</li>
+<li>NN -&gt; telescope</li>
+<li>DT -&gt; the</li>
+<li>IN -&gt; with</li>
+<li>IN -&gt; in</li>
+</ul>
+<hr />
+<ul>
+<li>For each rule that give non-terminals, identify one of the children to be the head of the rule. An additional piece of information.</li>
+</ul>
+<h3 id="more-about-heads"><a href="#more-about-heads">More about Heads</a></h3>
+<ul>
+<li>Each context-free rule has one “special” child that is the head of the rule, the most special part, the syntactic centre, e.g.
+<ul>
+<li>S -&gt; NP <strong>VP</strong>, (VP is the head)</li>
+<li>VP -&gt; <strong>Vt</strong> NP, (Vt is the head)</li>
+<li>NP -&gt; DT NN <strong>NN</strong> (NN is the head)</li>
+</ul></li>
+<li>A core idea in syntax
+<ul>
+<li>See X-bar Theory, Head-Driven Phrase Structure Grammar</li>
+</ul></li>
+<li>Some intuitions:
+<ul>
+<li>The central sub-constituent of each rule.</li>
+<li>The semantic predicate in each rule.</li>
+</ul></li>
+</ul>
+<h3 id="rules-which-recover-heads-an-example-for-nps"><a href="#rules-which-recover-heads-an-example-for-nps">Rules which Recover Heads: An Example for NPs</a></h3>
+<ul>
+<li>Many early treebanks, e.g. WSJ, do not contain annotations for the heads.</li>
+<li>If the rule contains NN, NNS, or NNP:
+<ul>
+<li>Choose the rightmost NN, NNS, or NNP.</li>
+</ul></li>
+<li>Else If the rule contains an NP:
+<ul>
+<li>Choose the leftmost NP</li>
+</ul></li>
+<li>Else If the rule contains a JJ
+<ul>
+<li>Choose the right-most JJ</li>
+</ul></li>
+<li>Else If the rule contains a CD (number, e.g. “100”, “1000”)
+<ul>
+<li>Choose the right-most CD</li>
+</ul></li>
+<li>Else
+<ul>
+<li>Choose the right-most child</li>
+</ul></li>
+</ul>
+<hr />
+<p>e.g.</p>
+<p>NP -&gt; DT NNP <strong>NN</strong> NP -&gt; DT NN <em>NNP</em>* NP -&gt; <strong>NP</strong> PP NP -&gt; DT <strong>JJ</strong> NP -&gt; <strong>DT</strong></p>
+<h3 id="rules-which-recover-heads-an-example-for-vps"><a href="#rules-which-recover-heads-an-example-for-vps">Rules which Recover Heads: An Example for VPs</a></h3>
+<ul>
+<li>If the rule contains Vi or Vt (or indeed all subcategories of verbs):
+<ul>
+<li>Choose the leftmost Vi or Vt</li>
+</ul></li>
+<li>Else If the rule contains a VP
+<ul>
+<li>Choose the leftmost VP</li>
+</ul></li>
+<li>Else
+<ul>
+<li>Choose the leftmost child</li>
+</ul></li>
+</ul>
+<hr />
+<p>e.g.</p>
+<p>VP -&gt; <strong>Vt</strong> NP VP -&gt; <strong>VP</strong> PP</p>
+<h3 id="adding-headwords-to-trees"><a href="#adding-headwords-to-trees">Adding Headwords to Trees</a></h3>
+<ul>
+<li>We’re going to add lexical information to each non-terminal to our tree.
+<ul>
+<li>Rather than one single “S”, we could have e.g. “S(questioned)”</li>
+<li>Whereas we had around 50 non-terminals before, now we could have <span class="math">\(50 \times |V|\)</span>, where <span class="math">\(V\)</span> is vocabulary size, so in the thousands.</li>
+</ul></li>
+<li>We will propogate heads up the tree.</li>
+</ul>
+<h3 id="adding-headwords-to-trees-continued"><a href="#adding-headwords-to-trees-continued">Adding Headwords to Trees (Continued)</a></h3>
+<ul>
+<li>A constituent receives its <strong>headword</strong> from its <strong>head child</strong>.
+<ul>
+<li>S -&gt; NP <strong>VP</strong>, (S receives headword from VP)</li>
+<li>VP -&gt; <strong>Vt</strong> NP, (VP receives headword from Vt)</li>
+<li>NP -&gt; DT <strong>NN</strong>, (NP receives headword from NN).</li>
+</ul></li>
+<li>For rules that go to a terminal (e.g. DT -&gt; the), the contituent receives the word as its headword (e.g. DT becomes DT(the)).</li>
+</ul>
+<h3 id="chomsky-normal-form-1"><a href="#chomsky-normal-form-1">Chomsky Normal Form</a></h3>
+<ul>
+<li>(see earlier slide about CNF)</li>
+<li>(recall the complexity of CYK algorithm is <span class="math">\(O(n^3 \times |N|^3)\)</span>, where <span class="math">\(n\)</span> is length of string being parsed, <span class="math">\(N\)</span> is number of non-terminals).</li>
+</ul>
+<h3 id="lexicalized-context-free-grammars-in-chomsky-normal-form"><a href="#lexicalized-context-free-grammars-in-chomsky-normal-form"> Lexicalized Context-Free Grammars in Chomsky Normal Form</a></h3>
+<ul>
+<li><span class="math">\(N\)</span> is a set of non-terminal symbols</li>
+<li><span class="math">\(\Sigma\)</span> is a set of terminal symbols</li>
+<li><span class="math">\(R\)</span> is a set of rules which take one of three forms:
+<ul>
+<li><span class="math">\(X(h) \rightarrow_1 Y_1(h) Y_2(w)\)</span> for <span class="math">\(X \in N\)</span>, and <span class="math">\(Y_1, Y_2 \in N\)</span>, and <span class="math">\(h, w \in \Sigma\)</span>.
+<ul>
+<li>e.g. VP(saw) <span class="math">\(\rightarrow_1\)</span> Vt(saw) NP(dog)</li>
+<li>X = VP</li>
+<li><span class="math">\(Y_1\)</span> = Vt</li>
+<li><span class="math">\(Y_2\)</span> = NP</li>
+<li>h = saw</li>
+<li>w = dog</li>
+<li>The subscript on the arrow indicates where the head word comes from, the first <span class="math">\(Y\)</span>.</li>
+</ul></li>
+<li><span class="math">\(X(h) \rightarrow_2 Y_1(w) Y_2(h)\)</span> for <span class="math">\(X \in N\)</span> and <span class="math">\(Y_1, Y_2 \in N\)</span> and <span class="math">\(h, w \in \Sigma\)</span>.
+<ul>
+<li>e.g. S(saw) <span class="math">\(\rightarrow_2\)</span> NP(man) VP(saw).</li>
+</ul></li>
+<li><span class="math">\(X(h) \in h\)</span> for <span class="math">\(X \in N\)</span> and <span class="math">\(h \in \Sigma\)</span>.
+<ul>
+<li>e.g. DT(the) -&gt; the, where X = DT and h = the.</li>
+</ul></li>
+</ul></li>
+<li><span class="math">\(S \in N\)</span> is a distinguished start symbol.</li>
+</ul>
+<hr />
+<ul>
+<li>The subscript on the arrows are important because it disambiguates e.g.
+<ul>
+<li>NP(dog) -&gt; NN(dog) NN(dog).</li>
+</ul></li>
+</ul>
+<h3 id="an-example-5"><a href="#an-example-5"> An Example</a></h3>
+<p>S(saw) <span class="math">\(\rightarrow_2\)</span> NP(man) VP(saw)<br />NP(saw) <span class="math">\(\rightarrow_1\)</span> Vt(saw) NP(dog)<br />NP(man) <span class="math">\(\rightarrow_2\)</span> DT(the) NN(man)<br />NP(dog) <span class="math">\(\rightarrow_2\)</span> DT(the) NN(dog)<br />Vt(saw) <span class="math">\(\rightarrow\)</span> saw<br />DT(the) <span class="math">\(\rightarrow\)</span> the<br />NN(man) <span class="math">\(\rightarrow\)</span> man<br />NN(dog) <span class="math">\(\rightarrow\)</span> dog</p>
+<ul>
+<li>When drawing parse tree put a big dot on the branch that indicate where the head word is coming from.</li>
+</ul>
+<h3 id="parameters-in-a-lexicalized-pcfg"><a href="#parameters-in-a-lexicalized-pcfg">Parameters in a Lexicalized PCFG</a></h3>
+<ul>
+<li>An example parameter in a regular PCFG</li>
+</ul>
+<p><span class="math">\[q(\textrm{S} \rightarrow \textrm{NP VP})\]</span></p>
+<ul>
+<li>An example parameter in a Lexicalized PCFG</li>
+</ul>
+<p><span class="math">\[q(\textrm{S(saw)} \rightarrow_2 \textrm{NP(man) VP(saw)})\]</span></p>
+<ul>
+<li>Technically a Lexicalized PCFG is just a regular PCFG with many, many more non-terminals.</li>
+<li>However, qualitatively what’s happened is that we have much less data per terminal.
+<ul>
+<li>This is a similar problem to language modelling with more n-grams, and will have a similar solution.</li>
+</ul></li>
+</ul>
+<h3 id="parsing-with-lexicalized-cfgs"><a href="#parsing-with-lexicalized-cfgs">Parsing with Lexicalized CFGs</a></h3>
+<ul>
+<li>The new form of grammar looks just like a Chomsky normal form CFG, but with potentially <span class="math">\(O(|\Sigma|^2 \times |N|^3)\)</span> possible rules.</li>
+<li>Naively, parsing an <span class="math">\(n\)</span> word sentence using the dynamic programming algorithm will take <span class="math">\(O(n^3 |\Sigma|^2 |N|^3)\)</span> time.
+<ul>
+<li>But <span class="math">\(|\Sigma|\)</span> can be <strong>huge</strong>!!</li>
+</ul></li>
+<li>Crucial observation: at most <span class="math">\(O(n^2 \times |N|^3)\)</span> rules can be applicable to a given sentence <span class="math">\(w_1, w_2, \ldots, w_n\)</span>, of length n. This is because any rules which contain a lexical item that is not one of <span class="math">\(w_1 \ldots w_n\)</span> an be safely discarded.
+<ul>
+<li>e.g. given “the dog saw the cat”</li>
+<li>If rule is “S(questioned) -&gt;2 NP(dog) VP(questioned)”, it can be discarded because “questioned” not in sentence.</li>
+</ul></li>
+<li>The result: we can parse in <span class="math">\(O(n^5 |N|^3)\)</span> time.
+<ul>
+<li><span class="math">\(n^3\)</span> comes from dynamic programming algorithm.</li>
+<li><span class="math">\(n^2\)</span> comes from the idea we need to use words from the sentence.</li>
+<li><span class="math">\(|N|^3\)</span> comes from CNF usage of non-terminals.</li>
+</ul></li>
+</ul>
+<h3 id="a-model-from-charniak-1997"><a href="#a-model-from-charniak-1997">A Model from Charniak (1997)</a></h3>
+<ul>
+<li>An example parameter in a Lexicalized PCFG:</li>
+</ul>
+<p><span class="math">\[q(\textrm{S(saw)} \rightarrow_2 \textrm{NP(man) VP(saw)})\]</span></p>
+<ul>
+<li>First step: decompose this parameter into a product of two parameters</li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+        &amp; q(\textrm{S(saw)} \rightarrow_2 \textrm{NP(man) VP(saw)}) \\
+      = &amp; q(\textrm{S} \rightarrow_2 \textrm{NP VP|S, saw}) \times q(\textrm{man|S} \rightarrow_2 \textrm{NP VP, saw})
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>First parameter: given that I have S(saw) what is the probability of re-writing it as “NP VP”?</li>
+<li>Second parameter: say we have S(saw) and we know we have NP on the left and VP(saw) on the right.
+<ul>
+<li>What will fill in the NP(???)</li>
+<li>What is the probability that “man” is chosen for the NP?</li>
+</ul></li>
+<li>Second step: use smoothed estimation for the two parameter estimates</li>
+</ul>
+<p><span class="math">\[
+\begin{align}
+    &amp;\begin{aligned}
+      &amp; q(\textrm{S} \rightarrow_2 \textrm{NP VP | S, saw}) \\
+    = &amp; \lambda_1 \times q_{ML}(\textrm{S} \rightarrow_2 \textrm{NP VP | S, saw}) + \lambda_2 \times q_{ML} (S \rightarrow_2 \textrm{NP VP | S}) \\ \\
+      &amp; q(\textrm{man | S} \rightarrow_2 \textrm{NP VP, saw}) \\
+    = &amp; \lambda_3 \times q_{ML} (\textrm{man | S} \rightarrow_2 \textrm{NP VP, saw}) + \lambda_4 \times q_{ML}(\textrm{man | S} \rightarrow_2 \textrm{NP VP}) + \lambda_5 \times q_{ML} (\textrm{man | NP})
+    \end{aligned}
+\end{align}
+\]</span></p>
+<ul>
+<li>The first parameter:
+<ul>
+<li><p><span class="math">\(\lambda_1, \lambda_2 \ge 0\)</span>, <span class="math">\(\lambda_1 + \lambda_2 = 1\)</span>.</p></li>
+<li><span class="math">\(q_{ML}(\textrm{S} \rightarrow_2 \textrm{NP VP | S, saw}) = \frac{\textrm{Count}(\textrm{S(saw)} \rightarrow_2 \textrm{NP VP})}{\textrm{Count}(\textrm{S(saw)})}\)</span>
+<ul>
+<li>Probability of S(saw) re-writing with this particular rule.</li>
+<li>This estimate will be more detailed; uses more information.</li>
+</ul></li>
+<li><span class="math">\(q_{ML} (S \rightarrow_2 \textrm{NP VP | S}) = \frac{\textrm{Count}(\textrm{S} \rightarrow_2 \textrm{NP VP})}{\textrm{Count}(\textrm{S})}\)</span>
+<ul>
+<li>A backed-off estimate that completely ignores the lexical information “saw”.</li>
+<li>Almost identical to a rule in a regular PCFG.</li>
+<li>This estimate will be more robust; counts will be robust and will more closely reflect the “true” value.</li>
+</ul></li>
+<li>Robustness vs. sensitivity to lexical information is balanced using linear interpolation.
+<ul>
+<li>Again, this is bias vs. variance.</li>
+</ul></li>
+</ul></li>
+<li>The second parameter:
+<ul>
+<li>Very similar reasoning.</li>
+<li><span class="math">\(\lambda_3, \lambda_4, \lambda_5 \ge 0\)</span>, <span class="math">\(\lambda_3 + \lambda_4 + \lambda_5 = 1\)</span>.</li>
+<li><span class="math">\(\lambda_3\)</span> asks “given S(saw), NP(???), and VP(saw), what is the probability of the NP having man?”</li>
+<li>Throw away “saw”, <span class="math">\(\lambda_4\)</span> asks “given S(h), NP(???) and VP(h), where h is some head word, what’s the probability of the NP having man?”</li>
+<li><span class="math">\(\lambda_4\)</span> asks “given NP(???) what’s the probability of the NP having man?”</li>
+<li>Again, robustness vs. sensitivity, bias vs. variance.</li>
+</ul></li>
+</ul>
+<h3 id="other-important-details"><a href="#other-important-details">Other Important Details</a></h3>
+<ul>
+<li>Need to deal with rules with more than two children, e.g.
+<ul>
+<li>VP(told) -&gt; V(told) NP(him) PP(on) SBAR(that)</li>
+<li>One way is to binarize using method covered before, adding intermediate non-terminals.</li>
+</ul></li>
+<li>Need to incorporate parts of speech (useful in smoothing)
+<ul>
+<li>VP-V(told) -&gt; V(told) NP-PRP(him) PP-IN(on) SBAR-COMP(that)</li>
+</ul></li>
+<li>Need to encode preferences for close attachment.
+<ul>
+<li>“John was believed to have been shot by Bill”.</li>
+</ul></li>
+<li>Won’t be covered in this course. Further reading:
+<ul>
+<li>Michael Collins, 2003. “Head-Driven Statistical Models for Natural Language Parsing”. In Computational Linguistics.</li>
+</ul></li>
+</ul>
+<h3 id="evaluation-representing-trees-as-constituents"><a href="#evaluation-representing-trees-as-constituents">Evaluation: Representing Trees as Constituents</a></h3>
+<ul>
+<li>Take some parse tree.</li>
+<li>Break up into constituents with labels, start points, end points.</li>
+<li>“the/1 lawyer/2 questioned/3 the/4 witness/5”</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Label</th>
+<th align="left">Start Point</th>
+<th align="left">End Point</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">NP</td>
+<td align="left">1</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">NP</td>
+<td align="left">4</td>
+<td align="left">5</td>
+</tr>
+<tr class="odd">
+<td align="left">VP</td>
+<td align="left">3</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">S</td>
+<td align="left">1</td>
+<td align="left">5</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>We <strong>do not</strong> include parts of speech in this defintion. What’s missing is “the/DT lawyer/NN questioned/Vt the/DT witness/NN”.</li>
+</ul>
+<h3 id="precision-and-recall"><a href="#precision-and-recall"> Precision and Recall</a></h3>
+<ul>
+<li>Take the output from human parsed data, this is our <em>gold standard</em>.</li>
+<li>Take output parsed using our PCFG.</li>
+<li>Create two sets of tables for the constituents.</li>
+<li><span class="math">\(G\)</span> = number of constituents in <em>gold standard</em> = 7.</li>
+<li><span class="math">\(P\)</span> = number of constituents in <em>parse output</em> = 6.</li>
+<li>$C = number correct = 6.
+<ul>
+<li>How many rules in the parse output are also in the gold standard?</li>
+</ul></li>
+<li>Recall = <span class="math">\(\textrm{100%} \times \frac{C}{G} = \textrm{100%} \times \frac{6}{7}\)</span></li>
+<li>Precision = <span class="math">\(\textrm{100%} \times \frac{C}{P} = \textrm{100%} \times {6}{6}\)</span>.</li>
+</ul>
+<h3 id="results"><a href="#results">Results</a></h3>
+<ul>
+<li>Training data: 40k sentences from the Penn Wall Street Journal treebank. Testing: around 2.4k sentences from the Penn Wall Street Journal treebank.</li>
+<li>Results for a PCFG: 70.6% Recall, 74.8% Precision.</li>
+<li>Magerman (1994): 84.0% Recall, 84.3% Precision.
+<ul>
+<li>Based on Decision trees and bottom-up parser.</li>
+</ul></li>
+<li>Results for a lexicalized PCFG: 88.1% recall, 88.3% precision (from Collins (1997, 2003)</li>
+<li>More recent results:
+<ul>
+<li>90.7%/91.4% (Carreras et al 2008)
+<ul>
+<li>Discriminative estimation</li>
+</ul></li>
+<li>91.7%/92.0% (Petrov 2010)
+<ul>
+<li>Latent-variable PCFGs</li>
+</ul></li>
+<li>91.2%/91.8% (Charniak and Johnson, 2005)
+<ul>
+<li>Discriminative estimation</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="evaluation-dependencies"><a href="#evaluation-dependencies">Evaluation: Dependencies</a></h3>
+<ul>
+<li>Recall two of the three rules of lexicalised PCFGs:
+<ul>
+<li><span class="math">\(X(h) \rightarrow_1 Y_1(h) Y_2(w)\)</span></li>
+<li><span class="math">\(X(h) \rightarrow_2 Y_1(w) Y_2(h)\)</span></li>
+</ul></li>
+<li>see slides for lexicalised PCFG parse tree of “the man saw the dog with the telescope”</li>
+<li>Dependencies (format: (h, w, rule))
+<ul>
+<li>(ROOT_0, saw_3, ROOT)</li>
+<li>(saw_3, man_2, S -&gt;2 NP VP)</li>
+<li>(man_2, the_1, NP -&gt;2 DT NN)</li>
+<li>(saw_3, with_6, VP -&gt;1 VP PP)</li>
+<li>(saw_3, dog_5, VP -&gt;1 Vt NP)</li>
+<li>(dog_5, the_4, NP -&gt;2 DT NN)</li>
+<li>(with_6, telescope_8, PP -&gt;1 IN NP)</li>
+<li>(telescope_8, the_7, NP -&gt;2 DT NN)</li>
+</ul></li>
+<li>Always same number of dependencies as number of words, in this case 8.</li>
+<li>Special dependency for the start symbol.</li>
+</ul>
+<h3 id="strengths-and-weaknesses-of-modern-parsers"><a href="#strengths-and-weaknesses-of-modern-parsers"> Strengths and Weaknesses of Modern Parsers</a></h3>
+<p>(Numbers taken from Collins (2003))</p>
+<ul>
+<li>Subject-verb pairs (S <span class="math">\(\rightarrow_2\)</span> NP VP): over 95%/95% recall/precision.</li>
+<li>Object-verb pairs (VP <span class="math">\(\rightarrow_1\)</span> Vt NP$) (“saw the man”): over 92%/92% recall/precision.</li>
+<li>Other arguments to verbs (VP <em>1 Y</em>1 Y_2$): 92%</li>
+<li>Non-recursive NP boundaries: 93%</li>
+<li>PP attachments (<span class="math">\(X(h) \rightarrow Y_1(h) PP(w)\)</span>): 82%</li>
+<li>Coordination ambiguities: 61%.</li>
+<li>Takeaway
+<ul>
+<li>Core structure is good.</li>
+<li>Modifiers cause difficulties.</li>
+<li>This is from 1997, but would see same breakdown of per-type dependency accuracies in modern parsers.</li>
+</ul></li>
+</ul>
+<h3 id="summary-3"><a href="#summary-3">Summary</a></h3>
+<ul>
+<li>Key weakness of PCFGs: lack of sensitivity to lexical information</li>
+<li>Lexicalised PCFGs:
+<ul>
+<li>Lexicalize a treebank using head rules.</li>
+<li>Estimate the parameters of a lexicalized PCFG using smoothed estimaton.</li>
+</ul></li>
+<li>Accuracy of lexicalized PCFGs: around 88% in recovering constituents or dependencies.</li>
+</ul>
+<h3 id="dependency-accuracies"><a href="#dependency-accuracies">Dependency Accuracies</a></h3>
+<ul>
+<li>All parses for a sentence with <span class="math">\(n\)</span> words have <span class="math">\(n\)</span> dependencies. Report a single figure, dependency accuracy.</li>
+<li>Results from Collins 2003: 88.3% dependency accuracy.</li>
+<li>Can calculate precision/recall on particular dependency <em>types</em>,
+<ul>
+<li>e.g. look at all subject/verb dependencies <span class="math">\(\implies\)</span> all dependencies with label <span class="math">\(\textrm{S} \rightarrow_2 \textrm{NP VP}\)</span>.</li>
+<li>Recall = <span class="math">\(\frac{\textrm{number of subject/verb dependencies correct}}{\textrm{number of subject/verb dependencies in gold standard}}\)</span></li>
+<li>Precision = <span class="math">\(\frac{\textrm{number of subject/verb dependencies correct}}{\textrm{number of subject/verb dependencies in parser&#39;s output}}\)</span></li>
 </ul></li>
 </ul>
 <h2 id="readings"><a href="#readings">Readings</a></h2>
