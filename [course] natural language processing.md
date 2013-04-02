@@ -1688,7 +1688,7 @@ We want 'argmax', not 'max', i.e. the actual most-likely tag sequence.
     -   When words are complex even worse.
     -   Later in the course we develop more complex methods.
 
-## Week 3 - Parsing, and Context-Free Grammars
+## Week 3 - Parsing, and Context-Free Grammars (CFGs)
 
 ### Parsing (Syntatic Structure)
 
@@ -2088,10 +2088,701 @@ Quiz: given "the fast car mechanic", there are **three** parse trees.
 
 - - -
 
--   Another source: **noun premodifiers**
+-   Third source: **noun premodifiers**
 -   "the fast car mechanic"
     -   "the" "fast" "car mechanic"
     -   "the" "fast car" "mechanic"
+
+## Week 3 - Probabilistic Context-Free Grammars (PCFGs)
+
+-   Probability assigned to each rule.
+-   Hence probability assigned to each possible parse tree when ambiguity presence.
+-   Naive application is very poor, but simple to make better.
+
+### A Probabilistic Context-Free Grammar (PCFG)
+
+-   Every rule, even the rules that lead only to terminal symbols (e.g. $Vi \rightarrow \textrm{sleeps}$), has a probability associated with it.
+-   Probability of a tree $t$ with rules:
+
+$$\alpha_1 \rightarrow \beta_1, \alpha_2 \rightarrow \beta_2, \ldots, \alpha_n \rightarrow \beta_n$$
+
+-   $p(t) = \prod_{i=1}^{n} q(\alpha_i \rightarrow \beta_i)$, where $q(\alpha \rightarrow \beta)$ is the probability for rule $\alpha \rightarrow \beta$.
+-   Note that the sum of all probabilities for a particular $\alpha_i$ left-hand-side (LHS) non-terminal is 1.
+
+- - -
+
+-   Top-down stochastic processe where we can sample parse trees.
+
+Derivation          Rules used                      Probability
+----------          ----------                      -----------
+S                   S $\rightarrow$ NP VP           1.0
+NP VP               NP $\rightarrow$ DT NN          0.3
+DT NN VP            DT $\rightarrow$ the            1.0
+the NN VP           NN $\rightarrow$ dog            0.1
+the dog VP          VP $\rightarrow$ Vi             0.4
+the dog Vi          Vi $\rightarrow$ laughs         0.5
+the dog laughs
+
+-   The process ends when we have no non-terminals left.
+
+- - -
+
+Quiz: consider the following PCFG:
+
+-   q(S -> NP VP) = 0.9
+-   q(S -> NP) = 0.1
+-   q(NP -> D N) = 1
+-   q(VP -> V) = 1
+-   q(D -> the) = 0.8
+-   q(D -> a) = 0.2
+-   q(N -> cat) = 0.5
+-   q(N -> dog) = 0.5
+-   q(V -> sings) = 1
+
+And parse tree:
+
+(S, (NP, (D, the), (N, cat)), (VP, (V, sings)))
+
+Probability:
+
+Derivation          Rules used                      Probability
+----------          ----------                      -----------
+S                   S -> NP VP                      0.9
+NP VP               NP -> D N                       1
+D N VP              D -> the                        0.8
+the N VP            N -> cat                        0.5
+the cat VP          VP -> V                         1
+the cat V           V -> sings                      1
+the cat sings
+
+Total probability = $0.9 \times 1 \times 0.8 \times 0.5 \times 0.5 \times 1 \times 1 = 0.36$
+
+- - -
+
+### Properties of CFGs
+
+-   Assigns a probability to each *left-most derivation*, or parse-tree, allowed by the underlying CFG.
+-   Assume:
+    -   sentence $s$,
+    -   set of derivations for that sentence $T(s)$
+-   Thus PCFG assigns probability $p(t)$ to each derivation in $T(s)$.
+-   There is a *ranking in order of probability*.
+-   The most likely parse tree for sentence $s$ is $\textrm{arg} \underset{t \in T(s)}{\textrm{max}} p(t)$
+
+- - -
+
+Quiz: consider the following PCFG:
+
+-   q(S -> NP VP) = 1.0
+-   q(VP -> VP PP) = 0.9
+-   q(VP -> V NP) = 0.1
+-   q(NP -> NP PP) = 0.5
+-   q(NP -> N) = 0.5
+-   q(PP -> P NP) = 1.0
+-   q(N -> Ted) = 0.2
+-   q(N -> Jill) = 0.2
+-   q(N -> town) = 0.6
+-   q(V -> saw) = 1.0
+-   q(P -> in) = 1.0
+
+Given sentence "Ted saw Jill in Town", what is highest probability for any parse tree under this PCFG?
+
+Right now there's no clever way, just brute force. Also note that just because a PCFG parse tree has a non-zero probability doesn't mean it's a **valid left-most derivation**.
+
+I could only find two valid left-most derivations; intuitively they are:
+
+1.  Ted "saw" "Jill in town", i.e. Jill was in town when Ted saw her.
+2.  Ted "saw Jill" "in town", i.e. Ted was in town and saw Jill.
+
+Strictly speaking the parse trees and corresponding probabilities are:
+
+(S, (NP, N, Ted), (VP, (V, saw), (NP, (NP, N, Jill), (PP, (P, in), (NP, N, town))))), = 0.00015
+
+(S, (NP, N, Ted), (VP, (VP, (V, saw), (NP, N, Jill)), (PP, (P, in), (NP, in town)))) = 0.00027
+
+Note that these probabilities do not add up to 1; not all possible PCFG parse-trees are valid left-most derivations.
+
+### Data for Parsing Experiments: Treebanks
+
+-   Penn WSJ Treebank = 50,000 sentences with associated trees
+-   Usual set up: 40,000 training sentences (80%), 2,400 test sentences (4.8%).
+
+### Deriving a PCFG from a Treebank
+
+-   Given a set of examples (a **treebank**), the underlying CFG can simply be *all the rules seen in the corpus*.
+-   Maximum Likelihood estimates:
+
+$$q_{ML}(\alpha \rightarrow \beta) = \frac{\textrm{Count}(\alpha \rightarrow \beta)}{\textrm{Count}(\alpha)}$$
+
+-   e.g.:
+
+$$q_{ML}(\textrm{VP} \rightarrow \textrm{Vt NP}) = \frac{\textrm{Count}(\textrm{VP} \rightarrow \textrm{Vt NP})}{\textrm{Count}(\textrm{VP})}$$
+
+-   where the counts are taken from a training set of example trees.
+-   **If the training data is generated by a PCFG**, then as training data size goes to infinite, the maximum-likelihood PCFG will converge to the same distribution as the "true" PCFG.
+
+- - -
+
+Quiz: given these three parse trees, what's $q_{ML}(\textrm{NP} \rightarrow \textrm{NP PP})$? It's 2/7.
+
+- - -
+
+### PCFGs
+
+-   Booth and Thompson (1973) show that a CFG with rule probabilities correctly defines a distribution over the set of derivations provided that:
+
+1.  The rule probabilities define conditional distributions over the different ways of rewriting each non-terminal.
+2.  A technical condition on the rule probabilities ensuring that the probability of the derivation terminating in a finite number of steps is 1. (This condition is not really a practical concern).
+    -   Consider "S -> S S" with probability 1.0, "S -> a" with probability 0.
+    -   But more interesting is that "S -> S S" with probability 0.6, "S -> a" with probability 0.4 *also* fails. Not elaborated on.
+
+### Parsing with a PCFG
+
+-   Given a PCFG and a sentence $s$, define $T(s)$ to be the set of trees with $s$ as the yield.
+-   Given a PCFG and a sentence $s$, how do we find:
+
+$$\textrm{arg} \underset{t \in T(s)}{\textrm{max}} p(t)$$
+
+-   We could enumerate, brute force.
+    1.  Find all trees.
+    2.  Calculate probabilities for each tree.
+    3.  Find tree with maximum probability.
+-   This is exponential, but can be efficiently solved using dynamic programming.
+
+### Chomsky Normal Form
+
+-   Assume CFG $G = (N, \Sigma, R, S)$ is in **Chomsky Normal Form**, as follows:
+    -   $N$ is a set of non-terminal symbols.
+    -   $\Sigma$ is a set of terminal symbols.
+    -   $R$ is a set of rules which take one of two forms:
+        -   $X \rightarrow Y_1 Y_2$ for $X \in N$, and $Y_1, Y_2 \in N$
+            -   $X, Y_1, Y_2$ are all non-terminals
+        -   $X \rightarrow Y$ for $X \in N$, and $Y \in \Sigma$.
+            -   $X$ is non-terminal, $Y$ is terminal.
+    -   $S \in N$ is a distinguished start symbol.
+
+- - -
+
+-   You can take any PCFG and convert it to a PCFG in Chomsky Normal Form.
+-   "VP -> Vt NP PP", with probability 0.2
+-   Introduce a new symbol.
+-   "VP -> Vt-NP PP", with probability 0.2
+-   "Vt-NP -> Vt NP", with probability 1.0
+-   This just introduces intermediary non-terminals; to move from Chomsky Normal Form back to the original PCFG just remove these dummy non-terminals.
+-   Notice that the original rule with three non-terminals has the same probability as the new rule with two non-terminals; this is also the answer to the quiz.
+
+### A Dynamic Programming Algorithm
+
+-   Given a PCFG and a sentence $s$, how do we find:
+
+$$\underset{t \in T(s)}{\textrm{max}} p(t)$$
+
+-   (we really want argmax, but we'll do that later).
+-   Notation:
+    -   $n$ = number of words in the sentence
+    -   $w_i$ = $i$'th word in the sentence
+    -   $N$ = the set of non-terminals in the grammar
+    -   $S$ = the start symbol in the grammar
+-   Define a dynamic programming table
+    -   $\pi[i,j,X]$ = maximum probability of a constituent with non-terminal $X$ spanning words $i \ldots j$ inclusive
+    -   $i = 1, 2, \ldots, n$
+    -   $j = 1, 2, \ldots, n$
+    -   $X \in N$
+-   Our goal is to calculate $max_{i \in T(S)} p(t) = \pi[1,n,S]$.
+    -   "What is the proability of the most likely parse tree that has S at the root and spans all the words in the sentence?"
+
+- - -
+
+-   Assume sentence $w_1, w_2, w_3, w_4, w_5, w_6$.
+-   $\pi(2, 5, NP)$ means "what is the probability of the most likely way of having an NP in the parse tree such that it dominates / spans $w_2, w_3, w_4, w_5$ inclusive?
+
+- - -
+
+### An Example
+
+$$\underset{1}{\textrm{the}} \enspace \underset{2}{\textrm{dog}} \enspace \underset{3}{\textrm{saw}} \enspace \underset{4}{\textrm{the}} \enspace \underset{5}{\textrm{man}} \enspace \underset{6}{\textrm{with}} \enspace \underset{7}{\textrm{the}} \enspace \underset{8}{\textrm{telescope}}$$
+
+$\pi(3, 8, \textrm{VP})$ is all VPs that span words 3 to 8 inclusive.
+
+-   the dog using the telescope to see the man
+-   the dog seeing a man with the telescope
+-   The $\pi$ statement is "which of the two is the more likely spanning VP?"
+
+- - -
+
+### A Dynamic Programming Algorithm
+
+-   Base case definition: $\forall i = 1, 2, \ldots, n, \forall X \in V$:
+
+$$\pi[i,i,X] = q(X \rightarrow w_i)$$
+
+-   Note: define $q(X \rightarrow w_i) = 0$ if $X \rightarrow w_i$ is not in the grammar.
+-   e.g. "the/1 dog/2 laughs/3", $\pi(2,2,\textrm{NN})$ only has one possible parse tree because it must be "NN -> dog", hence $= q(\textrm{NN} \rightarrow \textrm{dog})$
+
+-   Recursive definition: $\forall i = 1, 2, \ldots, (n-1)$, $j = (i+1), \ldots, n$, $X \in N$:
+
+$$\pi(i,j,X) = \underset{\underset{s \in i \ldots (j-1)}{X \rightarrow Y \enspace Z \in R}}{max} (q(X \rightarrow Y \enspace Z) \times \pi(i,s,Y) \times \pi(s+1,j,Z))$$
+
+-   $s$ is the **split point**.
+
+### An Example
+
+$$\underset{1}{\textrm{the}} \enspace \underset{2}{\textrm{dog}} \enspace \underset{3}{\textrm{saw}} \enspace \underset{4}{\textrm{the}} \enspace \underset{5}{\textrm{man}} \enspace \underset{6}{\textrm{with}} \enspace \underset{7}{\textrm{the}} \enspace \underset{8}{\textrm{telescope}}$$
+
+$\pi(3,8,\textrm{VP})$
+
+Suppose we have:
+
+-   VP -> Vt NP, probability 0.4
+-   VP -> VP PP, probability 0.6
+
+We're searching over two possible things:
+
+-   We're searching over all possible rules in the grammar ($X \rightarrow Y \enspace Z \in R$).
+-   We're searching over all possible split points ($s \in i \ldots (j-1)$).
+    -   $s \in \{3, 4, 5, 6, 7\}$.
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & q(\textrm{VP} \rightarrow \textrm{VT NP}) \times \pi(3,3,\textrm{Vt}) \times \pi(4,8,NP) \\
+        & q(\textrm{VP} \rightarrow \textrm{VT NP}) \times \pi(3,4,\textrm{Vt}) \times \pi(5,8,NP) \\
+        & \vdots \\
+        & q(\textrm{VP} \rightarrow \textrm{VT NP}) \times \pi(3,7,\textrm{Vt}) \times \pi(8,8,NP) \\
+        & q(\textrm{VP} \rightarrow \textrm{VT PP}) \times \pi(3,3,\textrm{Vt}) \times \pi(4,8,PP) \\
+        & q(\textrm{VP} \rightarrow \textrm{VT PP}) \times \pi(3,4,\textrm{Vt}) \times \pi(5,8,PP) \\
+        & \vdots \\
+        & q(\textrm{VP} \rightarrow \textrm{VT PP}) \times \pi(3,7,\textrm{Vt}) \times \pi(8,8,PP)
+    \end{aligned}
+\end{align}
+$$
+
+-   Each of these products will have a different value, and the max is the value for $\pi(3,8,\textrm{VP})$.
+-   We will calculate the $pi$ values bottom-up to ensure correctness.
+
+### Justification
+
+-   Consider the above example yet again.
+-   Suppose for $\pi(3,8,\textrm{VP})$ we choose "VP -> VP PP".
+-   And suppose we also choose split point $s = 5$.
+-   This means that the first right-hand-side $VP$ spans $w_3, w_4, w_5$, and the second right-hand-side $PP$ spans $w_6, w_7, w_8$.
+-   The highest probability tree is formed of two child trees, which themselves must be the highest probabilities trees, etc.
+-   This is a classic observation of "dividing a problem into equivalent subproblems", i.e. dynamic programming.
+
+### The Full Dynamic Programming Algorithm
+
+**Input**: a sentence $s = x_1 \ldots x_n$, a PCFG in Chomsky Normal Form (CNF) $G = (N, \Sigma, S, R, q)$.
+
+**Initialization**:
+
+$\forall \enspace i \in \{1, \ldots, n\}, \forall \enspace X \in N,$
+
+$$
+\begin{equation}
+    \pi(i,i,X) = \begin{cases}
+        q(X \rightarrow x_i), & \textrm{if} \enspace X \rightarrow x_i \in R \\
+        0, & \textrm{Otherwise}
+    \end{cases}
+\end{equation}
+$$
+
+**Algorithm**
+
+-   For $l = 1 \ldots (n-1)$
+    -   For $i = 1 \ldots (n-l)$
+        -   Set $j = i + l$
+        -   $\pi(i,j,X) = \underset{\underset{s \in i \ldots (j-1)}{X \rightarrow Y \enspace Z \in R}}{max} (q(X \rightarrow Y \enspace Z) \times \pi(i,s,Y) \times \pi(s+1,j,Z))$
+        -   and
+        -   $bp(i,j,X) = \textrm{arg}\underset{\underset{s \in i \ldots (j-1)}{X \rightarrow Y \enspace Z \in R}}{max} (q(X \rightarrow Y \enspace Z) \times \pi(i,s,Y) \times \pi(s+1,j,Z))$
+
+- - -
+
+-   $l$ is the length of the segment we're filling in.
+    -   Hence we go from smallest to largest, satisfying the rule that we do small lengths first.
+    -   l = 1
+        -   i = 1, j = 2
+        -   i = 2, j = 3
+        -   i = 3, j = 4
+    -   l = 2
+        -   i = 1, j = 3
+        -   i = 2, j = 4
+
+- - -
+
+-   The runtime is $O(n^3 \times |N|^3)$
+    -   Cubic with respect to number of words $n$.
+    -   Also cubic with respect to the number of non-terminals in the grammar, $|N|$.
+    -   Consider that there are $n^2$ choices for $(i,j)$.
+    -   There are $|N|$ choices for X, then $\times |N|^2$ when considering $Y$ and $Z$.
+    -   And $s$ also varies with $n$.
+    -   This is way easier than brute-force search.
+
+### Summary
+
+-   PCFGs augments CFGs by including a probability for each rule in the grammar.
+-   The probability for a parse tree is the product of probabilities for the rules in the tree.
+-   To build a PCFG-parsed parser:
+    1.  Learn a PCFG from a treebank.
+    2.  Given a test data sentence, use the CKY algorithm to computer the highest probability tree for the sentence under the PCFG.
+
+## Week 4 - Weaknesses of PCFGs
+
+-   Lack of sensitivity to lexical information
+-   Lack of sensitivity to structural frequencies
+
+-   History:
+    -   First treebanks in early 1990s.
+    -   PCFGs applies as seen before, but only around 72% accuracy for WSJ corpus.
+-   Modern parsers get around 92% accuracy for WSJ corpus.
+
+### Lack of sensitivity to lexical information
+
+-   Note that every rule to a terminal is independent of every other part of the parse tree; very strong and wrong independence assumption.
+-   **Attachment ambiguity** Attachment decision for prepositional phrases (PP) is completely independent of the words.
+    -   We know this is a bad decision.
+-   **Coordination ambiguity**: for the coordinator (CC), could be e.g.
+    -   "dogs in houses" "and" "cats", or
+    -   "dogs" "in" "houses and cats"
+
+### Lack of sensitivity to structural frequencies
+
+-   e.g. "president of a company in Africa"
+    -   "president" "of a" "company in Africa", or
+    -   "president" "of a company" "in Africa" (president in Africa)
+-   Both parse have the same rules, therefore receive the same probability under a PCFG.
+-   **Close attachment** ("Africa" attaching to "company" because it's close) is twice as likely in WSJ test.
+
+- - -
+
+-   Previous example: "John was believed to have been shot by Bill"
+    -   Here the low attachment analysis (Bill does the shooting) contains the same rules as the high attachment analysis (Bill does the believing), so the two analyses receive same probability.
+
+## Week 4 - Lexicalized PCFGs
+
+### Heads in Context-Free Rules
+
+-   Add **annotations** specifying the **"head"** of each rule:
+
+-   S -> NP **VP**
+-   VP -> **Vi**
+-   VP -> **Vt** NP
+-   VP -> **VP** PP
+-   NP -> DT **NN**
+-   NP -> **NP** PP
+-   PP -> **IN** NP
+
+- - -
+
+-   Vi -> sleeps
+-   Vt -> saw
+-   NN -> man
+-   NN -> woman
+-   NN -> telescope
+-   DT -> the
+-   IN -> with
+-   IN -> in
+
+- - -
+
+-   For each rule that give non-terminals, identify one of the children to be the head of the rule. An additional piece of information.
+
+### More about Heads
+
+-   Each context-free rule has one "special" child that is the head of the rule, the most special part, the syntactic centre, e.g.
+    -   S -> NP **VP**, (VP is the head)
+    -   VP -> **Vt** NP, (Vt is the head)
+    -   NP -> DT NN **NN** (NN is the head)
+
+-   A core idea in syntax
+    -   See X-bar Theory, Head-Driven Phrase Structure Grammar
+
+-   Some intuitions:
+    -   The central sub-constituent of each rule.
+    -   The semantic predicate in each rule.
+
+### Rules which Recover Heads: An Example for NPs
+
+-   Many early treebanks, e.g. WSJ, do not contain annotations for the heads.
+-   If the rule contains NN, NNS, or NNP:
+    -   Choose the rightmost NN, NNS, or NNP.
+-   Else If the rule contains an NP:
+    -   Choose the leftmost NP
+-   Else If the rule contains a JJ
+    -   Choose the right-most JJ
+-   Else If the rule contains a CD (number, e.g. "100", "1000")
+    -   Choose the right-most CD
+-   Else
+    -   Choose the right-most child
+
+- - -
+
+e.g.
+
+NP -> DT NNP **NN**
+NP -> DT NN *NNP**
+NP -> **NP** PP
+NP -> DT **JJ**
+NP -> **DT**
+
+### Rules which Recover Heads: An Example for VPs
+
+-   If the rule contains Vi or Vt (or indeed all subcategories of verbs):
+    -   Choose the leftmost Vi or Vt
+-   Else If the rule contains a VP
+    -   Choose the leftmost VP
+-   Else
+    -   Choose the leftmost child
+
+- - -
+
+e.g.
+
+VP -> **Vt** NP
+VP -> **VP** PP
+
+### Adding Headwords to Trees
+
+-   We're going to add lexical information to each non-terminal to our tree.
+    -   Rather than one single "S", we could have e.g. "S(questioned)"
+    -   Whereas we had around 50 non-terminals before, now we could have $50 \times |V|$, where $V$ is vocabulary size, so in the thousands.
+-   We will propogate heads up the tree.
+
+### Adding Headwords to Trees (Continued)
+
+-   A constituent receives its **headword** from its **head child**.
+    -   S -> NP **VP**, (S receives headword from VP)
+    -   VP -> **Vt** NP, (VP receives headword from Vt)
+    -   NP -> DT **NN**, (NP receives headword from NN).
+-   For rules that go to a terminal (e.g. DT -> the), the contituent receives the word as its headword (e.g. DT becomes DT(the)).
+
+### Chomsky Normal Form
+
+-   (see earlier slide about CNF)
+-   (recall the complexity of CYK algorithm is $O(n^3 \times |N|^3)$, where $n$ is length of string being parsed, $N$ is number of non-terminals).
+
+### Lexicalized Context-Free Grammars in Chomsky Normal Form
+
+-   $N$ is a set of non-terminal symbols
+-   $\Sigma$ is a set of terminal symbols
+-   $R$ is a set of rules which take one of three forms:
+    -   $X(h) \rightarrow_1 Y_1(h) Y_2(w)$ for $X \in N$, and $Y_1, Y_2 \in N$, and $h, w \in \Sigma$.
+        -   e.g. VP(saw) $\rightarrow_1$ Vt(saw) NP(dog)
+        -   X = VP
+        -   $Y_1$ = Vt
+        -   $Y_2$ = NP
+        -   h = saw
+        -   w = dog
+        -   The subscript on the arrow indicates where the head word comes from, the first $Y$.
+    -   $X(h) \rightarrow_2 Y_1(w) Y_2(h)$ for $X \in N$ and $Y_1, Y_2 \in N$ and $h, w \in \Sigma$.
+        -   e.g. S(saw) $\rightarrow_2$ NP(man) VP(saw).
+    -   $X(h) \in h$ for $X \in N$ and $h \in \Sigma$.
+        -   e.g. DT(the) -> the, where X = DT and h = the.
+-   $S \in N$ is a distinguished start symbol.
+
+- - -
+
+-   The subscript on the arrows are important because it disambiguates e.g.
+    -   NP(dog) -> NN(dog) NN(dog).
+
+### An Example
+
+S(saw) $\rightarrow_2$ NP(man) VP(saw)  
+NP(saw) $\rightarrow_1$ Vt(saw) NP(dog)  
+NP(man) $\rightarrow_2$ DT(the) NN(man)  
+NP(dog) $\rightarrow_2$ DT(the) NN(dog)  
+Vt(saw) $\rightarrow$ saw  
+DT(the) $\rightarrow$ the  
+NN(man) $\rightarrow$ man  
+NN(dog) $\rightarrow$ dog  
+
+-   When drawing parse tree put a big dot on the branch that indicate where the head word is coming from.
+
+### Parameters in a Lexicalized PCFG
+
+-   An example parameter in a regular PCFG
+
+$$q(\textrm{S} \rightarrow \textrm{NP VP})$$
+
+-   An example parameter in a Lexicalized PCFG
+
+$$q(\textrm{S(saw)} \rightarrow_2 \textrm{NP(man) VP(saw)})$$
+
+-   Technically a Lexicalized PCFG is just a regular PCFG with many, many more non-terminals.
+-   However, qualitatively what's happened is that we have much less data per terminal.
+    -   This is a similar problem to language modelling with more n-grams, and will have a similar solution.
+
+### Parsing with Lexicalized CFGs
+
+-   The new form of grammar looks just like a Chomsky normal form CFG, but with potentially $O(|\Sigma|^2 \times |N|^3)$ possible rules.
+-   Naively, parsing an $n$ word sentence using the dynamic programming algorithm will take $O(n^3 |\Sigma|^2 |N|^3)$ time.
+    -   But $|\Sigma|$ can be **huge**!!
+-   Crucial observation: at most $O(n^2 \times |N|^3)$ rules can be applicable to a given sentence $w_1, w_2, \ldots, w_n$, of length n. This is because any rules which contain a lexical item that is not one of $w_1 \ldots w_n$ an be safely discarded.
+    -   e.g. given "the dog saw the cat"
+    -   If rule is "S(questioned) ->2 NP(dog) VP(questioned)", it can be discarded because "questioned" not in sentence.
+-   The result: we can parse in $O(n^5 |N|^3)$ time.
+    -   $n^3$ comes from dynamic programming algorithm.
+    -   $n^2$ comes from the idea we need to use words from the sentence.
+    -   $|N|^3$ comes from CNF usage of non-terminals.
+
+### A Model from Charniak (1997)
+
+-   An example parameter in a Lexicalized PCFG:
+
+$$q(\textrm{S(saw)} \rightarrow_2 \textrm{NP(man) VP(saw)})$$
+
+-   First step: decompose this parameter into a product of two parameters
+
+$$
+\begin{align}
+    &\begin{aligned}
+        & q(\textrm{S(saw)} \rightarrow_2 \textrm{NP(man) VP(saw)}) \\
+      = & q(\textrm{S} \rightarrow_2 \textrm{NP VP|S, saw}) \times q(\textrm{man|S} \rightarrow_2 \textrm{NP VP, saw})
+    \end{aligned}
+\end{align}
+$$
+
+-   First parameter: given that I have S(saw) what is the probability of re-writing it as "NP VP"?
+-   Second parameter: say we have S(saw) and we know we have NP on the left and VP(saw) on the right.
+    -   What will fill in the NP(???)
+    -   What is the probability that "man" is chosen for the NP?
+
+-   Second step: use smoothed estimation for the two parameter estimates
+
+$$
+\begin{align}
+    &\begin{aligned}
+      & q(\textrm{S} \rightarrow_2 \textrm{NP VP | S, saw}) \\
+    = & \lambda_1 \times q_{ML}(\textrm{S} \rightarrow_2 \textrm{NP VP | S, saw}) + \lambda_2 \times q_{ML} (S \rightarrow_2 \textrm{NP VP | S}) \\ \\
+      & q(\textrm{man | S} \rightarrow_2 \textrm{NP VP, saw}) \\
+    = & \lambda_3 \times q_{ML} (\textrm{man | S} \rightarrow_2 \textrm{NP VP, saw}) + \lambda_4 \times q_{ML}(\textrm{man | S} \rightarrow_2 \textrm{NP VP}) + \lambda_5 \times q_{ML} (\textrm{man | NP})
+    \end{aligned}
+\end{align}
+$$
+
+-   The first parameter:
+    -   $\lambda_1, \lambda_2 \ge 0$, $\lambda_1 + \lambda_2 = 1$.
+
+    -   $q_{ML}(\textrm{S} \rightarrow_2 \textrm{NP VP | S, saw}) = \frac{\textrm{Count}(\textrm{S(saw)} \rightarrow_2 \textrm{NP VP})}{\textrm{Count}(\textrm{S(saw)})}$
+        -   Probability of S(saw) re-writing with this particular rule.
+        -   This estimate will be more detailed; uses more information.
+    -  $q_{ML} (S \rightarrow_2 \textrm{NP VP | S}) = \frac{\textrm{Count}(\textrm{S} \rightarrow_2 \textrm{NP VP})}{\textrm{Count}(\textrm{S})}$
+        -   A backed-off estimate that completely ignores the lexical information "saw".
+        -   Almost identical to a rule in a regular PCFG.
+        -   This estimate will be more robust; counts will be robust and will more closely reflect the "true" value.
+    -   Robustness vs. sensitivity to lexical information is balanced using linear interpolation.
+        -   Again, this is bias vs. variance.
+
+-   The second parameter:
+    -   Very similar reasoning.
+    -   $\lambda_3, \lambda_4, \lambda_5 \ge 0$, $\lambda_3 + \lambda_4 + \lambda_5 = 1$.
+    -   $\lambda_3$ asks "given S(saw), NP(???), and VP(saw), what is the probability of the NP having man?"
+    -   Throw away "saw", $\lambda_4$ asks "given S(h), NP(???) and VP(h), where h is some head word, what's the probability of the NP having man?"
+    -   $\lambda_4$ asks "given NP(???) what's the probability of the NP having man?"
+    -   Again, robustness vs. sensitivity, bias vs. variance.
+
+### Other Important Details
+
+-   Need to deal with rules with more than two children, e.g.
+    -   VP(told) -> V(told) NP(him) PP(on) SBAR(that)
+    -   One way is to binarize using method covered before, adding intermediate non-terminals.
+-   Need to incorporate parts of speech (useful in smoothing)
+    -   VP-V(told) -> V(told) NP-PRP(him) PP-IN(on) SBAR-COMP(that)
+-   Need to encode preferences for close attachment.
+    -   "John was believed to have been shot by Bill".
+-   Won't be covered in this course. Further reading:
+    -   Michael Collins, 2003. "Head-Driven Statistical Models for Natural Language Parsing". In Computational Linguistics.
+
+### Evaluation: Representing Trees as Constituents
+
+-   Take some parse tree.
+-   Break up into constituents with labels, start points, end points.
+-   "the/1 lawyer/2 questioned/3 the/4 witness/5"
+
+Label       Start Point         End Point
+-----       -----------         ---------
+NP          1                   2
+NP          4                   5
+VP          3                   5
+S           1                   5
+
+-   We **do not** include parts of speech in this defintion. What's missing is "the/DT lawyer/NN questioned/Vt the/DT witness/NN".
+
+### Precision and Recall
+
+-   Take the output from human parsed data, this is our *gold standard*.
+-   Take output parsed using our PCFG.
+-   Create two sets of tables for the constituents.
+-   $G$ = number of constituents in *gold standard* = 7.
+-   $P$ = number of constituents in *parse output* = 6.
+-   $C = number correct = 6.
+    -   How many rules in the parse output are also in the gold standard?
+-   Recall = $\textrm{100%} \times \frac{C}{G} = \textrm{100%} \times \frac{6}{7}$
+-   Precision = $\textrm{100%} \times \frac{C}{P} = \textrm{100%} \times {6}{6}$.
+
+### Results
+
+-   Training data: 40k sentences from the Penn Wall Street Journal treebank. Testing: around 2.4k sentences from the Penn Wall Street Journal treebank.
+-   Results for a PCFG: 70.6% Recall, 74.8% Precision.
+-   Magerman (1994): 84.0% Recall, 84.3% Precision.
+    -   Based on Decision trees and bottom-up parser.
+-   Results for a lexicalized PCFG: 88.1% recall, 88.3% precision (from Collins (1997, 2003)
+-   More recent results:
+    -   90.7%/91.4% (Carreras et al 2008)
+        -   Discriminative estimation 
+    -   91.7%/92.0% (Petrov 2010)
+        -   Latent-variable PCFGs
+    -   91.2%/91.8% (Charniak and Johnson, 2005)
+        -   Discriminative estimation 
+
+### Evaluation: Dependencies
+
+-   Recall two of the three rules of lexicalised PCFGs:
+    -   $X(h) \rightarrow_1 Y_1(h) Y_2(w)$
+    -   $X(h) \rightarrow_2 Y_1(w) Y_2(h)$
+-   see slides for lexicalised PCFG parse tree of "the man saw the dog with the telescope"
+-   Dependencies (format: (h, w, rule))
+    -   (ROOT_0, saw_3, ROOT)
+    -   (saw_3, man_2, S ->2 NP VP)
+    -   (man_2, the_1, NP ->2 DT NN)
+    -   (saw_3, with_6, VP ->1 VP PP)
+    -   (saw_3, dog_5, VP ->1 Vt NP)
+    -   (dog_5, the_4, NP ->2 DT NN)
+    -   (with_6, telescope_8, PP ->1 IN NP)
+    -   (telescope_8, the_7, NP ->2 DT NN)
+-   Always same number of dependencies as number of words, in this case 8.
+-   Special dependency for the start symbol.
+
+### Strengths and Weaknesses of Modern Parsers
+
+(Numbers taken from Collins (2003))
+
+-   Subject-verb pairs (S $\rightarrow_2$ NP VP): over 95%/95% recall/precision.
+-   Object-verb pairs (VP $\rightarrow_1$ Vt NP$) ("saw the man"): over 92%/92% recall/precision.
+-   Other arguments to verbs (VP \rightarrow_1 Y_1 Y_2$): 92%
+-   Non-recursive NP boundaries: 93%
+-   PP attachments ($X(h) \rightarrow Y_1(h) PP(w)$): 82%
+-   Coordination ambiguities: 61%.
+-   Takeaway
+    -   Core structure is good.
+    -   Modifiers cause difficulties.
+    -   This is from 1997, but would see same breakdown of per-type dependency accuracies in modern parsers.
+
+### Summary
+
+-   Key weakness of PCFGs: lack of sensitivity to lexical information
+-   Lexicalised PCFGs:
+    -   Lexicalize a treebank using head rules.
+    -   Estimate the parameters of a lexicalized PCFG using smoothed estimaton.
+-   Accuracy of lexicalized PCFGs: around 88% in recovering constituents or dependencies.
+
+### Dependency Accuracies
+
+-   All parses for a sentence with $n$ words have $n$ dependencies. Report a single figure, dependency accuracy.
+-   Results from Collins 2003: 88.3% dependency accuracy.
+-   Can calculate precision/recall on particular dependency *types*,
+    -   e.g. look at all subject/verb dependencies $\implies$ all dependencies with label $\textrm{S} \rightarrow_2 \textrm{NP VP}$.
+    -   Recall = $\frac{\textrm{number of subject/verb dependencies correct}}{\textrm{number of subject/verb dependencies in gold standard}}$
+    -   Precision = $\frac{\textrm{number of subject/verb dependencies correct}}{\textrm{number of subject/verb dependencies in parser's output}}$
 
 ## Readings
 
