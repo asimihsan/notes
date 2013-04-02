@@ -139,7 +139,7 @@
      
 -    OpenSSL symmetric encryption and compression
 
-        bzip2 --best --stdout -- test.svg | /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -salt -k "password" > test.svg.openssl
+        bzip2 --stdout -- test.svg | /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -salt -k "password" > test.svg.openssl
 
 -    OpenSSL symmetric decryption and decompression
 
@@ -147,9 +147,9 @@
         
 -    With OpenSSL 1.0.1e, AES-CBC-HMAC-SHA1 segfaults and AES-GCM always fails; they are not intended for command-line usage.
 
--    OpenSSL encrypt and HMAC simultaneously
+-    OpenSSL encrypt and HMAC simultaneously (`pigz` is a parallel gzip implementation)
 
-        bzip2 --best --stdout -- test.svg | /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -salt -k "password" | tee test.svg.2 | /usr/local/Cellar/openssl/1.0.1e/bin/openssl sha256 -hmac "password"
+        cat test.svg | pigz --best -c | /usr/local/Cellar/openssl/1.0.1e/bin/openssl enc -aes-256-ctr -salt -k "password" | tee test.svg.2 | /usr/local/Cellar/openssl/1.0.1e/bin/openssl sha256 -hmac "password"
 
 - - -
 
