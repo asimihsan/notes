@@ -41,6 +41,10 @@
 -    Useful httrack one-liner to index a site and all 'near' non-HTML resources and all first-links away in useful directory structure.
 
         httrack http://www.cs.columbia.edu/~smaskey/CS6998/ -W -O "/Users/ai/websites/smaskey" --extended-parsing --mirrorlinks --structure=4 +*.pdf
+
+-    Another httrack one liner.
+
+        httrack "http://www.bradblock.com.s3-website-us-west-1.amazonaws.com/mll.html" --mirror-wizard --path "/home/ubuntu/websites" --near --structure=4 --sockets=1 --priority=7
     
 -	Setting up SAMBA on RedHat
 	-	`yum install samba samba-client`
