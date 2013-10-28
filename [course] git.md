@@ -7,7 +7,7 @@ Via Code School
 ### Init, status
 
 -    `git init` to initialize a repo.
--    `git status` to see what the current state it.
+-    `git status` to see what the current state of the local repo is.
     -    *staged*: ready to be committed.
     -    *unstaged*: changed files that have not been prepared to be committed.
     -    *untracked*: not tracked by Git.
@@ -266,7 +266,7 @@ Via Code School
 -    `git log` to view previous commits.
     -    SHA hash, author, date, message.
 -    `git config --global color.ui true` to colourise the output.
--    `git log --pretty=online` for line-based log with `<hash> <commit message>` per line.
+-    `git log --pretty=oneline` for line-based log with `<hash> <commit message>` per line.
 -    `git log --pretty=format:"%h %ad- %s [%an]"` for a customizable format for log.
 -    `git log --oneline -p` will show patch-output for commits; what lines added/removed/modified.
 -    `git log --oneline --stat` will show counts of lines added/removed/modified for each commit.
@@ -278,7 +278,7 @@ Via Code School
 -    `git log --since=1.day.ago` for since in days.
 -    `git log --since=1.hour.ago` for since in hours.
 -    `git log --since=1.month.ago --until=2.weeks.ago` for since and until (relative).
--    `git log --sinace=2000-01-01 --until=2012-12-21` for since and until (absolute).
+-    `git log --since=2000-01-01 --until=2012-12-21` for since and until (absolute).
 
 #### Diff
 
@@ -315,7 +315,7 @@ Via Code School
 
 #### Untracking files
 
--    Sometims don't want to delete, just want to tell git `stop tracking this file`.
+-    Sometimes don't want to delete, just want to tell git "stop tracking this file".
 -    `git rm --cached <filename>` to stop tracking a file.
 -    Afterwards `git status` will say it's been deleted but it won't be deleted from your file system, only from Git.
 
@@ -337,7 +337,7 @@ Via Code School
 
 ### Other commands I've found
 
--    `git revert HEAD`: revert changes introduced by a particular revert, add new commit to track this. Used when you want to revert pushed changes.
+-    `git revert HEAD`: revert changes introduced by a particular commit, add new commit to track this. Used when you want to revert pushed changes.
 
 ### References
 
