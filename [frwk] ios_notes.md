@@ -3,18 +3,21 @@
 - x 01: Your First iPhone Application (Apple)
 - x 02: Your Second iOS App: Storyboards (Apple)
 - x 04: iOS App Programming Guide (Apple)
-- o 03: Your Third iOS App: iCloud
-- x 22: Core Data Tutorial for iOS (Apple)
-- o 27: Core Data Utility Tutorial (Apple)
-
+- o 23: iOS Human Interface Guidelines (Apple)
 - x 05: Cocoa Fundamentals Guide (Apple)
 - x 06: View Controller Programming Guide (Apple)
-- x 10: Table View Programming Guide (Apple)
 - o 07: Event Handling Guide for iOS (Apple)
 - o 08: View Programming Guide for iOS (Apple)
 - o 09: View Controller Catalog for iOS (Apple)
 - o 11: Design then Code (two tutorials on iOS apps)
+- o 26: Location Awareness Programming Guide (Apple)
+- o 34: App Store Submission Tutorial (Apple)
+- o 35: App Distribution Guide (Apple)
 
+- o 03: Your Third iOS App: iCloud
+- x 22: Core Data Tutorial for iOS (Apple)
+- o 27: Core Data Utility Tutorial (Apple)
+- x 10: Table View Programming Guide (Apple)
 - x 12: Networking Overview (Apple)
 - x 13: Networking Programming Topics (Apple)
 - x 29: Streams Programming Guide
@@ -27,17 +30,24 @@
 - o 15: Key-Value Coding Programming Guide (Apple)
 - o 16: Key-Value Observing Programming Guide (Apple)
 
-- o 23: iOS Human Interface Guidelines (Apple)
+
 - o 24: iOS Technology Overview (Apple)
 - o 25: Core Data Programming Guide (Apple)
-- o 26: Location Awareness Programming Guide (Apple).
 - o 28: Threading Programming Guide
 
 - o 30: Notification Programming Topics
 
-
+- o 33: MapKit Framework Reference
 
 ## Apple samples
+
+- o MapSearch
+- o MapCallouts
+- o BreadCrumb
+- o CurrentAddress
+- o Touches
+- o CopyPasteTile
+- o SimpleGestureRecognizers
 
 - o NavBar
 - o Tabster
@@ -177,7 +187,7 @@
 -	p37, fig 3-1: state changes in iOS app.
 -	p39: fig 3-2: launching an app into the foreground.
 -	p40, fig 3-3: launching an app into the background. no UI, just handles events. can tell on `applicationState` property of shared `UIApplication` object (p41).
--	p42: what to do in app delegate's `application:didFinishLuanchingWithOptions:`.
+-	p42: what to do in app delegate's `application:didFinishLaunchingWithOptions:`.
 	-	check launch options dictionary, why was app launched.
 	-	initialize critical data structures.
 	-	prepare window and views.
@@ -370,9 +380,35 @@
 - p79, fig 8-2: responding to the disappearance of a view.
 - p87: presenting a view controller programmatically.
 - p100: enabling edit mode in a view controller.
-- 
 
 ### 07: Event Handling Guide for iOS 
+
+-    p9: Three kinds of events:
+    -    Touch
+    -    Shaking motion
+    -    Remote-control
+-    p10: events also have subtypes.
+-    p11: UIEvents enter active application's event queue. Singleton `UIApplication` pops from queue
+-    p11: touch events go to window, and window uses "hit-testing" on views.
+    -    The hit-test view and the first responder are often the same object, but don't have to be.
+-    p11: can subclass `UIApplication` or `UIWindow` to override `sendEvent:`, as these are funnels for all events (very rare).
+    -    Always call superclass implementation.
+-    p12: to become first responder, implement `canBecomeFirstResponder` (return `YES`) and `becomeFirstResponder`.
+-    p13: touch events to hit-test views, motion/remote-control events to first responder.
+-    p13: responder chain, events go up hierarchy to superviews, window, then finally `UIApplication`.
+-    p18: UIEvent contains all UITouch objects for the sequence of touches, even across views.
+-    p19: use a custom subclass of `UIGestureRecognizer`
+-    p19: how to regulate delivery of touch events
+    -    On view with `userInteractionEnabled` property
+    -    On whole `UIApplication` with `beginIgnoringInteractionEvents` and `endIgnoringInteractionEvents`.
+    -    For multitouch on view need `multipleTouchEnabled` property to `YES`.
+    -    View's `exclusiveTouch` property means it is the only view capable of receiving events.
+    -    Custom `UIView` can override `hitTest:withEvent:` to control when subviews get called.
+-    p20: how to handle multitouch events (and what methods)
+    -    Common: subclass `UIView`.
+    -    Subclass `UIViewController`
+    -    Subclass e.g. `UIImageView` or `UISlider`
+    -    Rare: subclass `UIApplication` or `UIWindow`
 
 ### 08: View Programming Guide for iOS 
 
